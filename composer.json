@@ -21,14 +21,20 @@
         "source": "https://github.com/mimmi20/ua-comparator"
     },
     "require": {
-        "php": ">=5.5.0"
+        "php": ">= 5.5.0",
+        "symfony/console": "2.4.*",
+        "monolog/monolog": "1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
     },
     "autoload": {
         "psr-4": {
-            "UaComparator\\": "src/",
+            "UaComparator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "UaComparatorTest\\": "tests/"
         }
     }
