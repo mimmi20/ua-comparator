@@ -1,0 +1,35 @@
+{
+    "name": "mimmi20/ua-comparator",
+    "description": "a little project to compare different useragent parser",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["Browser", "user agent", "http", "parser", "user-agent"],
+    "homepage": "https://github.com/mimmi20/ua-comparator",
+    "authors": [
+        {
+            "name": "Thomas Müller",
+            "homepage": "https://github.com/mimmi20",
+            "role": "Developer"
+        },
+        {
+            "name": "Contributors",
+            "homepage": "https://github.com/mimmi20/ua-comparator/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/mimmi20/ua-comparator/issues",
+        "source": "https://github.com/mimmi20/ua-comparator"
+    },
+    "require": {
+        "php": ">=5.5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "UaComparator\\": "src/",
+            "UaComparatorTest\\": "tests/"
+        }
+    }
+}
