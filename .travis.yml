@@ -18,7 +18,6 @@ before_script:
 
 script:
   - php vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover --colors --verbose
-  - php vendor/bin/phpcs --standard=psr2 -pn src tests
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
