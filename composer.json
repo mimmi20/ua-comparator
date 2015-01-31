@@ -23,7 +23,16 @@
     "require": {
         "php": ">= 5.5.0",
         "symfony/console": "2.4.*",
-        "monolog/monolog": "1.*"
+        "monolog/monolog": "1.*",
+        "browscap/browscap": "dev-master",
+        "mimmi20/browser-detector": "dev-master",
+        "mimmi20/wurfl": "dev-master",
+        "mimmi20/wurflcache": "*",
+        "ua-parser/uap-php": "dev-master",
+        "synchro/uasparser": "v0.53",
+        "browscap/browscap-php": "dev-master",
+        "crossjoin/browscap": "dev-master",
+        "wurfl/wurfl-api": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "*"

@@ -30,30 +30,27 @@
 
 namespace UaComparator;
 
-/**
- * class to load the the content from a data file
- *
- * @package    FileLoader
- * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
- * @copyright  Copyright (c) 2015 Thomas Müller
- * @version    1.2
- * @license    http://www.opensource.org/licenses/MIT MIT License
- * @link       https://github.com/mimmi20/FileLoader/
- */
-class Loader
-{
-    /**
-     * loads the the content from a data file
-     *
-     * @param string $wurflKey
-     *
-     * @return array $data
-     */
-    public static function load($wurflKey)
-    {
-        /** @var array $data */
-        $data = require '../data/' . $wurflKey . '.php';
+use Symfony\Component\Console\Application;
 
-        return $data;
+/**
+ * Class UaComparator
+ *
+ * @category   UaComparator
+ * @package    UaComparator
+ * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
+ */
+class UaComparator extends Application
+{
+    public function __construct()
+    {
+        parent::__construct('Useragent Parser Comparator Project', 'dev-master');
+
+        $commands = array(
+            new Command\CompareCommand(),
+        );
+
+        foreach ($commands as $command) {
+            $this->add($command);
+        }
     }
 }

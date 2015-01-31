@@ -28,32 +28,24 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-namespace UaComparator;
+namespace UaComparator\Module;
 
 /**
- * class to load the the content from a data file
+ * UaComparator.ini parsing class with caching and update capabilities
  *
- * @package    FileLoader
- * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
- * @copyright  Copyright (c) 2015 Thomas Müller
- * @version    1.2
- * @license    http://www.opensource.org/licenses/MIT MIT License
- * @link       https://github.com/mimmi20/FileLoader/
+ * @category  UaComparator
+ * @package   UaComparator
+ * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
+ * @copyright 2015 Thomas Mueller
+ * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class Loader
+interface ModuleInterface
 {
-    /**
-     * loads the the content from a data file
-     *
-     * @param string $wurflKey
-     *
-     * @return array $data
-     */
-    public static function load($wurflKey)
-    {
-        /** @var array $data */
-        $data = require '../data/' . $wurflKey . '.php';
+    public function init();
 
-        return $data;
-    }
+    public function detect();
+
+    public function startTimer();
+
+    public function endTimer();
 }

@@ -28,32 +28,15 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-namespace UaComparator;
+namespace UaComparator\Input;
 
 /**
- * class to load the the content from a data file
+ * Base class for Exceptions of the Detector Inputs
  *
- * @package    FileLoader
- * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
- * @copyright  Copyright (c) 2015 Thomas Müller
- * @version    1.2
- * @license    http://www.opensource.org/licenses/MIT MIT License
- * @link       https://github.com/mimmi20/FileLoader/
+ * @package   UaComparator
  */
-class Loader
+class Exception extends \Exception
 {
-    /**
-     * loads the the content from a data file
-     *
-     * @param string $wurflKey
-     *
-     * @return array $data
-     */
-    public static function load($wurflKey)
-    {
-        /** @var array $data */
-        $data = require '../data/' . $wurflKey . '.php';
-
-        return $data;
-    }
+    const LOCAL_FILE_MISSING       = 100;
+    const NO_RESULT_CLASS_RETURNED = 100;
 }
