@@ -30,6 +30,10 @@
 
 namespace UaComparator\Module;
 
+use BrowserDetector\BrowserDetector;
+use Monolog\Logger;
+use WurflCache\Adapter\AdapterInterface;
+
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  *
@@ -41,19 +45,113 @@ namespace UaComparator\Module;
  */
 class Browscap implements ModuleInterface
 {
+    /**
+     * @var \Monolog\Logger
+     */
+    private $logger = null;
+
+    /**
+     * @var BrowserDetector
+     */
+    private $input = null;
+
+    /**
+     * @var \WurflCache\Adapter\AdapterInterface
+     */
+    private $cache = null;
+
+    /**
+     * @var integer
+     */
+    private $timer = 0;
+
+    /**
+     * creates the module
+     *
+     * @param \Monolog\Logger                      $logger
+     * @param \WurflCache\Adapter\AdapterInterface $cache
+     */
+    public function __construct(Logger $logger, AdapterInterface $cache)
+    {
+        $this->logger = $logger;
+        $this->cache  = $cache;
+
+        $this->input = new BrowserDetector();
+        $this->input->setInterface(new \UaComparator\Input\Browscap());
+        $this->input->setLogger($logger);
+        $this->input->setCache($this->cache);
+        $this->input->setCachePrefix('browscap-php');
+    }
+
+    /**
+     * initializes the module
+     *
+     * @throws \BrowserDetector\Input\Exception
+     */
     public function init()
     {
+        $parser = new \BrowscapPHP\Browscap();
+        $parser
+            ->setLogger($this->logger)
+            ->setCache($this->cache)
+        ;
+
+        $this->input->getInterface()->setParser($parser);
     }
 
-    public function detect()
+    /**
+     * @param string $agent
+     *
+     * @return \BrowserDetector\Detector\Result
+     * @throws \BrowserDetector\Input\Exception
+     */
+    public function detect($agent)
     {
+        $this->input->setAgent($agent);
+        return $this->input->getBrowser(true);
     }
 
+    /**
+     * starts the detection timer
+     *
+     * @return \UaComparator\Module\Browscap
+     */
     public function startTimer()
     {
+        $this->timer = microtime(true);
+
+        return $this;
     }
 
+    /**
+     * stops the detection timer and returns the duration
+     * @return float
+     */
     public function endTimer()
     {
+        $duration    = microtime(true) - $this->timer;
+        $this->timer = 0;
+
+        return $duration;
+    }
+
+    /**
+     * @return \BrowserDetector\BrowserDetector
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * @param \BrowserDetector\BrowserDetector $input
+     *
+     * @return \UaComparator\Module\Browscap
+     */
+    public function setInput(BrowserDetector $input)
+    {
+        $this->input = $input;
+
+        return $this;
     }
 }

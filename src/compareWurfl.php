@@ -9,6 +9,17 @@
  * Mobile-Detect: https://github.com/serbanghita/Mobile-Detect
  */
 
+use Monolog\ErrorHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Monolog\Processor\MemoryPeakUsageProcessor;
+use Monolog\Processor\MemoryUsageProcessor;
+use Monolog\Processor\WebProcessor;
+use UaComparator\Helper\LoggerFactory;
+use UaComparator\Module\Wurfl;
+use UaComparator\Module\WurflOld;
+use WurflCache\Adapter\File;
+
 echo 'initializing App ...';
 
 ini_set('memory_limit', '2048M');
@@ -17,43 +28,6 @@ ini_set('max_input_time', 0);
 ini_set('display_errors', 1);
 ini_set('error_log', './error.log');
 error_reporting(E_ALL | E_DEPRECATED);
-
-function errorHandler($errno, $errstr = '', $errfile = '', $errline = '', $errcontext = '')
-{
-    // error_reporting ist immer 0, wenn ein Befehl mit Fehler-Unterdrueckungs-Operator (@) aufgerufen wird.
-    // Diese Fehler muessen ignoriert werden!
-    // (wird z.B. von Zend benutzt, um die Existenz einer Datei (per fopen) zu pruefen)
-    if (error_reporting() != 0) {
-        $ex = new \ErrorException($errstr, $errno, 0, $errfile, $errline);
-
-        echo $ex . "\n\n";
-    }
-}
-
-function exceptionHandler(Exception $exception)
-{
-    $ex = new \Exception(
-        'logged in Exception Handler: ' . $exception->getMessage(), $exception->getCode(), $exception
-    );
-
-    echo $ex . "\n\n";
-}
-
-function shutdownHandler()
-{
-    if (!is_null($e = error_get_last())) {
-        $ex = new \Exception('logged in PHP Shutdown: ' . json_encode($e), $e['type']);
-
-        echo $ex . "\n\n";
-        exit;
-    }
-}
-
-set_error_handler('errorHandler');
-set_exception_handler('exceptionHandler');
-register_shutdown_function('shutdownHandler');
-
-define('DS', DIRECTORY_SEPARATOR);
 
 /**
  * This makes our life easier when dealing with paths. Everything is relative
@@ -82,9 +56,23 @@ define('COLOR_START_GREEN', "\x1b[30;42m");
 date_default_timezone_set('Europe/Berlin');
 setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
+$targets = array();
+
+/**
+ * @var \UaComparator\Module\ModuleInterface[] $modules
+ */
+$modules = array();
+
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
-$targets = array();
+/*******************************************************************************
+ * Logger
+ */
+echo 'initializing Logger ...';
+
+$logger = LoggerFactory::create();
+
+echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
  * WURFL - PHP 5.3 port
@@ -93,16 +81,14 @@ $targets = array();
 echo 'initializing Wurfl API (PHP-API 5.3 port) ...';
 
 // Create WURFL Configuration from an XML config file
-$wurflConfig  = new \Wurfl\Configuration\XmlConfig('data/wurfl-config.xml');
-$wurflCache   = new \WurflCache\Adapter\Memory();
-$wurflStorage = new \WurflCache\Adapter\File(array('dir' => 'data/cache/wurfl/'));
-
 ini_set('max_input_time', '6000');
-// Create a WURFL Manager from the WURFL Configuration
-$wurflManager = new \Wurfl\Manager($wurflConfig, $wurflStorage, $wurflCache);
+$adapter     = new File(array('dir' => 'data/cache/wurfl/'));
+$wurflModule = new Wurfl($logger, $adapter, 'data/wurfl-config.xml');
 
-$device             = $wurflManager->getDeviceForUserAgent('');
-$allWurflProperties = $device->getAllCapabilities();
+$wurflModule->init();
+
+$targets[11] = 'WURFL API (PHP-API 5.3)';
+$modules[11] = $wurflModule;
 
 $target = 'WURFL API (PHP-API 5.3)';
 
@@ -115,40 +101,13 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
 echo 'initializing Wurfl API (PHP-API 5.2 original) ...';
 
 // Create WURFL Configuration from an XML config file
-$wurflConfigOrig  = new WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-$wurflCacheOrig   = new WURFL_Storage_Memory();
-$wurflStorageOrig = new WURFL_Storage_File(array(WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
+$adapter        = new File(array('dir' => 'data/cache/wurfl_old/'));
+$oldWurflModule = new WurflOld($logger, $adapter, 'data/wurfl-config.xml');
 
-// Create a WURFL Manager Factory from the WURFL Configuration
-$wurflManagerFactoryOrig = new WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
-ini_set('max_input_time', '6000');
-// Create a WURFL Manager
-$wurflManagerOrig = $wurflManagerFactoryOrig->create();
-$deviceOrig       = $wurflManagerOrig->getDeviceForUserAgent('');
+$oldWurflModule->init();
 
 $targets[7] = 'WURFL API (PHP-API 5.2 original)';
-
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-echo 'exporting Wurfl data ...';
-
-// $iterator = new \RecursiveDirectoryIterator('data/cache/wurfl_old/');
-
-// foreach (new \RecursiveIteratorIterator($iterator) as $file) {
-    // /** @var $file \SplFileInfo */
-    // if (!$file->isFile()) {
-        // continue;
-    // }
-
-    // try {
-        // $d = $wurflManagerOrig->getDevice($file->getBasename());
-        // echo  "\n" . '    found:' . $file->getBasename();
-    // } catch (\Exception $e) {
-        // echo  "\n" . 'not found:' . $file->getBasename();
-        // continue;
-    // }
-    
-    // storeProperties($d);
-// }
+$modules[7] = $oldWurflModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -228,26 +187,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
      * Wurfl - PHP 5.3 port
      */
 
-    $wurflStartTime = microtime(true);
+    $modules[11]->startTimer();
 
-    // Create WURFL Configuration from an XML config file
-    $wurflConfig  = new \Wurfl\Configuration\XmlConfig('data/wurfl-config.xml');
-    $wurflCache   = new \WurflCache\Adapter\Memory();
-    $wurflStorage = new \WurflCache\Adapter\File(array('dir' => 'data/cache/wurfl/'));
+    $device = $modules[11]->detect($agent);
 
-    ini_set('max_input_time', '6000');
-    // Create a WURFL Manager from the WURFL Configuration
-    $wurflManager = new \Wurfl\Manager($wurflConfig, $wurflStorage, $wurflCache);
-
-    try {
-        $device = $wurflManager->getDeviceForUserAgent($agent);
-    } catch (\Exception $e) {
-        echo 'LINE' . __LINE__ . ': ';
-        echo $e;
-        $device = null;
-    }
-
-    $detectionWurflTime = microtime(true) - $wurflStartTime;
+    $detectionWurflTime = $modules[11]->endTimer();
 
     /***************************************************************************
      * Wurfl - PHP 5.3 port - end
@@ -257,26 +201,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
      * Wurfl - PHP-API 5.2 original
      */
 
-    $wurflOrigStartTime = microtime(true);
+    $modules[7]->startTimer();
 
-    // Create WURFL Configuration from an XML config file
-    $wurflConfigOrig  = new WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-    $wurflCacheOrig   = new WURFL_Storage_Memory();
-    $wurflStorageOrig = new WURFL_Storage_File(array(WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
+    $deviceOrig = $modules[7]->detect($agent);
 
-    // Create a WURFL Manager Factory from the WURFL Configuration
-    $wurflManagerFactoryOrig = new WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
-    ini_set('max_input_time', '6000');
-    // Create a WURFL Manager
-    $wurflManagerOrig = $wurflManagerFactoryOrig->create();
-
-    try {
-        $deviceOrig = $wurflManagerOrig->getDeviceForUserAgent($agent);
-    } catch (\Exception $e) {
-        $deviceOrig = null;
-    }
-
-    $detectionWurflOrigTime = microtime(true) - $wurflOrigStartTime;
+    $detectionWurflOrigTime = $modules[7]->endTimer();
 
     storeProperties($deviceOrig);
 

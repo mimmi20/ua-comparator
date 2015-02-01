@@ -30,6 +30,7 @@
 
 namespace UaComparator\Input;
 
+use BrowserDetector\Input\Core;
 use UaComparator\Detector\Result;
 use UaComparator\Detector\Version;
 use UaComparator\Helper\InputMapper;
@@ -81,6 +82,14 @@ class Wurfl extends Core
         $this->wurflManager = $wurfl;
 
         return $this;
+    }
+
+    /**
+     * @return \Wurfl\Manager
+     */
+    public function getWurflManager()
+    {
+        return $this->wurflManager;
     }
 
     /**

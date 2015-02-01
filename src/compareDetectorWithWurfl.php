@@ -9,16 +9,12 @@
  * Mobile-Detect: https://github.com/serbanghita/Mobile-Detect
  */
 
-use BrowserDetector\BrowserDetector;
-use Browscap\Generator\BuildFullFileOnlyGenerator;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use Monolog\Processor\MemoryUsageProcessor;
-use Monolog\Processor\WebProcessor;
-use UAS\Parser;
-use Wurfl\Configuration\XmlConfig;
-use Wurfl\Manager;
-use WurflCache\Adapter\Memory;
+use BrowserDetector\Detector\Version;
+use UaComparator\Helper\LoggerFactory;
+use UaComparator\Module\BrowserDetectorModule;
+use UaComparator\Module\Wurfl;
+use UaComparator\Module\WurflOld;
+use WurflCache\Adapter\File;
 
 echo 'initializing App ...';
 
@@ -28,43 +24,6 @@ ini_set('max_input_time', 0);
 ini_set('display_errors', 1);
 ini_set('error_log', './error.log');
 error_reporting(E_ALL | E_DEPRECATED);
-
-function errorHandler($errno, $errstr = '', $errfile = '', $errline = '')
-{
-    // error_reporting ist immer 0, wenn ein Befehl mit Fehler-Unterdrueckungs-Operator (@) aufgerufen wird.
-    // Diese Fehler muessen ignoriert werden!
-    // (wird z.B. von Zend benutzt, um die Existenz einer Datei (per fopen) zu pruefen)
-    if (error_reporting() != 0) {
-        $ex = new \ErrorException($errstr, $errno, 1, $errfile, $errline);
-
-        echo $ex . "\n\n";
-    }
-}
-
-function exceptionHandler(Exception $exception)
-{
-    $ex = new \Exception(
-        'logged in Exception Handler: ' . $exception->getMessage(), $exception->getCode(), $exception
-    );
-
-    echo $ex . "\n\n";
-}
-
-function shutdownHandler()
-{
-    if (!is_null($e = error_get_last())) {
-        $ex = new \Exception('logged in PHP Shutdown: ' . json_encode($e), $e['type']);
-
-        echo $ex . "\n\n";
-        exit;
-    }
-}
-
-set_error_handler('errorHandler');
-set_exception_handler('exceptionHandler');
-register_shutdown_function('shutdownHandler');
-
-define('DS', DIRECTORY_SEPARATOR);
 
 /**
  * This makes our life easier when dealing with paths. Everything is relative
@@ -93,6 +52,13 @@ define('COLOR_START_GREEN', "\x1b[30;42m");
 date_default_timezone_set('Europe/Berlin');
 setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
+$targets = array();
+
+/**
+ * @var \UaComparator\Module\ModuleInterface[] $modules
+ */
+$modules = array();
+
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
@@ -100,34 +66,37 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
  */
 echo 'initializing Logger ...';
 
-$logProcessors = [
-    new MemoryUsageProcessor(),
-    new WebProcessor()
-];
-$logHandlers = [
-    new StreamHandler('php://output', Logger::NOTICE),
-    new StreamHandler('log/error.log', Logger::WARNING)
-];
-$logger = new Logger('terawurfl', $logHandlers, $logProcessors);
-// $logger->pushHandler(new \Monolog\Handler\StreamHandler('log/error.log'));
-// $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
+$logger = LoggerFactory::create();
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
-$targets = array();
+/*******************************************************************************
+ * BrowserDetectorModule
+ */
+echo 'initializing BrowserDetectorModule (with the internal detecting engine) ...';
+
+$adapter        = new File(array('dir' => 'data/cache/browser/'));
+$browscapModule = new BrowserDetectorModule($logger, $adapter);
+
+$browscapModule->init();
+$modules[0] = $browscapModule;
+
+echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
- * BrowserDetector
+ * WURFL - PHP 5.3 port
  */
-echo 'initializing BrowserDetector (with the internal detecting engine) ...';
 
-$browscap = new BrowserDetector();
-$browscap->setInterface(BrowserDetector::INTERFACE_INTERNAL);
-$browscap->setLogger($logger);
+echo 'initializing Wurfl API (PHP-API 5.3 port) ...';
 
-$browscap->setAgent('');
-$browser = $browscap->getBrowser();
-$allBrowserProperties = $browser->getCapabilities();
+ini_set('max_input_time', '6000');
+$adapter     = new File(array('dir' => 'data/cache/wurfl/'));
+$wurflModule = new Wurfl($logger, $adapter, 'data/wurfl-config.xml');
+
+$wurflModule->init();
+
+$targets[11] = 'WURFL API (PHP-API 5.3)';
+$modules[11]  = $wurflModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -137,7 +106,13 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
 
 echo 'initializing Wurfl API (PHP-API 5.2 original) ...';
 
+$adapter        = new File(array('dir' => 'data/cache/wurfl_old/'));
+$oldWurflModule = new WurflOld($logger, $adapter, 'data/wurfl-config.xml');
+
+$oldWurflModule->init();
+
 $targets[7] = 'WURFL API (PHP-API 5.2 original)';
+$modules[7] = $oldWurflModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -212,50 +187,42 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $matches = array();
 
     /***************************************************************************
-     * BrowserDetector
+     * BrowserDetectorModule
      */
 
-    $detectionStartTime = microtime(true);
+    $modules[0]->startTimer();
 
-    $browscap->setAgent($agent);
-    $browser = $browscap->getBrowser(true);
+    $browser = $modules[0]->detect($agent);
 
-    $detectionBrowserDetectorTime = microtime(true) - $detectionStartTime;
+    $detectionBrowserDetectorTime = $modules[0]->endTimer();
 
     /***************************************************************************
-     * BrowserDetector - end
+     * BrowserDetectorModule - end
+     */
+
+    /***************************************************************************
+     * Wurfl - PHP 5.3 port
+     */
+
+    $modules[11]->startTimer();
+
+    $device = $modules[11]->detect($agent);
+
+    $detectionWurflTime = $modules[11]->endTimer();
+
+    /***************************************************************************
+     * Wurfl - PHP 5.3 port - end
      */
 
     /***************************************************************************
      * Wurfl - PHP-API 5.2 original
      */
 
-    $wurflStartTime = microtime(true);
+    $modules[7]->startTimer();
 
-    // Create WURFL Configuration from an XML config file
-    $wurflConfigOrig  = new WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-    $wurflCacheOrig   = new WURFL_Storage_Memory();
-    $wurflStorageOrig = new WURFL_Storage_File(array(WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
+    $deviceOrig = $modules[7]->detect($agent);
 
-    // Create a WURFL Manager Factory from the WURFL Configuration
-    $wurflManagerFactoryOrig = new WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
-    ini_set('max_input_time', '6000');
-    // Create a WURFL Manager
-    $wurflManagerOrig = $wurflManagerFactoryOrig->create();
-
-    try {
-        $deviceOrig = $wurflManagerOrig->getDeviceForUserAgent($agent);
-
-        $props = $deviceOrig->getAllCapabilities();
-
-        if (!file_exists('data/browser/' . $deviceOrig->id . '.php')) {
-            file_put_contents('data/browser/' . $deviceOrig->id . '.php', 'return ' . var_export($props, true));
-        }
-    } catch (\Exception $e) {
-        $deviceOrig = null;
-    }
-
-    $detectionWurflTime = microtime(true) - $wurflStartTime;
+    $detectionWurflOrigTime = $modules[7]->endTimer();
 
     /***************************************************************************
      * Wurfl - PHP-API 5.2 original - end
@@ -265,14 +232,12 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
      * Auswertung
      */
 
-    $detectionTime = microtime(true) - $detectionStartTime;
-
     $oldMemery = $actualMemory;
     $actualMemory = memory_get_usage(true);
 
     $vollBrowser = $browser->getComparationName();
 
-    $mode = \BrowserDetector\Detector\Version::MAJORMINOR;
+    $mode = Version::MAJORMINOR;
 
     $startString = '#count#x found|' . str_repeat(' ', count($targets)) . '|';
     $browserOk = formatMessage(
@@ -297,7 +262,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $vollBrowser
     ) && $ok;
 
-    $mode = \BrowserDetector\Detector\Version::MAJORMINOR | \BrowserDetector\Detector\Version::IGNORE_MINOR_IF_EMPTY;
+    $mode = Version::MAJORMINOR | Version::IGNORE_MINOR_IF_EMPTY;
 
     $startString = '#percent1# % +|' . str_repeat(' ', count($targets)) . '|';
     $osOk = formatMessage(
@@ -357,7 +322,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     ) && $ok;
 
     $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', count($targets)) . '|';
-    
+
     $ok = formatMessage(
         $content,
         $matches,
@@ -772,9 +737,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
         $fullTime = microtime(true) - $startTime;
 
-        echo $startString . 'Time:   Detection (BrowserDetector)' . str_repeat(' ', 60 - strlen('BrowserDetector')) . ':' . number_format($detectionBrowserDetectorTime, 10, ',', '.') . ' Sek.' . "\n";
+        echo $startString . 'Time:   Detection (BrowserDetectorModule)' . str_repeat(' ', 60 - strlen('BrowserDetectorModule')) . ':' . number_format($detectionBrowserDetectorTime, 10, ',', '.') . ' Sek.' . "\n";
         echo $startString . '        Detection (' . $targets[7] . ')' . str_repeat(' ', 60 - strlen($targets[7])) . ':' . number_format($detectionWurflTime, 10, ',', '.') . ' Sek.' . "\n";
-        echo $startString . '        Detection (complete)' . str_repeat(' ', 60 - strlen('complete')) . ':' . number_format($detectionTime, 10, ',', '.') . ' Sek.' . "\n";
         echo $startString . '        Complete                         :' . number_format($fullTime, 10, ',', '.') . ' Sek.' . "\n";
         $totalTime = microtime(true) - START_TIME;
         echo $startString . '        Absolute TOTAL                   :' . formatTime(microtime(true) - START_TIME) . "\n";
@@ -841,7 +805,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $wurflManagerOrig,
         $deviceOrig,
         $detectionWurflOrigTime,
-        $detectionTime,
         $oldMemery,
         $vollBrowser,
         $allCapabilities

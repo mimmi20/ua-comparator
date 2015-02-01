@@ -30,6 +30,13 @@
 
 namespace UaComparator\Module;
 
+use BrowserDetector\BrowserDetector;
+use Monolog\Logger;
+use Wurfl\Configuration\XmlConfig;
+use Wurfl\Manager;
+use WurflCache\Adapter\AdapterInterface;
+use WurflCache\Adapter\Memory;
+
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  *
@@ -41,19 +48,117 @@ namespace UaComparator\Module;
  */
 class Wurfl implements ModuleInterface
 {
+    /**
+     * @var \Monolog\Logger
+     */
+    private $logger = null;
+
+    /**
+     * @var \BrowserDetector\BrowserDetector
+     */
+    private $input = null;
+
+    /**
+     * @var \WurflCache\Adapter\AdapterInterface
+     */
+    private $cache = null;
+
+    /**
+     * @var string
+     */
+    private $configFile = '';
+
+    /**
+     * @var integer
+     */
+    private $timer = 0;
+
+    /**
+     * creates the module
+     *
+     * @param \Monolog\Logger                      $logger
+     * @param \WurflCache\Adapter\AdapterInterface $cache
+     * @param string                               $configFile
+     */
+    public function __construct(Logger $logger, AdapterInterface $cache, $configFile = '')
+    {
+        $this->logger     = $logger;
+        $this->cache      = $cache;
+        $this->configFile = $configFile;
+    }
+
+    /**
+     * initializes the module
+     *
+     * @throws \BrowserDetector\Input\Exception
+     */
     public function init()
     {
+        $device = $this->detect('');
+        $device->getAllCapabilities();
     }
 
-    public function detect()
+    /**
+     * @param string $agent
+     *
+     * @return \Wurfl\CustomDevice|null
+     */
+    public function detect($agent)
     {
+        $wurflConfig  = new XmlConfig($this->configFile);
+        $wurflCache   = new Memory();
+        $wurflManager = new Manager($wurflConfig, $this->cache, $wurflCache);
+
+        try {
+            $device = $wurflManager->getDeviceForUserAgent($agent);
+        } catch (\Exception $e) {
+            $device = null;
+        }
+
+        return $device;
     }
 
+    /**
+     * starts the detection timer
+     *
+     * @return \UaComparator\Module\Wurfl
+     */
     public function startTimer()
     {
+        $this->timer = microtime(true);
+
+        return $this;
     }
 
+    /**
+     * stops the detection timer and returns the duration
+     * @return float
+     */
     public function endTimer()
     {
+        $duration    = microtime(true) - $this->timer;
+        $this->timer = 0;
+
+        return $duration;
+    }
+
+    /**
+     * @return \BrowserDetector\BrowserDetector
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * @param \BrowserDetector\BrowserDetector $input
+     *
+     * @return \UaComparator\Module\Wurfl
+     */
+    public function setInput(BrowserDetector $input)
+    {
+        $this->input = $input;
+
+        return $this;
     }
 }

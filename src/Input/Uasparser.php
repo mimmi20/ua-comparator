@@ -30,6 +30,7 @@
 
 namespace UaComparator\Input;
 
+use BrowserDetector\Input\Core;
 use UaComparator\Detector\Result;
 use UaComparator\Detector\Version;
 use UaComparator\Helper\InputMapper;

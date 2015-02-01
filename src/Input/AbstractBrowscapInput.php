@@ -30,6 +30,8 @@
 
 namespace UaComparator\Input;
 
+use BrowserDetector\Input\Core;
+use BrowserDetector\Input\Exception;
 use UaComparator\Detector\Result;
 use UaComparator\Detector\Version;
 use UaComparator\Helper\InputMapper;
@@ -57,7 +59,7 @@ abstract class AbstractBrowscapInput extends Core
      *
      * @param string $filename the file name
      *
-     * @throws \UaComparator\Input\Exception
+     * @throws \BrowserDetector\Input\Exception
      * @return void
      */
     public function setLocaleFile($filename)

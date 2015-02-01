@@ -30,6 +30,10 @@
 
 namespace UaComparator\Module;
 
+use BrowserDetector\BrowserDetector;
+use Monolog\Logger;
+use WurflCache\Adapter\AdapterInterface;
+
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  *
@@ -41,11 +45,51 @@ namespace UaComparator\Module;
  */
 interface ModuleInterface
 {
+    /**
+     * creates the module
+     *
+     * @param \Monolog\Logger                      $logger
+     * @param \WurflCache\Adapter\AdapterInterface $cache
+     */
+    public function __construct(Logger $logger, AdapterInterface $cache);
+
+    /**
+     * initializes the module
+     *
+     * @throws \BrowserDetector\Input\Exception
+     */
     public function init();
 
-    public function detect();
+    /**
+     * @param string $agent
+     *
+     * @return mixed
+     */
+    public function detect($agent);
 
+    /**
+     * starts the detection timer
+     *
+     * @return \UaComparator\Module\ModuleInterface
+     */
     public function startTimer();
 
+    /**
+     * stops the detection timer and returns the duration
+     *
+     * @return float
+     */
     public function endTimer();
+
+    /**
+     * @return \BrowserDetector\BrowserDetector
+     */
+    public function getInput();
+
+    /**
+     * @param \BrowserDetector\BrowserDetector $input
+     *
+     * @return \UaComparator\Module\ModuleInterface
+     */
+    public function setInput(BrowserDetector $input);
 }

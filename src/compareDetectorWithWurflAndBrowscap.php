@@ -9,15 +9,20 @@
  * Mobile-Detect: https://github.com/serbanghita/Mobile-Detect
  */
 
-use BrowserDetector\BrowserDetector;
 use Browscap\Generator\BuildFullFileOnlyGenerator;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use Monolog\Processor\MemoryUsageProcessor;
-use Monolog\Processor\WebProcessor;
+use BrowserDetector\Detector\Version;
+use UaComparator\Helper\LoggerFactory;
+use UaComparator\Module\Browscap;
+use UaComparator\Module\BrowserDetectorModule;
+use UaComparator\Module\CrossJoin;
+use UaComparator\Module\UaParser;
+use UaComparator\Module\UasParser;
+use UaComparator\Module\Wurfl;
+use UaComparator\Module\WurflOld;
 use UAS\Parser;
 use Wurfl\Configuration\XmlConfig;
 use Wurfl\Manager;
+use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
 
 echo 'initializing App ...';
@@ -28,43 +33,6 @@ ini_set('max_input_time', 0);
 ini_set('display_errors', 1);
 ini_set('error_log', './error.log');
 error_reporting(E_ALL | E_DEPRECATED);
-
-function errorHandler($errno, $errstr = '', $errfile = '', $errline = '')
-{
-    // error_reporting ist immer 0, wenn ein Befehl mit Fehler-Unterdrueckungs-Operator (@) aufgerufen wird.
-    // Diese Fehler muessen ignoriert werden!
-    // (wird z.B. von Zend benutzt, um die Existenz einer Datei (per fopen) zu pruefen)
-    if (error_reporting() != 0) {
-        $ex = new \ErrorException($errstr, $errno, 1, $errfile, $errline);
-
-        echo $ex . "\n\n";
-    }
-}
-
-function exceptionHandler(Exception $exception)
-{
-    $ex = new \Exception(
-        'logged in Exception Handler: ' . $exception->getMessage(), $exception->getCode(), $exception
-    );
-
-    echo $ex . "\n\n";
-}
-
-function shutdownHandler()
-{
-    if (!is_null($e = error_get_last())) {
-        $ex = new \Exception('logged in PHP Shutdown: ' . json_encode($e), $e['type']);
-
-        echo $ex . "\n\n";
-        exit;
-    }
-}
-
-set_error_handler('errorHandler');
-set_exception_handler('exceptionHandler');
-register_shutdown_function('shutdownHandler');
-
-define('DS', DIRECTORY_SEPARATOR);
 
 /**
  * This makes our life easier when dealing with paths. Everything is relative
@@ -93,6 +61,13 @@ define('COLOR_START_GREEN', "\x1b[30;42m");
 date_default_timezone_set('Europe/Berlin');
 setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
+$targets = array();
+
+/**
+ * @var \UaComparator\Module\ModuleInterface[] $modules
+ */
+$modules = array();
+
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
@@ -100,17 +75,19 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
  */
 echo 'initializing Logger ...';
 
-$logProcessors = [
-    new MemoryUsageProcessor(),
-    new WebProcessor()
-];
-$logHandlers = [
-    new StreamHandler('php://output', Logger::NOTICE),
-    new StreamHandler('log/error.log', Logger::WARNING)
-];
-$logger = new Logger('terawurfl', $logHandlers, $logProcessors);
-// $logger->pushHandler(new \Monolog\Handler\StreamHandler('log/error.log'));
-// $logger->pushProcessor(new \Monolog\Processor\WebProcessor());
+$logger = LoggerFactory::create();
+
+echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+
+/*******************************************************************************
+ * BrowserDetectorModule
+ */
+echo 'initializing BrowserDetectorModule (with the internal detecting engine) ...';
+
+$detectorModule = new BrowserDetectorModule($logger, new File(array('dir' => 'data/cache/browser/')));
+$detectorModule->init();
+
+$modules[0] = $detectorModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -141,175 +118,60 @@ if (!file_exists($iniFile)) {
 }
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
-$targets = array();
-
-/*******************************************************************************
- * BrowserDetector
- */
-echo 'initializing BrowserDetector (with the internal detecting engine) ...';
-
-$browscap = new BrowserDetector();
-$browscap->setInterface(BrowserDetector::INTERFACE_INTERNAL);
-//$browscap->setCache(new \WurflCache\Adapter\File(array('dir' => 'data/cache/browser/')));
-//$browscap->setCachePrefix('browscap_');
-$browscap->setLogger($logger);
-
-$browscap->setAgent('');
-$browser = $browscap->getBrowser();
-$allBrowserProperties = $browser->getCapabilities();
-
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-
-/*******************************************************************************
- * BrowserDetector - modifiziert
- *
-
-echo 'initializing BrowserDetector (with an mofified Parser) ...';
-
-$gbrMod = new \BrowserDetector\BrowserDetector();
-$gbrMod->setInterface(\BrowserDetector\BrowserDetector::INTERFACE_BROWSCAP_DETECTOR);
-$gbrMod->setCache(new \WurflCache\Adapter\File(array('dir' => 'data/cache/browscap/')));
-$gbrMod->setLogger($logger);
-$gbrMod->getInterface()->setLocaleFile($iniFile);
-$gbrMod->setCachePrefix('modified_ini_');
-
-$parser = new \BrowscapPHP\Detector('data/cache/browscap/cached_full_php_browscap.ini');
-$parser->setLocaleFile($iniFile);
-$gbrMod->getInterface()->setParser($parser);
-
-$targets[4] = 'BrowserDetector (mofified Parser/full ini File)';
-
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-
 /*******************************************************************************
  * Browscap-PHP
  */
 
 echo 'initializing Browscap-PHP ...';
 
-$adapter = new \WurflCache\Adapter\File(array('dir' => 'data/cache/browscap/'));
-
-$gbrModOrig = new BrowserDetector();
-$gbrModOrig->setInterface(BrowserDetector::INTERFACE_BROWSCAP_INI);
-$gbrModOrig->setCache($adapter);
-$gbrModOrig->setCachePrefix('browscap-php');
-$gbrModOrig->setLogger($logger);
-
-$parser = new \BrowscapPHP\Browscap();
-$parser
-    ->setLogger($logger)
-    ->setCache($adapter)
-;
-
-if ($newFile) {
-    $parser->convertFile($iniFile);
-}
-
-$gbrModOrig->getInterface()->setParser($parser);
+$browscapModule = new Browscap($logger, new File(array('dir' => 'data/cache/browscap/')));
+$browscapModule->init();
+$browscapModule->getInput()->getInterface()->getParser()->convertFile($iniFile);
 
 $targets[9] = 'Browscap-PHP';
+$modules[9] = $browscapModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
- * BrowserDetector - original - lite
- *
-echo 'initializing BrowserDetector (with the original lite ini File) ...';
-
-$gbrOrigLite = new \BrowserDetector\BrowserDetector();
-$gbrOrigLite->setInterface(\BrowserDetector\BrowserDetector::INTERFACE_BROWSCAP_INI);
-$gbrOrigLite->setCache(clone $cache2);
-$gbrOrigLite->setCachePrefix('original_lite_ini_');
-$gbrOrigLite->setLogger($logger);
-$gbrOrigLite->getInterface()->setLocaleFile('data/data/lite_php_browscap.ini');
-
-$parser = new \BrowscapPHP\Detector('data/cache/browser/');
-$parser->localFile = 'data/data/lite_php_browscap.ini';
-$parser->iniFilename = 'lite_php_browscap.ini';
-$gbrOrigFull->getInterface()->setParser($parser);
-
-$targets[1] = 'BrowserDetector (original lite ini File)';
-
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-
-/*******************************************************************************
- * BrowserDetector - original - normal
- *
-echo 'initializing BrowserDetector (with the original normal ini File) ...';
-
-$gbrOrigNormal = new \BrowserDetector\BrowserDetector();
-$gbrOrigNormal->setInterface(\BrowserDetector\BrowserDetector::INTERFACE_BROWSCAP_INI);
-$gbrOrigNormal->setCache(clone $cache2);
-$gbrOrigNormal->setCachePrefix('original_normal_ini_');
-$gbrOrigNormal->setLogger($logger);
-$gbrOrigNormal->getInterface()->setLocaleFile('data/data/php_browscap.ini');
-
-$parser = new \BrowscapPHP\Detector('data/cache/browser/');
-$parser->localFile = 'data/data/php_browscap.ini';
-$parser->iniFilename = 'php_browscap.ini';
-$gbrOrigFull->getInterface()->setParser($parser);
-
-$targets[2] = 'BrowserDetector (original normal ini File)';
-
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-
-/*******************************************************************************
- * BrowserDetector - original - full
+ * Crossjoin\Browscap
  */
 
-// echo 'initializing BrowserDetector (with an modified Parser and the original full ini File) ...';
+echo 'initializing Crossjoin\Browscap ...';
 
-// $gbrOrigFull = new \BrowserDetector\BrowserDetector();
-// $gbrOrigFull->setInterface(\BrowserDetector\BrowserDetector::INTERFACE_BROWSCAP_DETECTOR);
-// $gbrOrigFull->setCache(new \WurflCache\Adapter\File(array('dir' => 'data/cache/browscap2/')));
-// $gbrOrigFull->setCachePrefix('original_full_ini_');
-// $gbrOrigFull->setLogger($logger);
-// $gbrOrigFull->getInterface()->setLocaleFile($iniFile);
+$crossjoinModule = new CrossJoin($logger, new File(array('dir' => 'data/cache/crossjoin/')), $iniFile);
+$crossjoinModule->init();
 
-// $parser = new \BrowscapPHP\Detector('data/cache/browscap2/cached_full_php_browscap.ini');
-// $parser->setLocaleFile($iniFile);
-// $gbrOrigFull->getInterface()->setParser($parser);
+$targets[10] = 'Crossjoin\Browscap';
+$modules[10] = $crossjoinModule;
 
-// $targets[3] = 'BrowserDetector (mofified Parser/original full ini File)';
-
-// echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
  * UAParser
- *
+ */
 
 echo 'initializing UAParser ...';
 
-$parser = \UAParser\Parser::create();
-
-$uaparser = new BrowserDetector();
-$uaparser->setInterface(BrowserDetector::INTERFACE_UAPARSER);
-//$uaparser->setCache(new \WurflCache\Adapter\File(array('dir' => 'data/cache/uaparser/')));
-//$uaparser->setCachePrefix('uaparser_');
-$uaparser->setLogger($logger);
-$uaparser->getInterface()->setParser($parser);
+$uaparserModule = new UaParser($logger, new File(array('dir' => 'data/cache/uaparser/')));
+$uaparserModule->init();
 
 $targets[5] = 'UAParser';
+$modules[5] = $uaparserModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
  * UASParser
- *
+ */
 
 echo 'initializing UASParser ...';
 
-require_once 'vendor/synchro/uasparser/UAS/Parser.php';
-$parser = new Parser('data/cache/uasparser');
-
-$uasparser = new BrowserDetector();
-$uasparser->setInterface(BrowserDetector::INTERFACE_UASPARSER);
-//$uasparser->setCache(new \WurflCache\Adapter\File(array('dir' => 'data/cache/uasparser/')));
-//$uasparser->setCachePrefix('uasparser_');
-$uasparser->setLogger($logger);
-$uasparser->getInterface()->setParser($parser);
+$uasparserModule = new UasParser($logger, new File(array('dir' => 'data/cache/uasparser/')));
+$uasparserModule->init();
 
 $targets[6] = 'UASParser';
+$modules[6] = $uasparserModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -318,28 +180,15 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
  */
 
 echo 'initializing Wurfl API (PHP-API 5.3 port) ...';
-// ini_set('max_input_time', '6000');
-
-// Create WURFL Configuration from an XML config file
-$wurflConfig  = new XmlConfig('data/wurfl-config.xml');
-$wurflCache   = new Memory();
-$wurflStorage = new \WurflCache\Adapter\File(array('dir' => 'data/cache/wurfl/'));
 
 ini_set('max_input_time', '6000');
-// Create a WURFL Manager from the WURFL Configuration
-$wurflManager = new Manager($wurflConfig, $wurflStorage, $wurflCache);
+$adapter     = new File(array('dir' => 'data/cache/wurfl/'));
+$wurflModule = new Wurfl($logger, $adapter, 'data/wurfl-config.xml');
 
-$device             = $wurflManager->getDeviceForUserAgent('');
-$allWurflProperties = $device->getAllCapabilities();
+$wurflModule->init();
 
-$wurfl = new BrowserDetector();
-$wurfl->setInterface(BrowserDetector::INTERFACE_WURFL_FILE);
-//$wurfl->setCache(new \WurflCache\Adapter\File(array('dir' => 'data/cache/wurfl/')));
-//$wurfl->setCachePrefix('wurfl_');
-$wurfl->setLogger($logger);
-$wurfl->getInterface()->setWurflManager($wurflManager);
-
-$targets[0] = 'WURFL API (PHP-API 5.3)';
+$targets[11] = 'WURFL API (PHP-API 5.3)';
+$modules[11]  = $wurflModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -347,74 +196,15 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
  * WURFL - PHP 5.2 original
  */
 
-//echo 'initializing Wurfl API (PHP-API 5.2 original) ...';
+echo 'initializing Wurfl API (PHP-API 5.2 original) ...';
 
-// Create WURFL Configuration from an XML config file
-// $wurflConfigOrig  = new WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-// $wurflCacheOrig   = new WURFL_Storage_Memory();
-// $wurflStorageOrig = new WURFL_Storage_File(array(WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
+$adapter        = new File(array('dir' => 'data/cache/wurfl_old/'));
+$oldWurflModule = new WurflOld($logger, $adapter, 'data/wurfl-config.xml');
 
-// Create a WURFL Manager Factory from the WURFL Configuration
-// $wurflManagerFactoryOrig = new WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
-// ini_set('max_input_time', '6000');
-// Create a WURFL Manager
-// $wurflManagerOrig = $wurflManagerFactoryOrig->create();
-// $deviceOrig       = $wurflManagerOrig->getDeviceForUserAgent('');
+$oldWurflModule->init();
 
-//$targets[7] = 'WURFL API (PHP-API 5.2 original)';
-
-//echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-
-/*******************************************************************************
- * WURFL - Terawurfl 5.2 original
- */
-
-//echo 'initializing Wurfl API (DB-API 5.2 original) ...';
-
-// Create WURFL Configuration from an XML config file
-// $wurflConfigTera  = new WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-// $wurflCacheTera   = new WURFL_Storage_Memory();
-// $wurflStorageTera = new WURFL_Storage_File(array(WURFL_Storage_File::DIR => 'data/cache/wurfl_old2/'));
-
-// Create a WURFL Manager Factory from the WURFL Configuration
-// $wurflManagerFactoryTera = new WURFL_WURFLManagerFactory($wurflConfigTera, $wurflStorageTera, $wurflCacheTera);
-// ini_set('max_input_time', '6000');
-// Create a WURFL Manager
-// $wurflManagerTera = $wurflManagerFactoryTera->create();
-// $deviceTera       = $wurflManagerTera->getDeviceForUserAgent('');
-
-// Create WURFL Configuration from an XML config file
-// $terawurfl  = new TeraWurfl();
-// $deviceTera = $terawurfl->getDeviceCapabilitiesFromAgent('');
-
-//$targets[8] = 'WURFL API (DB-API 5.2 original)';
-
-//echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-
-/*******************************************************************************
- * Crossjoin\Browscap
- */
-
-echo 'initializing Crossjoin\Browscap ...';
-
-\Crossjoin\Browscap\Cache\File::setCacheDirectory('data/cache/crossjoin/');
-\Crossjoin\Browscap\Browscap::setDatasetType(\Crossjoin\Browscap\Browscap::DATASET_TYPE_LARGE);
-
-$updater = new \Crossjoin\Browscap\Updater\Local();
-$updater->setOption('LocalFile', $iniFile);
-\Crossjoin\Browscap\Browscap::setUpdater($updater);
-\Crossjoin\Browscap\Browscap::update(true);
-
-$parser = new \Crossjoin\Browscap\Browscap();
-
-$crossjoin = new BrowserDetector();
-$crossjoin->setInterface(BrowserDetector::INTERFACE_BROWSCAP_CROSSJOIN);
-$crossjoin->setCache(new \WurflCache\Adapter\File(array('dir' => 'data/cache/crossjoin/')));
-$crossjoin->setCachePrefix('crossjoin_');
-$crossjoin->setLogger($logger);
-$crossjoin->getInterface()->setParser($parser);
-
-$targets[10] = 'Crossjoin\Browscap';
+$targets[7] = 'WURFL API (PHP-API 5.2 original)';
+$modules[7] = $oldWurflModule;
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -479,8 +269,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $colorEnd = '';
     reset($targets);
 
-    $startTime = microtime(true);
-
     $agent = trim($row['agent']);
 
     $content = '';
@@ -500,41 +288,28 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // echo $colorEnd . "\n";
 
     /***************************************************************************
-     * BrowserDetector
+     * BrowserDetectorModule
      */
 
-    $detectionStartTime = microtime(true);
+    $modules[0]->startTimer();
 
-    $browscap->setAgent($agent);
-    $browser = $browscap->getBrowser(true);
+    $browser = $modules[0]->detect($agent);
 
-    $detectionBrowserDetectorTime = microtime(true) - $detectionStartTime;
+    $detectionBrowserDetectorTime = $modules[0]->endTimer();
 
     /***************************************************************************
-     * BrowserDetector - end
+     * BrowserDetectorModule - end
      */
 
     /***************************************************************************
      * Wurfl - PHP 5.3 port
      */
 
-    $wurflStartTime = microtime(true);
+    $modules[11]->startTimer();
 
-    $wurflConfig  = new XmlConfig('data/wurfl-config.xml');
-    $wurflCache   = new Memory();
-    $wurflStorage = new \WurflCache\Adapter\File(array('dir' => 'data/cache/wurfl/'));
-    $wurflManager = new Manager($wurflConfig, $wurflStorage, $wurflCache);
-    $wurfl->getInterface()->setWurflManager($wurflManager);
+    $device = $modules[11]->detect($agent);
 
-    $wurfl->setAgent($agent);
-
-    try {
-        $device = $wurfl->getBrowser(true);
-    } catch (\Exception $e) {
-        $device = null;
-    }
-
-    $detectionWurflTime = microtime(true) - $wurflStartTime;
+    $detectionWurflTime = $modules[11]->endTimer();
 
     /***************************************************************************
      * Wurfl - PHP 5.3 port - end
@@ -542,28 +317,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     /***************************************************************************
      * Wurfl - PHP-API 5.2 original
-     *
+     */
 
-    $wurflOrigStartTime = microtime(true);
+    $modules[7]->startTimer();
 
-    // Create WURFL Configuration from an XML config file
-    $wurflConfigOrig  = new WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-    $wurflCacheOrig   = new WURFL_Storage_Memory();
-    $wurflStorageOrig = new WURFL_Storage_File(array(WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
+    $deviceOrig = $modules[7]->detect($agent);
 
-    // Create a WURFL Manager Factory from the WURFL Configuration
-    $wurflManagerFactoryOrig = new WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
-    ini_set('max_input_time', '6000');
-    // Create a WURFL Manager
-    $wurflManagerOrig = $wurflManagerFactoryOrig->create();
-
-    try {
-        $deviceOrig = $wurflManagerOrig->getDeviceForUserAgent($agent);
-    } catch (\Exception $e) {
-        $deviceOrig = null;
-    }
-
-    $detectionWurflOrigTime = microtime(true) - $wurflOrigStartTime;
+    $detectionWurflOrigTime = $modules[7]->endTimer();
 
     /***************************************************************************
      * Wurfl - PHP-API 5.2 original - end
@@ -599,90 +359,42 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
      */
 
     /***************************************************************************
-     * getBrowser - original - lite
-     *
-
-    $gboStartTime = microtime(true);
-
-    $gbrOrigLite->setAgent($agent);
-    $gboLite = $gbrOrigLite->getBrowser();
-
-    $detectionGboLiteTime = microtime(true) - $gboStartTime;
-
-    /***************************************************************************
-     * getBrowser - original - lite - end
-     */
-
-    /***************************************************************************
-     * getBrowser - original - normal
-     *
-
-    $gboStartTime = microtime(true);
-
-    $gbrOrigNormal->setAgent($agent);
-    $gboNormal = $gbrOrigNormal->getBrowser();
-
-    $detectionGboNormalTime = microtime(true) - $gboStartTime;
-
-    /***************************************************************************
-     * getBrowser - original - normal - end
-     */
-
-    /***************************************************************************
-     * getBrowser - original - full
-     */
-
-    // $gboStartTime = microtime(true);
-
-    // $gbrOrigFull->setAgent($agent);
-    // $gboFull = $gbrOrigFull->getBrowser();
-
-    // $detectionGboFullTime = microtime(true) - $gboStartTime;
-
-    /***************************************************************************
-     * getBrowser - original - full - end
-     */
-
-    /***************************************************************************
-     * getBrowser - modified
-     *
-
-    $gbmStartTime = microtime(true);
-
-    $gbrMod->setAgent($agent);
-    $gbm = $gbrMod->getBrowser();
-
-    $detectionGbmTime = microtime(true) - $gbmStartTime;
-
-    /***************************************************************************
-     * getBrowser - modified - end
-     */
-
-    /***************************************************************************
      * Browscap-PHP
      */
 
-    $gbmStartTime = microtime(true);
+    $modules[9]->startTimer();
 
-    $gbrModOrig->setAgent($agent);
-    $gbmo = $gbrModOrig->getBrowser(true);
-    //var_dump($gbmo);exit;
-    $detectionGbmoTime = microtime(true) - $gbmStartTime;
+    $gbmo = $modules[9]->detect($agent);
+
+    $detectionGbmoTime = $modules[9]->endTimer();
 
     /***************************************************************************
      * Browscap-PHP - end
      */
 
     /***************************************************************************
+     * crossjoin/Browscap
+     */
+
+    $modules[10]->startTimer();
+
+    $crossjoinResult = $modules[10]->detect($agent);
+
+    $detectionCrossjoinTime = $modules[10]->endTimer();
+
+    /***************************************************************************
+     * crossjoin/Browscap - end
+     */
+
+    /***************************************************************************
      * UAParser
-     *
+     */
 
-    $uaparserStartTime = microtime(true);
+    $modules[5]->startTimer();
 
-    $uaparser->setAgent($agent);
-    $parserResult = $uaparser->getBrowser(true);
+    $parserResult = $modules[5]->detect($agent);
 
-    $detectionUaparserTime = microtime(true) - $uaparserStartTime;
+    $detectionUaparserTime = $modules[5]->endTimer();
 
     /***************************************************************************
      * UAParser - end
@@ -690,46 +402,28 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     /***************************************************************************
      * UASParser
-     *
+     */
 
-    $uasparserStartTime = microtime(true);
+    $modules[6]->startTimer();
 
-    $uasparser->setAgent($agent);
-    $uasParserResult = $uasparser->getBrowser(true);
+    $uasParserResult = $modules[6]->detect($agent);
 
-    $detectionUasparserTime = microtime(true) - $uasparserStartTime;
+    $detectionUasparserTime = $modules[6]->endTimer();
 
     /***************************************************************************
      * UASParser - end
-     */
-
-    /***************************************************************************
-     * crossjoin/Browscap
-     */
-
-    $crossjoinStartTime = microtime(true);
-
-    $crossjoin->setAgent($agent);
-    $crossjoinResult = $crossjoin->getBrowser(true);
-
-    $detectionCrossjoinTime = microtime(true) - $crossjoinStartTime;
-
-    /***************************************************************************
-     * crossjoin/Browscap
      */
 
     /**
      * Auswertung
      */
 
-    $detectionTime = microtime(true) - $detectionStartTime;
-
     $oldMemery = $actualMemory;
     $actualMemory = memory_get_usage(true);
 
     $vollBrowser = $browser->getComparationName();
 
-    $mode = \BrowserDetector\Detector\Version::MAJORMINOR;
+    $mode = Version::MAJORMINOR;
 
     //var_dump($browser->getFullBrowser(true, $mode));exit;
 
@@ -743,7 +437,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getFullBrowser(true, $mode),
             $targets[9] => $gbmo->getFullBrowser(true, $mode),
-            $targets[0] => $device->getFullBrowser(true, $mode),
+            $targets[11] => $device->getFullBrowser(true, $mode),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('advertised_browser')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getVirtualCapability('advertised_browser')),
             //$targets[1] => $gboLite->getFullBrowser(true, $mode),
@@ -767,7 +461,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getFullEngine($mode),
             $targets[9] => $gbmo->getFullEngine($mode),
-            $targets[0] => $device->getFullEngine($mode),
+            $targets[11] => $device->getFullEngine($mode),
             //$targets[7] => null,
             //$targets[8] => null,
             //$targets[1] => $gboLite->getFullEngine($mode),
@@ -780,7 +474,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $vollBrowser
     ) && $ok;
 
-    $mode = \BrowserDetector\Detector\Version::MAJORMINOR | \BrowserDetector\Detector\Version::IGNORE_MINOR_IF_EMPTY;
+    $mode = Version::MAJORMINOR | Version::IGNORE_MINOR_IF_EMPTY;
 
     $startString = '#percent1# % +|' . str_repeat(' ', count($targets)) . '|';
     $osOk = formatMessage(
@@ -792,7 +486,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getFullPlatform(true, $mode),
             $targets[9] => $gbmo->getFullPlatform(true, $mode),
-            $targets[0] => $device->getFullPlatform(true, $mode),
+            $targets[11] => $device->getFullPlatform(true, $mode),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('advertised_device_os')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getVirtualCapability('advertised_device_os')),
             //$targets[1] => null,
@@ -816,7 +510,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getFullDevice(true),
             $targets[9] => $gbmo->getFullDevice(true),
-            $targets[0] => $device->getFullDevice(true),
+            $targets[11] => $device->getFullDevice(true),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('model_name')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getCapability('model_name')),
             //$targets[1] => $gboLite->getFullDevice(true),
@@ -840,7 +534,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('ux_full_desktop'),
             $targets[9] => $gbmo->getCapability('ux_full_desktop'),
-            $targets[0] => $device->getCapability('ux_full_desktop'),
+            $targets[11] => $device->getCapability('ux_full_desktop'),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_full_desktop')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getVirtualCapability('is_full_desktop')),
             //$targets[1] => $gboLite->getCapability('ux_full_desktop'),
@@ -863,7 +557,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('is_smarttv'),
             $targets[9] => $gbmo->getCapability('is_smarttv'),
-            $targets[0] => $device->getCapability('is_smarttv'),
+            $targets[11] => $device->getCapability('is_smarttv'),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_smarttv')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getCapability('is_smarttv')),
             //$targets[1] => $gboLite->getCapability('is_smarttv'),
@@ -886,7 +580,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('is_wireless_device'),
             $targets[9] => $gbmo->getCapability('is_wireless_device'),
-            $targets[0] => $device->getCapability('is_wireless_device'),
+            $targets[11] => $device->getCapability('is_wireless_device'),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_mobile')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getVirtualCapability('is_mobile')),
             //$targets[1] => $gboLite->getCapability('is_wireless_device'),
@@ -909,7 +603,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('is_tablet'),
             $targets[9] => $gbmo->getCapability('is_tablet'),
-            $targets[0] => $device->getCapability('is_tablet'),
+            $targets[11] => $device->getCapability('is_tablet'),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_tablet')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getCapability('is_tablet')),
             //$targets[1] => $gboLite->getCapability('is_tablet'),
@@ -931,7 +625,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('is_bot'),
             $targets[9] => $gbmo->getCapability('is_bot'),
-            $targets[0] => $device->getCapability('is_bot'),
+            $targets[11] => $device->getCapability('is_bot'),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_robot')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getVirtualCapability('is_robot')),
             //$targets[1] => $gboLite->getCapability('is_bot'),
@@ -953,7 +647,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('device_type'),
             $targets[9] => $gbmo->getCapability('device_type'),
-            $targets[0] => $device->getCapability('device_type'),
+            $targets[11] => $device->getCapability('device_type'),
             //$targets[7] => null,
             //$targets[8] => null,
             //$targets[1] => $gboLite->getCapability('device_type'),
@@ -975,7 +669,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('is_console'),
             $targets[9] => $gbmo->getCapability('is_console'),
-            $targets[0] => $device->getCapability('is_console'),
+            $targets[11] => $device->getCapability('is_console'),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_console')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getCapability('is_console')),
             //$targets[1] => $gboLite->getCapability('is_console'),
@@ -997,7 +691,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('is_transcoder'),
             $targets[9] => $gbmo->getCapability('is_transcoder'),
-            $targets[0] => $device->getCapability('is_transcoder'),
+            $targets[11] => $device->getCapability('is_transcoder'),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_transcoder')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getCapability('is_transcoder')),                //$targets[1] => $gboLite->getCapability('is_transcoder'),
             //$targets[2] => $gboNormal->getCapability('is_transcoder'),
@@ -1018,7 +712,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('is_syndication_reader'),
             $targets[9] => $gbmo->getCapability('is_syndication_reader'),
-            $targets[0] => $device->getCapability('is_syndication_reader'),
+            $targets[11] => $device->getCapability('is_syndication_reader'),
             //$targets[7] => null,
             //$targets[8] => null,
             //$targets[1] => $gboLite->getCapability('is_syndication_reader'),
@@ -1040,7 +734,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('browser_type', false)->getName(),
             $targets[9] => $gbmo->getCapability('browser_type'),
-            $targets[0] => $device->getCapability('browser_type'),
+            $targets[11] => $device->getCapability('browser_type'),
             //$targets[7] => null,
             //$targets[8] => null,
             //$targets[1] => $gboLite->getCapability('browser_type', false)->getName(),
@@ -1062,7 +756,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('manufacturer_name'),
             $targets[9] => $gbmo->getCapability('manufacturer_name'),
-            $targets[0] => $device->getCapability('manufacturer_name'),
+            $targets[11] => $device->getCapability('manufacturer_name'),
             //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('manufacturer_name')),
             //$targets[8] => ($deviceTera === null ? null : $deviceTera->getCapability('manufacturer_name')),
             //$targets[1] => $gboLite->getCapability('manufacturer_name'),
@@ -1084,7 +778,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('mobile_browser_manufacturer'),
             $targets[9] => $gbmo->getCapability('mobile_browser_manufacturer'),
-            $targets[0] => $device->getCapability('mobile_browser_manufacturer'),
+            $targets[11] => $device->getCapability('mobile_browser_manufacturer'),
             //$targets[7] => null,
             //$targets[8] => null,
             //$targets[1] => $gboLite->getCapability('mobile_browser_manufacturer'),
@@ -1106,7 +800,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('device_os_manufacturer'),
             $targets[9] => $gbmo->getCapability('device_os_manufacturer'),
-            $targets[0] => $device->getCapability('device_os_manufacturer'),
+            $targets[11] => $device->getCapability('device_os_manufacturer'),
             //$targets[7] => null,
             //$targets[8] => null,
             //$targets[1] => $gboLite->getCapability('device_os_manufacturer'),
@@ -1128,7 +822,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         array(
             //$targets[4] => $gbm->getCapability('renderingengine_manufacturer'),
             $targets[9] => $gbmo->getCapability('renderingengine_manufacturer'),
-            $targets[0] => $device->getCapability('renderingengine_manufacturer'),
+            $targets[11] => $device->getCapability('renderingengine_manufacturer'),
             //$targets[7] => null,
             //$targets[8] => null,
             //$targets[1] => $gboLite->getCapability('renderingengine_manufacturer'),
@@ -1366,7 +1060,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             array(
                 //$targets[4] => $gbm->getCapability($key),
                 $targets[9] => $gbmo->getCapability($key),
-                $targets[0] => $device->getCapability($key),
+                $targets[11] => $device->getCapability($key),
                 //$targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability($key)),
                 //$targets[8] => ($deviceTera === null ? null : $deviceTera->getCapability($key)),
                 //$targets[1] => $gboLite->getCapability($key),
@@ -1439,7 +1133,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $tagetTitles = array(
             //$targets[4],
             $targets[9],
-            $targets[0],
+            $targets[11],
             //$targets[7],
             //$targets[8],
             //$targets[1],
@@ -1473,8 +1167,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
         $fullTime = microtime(true) - $startTime;
 
-        echo $startString . 'Time:   Detection (BrowserDetector)' . str_repeat(' ', 60 - strlen('BrowserDetector')) . ':' . number_format($detectionBrowserDetectorTime, 10, ',', '.') . ' Sek.' . "\n";
-        echo $startString . '        Detection (' . $targets[0] . ')' . str_repeat(' ', 60 - strlen($targets[0])) . ':' . number_format($detectionWurflTime, 10, ',', '.') . ' Sek.' . "\n";
+        echo $startString . 'Time:   Detection (BrowserDetectorModule)' . str_repeat(' ', 60 - strlen('BrowserDetectorModule')) . ':' . number_format($detectionBrowserDetectorTime, 10, ',', '.') . ' Sek.' . "\n";
+        echo $startString . '        Detection (' . $targets[11] . ')' . str_repeat(' ', 60 - strlen($targets[11])) . ':' . number_format($detectionWurflTime, 10, ',', '.') . ' Sek.' . "\n";
         // echo $startString . '        Detection (' . $targets[7] . ')' . str_repeat(' ', 60 - strlen($targets[7])) . ':' . number_format($detectionWurflOrigTime, 10, ',', '.') . ' Sek.' . "\n";
         // echo $startString . '        Detection (' . $targets[8] . ')' . str_repeat(' ', 60 - strlen($targets[8])) . ':' . number_format($detectionWurflTeraTime, 10, ',', '.') . ' Sek.' . "\n";
         // echo $startString . '        Detection (' . $targets[1] . ')' . str_repeat(' ', 60 - strlen($targets[1])) . ':' . number_format($detectionGboLiteTime, 10, ',', '.') . ' Sek.' . "\n";
@@ -1485,7 +1179,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // echo $startString . '        Detection (' . $targets[5] . ')' . str_repeat(' ', 60 - strlen($targets[5])) . ':' . number_format($detectionUaparserTime, 10, ',', '.') . ' Sek.' . "\n";
         // echo $startString . '        Detection (' . $targets[6] . ')' . str_repeat(' ', 60 - strlen($targets[6])) . ':' . number_format($detectionUasparserTime, 10, ',', '.') . ' Sek.' . "\n";
         echo $startString . '        Detection (' . $targets[10] . ')' . str_repeat(' ', 60 - strlen($targets[10])) . ':' . number_format($detectionCrossjoinTime, 10, ',', '.') . ' Sek.' . "\n";
-        echo $startString . '        Detection (complete)' . str_repeat(' ', 60 - strlen('complete')) . ':' . number_format($detectionTime, 10, ',', '.') . ' Sek.' . "\n";
         echo $startString . '        Complete                         :' . number_format($fullTime, 10, ',', '.') . ' Sek.' . "\n";
         $totalTime = microtime(true) - START_TIME;
         echo $startString . '        Absolute TOTAL                   :' . formatTime(microtime(true) - START_TIME) . "\n";
@@ -1552,7 +1245,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $wurflManagerOrig,
         $deviceOrig,
         $detectionWurflOrigTime,
-        $detectionTime,
         $oldMemery,
         $vollBrowser,
         $allCapabilities

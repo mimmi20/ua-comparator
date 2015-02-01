@@ -63,6 +63,14 @@ class Browscap extends AbstractBrowscapInput
     }
 
     /**
+     * @return \BrowscapPHP\Browscap
+     */
+    public function getParser()
+    {
+        return $this->parser;
+    }
+
+    /**
      * sets the main parameters to the parser
      *
      * @throws \UnexpectedValueException
