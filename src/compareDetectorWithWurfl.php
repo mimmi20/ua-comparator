@@ -323,15 +323,20 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', count($targets)) . '|';
 
-    $ok = formatMessage(
-        $content,
-        $matches,
-        'WurflKey',
-        $startString,
-        $browser->getCapability('wurflKey', true),
-        array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->id)),
-        $vollBrowser
-    ) && $ok;
+    try {
+        $ok = formatMessage(
+            $content,
+            $matches,
+            'WurflKey',
+            $startString,
+            $browser->getCapability('wurflKey', true),
+            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->id)),
+            $vollBrowser
+        ) && $ok;
+    } catch (\InvalidArgumentException $e) {
+        $logger->error($e);
+        $ok = false;
+    }
 
     $ok = formatMessage(
         $content,

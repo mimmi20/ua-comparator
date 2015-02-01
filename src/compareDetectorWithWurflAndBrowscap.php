@@ -845,7 +845,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         && ('' !== $browser->getFullDevice(true) || '' !== $browser->getFullBrowser(true))
     ) {
         if ($browser->getCapability('is_wireless_device', false)) {
-            // $checks['WurflKey'] = array('key' => 'wurflKey', 'include' => false);
             // $checks['DeviceClass'] = array('key' => 'deviceClass', 'include' => false);
             $checks['model_name'] = array('key' => 'model_name', 'include' => true);
             // $checks['model_version'] = array('key' => 'model_version', 'include' => false);
@@ -882,7 +881,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $checks['dual_orientation'] = array('key' => 'dual_orientation', 'include' => true);
             $checks['colors'] = array('key' => 'colors', 'include' => true);
         } else {
-            // $checks['WurflKey'] = array('key' => 'wurflKey', 'include' => false);
             // $checks['DeviceClass'] = array('key' => 'deviceClass', 'include' => false);
         }
 
