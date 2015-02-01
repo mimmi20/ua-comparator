@@ -86,9 +86,13 @@ class Detector implements ModuleInterface
      * initializes the module
      *
      * @throws \BrowserDetector\Input\Exception
+     * @return \UaComparator\Module\Detector
      */
     public function init()
     {
+        $this->detect('');
+
+        return $this;
     }
 
     public function detect($agent)

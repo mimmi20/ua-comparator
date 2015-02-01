@@ -103,9 +103,13 @@ class CrossJoin implements ModuleInterface
      * initializes the module
      *
      * @throws \BrowserDetector\Input\Exception
+     * @return \UaComparator\Module\CrossJoin
      */
     public function init()
     {
+        $this->detect('');
+
+        return $this;
     }
 
     /**

@@ -57,6 +57,7 @@ interface ModuleInterface
      * initializes the module
      *
      * @throws \BrowserDetector\Input\Exception
+     * @return \UaComparator\Module\ModuleInterface
      */
     public function init();
 

@@ -87,12 +87,15 @@ class BrowserDetectorModule implements ModuleInterface
      * initializes the module
      *
      * @throws \BrowserDetector\Input\Exception
+     * @return \UaComparator\Module\BrowserDetectorModule
      */
     public function init()
     {
         $this->input->setAgent('');
         $browser = $this->input->getBrowser();
         $browser->getCapabilities();
+
+        return $this;
     }
 
     /**

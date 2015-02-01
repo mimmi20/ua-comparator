@@ -88,25 +88,30 @@ class WurflOld implements ModuleInterface
      * initializes the module
      *
      * @throws \BrowserDetector\Input\Exception
+     * @return \UaComparator\Module\WurflOld
      */
     public function init()
     {
+        $device = $this->detect('');
+        $device->getAllCapabilities();
+
+        return $this;
     }
 
     /**
      * @param string $agent
      *
-     * @return WURFL_CustomDevice|null
+     * @return \WURFL_CustomDevice|null
      */
     public function detect($agent)
     {
         // Create WURFL Configuration from an XML config file
-        $wurflConfigOrig  = new WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-        $wurflCacheOrig   = new WURFL_Storage_Memory();
-        $wurflStorageOrig = new WURFL_Storage_File(array(WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
+        $wurflConfigOrig  = new \WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
+        $wurflCacheOrig   = new \WURFL_Storage_Memory();
+        $wurflStorageOrig = new \WURFL_Storage_File(array(\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
 
         // Create a WURFL Manager Factory from the WURFL Configuration
-        $wurflManagerFactoryOrig = new WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
+        $wurflManagerFactoryOrig = new \WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
         ini_set('max_input_time', '6000');
         // Create a WURFL Manager
         $wurflManagerOrig = $wurflManagerFactoryOrig->create();

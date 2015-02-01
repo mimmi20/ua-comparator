@@ -92,9 +92,13 @@ class UaParser implements ModuleInterface
      * initializes the module
      *
      * @throws \BrowserDetector\Input\Exception
+     * @return \UaComparator\Module\UaParser
      */
     public function init()
     {
+        $this->detect('');
+
+        return $this;
     }
 
     /**

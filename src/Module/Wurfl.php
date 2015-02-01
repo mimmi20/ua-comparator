@@ -91,11 +91,14 @@ class Wurfl implements ModuleInterface
      * initializes the module
      *
      * @throws \BrowserDetector\Input\Exception
+     * @return \UaComparator\Module\Wurfl
      */
     public function init()
     {
         $device = $this->detect('');
         $device->getAllCapabilities();
+
+        return $this;
     }
 
     /**
