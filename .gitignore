@@ -4,4 +4,5 @@
 .project
 .idea/
 vendor/
+data/
 error.log
