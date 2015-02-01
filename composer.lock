@@ -290,12 +290,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/wurfl-data.git",
-                "reference": "f73e92903ed2df47b8b9340061a073f65a46cbff"
+                "reference": "2447ff5967561786beb1794524db4f6b03683c78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/f73e92903ed2df47b8b9340061a073f65a46cbff",
-                "reference": "f73e92903ed2df47b8b9340061a073f65a46cbff",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/2447ff5967561786beb1794524db4f6b03683c78",
+                "reference": "2447ff5967561786beb1794524db4f6b03683c78",
                 "shasum": ""
             },
             "require": {
@@ -334,7 +334,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-02-01 18:29:25"
+            "time": "2015-02-01 21:18:45"
         },
         {
             "name": "mimmi20/wurflcache",
