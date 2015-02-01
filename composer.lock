@@ -180,12 +180,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "2b7af18e7e0ef721f212f51ea5f0497aaf78d036"
+                "reference": "26c8218237445a765d0d4f5ceea2562d615d4db2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/2b7af18e7e0ef721f212f51ea5f0497aaf78d036",
-                "reference": "2b7af18e7e0ef721f212f51ea5f0497aaf78d036",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/26c8218237445a765d0d4f5ceea2562d615d4db2",
+                "reference": "26c8218237445a765d0d4f5ceea2562d615d4db2",
                 "shasum": ""
             },
             "require": {
@@ -230,7 +230,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-02-01 18:33:31"
+            "time": "2015-02-01 21:50:24"
         },
         {
             "name": "mimmi20/wurfl",
