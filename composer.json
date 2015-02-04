@@ -31,7 +31,7 @@
         "mimmi20/wurfl-data": "dev-master",
         "ua-parser/uap-php": "dev-master",
         "synchro/uasparser": "v0.53",
-        "browscap/browscap-php": "dev-master",
+        "browscap/browscap-php": "3.x@dev",
         "crossjoin/browscap": "dev-master",
         "wurfl/wurfl-api": "dev-master"
     },
