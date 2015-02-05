@@ -16,9 +16,11 @@ use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\WebProcessor;
 use UaComparator\Helper\LoggerFactory;
+use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\Wurfl;
 use UaComparator\Module\WurflOld;
 use WurflCache\Adapter\File;
+use WurflCache\Adapter\NullStorage;
 
 echo 'initializing App ...';
 
@@ -58,11 +60,6 @@ setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
 $targets = array();
 
-/**
- * @var \UaComparator\Module\ModuleInterface[] $modules
- */
-$modules = array();
-
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
@@ -74,6 +71,8 @@ $logger = LoggerFactory::create();
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
+$collection = new ModuleCollection();
+
 /*******************************************************************************
  * WURFL - PHP 5.3 port
  */
@@ -84,11 +83,12 @@ echo 'initializing Wurfl API (PHP-API 5.3 port) ...';
 ini_set('max_input_time', '6000');
 $adapter     = new File(array('dir' => 'data/cache/wurfl/'));
 $wurflModule = new Wurfl($logger, $adapter, 'data/wurfl-config.xml');
+$wurflModule
+    ->setId(11)
+    ->setName('WURFL API (PHP-API 5.3)')
+;
 
-$wurflModule->init();
-
-$targets[11] = 'WURFL API (PHP-API 5.3)';
-$modules[11] = $wurflModule;
+$collection->addModule($wurflModule);
 
 $target = 'WURFL API (PHP-API 5.3)';
 
@@ -103,11 +103,22 @@ echo 'initializing Wurfl API (PHP-API 5.2 original) ...';
 // Create WURFL Configuration from an XML config file
 $adapter        = new File(array('dir' => 'data/cache/wurfl_old/'));
 $oldWurflModule = new WurflOld($logger, $adapter, 'data/wurfl-config.xml');
+$oldWurflModule
+    ->setId(7)
+    ->setName('WURFL API (PHP-API 5.2 original)')
+;
 
-$oldWurflModule->init();
+$collection->addModule($oldWurflModule);
 
-$targets[7] = 'WURFL API (PHP-API 5.2 original)';
-$modules[7] = $oldWurflModule;
+echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+
+/*******************************************************************************
+ * init
+ */
+
+echo 'initializing all Modules ...';
+
+$collection->init();
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -177,42 +188,37 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $agent = trim($row['agent']);
 
     $content = '';
-    $ok = true;
-    $id = substr(str_repeat(' ', FIRST_COL_LENGTH) . $row['idAgents'], -(FIRST_COL_LENGTH - 2));
+    $ok      = true;
+    $id      = substr(str_repeat(' ', FIRST_COL_LENGTH) . $row['idAgents'], -(FIRST_COL_LENGTH - 2));
     $matches = array();
+    $modules = array();
 
     $detectionStartTime = microtime(true);
 
     /***************************************************************************
-     * Wurfl - PHP 5.3 port
+     * handle modules
      */
 
-    $modules[11]->startTimer();
+    foreach ($collection->getModules() as $module) {
+        $module
+            ->startTimer()
+            ->detect($agent)
+            ->endTimer()
+        ;
 
-    $device = $modules[11]->detect($agent);
+        $modules[$module->getId()] = array(
+            'name'   => $module->getName(),
+            'time'   => $module->getTime(),
+            'result' => $module->getDetectionResult(),
+        );
+    }
 
-    $detectionWurflTime = $modules[11]->endTimer();
+    $detectionWurflTime     = $modules[11]['time'];
+    $detectionWurflOrigTime = $modules[7]['time'];
 
     /***************************************************************************
-     * Wurfl - PHP 5.3 port - end
+     * handle modules - end
      */
-
-    /***************************************************************************
-     * Wurfl - PHP-API 5.2 original
-     */
-
-    $modules[7]->startTimer();
-
-    $deviceOrig = $modules[7]->detect($agent);
-
-    $detectionWurflOrigTime = $modules[7]->endTimer();
-
-    storeProperties($deviceOrig);
-
-    /***************************************************************************
-     * Wurfl - PHP-API 5.2 original - end
-     */
-
     /**
      * Auswertung
      */

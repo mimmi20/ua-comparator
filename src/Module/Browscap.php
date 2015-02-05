@@ -61,9 +61,29 @@ class Browscap implements ModuleInterface
     private $cache = null;
 
     /**
-     * @var integer
+     * @var float
      */
-    private $timer = 0;
+    private $timer = 0.0;
+
+    /**
+     * @var float
+     */
+    private $duration = 0.0;
+
+    /**
+     * @var string
+     */
+    private $name = '';
+
+    /**
+     * @var int
+     */
+    private $id = 0;
+
+    /**
+     * @var mixed
+     */
+    private $detectionResult = null;
 
     /**
      * creates the module
@@ -105,13 +125,15 @@ class Browscap implements ModuleInterface
     /**
      * @param string $agent
      *
-     * @return \BrowserDetector\Detector\Result
+     * @return \UaComparator\Module\Browscap
      * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
         $this->input->setAgent($agent);
-        return $this->input->getBrowser(true);
+        $this->detectionResult = $this->input->getBrowser(true);
+
+        return $this;
     }
 
     /**
@@ -121,21 +143,32 @@ class Browscap implements ModuleInterface
      */
     public function startTimer()
     {
-        $this->timer = microtime(true);
+        $this->duration = 0.0;
+        $this->timer    = microtime(true);
 
         return $this;
     }
 
     /**
-     * stops the detection timer and returns the duration
-     * @return float
+     * stops the detection timer
+     * @return \UaComparator\Module\Browscap
      */
     public function endTimer()
     {
-        $duration    = microtime(true) - $this->timer;
-        $this->timer = 0;
+        $this->duration = microtime(true) - $this->timer;
+        $this->timer    = 0.0;
 
-        return $duration;
+        return $this;
+    }
+
+    /**
+     * returns the duration
+     *
+     * @return float
+     */
+    public function getTime()
+    {
+        return $this->duration;
     }
 
     /**
@@ -156,5 +189,53 @@ class Browscap implements ModuleInterface
         $this->input = $input;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return \UaComparator\Module\Browscap
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return \UaComparator\Module\Browscap
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return \BrowserDetector\Detector\Result
+     */
+    public function getDetectionResult()
+    {
+        return $this->detectionResult;
     }
 }

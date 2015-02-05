@@ -13,10 +13,12 @@ use BrowscapPHP\Helper\IniLoader;
 use BrowserDetector\Detector\Version;
 use UaComparator\Helper\LoggerFactory;
 use UaComparator\Module\BrowserDetectorModule;
+use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\Wurfl;
 use UaComparator\Module\WurflOld;
 use WurflCache\Adapter\File;
 use Monolog\Logger;
+use WurflCache\Adapter\NullStorage;
 
 echo 'initializing App ...';
 
@@ -56,11 +58,6 @@ setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
 $targets = array();
 
-/**
- * @var \UaComparator\Module\ModuleInterface[] $modules
- */
-$modules = array();
-
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
@@ -73,16 +70,21 @@ $logger = LoggerFactory::create();
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
+$collection = new ModuleCollection();
+
 /*******************************************************************************
  * BrowserDetectorModule
  */
 echo 'initializing BrowserDetectorModule (with the internal detecting engine) ...';
 
 $adapter        = new File(array('dir' => 'data/cache/browser/'));
-$browscapModule = new BrowserDetectorModule($logger, $adapter);
+$detectorModule = new BrowserDetectorModule($logger, $adapter);
+$detectorModule
+    ->setId(0)
+    ->setName('BrowserDetector')
+;
 
-$browscapModule->init();
-$modules[0] = $browscapModule;
+$collection->addModule($detectorModule);
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -95,11 +97,12 @@ echo 'initializing Wurfl API (PHP-API 5.3 port) ...';
 ini_set('max_input_time', '6000');
 $adapter     = new File(array('dir' => 'data/cache/wurfl/'));
 $wurflModule = new Wurfl($logger, $adapter, 'data/wurfl-config.xml');
+$wurflModule
+    ->setId(11)
+    ->setName('WURFL API (PHP-API 5.3)')
+;
 
-$wurflModule->init();
-
-$targets[11] = 'WURFL API (PHP-API 5.3)';
-$modules[11]  = $wurflModule;
+$collection->addModule($wurflModule);
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -111,11 +114,22 @@ echo 'initializing Wurfl API (PHP-API 5.2 original) ...';
 
 $adapter        = new File(array('dir' => 'data/cache/wurfl_old/'));
 $oldWurflModule = new WurflOld($logger, $adapter, 'data/wurfl-config.xml');
+$oldWurflModule
+    ->setId(7)
+    ->setName('WURFL API (PHP-API 5.2 original)')
+;
 
-$oldWurflModule->init();
+$collection->addModule($oldWurflModule);
 
-$targets[7] = 'WURFL API (PHP-API 5.2 original)';
-$modules[7] = $oldWurflModule;
+echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+
+/*******************************************************************************
+ * init
+ */
+
+echo 'initializing all Modules ...';
+
+$collection->init();
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -205,7 +219,7 @@ foreach ($files as $path) {
 
         while ($internalLoader->isValid()) {
             try {
-                handleLine($internalLoader->getLine(), $modules, $targets, $logger, $i);
+                handleLine($internalLoader->getLine(), $collection, $targets, $logger, $i);
             } catch (\Exception $e) {
                 if (1 === $e->getCode()) {
                     $nokfound++;
@@ -255,7 +269,7 @@ foreach ($files as $path) {
 
         foreach ($lines as $line) {
             try {
-                handleLine($line, $modules, $targets, $logger, $i);
+                handleLine($line, $collection, $targets, $logger, $i);
             } catch (\Exception $e) {
                 if (1 === $e->getCode()) {
                     $nokfound++;
@@ -527,15 +541,15 @@ function formatTime($time)
 }
 
 /**
- * @param string                                 $agent
- * @param \UaComparator\Module\ModuleInterface[] $modules
- * @param array                                  $targets
- * @param \Monolog\Logger                        $logger
- * @param integer                                $i
+ * @param string                                $agent
+ * @param \UaComparator\Module\ModuleCollection $collection
+ * @param array                                 $targets
+ * @param \Monolog\Logger                       $logger
+ * @param integer                               $i
  *
  * @throws \Exception
  */
-function handleLine($agent, array $modules, array $targets, Logger $logger, $i)
+function handleLine($agent, ModuleCollection $collection, array $targets, Logger $logger, $i)
 {
     $colorStart = '';
     $colorEnd   = '';
@@ -545,48 +559,33 @@ function handleLine($agent, array $modules, array $targets, Logger $logger, $i)
     $content   = '';
     $ok        = true;
     $matches   = array();
+    $modules   = array();
     $aLength   = SECOND_COL_LENGTH + 1 + COL_LENGTH + 1 + (count($targets) * (COL_LENGTH + 1));
 
     /***************************************************************************
-     * BrowserDetectorModule
+     * handle modules
      */
 
-    $modules[0]->startTimer();
+    foreach ($collection->getModules() as $module) {
+        $module
+            ->startTimer()
+            ->detect($agent)
+            ->endTimer()
+        ;
 
-    $browser = $modules[0]->detect($agent);
+        $modules[$module->getId()] = array(
+            'name'   => $module->getName(),
+            'time'   => $module->getTime(),
+            'result' => $module->getDetectionResult(),
+        );
+    }
 
-    $detectionBrowserDetectorTime = $modules[0]->endTimer();
-
-    /***************************************************************************
-     * BrowserDetectorModule - end
-     */
-
-    /***************************************************************************
-     * Wurfl - PHP 5.3 port
-     */
-
-    $modules[11]->startTimer();
-
-    $device = $modules[11]->detect($agent);
-
-    $detectionWurflTime = $modules[11]->endTimer();
+    $detectionBrowserDetectorTime = $modules[0]['time'];
+    $detectionWurflTime           = $modules[11]['time'];
+    $detectionWurflOrigTime       = $modules[7]['time'];
 
     /***************************************************************************
-     * Wurfl - PHP 5.3 port - end
-     */
-
-    /***************************************************************************
-     * Wurfl - PHP-API 5.2 original
-     */
-
-    $modules[7]->startTimer();
-
-    $deviceOrig = $modules[7]->detect($agent);
-
-    $detectionWurflOrigTime = $modules[7]->endTimer();
-
-    /***************************************************************************
-     * Wurfl - PHP-API 5.2 original - end
+     * handle modules - end
      */
 
     /**

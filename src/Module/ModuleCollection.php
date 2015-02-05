@@ -28,12 +28,7 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-namespace UaComparator\Input;
-
-use BrowserDetector\Input\Core;
-use UaComparator\Detector\Result;
-use UaComparator\Helper\InputMapper;
-use UAParser\Parser;
+namespace UaComparator\Module;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -44,74 +39,45 @@ use UAParser\Parser;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class Uaparser extends Core
+class ModuleCollection
 {
     /**
-     * the UAParser class
-     *
-     * @var \UAParser\Parser
+     * @var \UaComparator\Module\ModuleInterface[]
      */
-    private $parser = null;
+    private $modules = array();
 
     /**
-     * sets the UA Parser detector
+     * @param \UaComparator\Module\ModuleInterface $module
      *
-     * @var \UAParser\Parser $parser
-     *
-     * @return \UaComparator\Input\Uaparser
+     * @return \UaComparator\Module\ModuleCollection
      */
-    public function setParser(Parser $parser)
+    public function addModule(ModuleInterface $module)
     {
-        $this->parser = $parser;
+        $this->modules[] = $module;
 
         return $this;
     }
 
     /**
-     * Gets the information about the browser by User Agent
-     *
-     * @throws \UnexpectedValueException
-     * @return \UaComparator\Detector\Result
+     * @return \UaComparator\Module\ModuleInterface[]
      */
-    public function getBrowser()
+    public function getModules()
     {
-        $parserResult = $this->initParser()->parse($this->_agent);
-
-        $result = new Result();
-        $result->setCapability('useragent', $this->_agent);
-
-        $mapper = new InputMapper();
-
-        $browserName    = $mapper->mapBrowserName($parserResult->ua->family);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult->ua->toVersion(), $browserName);
-
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
-
-        $osName    = $mapper->mapOsName($parserResult->os->family);
-        $osVersion = $mapper->mapOsVersion($parserResult->os->toVersion(), $osName);
-
-        $result->setCapability('device_os', $osName);
-        $result->setCapability('device_os_version', $osVersion);
-
-        return $result;
+        return $this->modules;
     }
 
     /**
-     * sets the main parameters to the parser
+     * initializes the module
      *
-     * @throws \UnexpectedValueException
-     * @return \UAParser\Parser
+     * @throws \BrowserDetector\Input\Exception
+     * @return \UaComparator\Module\ModuleCollection
      */
-    private function initParser()
+    public function init()
     {
-        if (!($this->parser instanceof Parser)) {
-            throw new \UnexpectedValueException(
-                'the parser object has to be an instance of \\UAParser\\Parser'
-            );
+        foreach ($this->modules as $module) {
+            $module->init();
         }
 
-        return $this->parser;
+        return $this;
     }
 }
-

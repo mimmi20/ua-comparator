@@ -31,7 +31,10 @@
 namespace UaComparator\Module;
 
 use BrowserDetector\BrowserDetector;
+use BrowserDetector\Detector\Result;
+use BrowserDetector\Detector\Version;
 use Monolog\Logger;
+use UaComparator\Helper\InputMapper;
 use UAS\Parser;
 use WurflCache\Adapter\AdapterInterface;
 
@@ -62,9 +65,29 @@ class UasParser implements ModuleInterface
     private $cache = null;
 
     /**
-     * @var integer
+     * @var float
      */
-    private $timer = 0;
+    private $timer = 0.0;
+
+    /**
+     * @var float
+     */
+    private $duration = 0.0;
+
+    /**
+     * @var string
+     */
+    private $name = '';
+
+    /**
+     * @var int
+     */
+    private $id = 0;
+
+    /**
+     * @var array
+     */
+    private $detectionResult = null;
 
     /**
      * creates the module
@@ -76,16 +99,6 @@ class UasParser implements ModuleInterface
     {
         $this->logger = $logger;
         $this->cache  = $cache;
-
-        $parser = new Parser('data/cache/uasparser');
-
-        $this->input = new BrowserDetector();
-        $this->input->setInterface(new \UaComparator\Input\Uasparser());
-        $this->input->setLogger($logger);
-        $this->input->setCache($this->cache);
-        $this->input->setCachePrefix('uasparser_');
-
-        $this->input->getInterface()->setParser($parser);
     }
 
     /**
@@ -104,13 +117,16 @@ class UasParser implements ModuleInterface
     /**
      * @param string $agent
      *
-     * @return \BrowserDetector\Detector\Result
+     * @return \UaComparator\Module\UasParser
      * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
-        $this->input->setAgent($agent);
-        return $this->input->getBrowser(true);
+        $parser = new Parser('data/cache/uasparser');
+
+        $this->detectionResult = $parser->Parse($agent);
+
+        return $this;
     }
 
     /**
@@ -120,21 +136,32 @@ class UasParser implements ModuleInterface
      */
     public function startTimer()
     {
-        $this->timer = microtime(true);
+        $this->duration = 0.0;
+        $this->timer    = microtime(true);
 
         return $this;
     }
 
     /**
-     * stops the detection timer and returns the duration
+     * stops the detection timer
      * @return float
      */
     public function endTimer()
     {
-        $duration    = microtime(true) - $this->timer;
-        $this->timer = 0;
+        $this->duration = microtime(true) - $this->timer;
+        $this->timer    = 0.0;
 
-        return $duration;
+        return $this;
+    }
+
+    /**
+     * returns the duration
+     *
+     * @return float
+     */
+    public function getTime()
+    {
+        return $this->duration;
     }
 
     /**
@@ -155,5 +182,100 @@ class UasParser implements ModuleInterface
         $this->input = $input;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return \UaComparator\Module\UasParser
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return \UaComparator\Module\UasParser
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return \BrowserDetector\Detector\Result
+     */
+    public function getDetectionResult()
+    {
+        return $this->map($this->detectionResult);
+    }
+
+    /**
+     * Gets the information about the browser by User Agent
+     *
+     * @param array $parserResult
+     *
+     * @return \BrowserDetector\Detector\Result
+     */
+    private function map(array $parserResult)
+    {
+        $result = new Result();
+        $mapper = new InputMapper();
+
+        $browserName    = $mapper->mapBrowserName($parserResult['ua_family']);
+        $browserType    = $mapper->mapBrowserType($parserResult['typ'], $browserName);
+        $browserVersion = $mapper->mapBrowserVersion($parserResult['ua_version'], $browserName);
+        $browserMaker   = $mapper->mapBrowserMaker($parserResult['ua_company'], $browserName);
+
+        $result->setCapability('browser_type', $browserType->getName());
+        $result->setCapability('is_bot', $browserType->isBot());
+        $result->setCapability('is_transcoder', $browserType->isTranscoder());
+        $result->setCapability('is_syndication_reader', $browserType->isSyndicationReader());
+        $result->setCapability('is_banned', $browserType->isBanned());
+        $result->setCapability('mobile_browser', $browserName);
+        $result->setCapability('mobile_browser_manufacturer', $browserMaker);
+        $result->setCapability('mobile_browser_version', $browserVersion);
+
+        $osName    = $mapper->mapOsName($parserResult['os_family']);
+        $osVersion = null;
+        $osMaker   = $mapper->mapOsMaker($parserResult['os_company'], $osName);
+
+        $result->setCapability('device_os', $osName);
+
+        $version = new Version();
+        $version->setMode(
+            Version::COMPLETE
+            | Version::IGNORE_MINOR_IF_EMPTY
+            | Version::IGNORE_MICRO_IF_EMPTY
+        );
+
+        $result->setCapability(
+            'device_os_version', $version->setVersion($osVersion)
+        );
+        $result->setCapability('device_os_manufacturer', $osMaker);
+
+        return $result;
     }
 }

@@ -94,7 +94,7 @@ class Browscap extends AbstractBrowscapInput
     /**
      * Gets the information about the browser by User Agent
      *
-     * @return \UaComparator\Detector\Result the object containing the browsers details.
+     * @return \BrowserDetector\Detector\Result the object containing the browsers details.
      * @throws \UnexpectedValueException
      */
     public function getBrowser()

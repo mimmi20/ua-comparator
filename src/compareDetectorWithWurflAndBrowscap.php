@@ -15,6 +15,7 @@ use UaComparator\Helper\LoggerFactory;
 use UaComparator\Module\Browscap;
 use UaComparator\Module\BrowserDetectorModule;
 use UaComparator\Module\CrossJoin;
+use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\UaParser;
 use UaComparator\Module\UasParser;
 use UaComparator\Module\Wurfl;
@@ -24,6 +25,7 @@ use Wurfl\Configuration\XmlConfig;
 use Wurfl\Manager;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
+use WurflCache\Adapter\NullStorage;
 
 echo 'initializing App ...';
 
@@ -63,11 +65,6 @@ setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
 $targets = array();
 
-/**
- * @var \UaComparator\Module\ModuleInterface[] $modules
- */
-$modules = array();
-
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
@@ -79,15 +76,20 @@ $logger = LoggerFactory::create();
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
+$collection = new ModuleCollection();
+
 /*******************************************************************************
  * BrowserDetectorModule
  */
 echo 'initializing BrowserDetectorModule (with the internal detecting engine) ...';
 
 $detectorModule = new BrowserDetectorModule($logger, new File(array('dir' => 'data/cache/browser/')));
-$detectorModule->init();
+$detectorModule
+    ->setId(0)
+    ->setName('BrowserDetector')
+;
 
-$modules[0] = $detectorModule;
+$collection->addModule($detectorModule);
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -125,11 +127,13 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
 echo 'initializing Browscap-PHP ...';
 
 $browscapModule = new Browscap($logger, new File(array('dir' => 'data/cache/browscap/')));
-$browscapModule->init();
+$browscapModule
+    ->setId(9)
+    ->setName('Browscap-PHP')
+;
 $browscapModule->getInput()->getInterface()->getParser()->convertFile($iniFile);
 
-$targets[9] = 'Browscap-PHP';
-$modules[9] = $browscapModule;
+$collection->addModule($browscapModule);
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -140,10 +144,12 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
 echo 'initializing Crossjoin\Browscap ...';
 
 $crossjoinModule = new CrossJoin($logger, new File(array('dir' => 'data/cache/crossjoin/')), $iniFile);
-$crossjoinModule->init();
+$crossjoinModule
+    ->setId(10)
+    ->setName('Crossjoin\Browscap')
+;
 
-$targets[10] = 'Crossjoin\Browscap';
-$modules[10] = $crossjoinModule;
+$collection->addModule($crossjoinModule);
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -154,10 +160,12 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
 echo 'initializing UAParser ...';
 
 $uaparserModule = new UaParser($logger, new File(array('dir' => 'data/cache/uaparser/')));
-$uaparserModule->init();
+$uaparserModule
+    ->setId(5)
+    ->setName('UAParser')
+;
 
-$targets[5] = 'UAParser';
-$modules[5] = $uaparserModule;
+$collection->addModule($uaparserModule);
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -168,10 +176,12 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
 echo 'initializing UASParser ...';
 
 $uasparserModule = new UasParser($logger, new File(array('dir' => 'data/cache/uasparser/')));
-$uasparserModule->init();
+$uasparserModule
+    ->setId(6)
+    ->setName('UASParser')
+;
 
-$targets[6] = 'UASParser';
-$modules[6] = $uasparserModule;
+$collection->addModule($uasparserModule);
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -184,11 +194,12 @@ echo 'initializing Wurfl API (PHP-API 5.3 port) ...';
 ini_set('max_input_time', '6000');
 $adapter     = new File(array('dir' => 'data/cache/wurfl/'));
 $wurflModule = new Wurfl($logger, $adapter, 'data/wurfl-config.xml');
+$wurflModule
+    ->setId(11)
+    ->setName('WURFL API (PHP-API 5.3)')
+;
 
-$wurflModule->init();
-
-$targets[11] = 'WURFL API (PHP-API 5.3)';
-$modules[11]  = $wurflModule;
+$collection->addModule($wurflModule);
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -200,11 +211,22 @@ echo 'initializing Wurfl API (PHP-API 5.2 original) ...';
 
 $adapter        = new File(array('dir' => 'data/cache/wurfl_old/'));
 $oldWurflModule = new WurflOld($logger, $adapter, 'data/wurfl-config.xml');
+$oldWurflModule
+    ->setId(7)
+    ->setName('WURFL API (PHP-API 5.2 original)')
+;
 
-$oldWurflModule->init();
+$collection->addModule($oldWurflModule);
 
-$targets[7] = 'WURFL API (PHP-API 5.2 original)';
-$modules[7] = $oldWurflModule;
+echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+
+/*******************************************************************************
+ * init
+ */
+
+echo 'initializing all Modules ...';
+
+$collection->init();
 
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
@@ -272,146 +294,39 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $agent = trim($row['agent']);
 
     $content = '';
-    $ok = true;
-    $id = substr(str_repeat(' ', FIRST_COL_LENGTH) . $row['idAgents'], -(FIRST_COL_LENGTH - 2));
+    $ok      = true;
+    $id      = substr(str_repeat(' ', FIRST_COL_LENGTH) . $row['idAgents'], -(FIRST_COL_LENGTH - 2));
     $matches = array();
-
-    //echo '.';
-    //if (($i % 100) == 0) {
-    //    echo "\n";
-    //}
-
-    // echo $colorStart . substr(str_repeat(' ', FIRST_COL_LENGTH) . $i . '/' . $count, -1 * FIRST_COL_LENGTH) . '|' . str_repeat(' ', count($targets)) . '|' . str_repeat(' ', SECOND_COL_LENGTH) . '|' . substr('UserAgent' . str_repeat(' ', COL_LENGTH), 0, COL_LENGTH) . '|';
-        // foreach ($targets as $target) {
-            // echo substr($target . str_repeat(' ', COL_LENGTH), 0, COL_LENGTH) . '|';
-        // }
-        // echo $colorEnd . "\n";
+    $modules = array();
 
     /***************************************************************************
-     * BrowserDetectorModule
+     * handle modules
      */
 
-    $modules[0]->startTimer();
+    foreach ($collection->getModules() as $module) {
+        $module
+            ->startTimer()
+            ->detect($agent)
+            ->endTimer()
+        ;
 
-    $browser = $modules[0]->detect($agent);
-
-    $detectionBrowserDetectorTime = $modules[0]->endTimer();
-
-    /***************************************************************************
-     * BrowserDetectorModule - end
-     */
-
-    /***************************************************************************
-     * Wurfl - PHP 5.3 port
-     */
-
-    $modules[11]->startTimer();
-
-    $device = $modules[11]->detect($agent);
-
-    $detectionWurflTime = $modules[11]->endTimer();
-
-    /***************************************************************************
-     * Wurfl - PHP 5.3 port - end
-     */
-
-    /***************************************************************************
-     * Wurfl - PHP-API 5.2 original
-     */
-
-    $modules[7]->startTimer();
-
-    $deviceOrig = $modules[7]->detect($agent);
-
-    $detectionWurflOrigTime = $modules[7]->endTimer();
-
-    /***************************************************************************
-     * Wurfl - PHP-API 5.2 original - end
-     */
-
-    /***************************************************************************
-     * Wurfl - DB-API 5.2 original
-     *
-
-    $wurflTeraStartTime = microtime(true);
-
-    // Create WURFL Configuration from an XML config file
-    $wurflConfigTera  = new WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-    $wurflCacheTera   = new WURFL_Storage_Memory();
-    $wurflStorageTera = new WURFL_Storage_File(array(WURFL_Storage_File::DIR => 'data/cache/wurfl_old2/'));
-
-    // Create a WURFL Manager Factory from the WURFL Configuration
-    $wurflManagerFactoryTera = new WURFL_WURFLManagerFactory($wurflConfigTera, $wurflStorageTera, $wurflCacheTera);
-    ini_set('max_input_time', '6000');
-    // Create a WURFL Manager
-    $wurflManagerTera = $wurflManagerFactoryTera->create();
-
-    try {
-        $deviceTera = $wurflManagerTera->getDeviceForUserAgent($agent);
-    } catch (\Exception $e) {
-        $deviceTera = null;
+        $modules[$module->getId()] = array(
+            'name'   => $module->getName(),
+            'time'   => $module->getTime(),
+            'result' => $module->getDetectionResult(),
+        );
     }
 
-    $detectionWurflTeraTime = microtime(true) - $wurflTeraStartTime;
+    $detectionBrowserDetectorTime = $modules[0]['time'];
+    $detectionWurflTime           = $modules[11]['time'];
+    $detectionWurflOrigTime       = $modules[7]['time'];
+    $detectionGbmoTime            = $modules[9]['time'];
+    $detectionCrossjoinTime       = $modules[10]['time'];
+    $detectionUaparserTime        = $modules[5]['time'];
+    $detectionUasparserTime       = $modules[6]['time'];
 
     /***************************************************************************
-     * Wurfl - DB-API 5.2 original - end
-     */
-
-    /***************************************************************************
-     * Browscap-PHP
-     */
-
-    $modules[9]->startTimer();
-
-    $gbmo = $modules[9]->detect($agent);
-
-    $detectionGbmoTime = $modules[9]->endTimer();
-
-    /***************************************************************************
-     * Browscap-PHP - end
-     */
-
-    /***************************************************************************
-     * crossjoin/Browscap
-     */
-
-    $modules[10]->startTimer();
-
-    $crossjoinResult = $modules[10]->detect($agent);
-
-    $detectionCrossjoinTime = $modules[10]->endTimer();
-
-    /***************************************************************************
-     * crossjoin/Browscap - end
-     */
-
-    /***************************************************************************
-     * UAParser
-     */
-
-    $modules[5]->startTimer();
-
-    $parserResult = $modules[5]->detect($agent);
-
-    $detectionUaparserTime = $modules[5]->endTimer();
-
-    /***************************************************************************
-     * UAParser - end
-     */
-
-    /***************************************************************************
-     * UASParser
-     */
-
-    $modules[6]->startTimer();
-
-    $uasParserResult = $modules[6]->detect($agent);
-
-    $detectionUasparserTime = $modules[6]->endTimer();
-
-    /***************************************************************************
-     * UASParser - end
+     * handle modules - end
      */
 
     /**
@@ -424,8 +339,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $vollBrowser = $browser->getComparationName();
 
     $mode = Version::MAJORMINOR;
-
-    //var_dump($browser->getFullBrowser(true, $mode));exit;
 
     $startString = '#count#x found|' . str_repeat(' ', count($targets)) . '|';
     $browserOk = formatMessage(

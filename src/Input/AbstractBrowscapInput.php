@@ -32,7 +32,7 @@ namespace UaComparator\Input;
 
 use BrowserDetector\Input\Core;
 use BrowserDetector\Input\Exception;
-use UaComparator\Detector\Result;
+use BrowserDetector\Detector\Result;
 use UaComparator\Detector\Version;
 use UaComparator\Helper\InputMapper;
 
@@ -135,7 +135,7 @@ abstract class AbstractBrowscapInput extends Core
      *
      * @param \stdClass $parserResult
      *
-     * @return \UaComparator\Detector\Result the object containing the browsers details.
+     * @return \BrowserDetector\Detector\Result the object containing the browsers details.
      */
     protected function setResultData(\stdClass $parserResult)
     {
