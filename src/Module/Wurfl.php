@@ -265,7 +265,6 @@ class Wurfl implements ModuleInterface
     private function map(CustomDevice $device)
     {
         $marketingName = null;
-        $xhtmlLevel    = 0;
 
         try {
             $allProperties = $device->getAllCapabilities();
@@ -785,7 +784,6 @@ class Wurfl implements ModuleInterface
         }
 
         $result = new Result();
-        $result->setCapability('useragent', $this->_agent);
 
         if (null === $device || 'robot' === strtolower($device->getVirtualCapability('form_factor'))) {
             return $result;

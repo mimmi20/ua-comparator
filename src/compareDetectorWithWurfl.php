@@ -584,6 +584,9 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
     $detectionWurflTime           = $modules[11]['time'];
     $detectionWurflOrigTime       = $modules[7]['time'];
 
+    $browser    = $modules[0]['result'];
+    $deviceOrig = $modules[7]['result'];
+
     /***************************************************************************
      * handle modules - end
      */
@@ -603,7 +606,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Browser',
             $startString,
             $browser->getVirtualCapability('advertised_browser') . ' ' . $browser->getVirtualCapability('advertised_browser_version'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('advertised_browser'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('advertised_browser'))),
             $vollBrowser
         ) && $ok;
     $ok = $browserOk && $ok;
@@ -615,7 +618,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Engine',
             $startString,
             $browser->getFullEngine($mode),
-            array($targets[7] => null),
+            array($modules[7]['name'] => null),
             $vollBrowser
         ) && $ok;
 
@@ -626,7 +629,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'OS',
             $startString,
             $browser->getVirtualCapability('advertised_device_os'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('advertised_device_os'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('advertised_device_os'))),
             $vollBrowser
         ) && $ok;
     $ok = $osOk && $ok;
@@ -638,7 +641,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Device',
             $startString,
             $browser->getCapability('model_name'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('model_name'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('model_name'))),
             $vollBrowser
         ) && $ok;
     $ok = $deviceOk && $ok;
@@ -650,7 +653,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Desktop',
             $startString,
             $browser->getVirtualCapability('is_full_desktop'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_full_desktop'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_full_desktop'))),
             $vollBrowser
         ) && $ok;
 
@@ -661,7 +664,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'TV',
             $startString,
             $browser->getCapability('is_smarttv'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_smarttv'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_smarttv'))),
             $vollBrowser
         ) && $ok;
 
@@ -672,7 +675,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Mobile',
             $startString,
             $browser->getVirtualCapability('is_mobile'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_mobile'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_mobile'))),
             $vollBrowser
         ) && $ok;
 
@@ -685,7 +688,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
                 'WurflKey',
                 $startString,
                 $browser->getCapability('wurflKey', true),
-                array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->id)),
+                array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->id)),
                 $vollBrowser
             ) && $ok;
     } catch (\InvalidArgumentException $e) {
@@ -699,7 +702,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Tablet',
             $startString,
             $browser->getCapability('is_tablet'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_tablet'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_tablet'))),
             $vollBrowser
         ) && $ok;
 
@@ -709,7 +712,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Bot',
             $startString,
             $browser->getVirtualCapability('is_robot'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_robot'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_robot'))),
             $vollBrowser
         ) && $ok;
 
@@ -719,7 +722,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Device Typ',
             $startString,
             $browser->getCapability('device_type'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('form_factor'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('form_factor'))),
             $vollBrowser
         ) && $ok;
 
@@ -729,7 +732,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Console',
             $startString,
             $browser->getCapability('is_console'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_console'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_console'))),
             $vollBrowser
         ) && $ok;
 
@@ -739,7 +742,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Transcoder',
             $startString,
             $browser->getCapability('is_transcoder'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_transcoder'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_transcoder'))),
             $vollBrowser
         ) && $ok;
 
@@ -749,7 +752,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Syndication-Reader',
             $startString,
             $browser->getCapability('is_syndication_reader'),
-            array($targets[7] => null),
+            array($modules[7]['name'] => null),
             $vollBrowser
         ) && $ok;
 
@@ -759,7 +762,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Browser Typ',
             $startString,
             $browser->getCapability('browser_type'),
-            array($targets[7] => null),
+            array($modules[7]['name'] => null),
             $vollBrowser
         ) && $ok;
 
@@ -769,7 +772,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Device-Hersteller',
             $startString,
             $browser->getCapability('manufacturer_name'),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability('manufacturer_name'))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('manufacturer_name'))),
             $vollBrowser
         ) && $ok;
 
@@ -779,7 +782,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Browser-Hersteller',
             $startString,
             $browser->getCapability('mobile_browser_manufacturer', true),
-            array($targets[7] => null),
+            array($modules[7]['name'] => null),
             $vollBrowser
         ) && $ok;
 
@@ -789,7 +792,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'OS-Hersteller',
             $startString,
             $browser->getCapability('device_os_manufacturer', true),
-            array($targets[7] => null),
+            array($modules[7]['name'] => null),
             $vollBrowser
         ) && $ok;
 
@@ -799,7 +802,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             'Engine-Hersteller',
             $startString,
             $browser->getCapability('renderingengine_manufacturer', true),
-            array($targets[7] => null),
+            array($modules[7]['name'] => null),
             $vollBrowser
         ) && $ok;
 
@@ -1008,7 +1011,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             $label,
             $startString,
             $browser->getCapability($key, true),
-            array($targets[7] => ($deviceOrig === null ? null : $deviceOrig->getCapability($key))),
+            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability($key))),
             $vollBrowser
         );
 
@@ -1039,7 +1042,7 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
         $fullTime = microtime(true) - $startTime;
 
         $content .= $startString . 'Time:   Detection (BrowserDetectorModule)' . str_repeat(' ', 60 - strlen('BrowserDetectorModule')) . ':' . number_format($detectionBrowserDetectorTime, 10, ',', '.') . ' Sek.' . "\n";
-        $content .= $startString . '        Detection (' . $targets[7] . ')' . str_repeat(' ', 60 - strlen($targets[7])) . ':' . number_format($detectionWurflTime, 10, ',', '.') . ' Sek.' . "\n";
+        $content .= $startString . '        Detection (' . $modules[7]['name'] . ')' . str_repeat(' ', 60 - strlen($modules[7]['name'])) . ':' . number_format($detectionWurflTime, 10, ',', '.') . ' Sek.' . "\n";
         $content .= $startString . '        Complete                         :' . number_format($fullTime, 10, ',', '.') . ' Sek.' . "\n";
         $content .= $startString . '        Absolute TOTAL                   :' . formatTime(microtime(true) - START_TIME) . "\n";
     } else {
