@@ -20,6 +20,12 @@
         "issues": "https://github.com/mimmi20/ua-comparator/issues",
         "source": "https://github.com/mimmi20/ua-comparator"
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url":  "https://github.com/mimmi20/uasparser.git"
+        }
+    ],
     "require": {
         "php": ">= 5.5.0",
         "symfony/console": "2.4.*",
@@ -30,7 +36,7 @@
         "mimmi20/wurflcache": "*",
         "mimmi20/wurfl-data": "dev-master",
         "ua-parser/uap-php": "dev-master",
-        "synchro/uasparser": "v0.53",
+        "synchro/uasparser": "dev-master",
         "browscap/browscap-php": "3.x@dev",
         "crossjoin/browscap": "dev-master",
         "wurfl/wurfl-api": "dev-master"

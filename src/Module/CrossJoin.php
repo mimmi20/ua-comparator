@@ -31,7 +31,7 @@
 namespace UaComparator\Module;
 
 use BrowserDetector\BrowserDetector;
-use Crossjoin\Browscap\Browscap;
+use Crossjoin\Browscap\Browscap as CrBrowscap;
 use Crossjoin\Browscap\Cache\File;
 use Crossjoin\Browscap\Updater\Local;
 use Monolog\Logger;
@@ -101,14 +101,14 @@ class CrossJoin implements ModuleInterface
         $this->cache  = $cache;
 
         File::setCacheDirectory('data/cache/crossjoin/');
-        Browscap::setDatasetType(Browscap::DATASET_TYPE_LARGE);
+        CrBrowscap::setDatasetType(CrBrowscap::DATASET_TYPE_LARGE);
 
         $updater = new Local();
         $updater->setOption('LocalFile', $iniFile);
-        Browscap::setUpdater($updater);
-        Browscap::update(true);
+        CrBrowscap::setUpdater($updater);
+        CrBrowscap::update(true);
 
-        $parser = new Browscap();
+        $parser = new CrBrowscap();
 
         $this->input = new BrowserDetector();
         $this->input->setInterface(new \UaComparator\Input\CrossJoin());

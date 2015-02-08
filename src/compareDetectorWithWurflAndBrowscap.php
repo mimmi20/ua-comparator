@@ -131,7 +131,6 @@ $browscapModule
     ->setId(9)
     ->setName('Browscap-PHP')
 ;
-$browscapModule->getInput()->getInterface()->getParser()->convertFile($iniFile);
 
 $collection->addModule($browscapModule);
 
@@ -171,7 +170,7 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
 
 /*******************************************************************************
  * UASParser
- */
+ *
 
 echo 'initializing UASParser ...';
 
@@ -225,9 +224,12 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
  */
 
 echo 'initializing all Modules ...';
-
-$collection->init();
-
+try {
+    $collection->init();
+} catch (\Exception $e) {
+    echo $e;
+    exit;
+}
 echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
@@ -323,7 +325,15 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $detectionGbmoTime            = $modules[9]['time'];
     $detectionCrossjoinTime       = $modules[10]['time'];
     $detectionUaparserTime        = $modules[5]['time'];
-    $detectionUasparserTime       = $modules[6]['time'];
+    //$detectionUasparserTime       = $modules[6]['time'];
+
+    $browser         = $modules[0]['result'];
+    $deviceOrig      = $modules[7]['result'];
+    $device          = $modules[11]['result'];
+    $gbmo            = $modules[9]['result'];
+    $crossjoinResult = $modules[10]['result'];
+    $parserResult    = $modules[5]['result'];
+    //$uasParserResult = $modules[6]['result'];
 
     /***************************************************************************
      * handle modules - end

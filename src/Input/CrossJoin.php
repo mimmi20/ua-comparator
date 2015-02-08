@@ -69,7 +69,7 @@ class CrossJoin extends AbstractBrowscapInput
      * sets the main parameters to the parser
      *
      * @throws \UnexpectedValueException
-     * @return Browscap
+     * @return \Crossjoin\Browscap\Browscap
      */
     protected function initParser()
     {
@@ -82,7 +82,7 @@ class CrossJoin extends AbstractBrowscapInput
         if (null !== $this->localFile) {
             $updater = new Local();
             $updater->setOption('LocalFile', $this->localFile);
-            Browscap::setUpdater($updater);
+            CrBrowscap::setUpdater($updater);
         }
 
         return $this->parser;

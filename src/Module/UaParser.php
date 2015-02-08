@@ -36,7 +36,6 @@ use UAParser\Parser;
 use UAParser\Result\Client;
 use WurflCache\Adapter\AdapterInterface;
 use BrowserDetector\Detector\Result;
-use BrowserDetector\Detector\Version;
 use UaComparator\Helper\InputMapper;
 
 /**

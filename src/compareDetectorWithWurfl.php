@@ -170,10 +170,10 @@ echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_fo
 
 $i       = 1;
 $count   = 0;
-$aLength = SECOND_COL_LENGTH + 1 + COL_LENGTH + 1 + (count($targets) * (COL_LENGTH + 1));
+$aLength = SECOND_COL_LENGTH + 1 + COL_LENGTH + 1 + ($collection->count() - 1 * (COL_LENGTH + 1));
 
 
-echo str_repeat('+', FIRST_COL_LENGTH + $aLength + count($targets) + 2) . "\n";
+echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2) . "\n";
 
 $oldMemery = 0;
 $okfound   = 0;
@@ -219,7 +219,7 @@ foreach ($files as $path) {
 
         while ($internalLoader->isValid()) {
             try {
-                handleLine($internalLoader->getLine(), $collection, $targets, $logger, $i);
+                handleLine($internalLoader->getLine(), $collection, $logger, $i);
             } catch (\Exception $e) {
                 if (1 === $e->getCode()) {
                     $nokfound++;
@@ -269,7 +269,7 @@ foreach ($files as $path) {
 
         foreach ($lines as $line) {
             try {
-                handleLine($line, $collection, $targets, $logger, $i);
+                handleLine($line, $collection, $logger, $i);
             } catch (\Exception $e) {
                 if (1 === $e->getCode()) {
                     $nokfound++;
@@ -310,7 +310,7 @@ foreach ($files as $path) {
     }
 }
 
-echo "\n" . str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', count($targets)) . '+' . str_repeat('-', $aLength) . "\n";
+echo "\n" . str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n";
 
 $content = '#plus# + detected|' . "\n"
     . '#percent1# % +|' . "\n"
@@ -356,7 +356,7 @@ asort($weights['browsers'], SORT_NUMERIC);
 asort($weights['engine'], SORT_NUMERIC);
 asort($weights['os'], SORT_NUMERIC);
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', count($targets) + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
 echo 'Weight of Device Manufacturers' . "\n";
 
 $weights['manufacturers'] = array_reverse($weights['manufacturers']);
@@ -365,7 +365,7 @@ foreach ($weights['manufacturers'] as $manufacturer => $weight) {
     echo substr(str_repeat(' ', $len) . $manufacturer, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', count($targets) + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
 echo 'Weight of Devices' . "\n";
 
 $weights['devices'] = array_reverse($weights['devices']);
@@ -374,7 +374,7 @@ foreach ($weights['devices'] as $device => $weight) {
     echo substr(str_repeat(' ', $len) . $device, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', count($targets) + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
 echo 'Weight of Browsers' . "\n";
 
 $weights['browsers'] = array_reverse($weights['browsers']);
@@ -383,7 +383,7 @@ foreach ($weights['browsers'] as $browser => $weight) {
     echo substr(str_repeat(' ', $len) . $browser, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', count($targets) + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
 echo 'Weight of Rendering Engines' . "\n";
 
 $weights['engine'] = array_reverse($weights['engine']);
@@ -392,7 +392,7 @@ foreach ($weights['engine'] as $engine => $weight) {
     echo substr(str_repeat(' ', $len) . $engine, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', count($targets) + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
 echo 'Weight of Platforms' . "\n";
 
 $weights['os'] = array_reverse($weights['os']);
@@ -401,24 +401,31 @@ foreach ($weights['os'] as $os => $weight) {
     echo substr(str_repeat(' ', $len) . $os, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', count($targets) + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
 
 // End
-echo str_repeat('+', FIRST_COL_LENGTH + $aLength + count($targets) + 2) . "\n";
+echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2) . "\n";
 
-function formatMessage(&$content, &$matches, $property, $start, $reality, array $targets, $browser)
+/**
+ * @param string                                $content
+ * @param array                                 $matches
+ * @param string                                $propertyTitel
+ * @param string                                $propertyName
+ * @param \UaComparator\Module\ModuleCollection $collection
+ *
+ * @return bool
+ */
+function formatMessage(&$content, &$matches, $propertyTitel, $propertyName, ModuleCollection $collection, $start = '')
 {
     static $allErrors = array();
 
-    $startcolor = COLOR_START_GREEN;
-    $endcolor   = COLOR_END;
-    $mismatch   = false;
-    $passed     = true;
-    $start      = substr($start, 0, -1 * (2 + count($targets)));
-    $testresult = '|';
-    $property   = trim($property);
-
-    $detectionMessage = array(0 => '');
+    $mismatch      = false;
+    $passed        = true;
+    $testresult    = '|';
+    $prefix        = ' ';
+    $propertyTitel = trim($propertyTitel);
+    $reality       = $collection[0]->getDetectionResult()->getCapability($propertyName);
+    $start         = substr($start, 0, -1 * (1 + $collection->count()));
 
     if (null === $reality || 'null' === $reality) {
         $strReality = '(NULL)';
@@ -432,9 +439,15 @@ function formatMessage(&$content, &$matches, $property, $start, $reality, array 
         $strReality = (string) $reality;
     }
 
-    $tooLong = false;
+    $detectionMessage = array(0 => str_pad($prefix . $strReality, COL_LENGTH, ' ') . '|');
 
-    foreach ($targets as $targetName => $target) {
+    foreach (array_keys($collection->getModules()) as $id) {
+        if (0 === $id) {
+            continue;
+        }
+
+        $target = $collection[$id]->getDetectionResult()->getCapability($propertyName);
+
         if (null === $target || 'null' === $target) {
             $strTarget = '(NULL)';
         } elseif ('' === $target) {
@@ -461,7 +474,7 @@ function formatMessage(&$content, &$matches, $property, $start, $reality, array 
             //$passed = false;
             $startcolor = COLOR_START_RED;
 
-            if (isset($allErrors[$targetName][$browser][$property])) {
+            if (isset($allErrors[$collection[$id]->getName()][$propertyTitel])) {
                 $passed = false;
                 $r      = ':';
                 $r1     = ':';
@@ -488,35 +501,21 @@ function formatMessage(&$content, &$matches, $property, $start, $reality, array 
         $testresult .= $r;
         $matches[]   = $r1;
 
-        if (!isset($allErrors[$targetName][$browser][$property])
+        if (!isset($allErrors[$collection[$id]->getName()][$propertyTitel])
             && $mismatch
         ) {
-            $allErrors[$targetName][$browser][$property] = $reality;
+            $allErrors[$collection[$id]->getName()][$propertyTitel] = $reality;
         }
 
-        $prefix  = $r1;
-        $tooLong = $tooLong || (strlen($strTarget) > COL_LENGTH);
-
-        $detectionMessage[] = str_pad($prefix . $strTarget, COL_LENGTH, ' ') . '|';
+        $detectionMessage[] = str_pad($r1 . $strTarget, COL_LENGTH, ' ') . '|';
     }
 
-    $prefix  = ' ';
-    $tooLong = $tooLong || (strlen($strReality) > COL_LENGTH);
-    if ($tooLong) {
-        $startcolor = COLOR_START_RED;
-    }
+    $prefix = ' ';
 
     $detectionMessage[0] = str_pad($prefix . $strReality, COL_LENGTH, ' ') . '|';
 
-    $start .= $testresult . '|';
-
-    if (true || false !== strpos('WINNT', PHP_OS)) {
-        $startcolor = '';
-        $endcolor = '';
-    }
-
-    $content .= $startcolor . $start . substr(str_repeat(' ', SECOND_COL_LENGTH)
-        . $property, -1 * SECOND_COL_LENGTH) . '|' . implode('', $detectionMessage) . $endcolor
+    $content .= $start . $testresult . '|' . substr(str_repeat(' ', SECOND_COL_LENGTH)
+        . $propertyTitel, -1 * SECOND_COL_LENGTH) . '|' . implode('', $detectionMessage)
         . "\n";
 
     return $passed;
@@ -543,49 +542,33 @@ function formatTime($time)
 /**
  * @param string                                $agent
  * @param \UaComparator\Module\ModuleCollection $collection
- * @param array                                 $targets
  * @param \Monolog\Logger                       $logger
  * @param integer                               $i
  *
  * @throws \Exception
  */
-function handleLine($agent, ModuleCollection $collection, array $targets, Logger $logger, $i)
+function handleLine($agent, ModuleCollection $collection, Logger $logger, $i)
 {
     $colorStart = '';
     $colorEnd   = '';
-    reset($targets);
 
     $startTime = microtime(true);
     $content   = '';
     $ok        = true;
     $matches   = array();
-    $modules   = array();
-    $aLength   = SECOND_COL_LENGTH + 1 + COL_LENGTH + 1 + (count($targets) * (COL_LENGTH + 1));
+    $aLength   = SECOND_COL_LENGTH + 1 + ($collection->count() * (COL_LENGTH + 1));
 
     /***************************************************************************
      * handle modules
      */
 
-    foreach ($collection->getModules() as $module) {
+    foreach ($collection as $module) {
         $module
             ->startTimer()
             ->detect($agent)
             ->endTimer()
         ;
-
-        $modules[$module->getId()] = array(
-            'name'   => $module->getName(),
-            'time'   => $module->getTime(),
-            'result' => $module->getDetectionResult(),
-        );
     }
-
-    $detectionBrowserDetectorTime = $modules[0]['time'];
-    $detectionWurflTime           = $modules[11]['time'];
-    $detectionWurflOrigTime       = $modules[7]['time'];
-
-    $browser    = $modules[0]['result'];
-    $deviceOrig = $modules[7]['result'];
 
     /***************************************************************************
      * handle modules - end
@@ -595,101 +578,107 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
      * Auswertung
      */
 
-    $vollBrowser = $browser->getComparationName();
+    $content .= "\n";
+    $content .= str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n";
+
+    $content .= str_pad($i, FIRST_COL_LENGTH, ' ', STR_PAD_LEFT) . '|' . str_repeat('-', $collection->count() - 1) . '|' . str_repeat('-', SECOND_COL_LENGTH) . '|';
+    foreach ($collection as $target) {
+        $content .= str_repeat('-', COL_LENGTH) . '|';
+    }
+    $content .= "\n";
+    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '| ' . $agent . "\n";
+
+    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat(' ', SECOND_COL_LENGTH) . '|';
+    foreach ($collection as $target) {
+        $content .= str_pad($target->getName(), COL_LENGTH, ' ', STR_PAD_RIGHT) . '|';
+    }
+    $content .= "\n";
 
     $mode = Version::MAJORMINOR;
 
-    $startString = '#count#x found|' . str_repeat(' ', count($targets)) . '|';
+    $startString = '#plus# + detected|' . str_repeat(' ', $collection->count() - 1) . '|';
     $browserOk = formatMessage(
             $content,
             $matches,
             'Browser',
-            $startString,
-            $browser->getVirtualCapability('advertised_browser') . ' ' . $browser->getVirtualCapability('advertised_browser_version'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('advertised_browser'))),
-            $vollBrowser
+            'mobile_browser',
+            $collection,
+            $startString
         ) && $ok;
     $ok = $browserOk && $ok;
-
-    $startString = '#plus# + detected|' . str_repeat(' ', count($targets)) . '|';
+/*
+    $startString = '#plus# + detected|' . str_repeat(' ', $collection->count() - 1) . '|';
     $ok = formatMessage(
             $content,
             $matches,
             'Engine',
-            $startString,
-            $browser->getFullEngine($mode),
-            array($modules[7]['name'] => null),
-            $vollBrowser
+            '',
+            $collection,
+            $startString
         ) && $ok;
-
-    $startString = '#percent1# % +|' . str_repeat(' ', count($targets)) . '|';
+/**/
+    $startString = '#percent1# % +|' . str_repeat(' ', $collection->count() - 1) . '|';
     $osOk = formatMessage(
             $content,
             $matches,
             'OS',
-            $startString,
-            $browser->getVirtualCapability('advertised_device_os'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('advertised_device_os'))),
-            $vollBrowser
+            'device_os',
+            $collection,
+            $startString
         ) && $ok;
     $ok = $osOk && $ok;
 
-    $startString = '#minus# - detected|' . str_repeat(' ', count($targets)) . '|';
+    $startString = '#minus# - detected|' . str_repeat(' ', $collection->count() - 1) . '|';
     $deviceOk = formatMessage(
             $content,
             $matches,
             'Device',
-            $startString,
-            $browser->getCapability('model_name'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('model_name'))),
-            $vollBrowser
+            'model_name',
+            $collection,
+            $startString
         ) && $ok;
     $ok = $deviceOk && $ok;
-
-    $startString = '#percent2# % -|' . str_repeat(' ', count($targets)) . '|';
+/*
+    $startString = '#percent2# % -|' . str_repeat(' ', $collection->count() - 1) . '|';
     $ok = formatMessage(
             $content,
             $matches,
             'Desktop',
-            $startString,
-            $browser->getVirtualCapability('is_full_desktop'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_full_desktop'))),
-            $vollBrowser
+            'is_full_desktop',
+            $collection,
+            $startString
         ) && $ok;
-
-    $startString = '#soso# : detected|' . str_repeat(' ', count($targets)) . '|';
+/**/
+    $startString = '#soso# : detected|' . str_repeat(' ', $collection->count() - 1) . '|';
     $ok = formatMessage(
             $content,
             $matches,
             'TV',
-            $startString,
-            $browser->getCapability('is_smarttv'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_smarttv'))),
-            $vollBrowser
+            'is_smarttv',
+            $collection,
+            $startString
         ) && $ok;
-
-    $startString = '#percent3# % :|' . str_repeat(' ', count($targets)) . '|';
+/*
+    $startString = '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|';
     $ok = formatMessage(
             $content,
             $matches,
             'Mobile',
-            $startString,
-            $browser->getVirtualCapability('is_mobile'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_mobile'))),
-            $vollBrowser
+            'is_mobile',
+            $collection,
+            $startString
         ) && $ok;
-
-    $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', count($targets)) . '|';
+/**/
+    $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|';
 
     try {
         $ok = formatMessage(
                 $content,
                 $matches,
                 'WurflKey',
-                $startString,
-                $browser->getCapability('wurflKey', true),
-                array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->id)),
-                $vollBrowser
+                'wurflKey',
+                $collection,
+                $startString
             ) && $ok;
     } catch (\InvalidArgumentException $e) {
         $logger->error($e);
@@ -700,110 +689,99 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             $content,
             $matches,
             'Tablet',
-            $startString,
-            $browser->getCapability('is_tablet'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_tablet'))),
-            $vollBrowser
+            'is_tablet',
+            $collection,
+            $startString
         ) && $ok;
-
+/*
     $ok = formatMessage(
             $content,
             $matches,
             'Bot',
-            $startString,
-            $browser->getVirtualCapability('is_robot'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('is_robot'))),
-            $vollBrowser
+            'is_robot',
+            $collection,
+            $startString
         ) && $ok;
 
     $ok = formatMessage(
             $content,
             $matches,
             'Device Typ',
-            $startString,
-            $browser->getCapability('device_type'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getVirtualCapability('form_factor'))),
-            $vollBrowser
+            'device_type',
+            $collection,
+            $startString
         ) && $ok;
-
+/**/
     $ok = formatMessage(
             $content,
             $matches,
             'Console',
-            $startString,
-            $browser->getCapability('is_console'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_console'))),
-            $vollBrowser
+            'is_console',
+            $collection,
+            $startString
         ) && $ok;
 
     $ok = formatMessage(
             $content,
             $matches,
             'Transcoder',
-            $startString,
-            $browser->getCapability('is_transcoder'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('is_transcoder'))),
-            $vollBrowser
+            'is_transcoder',
+            $collection,
+            $startString
         ) && $ok;
 
     $ok = formatMessage(
             $content,
             $matches,
             'Syndication-Reader',
-            $startString,
-            $browser->getCapability('is_syndication_reader'),
-            array($modules[7]['name'] => null),
-            $vollBrowser
+            'is_syndication_reader',
+            $collection,
+            $startString
         ) && $ok;
 
     $ok = formatMessage(
             $content,
             $matches,
             'Browser Typ',
-            $startString,
-            $browser->getCapability('browser_type'),
-            array($modules[7]['name'] => null),
-            $vollBrowser
+            'browser_type',
+            $collection,
+            $startString
         ) && $ok;
 
     $ok = formatMessage(
             $content,
             $matches,
             'Device-Hersteller',
-            $startString,
-            $browser->getCapability('manufacturer_name'),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability('manufacturer_name'))),
-            $vollBrowser
+            'manufacturer_name',
+            $collection,
+            $startString
         ) && $ok;
 
     $ok = formatMessage(
             $content,
             $matches,
             'Browser-Hersteller',
-            $startString,
-            $browser->getCapability('mobile_browser_manufacturer', true),
-            array($modules[7]['name'] => null),
-            $vollBrowser
+            'mobile_browser_manufacturer',
+            $collection,
+            $startString
         ) && $ok;
 
     $ok = formatMessage(
             $content,
             $matches,
             'OS-Hersteller',
-            $startString,
-            $browser->getCapability('device_os_manufacturer', true),
-            array($modules[7]['name'] => null),
-            $vollBrowser
+            'device_os_manufacturer',
+            $collection,
+            $startString
         ) && $ok;
 
     $ok = formatMessage(
             $content,
             $matches,
             'Engine-Hersteller',
-            $startString,
-            $browser->getCapability('renderingengine_manufacturer', true),
-            array($modules[7]['name'] => null),
-            $vollBrowser
+            'renderingengine_manufacturer',
+            $collection,
+            $startString
         ) && $ok;
 
     $checks = array();
@@ -1009,10 +987,9 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
             $returnContent,
             $returnMatches,
             $label,
-            $startString,
-            $browser->getCapability($key, true),
-            array($modules[7]['name'] => ($deviceOrig === null ? null : $deviceOrig->getCapability($key))),
-            $vollBrowser
+            $key,
+            $collection,
+            $startString
         );
 
         $ok = $checkOk && $ok;
@@ -1024,25 +1001,22 @@ function handleLine($agent, ModuleCollection $collection, array $targets, Logger
     }
     /**/
 
-    if (!$ok
-        // || ($i <= 5)
-        || (false !== stripos($browser->getCapability('mobile_browser'), 'general'))
-        || (false !== stripos($browser->getCapability('mobile_browser'), 'unknown'))
-    ) {
-        $content = "\n" . str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', count($targets)) . '+' . str_repeat('-', $aLength) . "\n" . $content;
+    if (!$ok) {
+        $content = "\n" . str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n" . $content;
 
-        reset($targets);
-        $content .= $colorStart . str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', count($targets)) . '|' . str_repeat('-', SECOND_COL_LENGTH) . '|' . str_repeat('-', COL_LENGTH) . '|';
-        foreach ($targets as $target) {
+        $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat('-', SECOND_COL_LENGTH) . '|' . str_repeat('-', COL_LENGTH) . '|';
+        foreach ($collection as $target) {
             $content .= str_repeat('-', COL_LENGTH) . '|';
         }
-        $content .= $colorEnd . "\n";
-        $content .= $colorStart . str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', count($targets)) . '|' . $colorEnd . "\n";
+        $content .= "\n";
+        $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . "\n";
 
         $fullTime = microtime(true) - $startTime;
 
-        $content .= $startString . 'Time:   Detection (BrowserDetectorModule)' . str_repeat(' ', 60 - strlen('BrowserDetectorModule')) . ':' . number_format($detectionBrowserDetectorTime, 10, ',', '.') . ' Sek.' . "\n";
-        $content .= $startString . '        Detection (' . $modules[7]['name'] . ')' . str_repeat(' ', 60 - strlen($modules[7]['name'])) . ':' . number_format($detectionWurflTime, 10, ',', '.') . ' Sek.' . "\n";
+        $content .= $startString . 'Time:' . "\n";
+        foreach ($collection as $target) {
+            $content .= $startString . '        Detection (' . $target->getName() . ')' . str_repeat(' ', 60 - strlen($target->getName())) . ':' . number_format($target->getTime(), 10, ',', '.') . ' Sek.' . "\n";
+        }
         $content .= $startString . '        Complete                         :' . number_format($fullTime, 10, ',', '.') . ' Sek.' . "\n";
         $content .= $startString . '        Absolute TOTAL                   :' . formatTime(microtime(true) - START_TIME) . "\n";
     } else {

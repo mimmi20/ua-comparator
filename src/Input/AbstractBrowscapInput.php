@@ -33,7 +33,7 @@ namespace UaComparator\Input;
 use BrowserDetector\Input\Core;
 use BrowserDetector\Input\Exception;
 use BrowserDetector\Detector\Result;
-use UaComparator\Detector\Version;
+use BrowserDetector\Detector\Version;
 use UaComparator\Helper\InputMapper;
 
 /**
@@ -92,7 +92,7 @@ abstract class AbstractBrowscapInput extends Core
     /**
      * Gets the information about the browser by User Agent
      *
-     * @return \UaComparator\Detector\Result the object containing the browsers details.
+     * @return \BrowserDetector\Detector\Result the object containing the browsers details.
      * @throws \UnexpectedValueException
      */
     public function getBrowser()
