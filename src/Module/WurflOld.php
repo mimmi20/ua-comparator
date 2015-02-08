@@ -91,7 +91,7 @@ class WurflOld implements ModuleInterface
     private $id = 0;
 
     /**
-     * @var mixed
+     * @var \WURFL_CustomDevice|null
      */
     private $detectionResult = null;
 
@@ -122,6 +122,23 @@ class WurflOld implements ModuleInterface
         $device = $this->getDetectionResult();
         $device->getAllCapabilities();
 
+        // Create WURFL Configuration from an XML config file
+        $wurflConfigOrig  = new \WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
+        $wurflCacheOrig   = new \WURFL_Storage_Memory();
+        $wurflStorageOrig = new \WURFL_Storage_File(array(\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
+
+        // Create a WURFL Manager Factory from the WURFL Configuration
+        $wurflManagerFactoryOrig = new \WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
+        ini_set('max_input_time', '6000');
+        // Create a WURFL Manager
+        $wurflManagerOrig = $wurflManagerFactoryOrig->create();
+
+        foreach ($wurflManagerOrig->getAllDevicesID() as $deviceId) {
+            $result = $wurflManagerOrig->getDevice($deviceId);
+
+            $this->storeProperties($result);
+        }
+
         return $this;
     }
 
@@ -142,6 +159,8 @@ class WurflOld implements ModuleInterface
         ini_set('max_input_time', '6000');
         // Create a WURFL Manager
         $wurflManagerOrig = $wurflManagerFactoryOrig->create();
+
+        $wurflManagerOrig->getAllDevicesID();
 
         try {
             $this->detectionResult = $wurflManagerOrig->getDeviceForUserAgent($agent);
@@ -921,5 +940,19 @@ class WurflOld implements ModuleInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @var \WURFL_CustomDevice $deviceOrig
+     */
+    private function storeProperties(WURFL_CustomDevice $deviceOrig = null)
+    {
+        if (null !== $deviceOrig && !file_exists('data/browser/' . $deviceOrig->id . '.php')) {
+            $props = $deviceOrig->getAllCapabilities();
+
+            $content   = "<?php\nreturn " . var_export($props, true) . ";\n";
+
+            file_put_contents('data/browser/' . $deviceOrig->id . '.php', $content);
+        }
     }
 }

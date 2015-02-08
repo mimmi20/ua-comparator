@@ -10,15 +10,15 @@
  */
 
 use BrowscapPHP\Helper\IniLoader;
-use BrowserDetector\Detector\Version;
 use UaComparator\Helper\LoggerFactory;
+use UaComparator\Helper\MessageFormatter;
+use UaComparator\Helper\TimeFormatter;
 use UaComparator\Module\BrowserDetectorModule;
 use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\Wurfl;
 use UaComparator\Module\WurflOld;
 use WurflCache\Adapter\File;
 use Monolog\Logger;
-use WurflCache\Adapter\NullStorage;
 
 echo 'initializing App ...';
 
@@ -58,7 +58,7 @@ setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
 $targets = array();
 
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
  * Logger
@@ -68,7 +68,7 @@ echo 'initializing Logger ...';
 /** @var \Monolog\Logger $logger */
 $logger = LoggerFactory::create();
 
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 $collection = new ModuleCollection();
 
@@ -86,7 +86,7 @@ $detectorModule
 
 $collection->addModule($detectorModule);
 
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
  * WURFL - PHP 5.3 port
@@ -104,7 +104,7 @@ $wurflModule
 
 $collection->addModule($wurflModule);
 
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
  * WURFL - PHP 5.2 original
@@ -121,7 +121,7 @@ $oldWurflModule
 
 $collection->addModule($oldWurflModule);
 
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
  * init
@@ -131,38 +131,7 @@ echo 'initializing all Modules ...';
 
 $collection->init();
 
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-
-/*******************************************************************************
- * Database
- *
-echo 'initializing Database ...';
-
-$dsn      = 'mysql:dbname=browscap;host=localhost';
-$user     = 'root';
-$password = '';
-
-$adapter = new PDO($dsn, $user, $password);
-$adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
-
-/*******************************************************************************
- * loading Agents
- *
-echo 'loading agents ...';
-
-$sql = 'SELECT DISTINCT SQL_BIG_RESULT SQL_CACHE HIGH_PRIORITY `idAgents`, `agent`, `count`, `created`, `file` '
-    . 'FROM `agents`'
-    //. ' WHERE `agent` LIKE "%GT-I91%"'
-    . ' ORDER BY `count` DESC, `idAgents` DESC'
-    // . ' LIMIT 100'
-;
-
-$stmt = $adapter->prepare($sql);
-$stmt->execute();
-
-echo ' - ready ' . formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
  * Loop
@@ -172,6 +141,11 @@ $i       = 1;
 $count   = 0;
 $aLength = SECOND_COL_LENGTH + 1 + COL_LENGTH + 1 + ($collection->count() - 1 * (COL_LENGTH + 1));
 
+$messageFormatter = new MessageFormatter();
+$messageFormatter
+    ->setCollection($collection)
+    ->setColumnsLength(COL_LENGTH)
+;
 
 echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2) . "\n";
 
@@ -219,7 +193,7 @@ foreach ($files as $path) {
 
         while ($internalLoader->isValid()) {
             try {
-                handleLine($internalLoader->getLine(), $collection, $logger, $i);
+                handleLine($internalLoader->getLine(), $collection, $logger, $messageFormatter, $i);
             } catch (\Exception $e) {
                 if (1 === $e->getCode()) {
                     $nokfound++;
@@ -269,7 +243,7 @@ foreach ($files as $path) {
 
         foreach ($lines as $line) {
             try {
-                handleLine($line, $collection, $logger, $i);
+                handleLine($line, $collection, $logger, $messageFormatter, $i);
             } catch (\Exception $e) {
                 if (1 === $e->getCode()) {
                     $nokfound++;
@@ -407,151 +381,16 @@ echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->coun
 echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2) . "\n";
 
 /**
- * @param string                                $content
- * @param array                                 $matches
- * @param string                                $propertyTitel
- * @param string                                $propertyName
- * @param \UaComparator\Module\ModuleCollection $collection
- *
- * @return bool
- */
-function formatMessage(&$content, &$matches, $propertyTitel, $propertyName, ModuleCollection $collection, $start = '')
-{
-    static $allErrors = array();
-
-    $mismatch      = false;
-    $passed        = true;
-    $testresult    = '|';
-    $prefix        = ' ';
-    $propertyTitel = trim($propertyTitel);
-    $reality       = $collection[0]->getDetectionResult()->getCapability($propertyName);
-    $start         = substr($start, 0, -1 * (1 + $collection->count()));
-
-    if (null === $reality || 'null' === $reality) {
-        $strReality = '(NULL)';
-    } elseif ('' === $reality) {
-        $strReality = '(empty)';
-    } elseif (false === $reality || 'false' === $reality) {
-        $strReality = '(false)';
-    } elseif (true === $reality || 'true' === $reality) {
-        $strReality = '(true)';
-    } else {
-        $strReality = (string) $reality;
-    }
-
-    $detectionMessage = array(0 => str_pad($prefix . $strReality, COL_LENGTH, ' ') . '|');
-
-    foreach (array_keys($collection->getModules()) as $id) {
-        if (0 === $id) {
-            continue;
-        }
-
-        $target = $collection[$id]->getDetectionResult()->getCapability($propertyName);
-
-        if (null === $target || 'null' === $target) {
-            $strTarget = '(NULL)';
-        } elseif ('' === $target) {
-            $strTarget = '(empty)';
-        } elseif (false === $target || 'false' === $target) {
-            $strTarget = '(false)';
-        } elseif (true === $target || 'true' === $target) {
-            $strTarget = '(true)';
-        } else {
-            $strTarget = (string) $target;
-        }
-
-        if (strtolower($strTarget) === strtolower($strReality)) {
-            $r  = ' ';
-            $r1 = '+';
-        } elseif (((null === $reality) || ('' === $reality) || ('' === $strReality)) && ((null === $target) || ('' === $target))) {
-            $r  = ' '; //'?';
-            $r1 = '?';
-        } elseif ((null === $target) || ('' === $target) || ('' === $strTarget)) {
-            $r  = ' '; //'%';
-            $r1 = '%';
-        } else {
-            $mismatch = true;
-            //$passed = false;
-            $startcolor = COLOR_START_RED;
-
-            if (isset($allErrors[$collection[$id]->getName()][$propertyTitel])) {
-                $passed = false;
-                $r      = ':';
-                $r1     = ':';
-            } elseif ((strlen($strTarget) > strlen($strReality))
-                && (0 < strlen($strReality))
-                && (0 === strpos($strTarget, $strReality))
-            ) {
-                $passed = false;
-                $r      = '-';
-                $r1     = '<';
-            } elseif ((strlen($strTarget) < strlen($strReality))
-                && (0 < strlen($strTarget))
-                && (0 === strpos($strReality, $strTarget))
-            ) {
-                $r  = ' ';
-                $r1 = '>';
-            } else {
-                $passed = false;
-                $r      = '-';
-                $r1     = '-';
-            }
-        }
-
-        $testresult .= $r;
-        $matches[]   = $r1;
-
-        if (!isset($allErrors[$collection[$id]->getName()][$propertyTitel])
-            && $mismatch
-        ) {
-            $allErrors[$collection[$id]->getName()][$propertyTitel] = $reality;
-        }
-
-        $detectionMessage[] = str_pad($r1 . $strTarget, COL_LENGTH, ' ') . '|';
-    }
-
-    $prefix = ' ';
-
-    $detectionMessage[0] = str_pad($prefix . $strReality, COL_LENGTH, ' ') . '|';
-
-    $content .= $start . $testresult . '|' . substr(str_repeat(' ', SECOND_COL_LENGTH)
-        . $propertyTitel, -1 * SECOND_COL_LENGTH) . '|' . implode('', $detectionMessage)
-        . "\n";
-
-    return $passed;
-}
-
-function formatTime($time)
-{
-    $wochen = bcdiv((int)$time, 604800, 0);
-    $restwoche = bcmod((int)$time, 604800);
-    $tage = bcdiv($restwoche, 86400, 0);
-    $resttage = bcmod($restwoche, 86400);
-    $stunden = bcdiv($resttage, 3600, 0);
-    $reststunden = bcmod($resttage, 3600);
-    $minuten = bcdiv($reststunden, 60, 0);
-    $sekunden = bcmod($reststunden, 60);
-
-    return substr('00' . $wochen, -2) . ' Wochen '
-        . substr('00' . $tage, -2) . ' Tage '
-        . substr('00' . $stunden, -2) . ' Stunden '
-        . substr('00' . $minuten, -2) . ' Minuten '
-        . substr('00' . $sekunden, -2) . ' Sekunden';
-}
-
-/**
  * @param string                                $agent
  * @param \UaComparator\Module\ModuleCollection $collection
  * @param \Monolog\Logger                       $logger
+ * @param \UaComparator\Helper\MessageFormatter $messageFormatter
  * @param integer                               $i
  *
  * @throws \Exception
  */
-function handleLine($agent, ModuleCollection $collection, Logger $logger, $i)
+function handleLine($agent, ModuleCollection $collection, Logger $logger, MessageFormatter $messageFormatter, $i)
 {
-    $colorStart = '';
-    $colorEnd   = '';
-
     $startTime = microtime(true);
     $content   = '';
     $ok        = true;
@@ -594,195 +433,190 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, $i)
     }
     $content .= "\n";
 
-    $mode = Version::MAJORMINOR;
+    $startString = '#plus# + detected|' . str_repeat(' ', $collection->count() - 1) . '|';
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Browser',
+        'mobile_browser',
+        $startString,
+        $ok
+    );
 
     $startString = '#plus# + detected|' . str_repeat(' ', $collection->count() - 1) . '|';
-    $browserOk = formatMessage(
-            $content,
-            $matches,
-            'Browser',
-            'mobile_browser',
-            $collection,
-            $startString
-        ) && $ok;
-    $ok = $browserOk && $ok;
-/*
-    $startString = '#plus# + detected|' . str_repeat(' ', $collection->count() - 1) . '|';
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Engine',
-            '',
-            $collection,
-            $startString
-        ) && $ok;
-/**/
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Engine',
+        'renderingengine_name',
+        $startString,
+        $ok
+    );
+
     $startString = '#percent1# % +|' . str_repeat(' ', $collection->count() - 1) . '|';
-    $osOk = formatMessage(
-            $content,
-            $matches,
-            'OS',
-            'device_os',
-            $collection,
-            $startString
-        ) && $ok;
-    $ok = $osOk && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'OS',
+        'device_os',
+        $startString,
+        $ok
+    );
 
     $startString = '#minus# - detected|' . str_repeat(' ', $collection->count() - 1) . '|';
-    $deviceOk = formatMessage(
-            $content,
-            $matches,
-            'Device',
-            'model_name',
-            $collection,
-            $startString
-        ) && $ok;
-    $ok = $deviceOk && $ok;
-/*
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Device',
+        'model_name',
+        $startString,
+        $ok
+    );
+
     $startString = '#percent2# % -|' . str_repeat(' ', $collection->count() - 1) . '|';
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Desktop',
-            'is_full_desktop',
-            $collection,
-            $startString
-        ) && $ok;
-/**/
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Desktop',
+        'ux_full_desktop',
+        $startString,
+        $ok
+    );
+
     $startString = '#soso# : detected|' . str_repeat(' ', $collection->count() - 1) . '|';
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'TV',
-            'is_smarttv',
-            $collection,
-            $startString
-        ) && $ok;
-/*
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'TV',
+        'is_smarttv',
+        $startString,
+        $ok
+    );
+
     $startString = '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|';
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Mobile',
-            'is_mobile',
-            $collection,
-            $startString
-        ) && $ok;
-/**/
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Mobile',
+        'is_wireless_device',
+        $startString,
+        $ok
+    );
+
     $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|';
 
     try {
-        $ok = formatMessage(
-                $content,
-                $matches,
-                'WurflKey',
-                'wurflKey',
-                $collection,
-                $startString
-            ) && $ok;
+        list($ok, $content, $matches) = $messageFormatter->formatMessage(
+            $content,
+            $matches,
+            'WurflKey',
+            'wurflKey',
+            $startString,
+            $ok
+        );
     } catch (\InvalidArgumentException $e) {
         $logger->error($e);
         $ok = false;
     }
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Tablet',
-            'is_tablet',
-            $collection,
-            $startString
-        ) && $ok;
-/*
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Bot',
-            'is_robot',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Tablet',
+        'is_tablet',
+        $startString,
+        $ok
+    );
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Device Typ',
-            'device_type',
-            $collection,
-            $startString
-        ) && $ok;
-/**/
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Console',
-            'is_console',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Bot',
+        'is_bot',
+        $startString,
+        $ok
+    );
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Transcoder',
-            'is_transcoder',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Device Typ',
+        'device_type',
+        $startString,
+        $ok
+    );
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Syndication-Reader',
-            'is_syndication_reader',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Console',
+        'is_console',
+        $startString,
+        $ok
+    );
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Browser Typ',
-            'browser_type',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Transcoder',
+        'is_transcoder',
+        $startString,
+        $ok
+    );
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Device-Hersteller',
-            'manufacturer_name',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Syndication-Reader',
+        'is_syndication_reader',
+        $startString,
+        $ok
+    );
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Browser-Hersteller',
-            'mobile_browser_manufacturer',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Browser Typ',
+        'browser_type',
+        $startString,
+        $ok
+    );
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'OS-Hersteller',
-            'device_os_manufacturer',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Device-Hersteller',
+        'manufacturer_name',
+        $startString,
+        $ok
+    );
 
-    $ok = formatMessage(
-            $content,
-            $matches,
-            'Engine-Hersteller',
-            'renderingengine_manufacturer',
-            $collection,
-            $startString
-        ) && $ok;
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Browser-Hersteller',
+        'mobile_browser_manufacturer',
+        $startString,
+        $ok
+    );
+
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'OS-Hersteller',
+        'device_os_manufacturer',
+        $startString,
+        $ok
+    );
+
+    list($ok, $content, $matches) = $messageFormatter->formatMessage(
+        $content,
+        $matches,
+        'Engine-Hersteller',
+        'renderingengine_manufacturer',
+        $startString,
+        $ok
+    );
 
     $checks = array();
 
@@ -983,16 +817,14 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, $i)
         $returnMatches = array();
         $returnContent = '';
 
-        $checkOk = formatMessage(
+        list($ok, $returnContent, $returnMatches) = $messageFormatter->formatMessage(
             $returnContent,
             $returnMatches,
             $label,
             $key,
-            $collection,
-            $startString
+            $startString,
+            $ok
         );
-
-        $ok = $checkOk && $ok;
 
         if (in_array('-', $returnMatches)) {
             $matches  = $matches + $returnMatches;
@@ -1018,7 +850,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, $i)
             $content .= $startString . '        Detection (' . $target->getName() . ')' . str_repeat(' ', 60 - strlen($target->getName())) . ':' . number_format($target->getTime(), 10, ',', '.') . ' Sek.' . "\n";
         }
         $content .= $startString . '        Complete                         :' . number_format($fullTime, 10, ',', '.') . ' Sek.' . "\n";
-        $content .= $startString . '        Absolute TOTAL                   :' . formatTime(microtime(true) - START_TIME) . "\n";
+        $content .= $startString . '        Absolute TOTAL                   :' . TimeFormatter::formatTime(microtime(true) - START_TIME) . "\n";
     } else {
         $content = '';
     }
