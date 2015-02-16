@@ -30,12 +30,12 @@
 
 namespace UaComparator\Module;
 
-use BrowserDetector\BrowserDetector;
-use Crossjoin\Browscap\Browscap;
 use Crossjoin\Browscap\Cache\File;
 use Crossjoin\Browscap\Updater\Local;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
+use Crossjoin\Browscap\Browscap as CrBrowscap;
+use UaComparator\Module\Mapper\Browscap as BrowscapMapper;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -52,11 +52,6 @@ class CrossJoin implements ModuleInterface
      * @var \Monolog\Logger
      */
     private $logger = null;
-
-    /**
-     * @var \BrowserDetector\BrowserDetector
-     */
-    private $input = null;
 
     /**
      * @var \WurflCache\Adapter\AdapterInterface
@@ -81,22 +76,12 @@ class CrossJoin implements ModuleInterface
         $this->cache  = $cache;
 
         File::setCacheDirectory('data/cache/crossjoin/');
-        Browscap::setDatasetType(Browscap::DATASET_TYPE_LARGE);
+        CrBrowscap::setDatasetType(CrBrowscap::DATASET_TYPE_LARGE);
 
         $updater = new Local();
         $updater->setOption('LocalFile', $iniFile);
-        Browscap::setUpdater($updater);
-        Browscap::update(true);
-
-        $parser = new Browscap();
-
-        $this->input = new BrowserDetector();
-        $this->input->setInterface(new \UaComparator\Input\CrossJoin());
-        $this->input->setLogger($logger);
-        $this->input->setCache($this->cache);
-        $this->input->setCachePrefix('crossjoin_');
-
-        $this->input->getInterface()->setParser($parser);
+        CrBrowscap::setUpdater($updater);
+        CrBrowscap::update(true);
     }
 
     /**
@@ -120,8 +105,11 @@ class CrossJoin implements ModuleInterface
      */
     public function detect($agent)
     {
-        $this->input->setAgent($agent);
-        return $this->input->getBrowser(true);
+        $parser       = new CrBrowscap();
+        $parserResult = (object) $parser->getBrowser($agent)->getData();
+        $mapper       = new BrowscapMapper();
+
+        return $mapper->map($parserResult)->setCapability('useragent', $agent);
     }
 
     /**
@@ -146,25 +134,5 @@ class CrossJoin implements ModuleInterface
         $this->timer = 0;
 
         return $duration;
-    }
-
-    /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\CrossJoin
-     */
-    public function setInput(BrowserDetector $input)
-    {
-        $this->input = $input;
-
-        return $this;
     }
 }

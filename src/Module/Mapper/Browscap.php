@@ -28,12 +28,10 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-namespace UaComparator\Input;
+namespace UaComparator\Module\Mapper;
 
-use BrowserDetector\Input\Core;
-use BrowserDetector\Input\Exception;
-use UaComparator\Detector\Result;
-use UaComparator\Detector\Version;
+use BrowserDetector\Detector\Result;
+use BrowserDetector\Detector\Version;
 use UaComparator\Helper\InputMapper;
 
 /**
@@ -45,103 +43,18 @@ use UaComparator\Helper\InputMapper;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-abstract class AbstractBrowscapInput extends Core
+class Browscap implements MapperInterface
 {
-    /**
-     * the location of the local ini file
-     *
-     * @var string
-     */
-    protected $localFile = null;
-
-    /**
-     * sets the name of the local file
-     *
-     * @param string $filename the file name
-     *
-     * @throws \BrowserDetector\Input\Exception
-     * @return void
-     */
-    public function setLocaleFile($filename)
-    {
-        if (empty($filename)) {
-            throw new Exception(
-                'the filename can not be empty', Exception::LOCAL_FILE_MISSING
-            );
-        }
-
-        $localFile = realpath($filename);
-
-        if (false === $localFile) {
-            throw new Exception(
-                'the filename is invalid: ' . $filename, Exception::LOCAL_FILE_MISSING
-            );
-        }
-
-        $this->localFile = $localFile;
-    }
-
-    /**
-     * sets the main parameters to the parser
-     *
-     * @throws \UnexpectedValueException
-     * @return \BrowscapPHP\Browscap
-     */
-    abstract protected function initParser();
-
-    /**
-     * Gets the information about the browser by User Agent
-     *
-     * @return \UaComparator\Detector\Result the object containing the browsers details.
-     * @throws \UnexpectedValueException
-     */
-    public function getBrowser()
-    {
-        throw new \UnexpectedValueException('need to be overwritten by the child classes');
-    }
-
-    /**
-     * checks the parser result for special keys
-     *
-     * @param \stdClass $allProperties  The parser result array
-     * @param string    $propertyName   The name of the property to detect
-     * @param boolean   $depended       If TRUE the parameter $dependingValue has to be set
-     * @param string    $dependingValue An master value
-     *
-     * @return string|integer|boolean The value of the detected property
-     */
-    protected function detectProperty(
-        \stdClass $allProperties, $propertyName, $depended = false,
-        $dependingValue = null
-    ) {
-        $propertyName  = strtolower($propertyName);
-        $propertyValue = (empty($allProperties->$propertyName) ? null : trim($allProperties->$propertyName));
-
-        if (empty($propertyValue)
-            || '' == $propertyValue
-        ) {
-            $propertyValue = null;
-        }
-
-        if ($depended && null !== $propertyValue && !$dependingValue) {
-            $propertyValue = null;
-        }
-
-        return $propertyValue;
-    }
-
     /**
      * Gets the information about the browser by User Agent
      *
      * @param \stdClass $parserResult
      *
-     * @return \UaComparator\Detector\Result the object containing the browsers details.
+     * @return \BrowserDetector\Detector\Result the object containing the browsers details.
      */
-    protected function setResultData(\stdClass $parserResult)
+    public function map(\stdClass $parserResult)
     {
         $result = new Result();
-        $result->setCapability('useragent', $this->_agent);
-
         $mapper = new InputMapper();
 
         $browserName    = $this->detectProperty($parserResult, 'browser');
@@ -351,5 +264,35 @@ abstract class AbstractBrowscapInput extends Core
         $result->setCapability('supports_activex_controls', $activexSupport);
 
         return $result;
+    }
+
+    /**
+     * checks the parser result for special keys
+     *
+     * @param \stdClass $allProperties  The parser result array
+     * @param string    $propertyName   The name of the property to detect
+     * @param boolean   $depended       If TRUE the parameter $dependingValue has to be set
+     * @param string    $dependingValue An master value
+     *
+     * @return string|integer|boolean The value of the detected property
+     */
+    private function detectProperty(
+        \stdClass $allProperties, $propertyName, $depended = false,
+        $dependingValue = null
+    ) {
+        $propertyName  = strtolower($propertyName);
+        $propertyValue = (empty($allProperties->$propertyName) ? null : trim($allProperties->$propertyName));
+
+        if (empty($propertyValue)
+            || '' == $propertyValue
+        ) {
+            $propertyValue = null;
+        }
+
+        if ($depended && null !== $propertyValue && !$dependingValue) {
+            $propertyValue = null;
+        }
+
+        return $propertyValue;
     }
 }

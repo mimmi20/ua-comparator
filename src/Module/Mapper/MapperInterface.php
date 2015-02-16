@@ -28,10 +28,7 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-namespace UaComparator\Input;
-
-use Crossjoin\Browscap\Browscap as CrBrowscap;
-use Crossjoin\Browscap\Updater\Local;
+namespace UaComparator\Module\Mapper;
 
 /**
  * Browscap.ini parsing class with caching and update capabilities
@@ -42,62 +39,14 @@ use Crossjoin\Browscap\Updater\Local;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class CrossJoin extends AbstractBrowscapInput
+interface MapperInterface
 {
-    /**
-     * the parser class
-     *
-     * @var Browscap
-     */
-    private $parser = null;
-
-    /**
-     * sets the UA Parser detector
-     *
-     * @param \Crossjoin\Browscap\Browscap $parser
-     *
-     * @return CrossJoin
-     */
-    public function setParser(CrBrowscap $parser)
-    {
-        $this->parser = $parser;
-
-        return $this;
-    }
-
-    /**
-     * sets the main parameters to the parser
-     *
-     * @throws \UnexpectedValueException
-     * @return Browscap
-     */
-    protected function initParser()
-    {
-        if (!($this->parser instanceof CrBrowscap)) {
-            throw new \UnexpectedValueException(
-                'the parser object has to be an instance of \Crossjoin\Browscap\Browscap'
-            );
-        }
-
-        if (null !== $this->localFile) {
-            $updater = new Local();
-            $updater->setOption('LocalFile', $this->localFile);
-            Browscap::setUpdater($updater);
-        }
-
-        return $this->parser;
-    }
-
     /**
      * Gets the information about the browser by User Agent
      *
-     * @return \UaComparator\Detector\Result the object containing the browsers details.
-     * @throws \UnexpectedValueException
+     * @param \stdClass $parserResult
+     *
+     * @return \BrowserDetector\Detector\Result the object containing the browsers details.
      */
-    public function getBrowser()
-    {
-        $parserResult = (object) $this->initParser()->getBrowser($this->_agent)->getData();
-
-        return $this->setResultData($parserResult);
-    }
+    public function map(\stdClass $parserResult);
 }

@@ -30,9 +30,9 @@
 
 namespace UaComparator\Module;
 
-use BrowserDetector\BrowserDetector;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
+use UaComparator\Module\Mapper\Browscap as BrowscapMapper;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -49,11 +49,6 @@ class Browscap implements ModuleInterface
      * @var \Monolog\Logger
      */
     private $logger = null;
-
-    /**
-     * @var BrowserDetector
-     */
-    private $input = null;
 
     /**
      * @var \WurflCache\Adapter\AdapterInterface
@@ -75,12 +70,6 @@ class Browscap implements ModuleInterface
     {
         $this->logger = $logger;
         $this->cache  = $cache;
-
-        $this->input = new BrowserDetector();
-        $this->input->setInterface(new \UaComparator\Input\Browscap());
-        $this->input->setLogger($logger);
-        $this->input->setCache($this->cache);
-        $this->input->setCachePrefix('browscap-php');
     }
 
     /**
@@ -91,13 +80,7 @@ class Browscap implements ModuleInterface
      */
     public function init()
     {
-        $parser = new \BrowscapPHP\Browscap();
-        $parser
-            ->setLogger($this->logger)
-            ->setCache($this->cache)
-        ;
-
-        $this->input->getInterface()->setParser($parser);
+        $this->detect('');
 
         return $this;
     }
@@ -110,8 +93,16 @@ class Browscap implements ModuleInterface
      */
     public function detect($agent)
     {
-        $this->input->setAgent($agent);
-        return $this->input->getBrowser(true);
+        $parser = new \BrowscapPHP\Browscap();
+        $parser
+            ->setLogger($this->logger)
+            ->setCache($this->cache)
+        ;
+
+        $parserResult = (object) $parser->getBrowser($agent);
+        $mapper       = new BrowscapMapper();
+
+        return $mapper->map($parserResult)->setCapability('useragent', $agent);
     }
 
     /**
@@ -136,25 +127,5 @@ class Browscap implements ModuleInterface
         $this->timer = 0;
 
         return $duration;
-    }
-
-    /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\Browscap
-     */
-    public function setInput(BrowserDetector $input)
-    {
-        $this->input = $input;
-
-        return $this;
     }
 }

@@ -81,16 +81,4 @@ interface ModuleInterface
      * @return float
      */
     public function endTimer();
-
-    /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput();
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\ModuleInterface
-     */
-    public function setInput(BrowserDetector $input);
 }
