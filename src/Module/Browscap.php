@@ -160,26 +160,6 @@ class Browscap implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\Browscap
-     */
-    public function setInput(BrowserDetector $input)
-    {
-        $this->input = $input;
-
-        return $this;
-    }
-
-    /**
      * @return int
      */
     public function getId()

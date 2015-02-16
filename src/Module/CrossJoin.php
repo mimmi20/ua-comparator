@@ -35,7 +35,6 @@ use Crossjoin\Browscap\Cache\File;
 use Crossjoin\Browscap\Updater\Local;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
-use UaComparator\Module\Mapper\Browscap as BrowscapMapper;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -164,26 +163,6 @@ class CrossJoin implements ModuleInterface
     public function getTime()
     {
         return $this->duration;
-    }
-
-    /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\CrossJoin
-     */
-    public function setInput(BrowserDetector $input)
-    {
-        $this->input = $input;
-
-        return $this;
     }
 
     /**

@@ -90,18 +90,6 @@ interface ModuleInterface
     public function getTime();
 
     /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput();
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\ModuleInterface
-     */
-    public function setInput(BrowserDetector $input);
-
-    /**
      * @return int
      */
     public function getId();

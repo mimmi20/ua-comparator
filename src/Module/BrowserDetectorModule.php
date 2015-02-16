@@ -30,6 +30,7 @@
 
 namespace UaComparator\Module;
 
+use BrowserDetector\BrowserDetector;
 use BrowserDetector\Input\UserAgent;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
@@ -51,7 +52,7 @@ class BrowserDetectorModule implements ModuleInterface
     private $logger = null;
 
     /**
-     * @var \BrowserDetector\BrowserDetector
+     * @var BrowserDetector
      */
     private $input = null;
 
@@ -96,7 +97,7 @@ class BrowserDetectorModule implements ModuleInterface
         $this->logger = $logger;
         $this->cache  = $cache;
 
-        $this->input = new \BrowserDetector\BrowserDetector();
+        $this->input = new BrowserDetector();
         $this->input->setInterface(new UserAgent());
         $this->input->setLogger($logger);
         $this->input->setCache($this->cache);
@@ -165,26 +166,6 @@ class BrowserDetectorModule implements ModuleInterface
     public function getTime()
     {
         return $this->duration;
-    }
-
-    /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\BrowserDetectorModule
-     */
-    public function setInput(\BrowserDetector\BrowserDetector $input)
-    {
-        $this->input = $input;
-
-        return $this;
     }
 
     /**

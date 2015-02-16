@@ -30,7 +30,6 @@
 
 namespace UaComparator\Module;
 
-use BrowserDetector\BrowserDetector;
 use Monolog\Logger;
 use WURFL_CustomDevice;
 use WurflCache\Adapter\AdapterInterface;
@@ -54,11 +53,6 @@ class WurflOld implements ModuleInterface
      * @var \Monolog\Logger
      */
     private $logger = null;
-
-    /**
-     * @var \BrowserDetector\BrowserDetector
-     */
-    private $input = null;
 
     /**
      * @var \WurflCache\Adapter\AdapterInterface
@@ -206,26 +200,6 @@ class WurflOld implements ModuleInterface
     public function getTime()
     {
         return $this->duration;
-    }
-
-    /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\WurflOld
-     */
-    public function setInput(BrowserDetector $input)
-    {
-        $this->input = $input;
-
-        return $this;
     }
 
     /**

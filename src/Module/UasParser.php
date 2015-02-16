@@ -30,7 +30,6 @@
 
 namespace UaComparator\Module;
 
-use BrowserDetector\BrowserDetector;
 use BrowserDetector\Detector\Result;
 use BrowserDetector\Detector\Version;
 use Monolog\Logger;
@@ -53,11 +52,6 @@ class UasParser implements ModuleInterface
      * @var \Monolog\Logger
      */
     private $logger = null;
-
-    /**
-     * @var \BrowserDetector\BrowserDetector
-     */
-    private $input = null;
 
     /**
      * @var \WurflCache\Adapter\AdapterInterface
@@ -162,26 +156,6 @@ class UasParser implements ModuleInterface
     public function getTime()
     {
         return $this->duration;
-    }
-
-    /**
-     * @return \BrowserDetector\BrowserDetector
-     */
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    /**
-     * @param \BrowserDetector\BrowserDetector $input
-     *
-     * @return \UaComparator\Module\UasParser
-     */
-    public function setInput(BrowserDetector $input)
-    {
-        $this->input = $input;
-
-        return $this;
     }
 
     /**
