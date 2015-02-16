@@ -61,9 +61,29 @@ class BrowserDetectorModule implements ModuleInterface
     private $cache = null;
 
     /**
-     * @var integer
+     * @var float
      */
-    private $timer = 0;
+    private $timer = 0.0;
+
+    /**
+     * @var float
+     */
+    private $duration = 0.0;
+
+    /**
+     * @var string
+     */
+    private $name = '';
+
+    /**
+     * @var int
+     */
+    private $id = 0;
+
+    /**
+     * @var \BrowserDetector\Detector\Result
+     */
+    private $detectionResult = null;
 
     /**
      * creates the module
@@ -101,38 +121,50 @@ class BrowserDetectorModule implements ModuleInterface
     /**
      * @param string $agent
      *
-     * @return \BrowserDetector\Detector\Result
+     * @return \UaComparator\Module\BrowserDetectorModule
      * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
         $this->input->setAgent($agent);
-        return $this->input->getBrowser(true);
-    }
-
-    /**
-     * starts the detection timer
-
-     *
-*@return \UaComparator\Module\BrowserDetectorModule
-     */
-    public function startTimer()
-    {
-        $this->timer = microtime(true);
+        $this->detectionResult = $this->input->getBrowser(true);
 
         return $this;
     }
 
     /**
-     * stops the detection timer and returns the duration
-     * @return float
+     * starts the detection timer
+     *
+     * @return \UaComparator\Module\BrowserDetectorModule
+     */
+    public function startTimer()
+    {
+        $this->duration = 0.0;
+        $this->timer    = microtime(true);
+
+        return $this;
+    }
+
+    /**
+     * stops the detection timer
+     * @return \UaComparator\Module\BrowserDetectorModule
      */
     public function endTimer()
     {
-        $duration    = microtime(true) - $this->timer;
-        $this->timer = 0;
+        $this->duration = microtime(true) - $this->timer;
+        $this->timer    = 0.0;
 
-        return $duration;
+        return $this;
+    }
+
+    /**
+     * returns the duration
+     *
+     * @return float
+     */
+    public function getTime()
+    {
+        return $this->duration;
     }
 
     /**
@@ -145,14 +177,61 @@ class BrowserDetectorModule implements ModuleInterface
 
     /**
      * @param \BrowserDetector\BrowserDetector $input
-
      *
-*@return \UaComparator\Module\BrowserDetectorModule
+     * @return \UaComparator\Module\BrowserDetectorModule
      */
     public function setInput(\BrowserDetector\BrowserDetector $input)
     {
         $this->input = $input;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return \UaComparator\Module\BrowserDetectorModule
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return \UaComparator\Module\BrowserDetectorModule
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return \BrowserDetector\Detector\Result
+     */
+    public function getDetectionResult()
+    {
+        return $this->detectionResult;
     }
 }

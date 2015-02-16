@@ -64,7 +64,7 @@ interface ModuleInterface
     /**
      * @param string $agent
      *
-     * @return mixed
+     * @return \UaComparator\Module\ModuleInterface
      */
     public function detect($agent);
 
@@ -76,9 +76,57 @@ interface ModuleInterface
     public function startTimer();
 
     /**
-     * stops the detection timer and returns the duration
+     * stops the detection timer
+     *
+     * @return \UaComparator\Module\ModuleInterface
+     */
+    public function endTimer();
+
+    /**
+     * returns the duration
      *
      * @return float
      */
-    public function endTimer();
+    public function getTime();
+
+    /**
+     * @return \BrowserDetector\BrowserDetector
+     */
+    public function getInput();
+
+    /**
+     * @param \BrowserDetector\BrowserDetector $input
+     *
+     * @return \UaComparator\Module\ModuleInterface
+     */
+    public function setInput(BrowserDetector $input);
+
+    /**
+     * @return int
+     */
+    public function getId();
+
+    /**
+     * @param int $id
+     *
+     * @return \UaComparator\Module\ModuleInterface
+     */
+    public function setId($id);
+
+    /**
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * @param string $name
+     *
+     * @return \UaComparator\Module\ModuleInterface
+     */
+    public function setName($name);
+
+    /**
+     * @return \BrowserDetector\Detector\Result
+     */
+    public function getDetectionResult();
 }

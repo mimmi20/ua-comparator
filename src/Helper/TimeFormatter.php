@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2015, Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
+ * Copyright (c) 2012-2014, Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -20,34 +20,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @category  UaComparator
- * @package   UaComparator
+ * @category  BrowserDetectorModule
+ * @package   BrowserDetectorModule
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
- * @copyright 2015 Thomas Mueller
+ * @copyright 2012-2014 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
- * @link      https://github.com/mimmi20/ua-comparator
+ * @link      https://github.com/mimmi20/BrowserDetectorModule
  */
 
-namespace UaComparator\Module\Mapper;
+namespace UaComparator\Helper;
 
 /**
- * Browscap.ini parsing class with caching and update capabilities
+ * BrowserDetectorModule.ini parsing class with caching and update capabilities
  *
- * @category  UaComparator
- * @package   UaComparator
+ * @category  BrowserDetectorModule
+ * @package   BrowserDetectorModule
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
- * @copyright 2015 Thomas Mueller
+ * @copyright 2012-2014 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-interface MapperInterface
+class TimeFormatter
 {
     /**
-     * Gets the information about the browser by User Agent
+     * @param string $time
      *
-     * @param \stdClass $parserResult
-     *
-     * @return \BrowserDetector\Detector\Result the object containing the browsers details.
-     * @throws \UnexpectedValueException
+     * @return string
      */
-    public function map(\stdClass $parserResult);
+    public static function formatTime($time)
+    {
+        $wochen = bcdiv((int)$time, 604800, 0);
+        $restwoche = bcmod((int)$time, 604800);
+        $tage = bcdiv($restwoche, 86400, 0);
+        $resttage = bcmod($restwoche, 86400);
+        $stunden = bcdiv($resttage, 3600, 0);
+        $reststunden = bcmod($resttage, 3600);
+        $minuten = bcdiv($reststunden, 60, 0);
+        $sekunden = bcmod($reststunden, 60);
+
+        return substr('00' . $wochen, -2) . ' Wochen '
+        . substr('00' . $tage, -2) . ' Tage '
+        . substr('00' . $stunden, -2) . ' Stunden '
+        . substr('00' . $minuten, -2) . ' Minuten '
+        . substr('00' . $sekunden, -2) . ' Sekunden';
+    }
 }
+

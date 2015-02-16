@@ -61,9 +61,29 @@ class MobileDetect implements ModuleInterface
     private $cache = null;
 
     /**
-     * @var integer
+     * @var float
      */
-    private $timer = 0;
+    private $timer = 0.0;
+
+    /**
+     * @var float
+     */
+    private $duration = 0.0;
+
+    /**
+     * @var string
+     */
+    private $name = '';
+
+    /**
+     * @var int
+     */
+    private $id = 0;
+
+    /**
+     * @var mixed
+     */
+    private $detectionResult = null;
 
     /**
      * creates the module
@@ -95,8 +115,16 @@ class MobileDetect implements ModuleInterface
         return $this;
     }
 
+    /**
+     * @param string $agent
+     *
+     * @return \UaComparator\Module\MobileDetect
+     */
     public function detect($agent)
     {
+        $this->detectionResult = null;
+
+        return $this;
     }
 
     /**
@@ -106,21 +134,32 @@ class MobileDetect implements ModuleInterface
      */
     public function startTimer()
     {
-        $this->timer = microtime(true);
+        $this->duration = 0.0;
+        $this->timer    = microtime(true);
 
         return $this;
     }
 
     /**
-     * stops the detection timer and returns the duration
+     * stops the detection timer
      * @return float
      */
     public function endTimer()
     {
-        $duration    = microtime(true) - $this->timer;
-        $this->timer = 0;
+        $this->duration = microtime(true) - $this->timer;
+        $this->timer    = 0.0;
 
-        return $duration;
+        return $this;
+    }
+
+    /**
+     * returns the duration
+     *
+     * @return float
+     */
+    public function getTime()
+    {
+        return $this->duration;
     }
 
     /**
@@ -141,5 +180,53 @@ class MobileDetect implements ModuleInterface
         $this->input = $input;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return \UaComparator\Module\MobileDetect
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return \UaComparator\Module\MobileDetect
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return \BrowserDetector\Detector\Result
+     */
+    public function getDetectionResult()
+    {
+        return $this->detectionResult;
     }
 }
