@@ -224,6 +224,23 @@ $collection->addModule($oldWurflModule);
 echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
 
 /*******************************************************************************
+ * Piwik Parser
+ */
+
+echo 'initializing Piwik Parser ...';
+
+$adapter     = new File(array('dir' => 'data/cache/piwik/'));
+$piwikModule = new \UaComparator\Module\PiwikDetector($logger, $adapter);
+$piwikModule
+    ->setId(12)
+    ->setName('Piwik Parser')
+;
+
+$collection->addModule($piwikModule);
+
+echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes' . "\n";
+
+/*******************************************************************************
  * init
  */
 

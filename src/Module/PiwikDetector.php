@@ -30,6 +30,10 @@
 
 namespace UaComparator\Module;
 
+use BrowserDetector\Detector\Result;
+use UaComparator\Helper\InputMapper;
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\Device\DeviceParserAbstract;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
 
@@ -42,7 +46,7 @@ use WurflCache\Adapter\AdapterInterface;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class MobileDetect implements ModuleInterface
+class PiwikDetector implements ModuleInterface
 {
     /**
      * @var \Monolog\Logger
@@ -75,7 +79,7 @@ class MobileDetect implements ModuleInterface
     private $id = 0;
 
     /**
-     * @var mixed
+     * @var array
      */
     private $detectionResult = null;
 
@@ -95,10 +99,12 @@ class MobileDetect implements ModuleInterface
      * initializes the module
      *
      * @throws \BrowserDetector\Input\Exception
-     * @return \UaComparator\Module\MobileDetect
+     * @return \UaComparator\Module\CrossJoin
      */
     public function init()
     {
+        DeviceParserAbstract::setVersionTruncation(DeviceParserAbstract::VERSION_TRUNCATION_NONE);
+
         $this->detect('');
 
         return $this;
@@ -107,11 +113,12 @@ class MobileDetect implements ModuleInterface
     /**
      * @param string $agent
      *
-     * @return \UaComparator\Module\MobileDetect
+     * @return \UaComparator\Module\CrossJoin
+     * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
-        $this->detectionResult = null;
+        $this->detectionResult = DeviceDetector::getInfoFromUserAgent($agent);
 
         return $this;
     }
@@ -119,7 +126,7 @@ class MobileDetect implements ModuleInterface
     /**
      * starts the detection timer
      *
-     * @return \UaComparator\Module\MobileDetect
+     * @return \UaComparator\Module\CrossJoin
      */
     public function startTimer()
     {
@@ -131,7 +138,7 @@ class MobileDetect implements ModuleInterface
 
     /**
      * stops the detection timer
-     * @return float
+     * @return \UaComparator\Module\CrossJoin
      */
     public function endTimer()
     {
@@ -162,7 +169,7 @@ class MobileDetect implements ModuleInterface
     /**
      * @param int $id
      *
-     * @return \UaComparator\Module\MobileDetect
+     * @return \UaComparator\Module\CrossJoin
      */
     public function setId($id)
     {
@@ -182,7 +189,7 @@ class MobileDetect implements ModuleInterface
     /**
      * @param string $name
      *
-     * @return \UaComparator\Module\MobileDetect
+     * @return \UaComparator\Module\CrossJoin
      */
     public function setName($name)
     {
@@ -196,6 +203,37 @@ class MobileDetect implements ModuleInterface
      */
     public function getDetectionResult()
     {
-        return $this->detectionResult;
+        return $this->map($this->detectionResult);
+    }
+
+    /**
+     * Gets the information about the browser by User Agent
+     *
+     * @param array $parserResult
+     *
+     * @return \BrowserDetector\Detector\Result
+     */
+    private function map(array $parserResult)
+    {
+        $result = new Result();
+        $mapper = new InputMapper();
+
+        if (isset($parserResult['bot'])) {
+            return $result;
+        }
+
+        $browserName    = $mapper->mapBrowserName($parserResult['client']);
+        $browserVersion = $mapper->mapBrowserVersion($parserResult['client'], $browserName);
+
+        $result->setCapability('mobile_browser', $browserName);
+        $result->setCapability('mobile_browser_version', $browserVersion);
+
+        $osName    = $mapper->mapOsName($parserResult['os']);
+        $osVersion = $mapper->mapOsVersion($parserResult['os'], $osName);
+
+        $result->setCapability('device_os', $osName);
+        $result->setCapability('device_os_version', $osVersion);
+
+        return $result;
     }
 }

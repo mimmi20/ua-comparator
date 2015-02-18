@@ -52,7 +52,7 @@ class Browscap implements MapperInterface
      *
      * @return \BrowserDetector\Detector\Result the object containing the browsers details.
      */
-    public function map(\stdClass $parserResult)
+    public function map($parserResult)
     {
         $result = new Result();
         $mapper = new InputMapper();
