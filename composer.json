@@ -39,7 +39,8 @@
         "synchro/uasparser": "dev-master",
         "browscap/browscap-php": "3.x@dev",
         "crossjoin/browscap": "dev-master",
-        "wurfl/wurfl-api": "dev-master"
+        "wurfl/wurfl-api": "dev-master",
+        "piwik/device-detector": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "*"

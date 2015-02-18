@@ -44,10 +44,10 @@ interface MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param \stdClass $parserResult
+     * @param mixed $parserResult
      *
      * @return \BrowserDetector\Detector\Result the object containing the browsers details.
      * @throws \UnexpectedValueException
      */
-    public function map(\stdClass $parserResult);
+    public function map($parserResult);
 }

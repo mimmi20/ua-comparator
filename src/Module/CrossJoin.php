@@ -78,7 +78,7 @@ class CrossJoin implements ModuleInterface
     private $id = 0;
 
     /**
-     * @var mixed
+     * @var \StdClass
      */
     private $detectionResult = null;
 
@@ -210,6 +210,7 @@ class CrossJoin implements ModuleInterface
      */
     public function getDetectionResult()
     {
-        return $this->detectionResult;
+        $mapper = new Mapper\Browscap();
+        return $mapper->map($this->detectionResult);
     }
 }
