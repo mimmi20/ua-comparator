@@ -219,20 +219,60 @@ class PiwikDetector implements ModuleInterface
         $mapper = new InputMapper();
 
         if (isset($parserResult['bot'])) {
+            $browserName  = $mapper->mapBrowserName($parserResult['bot']['name']);
+
+            $result->setCapability('mobile_browser', $browserName);
+
+            if (isset($parserResult['bot']['producer']['name'])) {
+                $browserMaker = $parserResult['bot']['producer']['name'];
+                $result->setCapability('mobile_browser_manufacturer',
+                    $mapper->mapBrowserMaker($browserMaker, $browserName))
+                ;
+            }
+
+            $result->setCapability('browser_type', $mapper->mapBrowserType('robot', $browserName)->getName());
+
             return $result;
         }
 
-        $browserName    = $mapper->mapBrowserName($parserResult['client']);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult['client'], $browserName);
+        $browserName    = $mapper->mapBrowserName($parserResult['client']['name']);
+        $browserVersion = $mapper->mapBrowserVersion($parserResult['client']['version'], $browserName);
 
         $result->setCapability('mobile_browser', $browserName);
         $result->setCapability('mobile_browser_version', $browserVersion);
+        $result->setCapability('browser_type', $mapper->mapBrowserType('browser', $browserName)->getName());
 
-        $osName    = $mapper->mapOsName($parserResult['os']);
-        $osVersion = $mapper->mapOsVersion($parserResult['os'], $osName);
+        if (!empty($parserResult['client']['type'])) {
+            $browserType = $parserResult['client']['type'];
+        } else {
+            $browserType = null;
+        }
 
-        $result->setCapability('device_os', $osName);
-        $result->setCapability('device_os_version', $osVersion);
+        $result->setCapability('browser_type', $mapper->mapBrowserType($browserType, $browserName)->getName());
+
+        $engineName = $parserResult['client']['engine'];
+
+        if ('unknown' === $engineName || '' === $engineName) {
+            $engineName = null;
+        }
+
+        $result->setCapability('renderingengine_name', $engineName);
+
+        if (isset($parserResult['os']['name'])) {
+            $osName    = $mapper->mapOsName($parserResult['os']['name']);
+            $osVersion = $mapper->mapOsVersion($parserResult['os']['version'], $osName);
+
+            $result->setCapability('device_os', $osName);
+            $result->setCapability('device_os_version', $osVersion);
+        }
+
+        $deviceType      = $parserResult['device']['type'];
+        $deviceName      = $parserResult['device']['model'];
+        $deviceBrandName = $parserResult['device']['brand'];
+
+        $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
+        $result->setCapability('model_name', $deviceName);
+        $result->setCapability('brand_name', $mapper->mapDeviceBrandName($deviceBrandName, $deviceName));
 
         return $result;
     }

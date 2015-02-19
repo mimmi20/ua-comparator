@@ -239,6 +239,9 @@ class InputMapper
             case 'wap browser':
                 $browserType = new BrowserType\WapBrowser();
                 break;
+            case 'pim':
+                $browserType = new BrowserType\Pim();
+                break;
             default:
                 switch (strtolower($browserName)) {
                     case 'unknown':

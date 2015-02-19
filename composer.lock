@@ -195,12 +195,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "26c8218237445a765d0d4f5ceea2562d615d4db2"
+                "reference": "d2f6ba521462ddb33492ba740c3684316c58420c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/26c8218237445a765d0d4f5ceea2562d615d4db2",
-                "reference": "26c8218237445a765d0d4f5ceea2562d615d4db2",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/d2f6ba521462ddb33492ba740c3684316c58420c",
+                "reference": "d2f6ba521462ddb33492ba740c3684316c58420c",
                 "shasum": ""
             },
             "require": {
@@ -245,7 +245,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-02-01 21:50:24"
+            "time": "2015-02-19 20:46:02"
         },
         {
             "name": "mimmi20/file-loader",
