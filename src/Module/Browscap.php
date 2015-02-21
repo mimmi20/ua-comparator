@@ -30,6 +30,7 @@
 
 namespace UaComparator\Module;
 
+use BrowscapPHP\Helper\IniLoader;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
 use UaComparator\Module\Mapper\Browscap as BrowscapMapper;
@@ -100,6 +101,13 @@ class Browscap implements ModuleInterface
      */
     public function init()
     {
+        $browscap = new \BrowscapPHP\Browscap();;
+
+        $browscap
+            ->setLogger($this->logger)
+            ->setCache($this->cache)
+            ->update(IniLoader::PHP_INI)
+        ;
         $this->detect('');
 
         return $this;
@@ -119,7 +127,7 @@ class Browscap implements ModuleInterface
             ->setCache($this->cache)
         ;
 
-        $this->detectionResult = (object) $parser->getBrowser($agent);
+        $this->detectionResult = $parser->getBrowser($agent);
 
         return $this;
     }
@@ -204,7 +212,7 @@ class Browscap implements ModuleInterface
      */
     public function getDetectionResult()
     {
-        $mapper = new Mapper\Browscap();
+        $mapper = new Mapper\Browscap();var_dump($this->detectionResult);exit;
         return $mapper->map($this->detectionResult);
     }
 }

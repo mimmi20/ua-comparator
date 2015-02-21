@@ -52,7 +52,6 @@ require 'vendor/autoload.php';
 define('ROW_LENGTH', 397);
 define('COL_LENGTH', 50);
 define('FIRST_COL_LENGTH', 20);
-define('SECOND_COL_LENGTH', 40);
 
 define('START_TIME', microtime(true));
 
@@ -259,7 +258,7 @@ echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -
 
 $i       = 1;
 $count   = 0;
-$aLength = SECOND_COL_LENGTH + 1 + COL_LENGTH + 1 + ($collection->count() - 1 * (COL_LENGTH + 1));
+$aLength = COL_LENGTH + 1 + COL_LENGTH + 1 + ($collection->count() - 1 * (COL_LENGTH + 1));
 
 $messageFormatter = new MessageFormatter();
 $messageFormatter
@@ -442,7 +441,7 @@ $content = str_replace(
 
 echo substr(str_repeat(' ', FIRST_COL_LENGTH) . $i . '/' . $count, -1 * FIRST_COL_LENGTH) . '|' . "\n" . $content;
 
-$len = FIRST_COL_LENGTH + SECOND_COL_LENGTH;
+$len = FIRST_COL_LENGTH + COL_LENGTH;
 
 asort($weights['manufacturers'], SORT_NUMERIC);
 asort($weights['devices'], SORT_NUMERIC);
@@ -515,7 +514,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
     $content   = '';
     $ok        = true;
     $matches   = array();
-    $aLength   = SECOND_COL_LENGTH + 1 + ($collection->count() * (COL_LENGTH + 1));
+    $aLength   = COL_LENGTH + 1 + ($collection->count() * (COL_LENGTH + 1));
 
     /***************************************************************************
      * handle modules
@@ -538,16 +537,15 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
      */
 
     $content .= "\n";
+    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '| ' . $agent . "\n";
     $content .= str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n";
 
-    $content .= str_pad($i, FIRST_COL_LENGTH, ' ', STR_PAD_LEFT) . '|' . str_repeat('-', $collection->count() - 1) . '|' . str_repeat('-', SECOND_COL_LENGTH) . '|';
+    $content .= str_pad($i, FIRST_COL_LENGTH, ' ', STR_PAD_LEFT) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat('-', COL_LENGTH) . '|';
     foreach ($collection as $target) {
         $content .= str_repeat('-', COL_LENGTH) . '|';
     }
     $content .= "\n";
-    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '| ' . $agent . "\n";
-
-    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat(' ', SECOND_COL_LENGTH) . '|';
+    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat(' ', COL_LENGTH) . '|';
     foreach ($collection as $target) {
         $content .= str_pad($target->getName(), COL_LENGTH, ' ', STR_PAD_RIGHT) . '|';
     }
@@ -956,7 +954,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
     if (!$ok) {
         $content = "\n" . str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n" . $content;
 
-        $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat('-', SECOND_COL_LENGTH) . '|' . str_repeat('-', COL_LENGTH) . '|';
+        $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat('-', COL_LENGTH) . '|' . str_repeat('-', COL_LENGTH) . '|';
         foreach ($collection as $target) {
             $content .= str_repeat('-', COL_LENGTH) . '|';
         }

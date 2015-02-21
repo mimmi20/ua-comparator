@@ -227,6 +227,7 @@ class InputMapper
             case 'feed reader':
                 $browserType = new BrowserType\FeedReader();
                 break;
+            case 'mediaplayer':
             case 'multimedia player':
                 $browserType = new BrowserType\MultimediaPlayer();
                 break;
@@ -241,6 +242,9 @@ class InputMapper
                 break;
             case 'pim':
                 $browserType = new BrowserType\Pim();
+                break;
+            case 'mobile app':
+                $browserType = new BrowserType\Application();
                 break;
             default:
                 switch (strtolower($browserName)) {
@@ -279,9 +283,11 @@ class InputMapper
             case 'various':
                 $maker = null;
                 break;
+            case 'microsoft':
             case 'microsoft corporation.':
                 $maker = 'Microsoft Corporation';
                 break;
+            case 'apple':
             case 'apple inc.':
             case 'apple computer, inc.':
                 $maker = 'Apple Inc';
@@ -323,6 +329,9 @@ class InputMapper
                 break;
             case 'rim':
                 $maker = 'Research In Motion Limited';
+                break;
+            case 'mozilla':
+                $maker = 'Mozilla Foundation';
                 break;
             default:
                 // nothing to do here
