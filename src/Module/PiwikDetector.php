@@ -250,13 +250,15 @@ class PiwikDetector implements ModuleInterface
 
         $result->setCapability('browser_type', $mapper->mapBrowserType($browserType, $browserName)->getName());
 
-        $engineName = $parserResult['client']['engine'];
+        if (isset($parserResult['client']['engine'])) {
+            $engineName = $parserResult['client']['engine'];
 
-        if ('unknown' === $engineName || '' === $engineName) {
-            $engineName = null;
+            if ('unknown' === $engineName || '' === $engineName) {
+                $engineName = null;
+            }
+
+            $result->setCapability('renderingengine_name', $engineName);
         }
-
-        $result->setCapability('renderingengine_name', $engineName);
 
         if (isset($parserResult['os']['name'])) {
             $osName    = $mapper->mapOsName($parserResult['os']['name']);
@@ -271,7 +273,7 @@ class PiwikDetector implements ModuleInterface
         $deviceBrandName = $parserResult['device']['brand'];
 
         $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
-        $result->setCapability('model_name', $deviceName);
+        $result->setCapability('marketing_name', $deviceName);
         $result->setCapability('brand_name', $mapper->mapDeviceBrandName($deviceBrandName, $deviceName));
 
         return $result;

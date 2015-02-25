@@ -150,6 +150,18 @@ class InputMapper
             case 'blackberry browser':
                 $browserName = 'BlackBerry';
                 break;
+            case 'outlook':
+                $browserName = 'Microsoft Outlook';
+                break;
+            case 'mj12 bot':
+                $browserName = 'MJ12bot';
+                break;
+            case 'mobile silk':
+                $browserName = 'Silk';
+                break;
+            case 'genieo web filter':
+                $browserName = 'Genieo Web Filter';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -333,6 +345,9 @@ class InputMapper
             case 'mozilla':
                 $maker = 'Mozilla Foundation';
                 break;
+            case 'majestic-12':
+                $maker = 'Majestic-12 Ltd';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -395,6 +410,11 @@ class InputMapper
             case 'win95':
             case 'winnt':
             case 'winme':
+            case 'windows xp':
+            case 'windows vista':
+            case 'windows 7':
+            case 'windows 8':
+            case 'windows 8.1':
                 $osName = 'Windows';
                 break;
             case 'winphone7':
@@ -411,6 +431,7 @@ class InputMapper
             case 'blackberry os':
                 $osName = 'RIM OS';
                 break;
+            case 'mac':
             case 'macosx':
             case 'os x':
                 $osName = 'Mac OS X';
@@ -424,6 +445,9 @@ class InputMapper
                 break;
             case 'symbianos':
                 $osName = 'Symbian OS';
+                break;
+            case 'gnu/linux':
+                $osName = 'Linux';
                 break;
             default:
                 // nothing to do here

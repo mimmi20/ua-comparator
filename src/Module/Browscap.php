@@ -212,7 +212,7 @@ class Browscap implements ModuleInterface
      */
     public function getDetectionResult()
     {
-        $mapper = new Mapper\Browscap();var_dump($this->detectionResult);exit;
+        $mapper = new Mapper\Browscap();
         return $mapper->map($this->detectionResult);
     }
 }

@@ -258,7 +258,7 @@ echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -
 
 $i       = 1;
 $count   = 0;
-$aLength = COL_LENGTH + 1 + COL_LENGTH + 1 + ($collection->count() - 1 * (COL_LENGTH + 1));
+$aLength = ($collection->count() + 1) * (COL_LENGTH + 1);
 
 $messageFormatter = new MessageFormatter();
 $messageFormatter
@@ -266,7 +266,7 @@ $messageFormatter
     ->setColumnsLength(COL_LENGTH)
 ;
 
-echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2) . "\n";
+echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() + 1) . "\n";
 
 $oldMemery = 0;
 $okfound   = 0;
@@ -449,7 +449,7 @@ asort($weights['browsers'], SORT_NUMERIC);
 asort($weights['engine'], SORT_NUMERIC);
 asort($weights['os'], SORT_NUMERIC);
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() + $aLength) . "\n";
 echo 'Weight of Device Manufacturers' . "\n";
 
 $weights['manufacturers'] = array_reverse($weights['manufacturers']);
@@ -458,7 +458,7 @@ foreach ($weights['manufacturers'] as $manufacturer => $weight) {
     echo substr(str_repeat(' ', $len) . $manufacturer, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() + $aLength) . "\n";
 echo 'Weight of Devices' . "\n";
 
 $weights['devices'] = array_reverse($weights['devices']);
@@ -467,7 +467,7 @@ foreach ($weights['devices'] as $device => $weight) {
     echo substr(str_repeat(' ', $len) . $device, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() + $aLength) . "\n";
 echo 'Weight of Browsers' . "\n";
 
 $weights['browsers'] = array_reverse($weights['browsers']);
@@ -476,7 +476,7 @@ foreach ($weights['browsers'] as $browser => $weight) {
     echo substr(str_repeat(' ', $len) . $browser, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() + $aLength) . "\n";
 echo 'Weight of Rendering Engines' . "\n";
 
 $weights['engine'] = array_reverse($weights['engine']);
@@ -485,7 +485,7 @@ foreach ($weights['engine'] as $engine => $weight) {
     echo substr(str_repeat(' ', $len) . $engine, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() + $aLength) . "\n";
 echo 'Weight of Platforms' . "\n";
 
 $weights['os'] = array_reverse($weights['os']);
@@ -494,7 +494,7 @@ foreach ($weights['os'] as $os => $weight) {
     echo substr(str_repeat(' ', $len) . $os, -1 * $len) . '|' . substr(str_repeat(' ', FIRST_COL_LENGTH) . number_format($weight, 0, ',', '.'), -1 * FIRST_COL_LENGTH) . "\n";
 }
 
-echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1 + $aLength + 1) . "\n";
+echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() + $aLength) . "\n";
 
 // End
 echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2) . "\n";
@@ -511,10 +511,9 @@ echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2)
 function handleLine($agent, ModuleCollection $collection, Logger $logger, MessageFormatter $messageFormatter, $i)
 {
     $startTime = microtime(true);
-    $content   = '';
     $ok        = true;
     $matches   = array();
-    $aLength   = COL_LENGTH + 1 + ($collection->count() * (COL_LENGTH + 1));
+    $aLength   = ($collection->count() + 1) * (COL_LENGTH + 1);
 
     /***************************************************************************
      * handle modules
@@ -536,8 +535,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
      * Auswertung
      */
 
-    $content .= "\n";
-    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '| ' . $agent . "\n";
+    $content  = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '| ' . $agent . "\n";
     $content .= str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n";
 
     $content .= str_pad($i, FIRST_COL_LENGTH, ' ', STR_PAD_LEFT) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat('-', COL_LENGTH) . '|';
