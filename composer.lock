@@ -195,12 +195,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "d2f6ba521462ddb33492ba740c3684316c58420c"
+                "reference": "f8c3396dd5a6e9f8b8772e042a15a2b8cba8b600"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/d2f6ba521462ddb33492ba740c3684316c58420c",
-                "reference": "d2f6ba521462ddb33492ba740c3684316c58420c",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/f8c3396dd5a6e9f8b8772e042a15a2b8cba8b600",
+                "reference": "f8c3396dd5a6e9f8b8772e042a15a2b8cba8b600",
                 "shasum": ""
             },
             "require": {
@@ -245,7 +245,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-02-19 20:46:02"
+            "time": "2015-02-26 20:30:42"
         },
         {
             "name": "mimmi20/file-loader",
@@ -585,12 +585,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "64a25c5c482e7f2638cceca72a474d7abf14de87"
+                "reference": "9bc50f81e4fdc698d7ad476d765166da02a6e02b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/64a25c5c482e7f2638cceca72a474d7abf14de87",
-                "reference": "64a25c5c482e7f2638cceca72a474d7abf14de87",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/9bc50f81e4fdc698d7ad476d765166da02a6e02b",
+                "reference": "9bc50f81e4fdc698d7ad476d765166da02a6e02b",
                 "shasum": ""
             },
             "require": {
@@ -627,7 +627,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-02-15 00:19:23"
+            "time": "2015-02-24 22:32:21"
         },
         {
             "name": "psr/log",

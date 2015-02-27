@@ -146,7 +146,7 @@ class MessageFormatter
                 //$passed = false;
 
                 if (isset($allErrors[$this->collection[$id]->getName()][$propertyTitel])) {
-                    //$passed = false;
+                    $passed = false;
                     $r      = ':';
                     $r1     = ':';
                 } elseif ((strlen($strTarget) > strlen($strReality))

@@ -162,6 +162,12 @@ class InputMapper
             case 'genieo web filter':
                 $browserName = 'Genieo Web Filter';
                 break;
+            case 'yahoo! slurp':
+                $browserName = 'Slurp';
+                break;
+            case 'yandex bot':
+                $browserName = 'YandexBot';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -448,6 +454,9 @@ class InputMapper
                 break;
             case 'gnu/linux':
                 $osName = 'Linux';
+                break;
+            case 'chrome os':
+                $osName = 'ChromeOS';
                 break;
             default:
                 // nothing to do here

@@ -96,12 +96,6 @@ class BrowserDetectorModule implements ModuleInterface
     {
         $this->logger = $logger;
         $this->cache  = $cache;
-
-        $this->input = new BrowserDetector();
-        $this->input->setInterface(new UserAgent());
-        $this->input->setLogger($logger);
-        $this->input->setCache($this->cache);
-        $this->input->setCachePrefix('browser-detector');
     }
 
     /**
@@ -112,8 +106,15 @@ class BrowserDetectorModule implements ModuleInterface
      */
     public function init()
     {
-        $this->input->setAgent('');
-        $browser = $this->input->getBrowser();
+        $this->input = new BrowserDetector();
+        $this->input->setInterface(new UserAgent());
+        $this->input->setLogger($this->logger);
+        $this->input->setCache($this->cache);
+        $this->input->setCachePrefix('browser-detector');
+
+        $this->detect('');
+
+        $browser = $this->getDetectionResult();
         $browser->getCapabilities();
 
         return $this;
@@ -128,7 +129,14 @@ class BrowserDetectorModule implements ModuleInterface
     public function detect($agent)
     {
         $this->input->setAgent($agent);
-        $this->detectionResult = $this->input->getBrowser(true);
+
+        try {
+            $this->detectionResult = $this->input->getBrowser(true);
+        } catch (\Exception $e) {
+            $this->logger->err($e);
+
+            throw $e;
+        }
 
         return $this;
     }
