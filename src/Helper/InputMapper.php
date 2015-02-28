@@ -168,6 +168,9 @@ class InputMapper
             case 'yandex bot':
                 $browserName = 'YandexBot';
                 break;
+            case 'nutch-based bot':
+                $browserName = 'Nutch';
+                break;
             default:
                 // nothing to do here
                 break;
