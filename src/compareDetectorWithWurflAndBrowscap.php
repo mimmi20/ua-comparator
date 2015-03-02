@@ -551,7 +551,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
     }
     $content .= "\n";
 
-    $startString = '#count#x found|' . str_repeat(' ', $collection->count() - 1) . '|';
+    $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|';
     list($ok, $content, $matches) = $messageFormatter->formatMessage(
         $content,
         $matches,

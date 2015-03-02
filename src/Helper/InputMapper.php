@@ -171,6 +171,18 @@ class InputMapper
             case 'nutch-based bot':
                 $browserName = 'Nutch';
                 break;
+            case 'baidu spider':
+                $browserName = 'Baiduspider';
+                break;
+            case 'semrush bot':
+                $browserName = 'SemrushBot';
+                break;
+            case 'python urllib':
+                $browserName = 'Python-urllib';
+                break;
+            case 'mail.ru bot':
+                $browserName = 'Mail.Ru';
+                break;
             default:
                 // nothing to do here
                 break;
