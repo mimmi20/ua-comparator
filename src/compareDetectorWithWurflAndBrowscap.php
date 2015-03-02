@@ -536,16 +536,18 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
      */
 
     $content  = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '| ' . $agent . "\n";
-    $content .= str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n";
+    $content .= str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength);
+    $content .= "\n";
+
+    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat(' ', COL_LENGTH) . '|';
+    foreach ($collection as $target) {
+        $content .= str_pad($target->getName(), COL_LENGTH, ' ', STR_PAD_RIGHT) . '|';
+    }
+    $content .= "\n";
 
     $content .= str_pad($i, FIRST_COL_LENGTH, ' ', STR_PAD_LEFT) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat('-', COL_LENGTH) . '|';
     foreach ($collection as $target) {
         $content .= str_repeat('-', COL_LENGTH) . '|';
-    }
-    $content .= "\n";
-    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat(' ', COL_LENGTH) . '|';
-    foreach ($collection as $target) {
-        $content .= str_pad($target->getName(), COL_LENGTH, ' ', STR_PAD_RIGHT) . '|';
     }
     $content .= "\n";
 

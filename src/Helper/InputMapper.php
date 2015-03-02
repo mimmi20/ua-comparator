@@ -430,6 +430,7 @@ class InputMapper
             case 'winphone7.5':
             case 'winphone8':
             case 'winphone8.1':
+            case 'windows phone':
             case 'windows phone 7':
                 $osName = 'Windows Phone OS';
                 break;
@@ -1018,6 +1019,9 @@ class InputMapper
                 break;
             case 'people\'s tablet':
                 $marketingName = 'Peoples Tablet';
+                break;
+            case 'lifetab_e10320':
+                $marketingName = 'E10320';
                 break;
             default:
                 // nothing to do here
