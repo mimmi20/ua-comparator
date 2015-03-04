@@ -825,6 +825,9 @@ class InputMapper
             case 'e10312 (md 98486)':
                 $deviceName = 'LifeTab E10312';
                 break;
+            case 'i9506':
+                $deviceName = 'GT-I9506';
+                break;
             default:
                 // nothing to do here
                 break;
