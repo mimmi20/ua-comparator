@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "00208ab2e2ee1fa890ab419c9ae51f22",
+    "hash": "390495f664e3bf8705d1d5ea7eea6cdf",
     "packages": [
         {
             "name": "browscap/browscap",
@@ -195,12 +195,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "070c3e83354ff2ef16340a27c0c9c8a070717cf7"
+                "reference": "0c346638441418938679f0379cd5301e303d9afa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/070c3e83354ff2ef16340a27c0c9c8a070717cf7",
-                "reference": "070c3e83354ff2ef16340a27c0c9c8a070717cf7",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/0c346638441418938679f0379cd5301e303d9afa",
+                "reference": "0c346638441418938679f0379cd5301e303d9afa",
                 "shasum": ""
             },
             "require": {
@@ -245,7 +245,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-02-28 21:02:12"
+            "time": "2015-03-04 22:34:55"
         },
         {
             "name": "mimmi20/file-loader",
