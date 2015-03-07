@@ -195,12 +195,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "0c346638441418938679f0379cd5301e303d9afa"
+                "reference": "2c5ad5374d5673a9c42f390f69faf3a68c607ff0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/0c346638441418938679f0379cd5301e303d9afa",
-                "reference": "0c346638441418938679f0379cd5301e303d9afa",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/2c5ad5374d5673a9c42f390f69faf3a68c607ff0",
+                "reference": "2c5ad5374d5673a9c42f390f69faf3a68c607ff0",
                 "shasum": ""
             },
             "require": {
@@ -245,7 +245,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-03-04 22:34:55"
+            "time": "2015-03-05 16:00:01"
         },
         {
             "name": "mimmi20/file-loader",
@@ -462,16 +462,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.12.0",
+            "version": "1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "1fbe8c2641f2b163addf49cc5e18f144bec6b19f"
+                "reference": "c41c218e239b50446fd883acb1ecfd4b770caeae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1fbe8c2641f2b163addf49cc5e18f144bec6b19f",
-                "reference": "1fbe8c2641f2b163addf49cc5e18f144bec6b19f",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/c41c218e239b50446fd883acb1ecfd4b770caeae",
+                "reference": "c41c218e239b50446fd883acb1ecfd4b770caeae",
                 "shasum": ""
             },
             "require": {
@@ -488,6 +488,7 @@
                 "phpunit/phpunit": "~4.0",
                 "raven/raven": "~0.5",
                 "ruflin/elastica": "0.90.*",
+                "swiftmailer/swiftmailer": "~5.3",
                 "videlalvaro/php-amqplib": "~2.4"
             },
             "suggest": {
@@ -504,7 +505,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.12.x-dev"
+                    "dev-master": "1.13.x-dev"
                 }
             },
             "autoload": {
@@ -530,7 +531,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2014-12-29 21:29:35"
+            "time": "2015-03-05 01:12:12"
         },
         {
             "name": "mustangostang/spyc",

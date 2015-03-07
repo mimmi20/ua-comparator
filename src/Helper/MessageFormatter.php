@@ -132,20 +132,22 @@ class MessageFormatter
                 $strTarget = (string) $target;
             }
 
+            $fullname = $this->collection[0]->getDetectionResult()->getFullBrowserName(true);
+
             if (strtolower($strTarget) === strtolower($strReality)) {
                 $r  = ' ';
                 $r1 = '+';
             } elseif (((null === $reality) || ('' === $reality) || ('' === $strReality)) && ((null === $target) || ('' === $target))) {
-                $r  = ' '; //'?';
+                $r  = ' ';
                 $r1 = '?';
             } elseif ((null === $target) || ('' === $target) || ('' === $strTarget)) {
-                $r  = ' '; //'%';
+                $r  = ' ';
                 $r1 = '%';
             } else {
                 $mismatch = true;
                 //$passed = false;
 
-                if (isset($allErrors[$this->collection[$id]->getName()][$propertyTitel])) {
+                if (isset($allErrors[$fullname][$propertyTitel])) {
                     $passed = false;
                     $r      = ':';
                     $r1     = ':';
@@ -172,10 +174,10 @@ class MessageFormatter
             $testresult .= $r;
             $matches[]   = $r1;
 
-            if (!isset($allErrors[$this->collection[$id]->getName()][$propertyTitel])
+            if (!isset($allErrors[$fullname][$propertyTitel])
                 && $mismatch
             ) {
-                $allErrors[$this->collection[$id]->getName()][$propertyTitel] = $reality;
+                $allErrors[$fullname][$propertyTitel] = $reality;
             }
 
             $detectionMessage[] = str_pad($r1 . $strTarget, $this->columnsLength, ' ') . '|';
