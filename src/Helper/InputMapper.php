@@ -157,6 +157,7 @@ class InputMapper
                 $browserName = 'MJ12bot';
                 break;
             case 'mobile silk':
+            case 'amazon silk':
                 $browserName = 'Silk';
                 break;
             case 'genieo web filter':
@@ -828,6 +829,12 @@ class InputMapper
             case 'i9506':
                 $deviceName = 'GT-I9506';
                 break;
+            case 'lifetab_e10320':
+                $deviceName = 'E10320';
+                break;
+            case 'xperia sgp312':
+                $deviceName = 'SGP312';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -1034,9 +1041,6 @@ class InputMapper
                 break;
             case 'people\'s tablet':
                 $marketingName = 'Peoples Tablet';
-                break;
-            case 'lifetab_e10320':
-                $marketingName = 'E10320';
                 break;
             default:
                 // nothing to do here

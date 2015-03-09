@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "21fe409908dd0b5d1e0fa6b2b981683ce41b364e"
+                "reference": "e0b93d1f2799ed513fbd366ad5869248c77b6ad5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/21fe409908dd0b5d1e0fa6b2b981683ce41b364e",
-                "reference": "21fe409908dd0b5d1e0fa6b2b981683ce41b364e",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/e0b93d1f2799ed513fbd366ad5869248c77b6ad5",
+                "reference": "e0b93d1f2799ed513fbd366ad5869248c77b6ad5",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-02-27 08:20:01"
+            "time": "2015-03-06 08:59:07"
         },
         {
             "name": "browscap/browscap-php",
@@ -586,12 +586,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "a97cbf81590327caa8b0b9c485924ebc171ece01"
+                "reference": "ff74cc6b0c1259e0590a14c4356b15cc8b3c7146"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/a97cbf81590327caa8b0b9c485924ebc171ece01",
-                "reference": "a97cbf81590327caa8b0b9c485924ebc171ece01",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/ff74cc6b0c1259e0590a14c4356b15cc8b3c7146",
+                "reference": "ff74cc6b0c1259e0590a14c4356b15cc8b3c7146",
                 "shasum": ""
             },
             "require": {
@@ -628,7 +628,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-02-27 13:38:17"
+            "time": "2015-03-07 16:39:01"
         },
         {
             "name": "psr/log",
