@@ -184,6 +184,10 @@ class InputMapper
             case 'mail.ru bot':
                 $browserName = 'Mail.Ru';
                 break;
+            case 'nokia/s40ovi':
+            case 'nokia ovi browser':
+                $browserName = 'Nokia Proxy Browser';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -467,6 +471,8 @@ class InputMapper
                 $osName = 'Bada';
                 break;
             case 'symbianos':
+            case 'nokia series 40':
+            case 'symbian os series 40':
                 $osName = 'Symbian OS';
                 break;
             case 'gnu/linux':
@@ -815,6 +821,9 @@ class InputMapper
             // Nokia
             case 'nokia asha 201':
                 $deviceName = 'Asha 201';
+                break;
+            case 'nokia asha 300':
+                $deviceName = '300';
                 break;
             // Medion
             case 'p9514':
