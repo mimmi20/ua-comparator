@@ -161,7 +161,7 @@ echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -
 
 echo 'initializing UAParser ...';
 
-$uaparserModule = new UaParser($logger, new File(array('dir' => 'data/cache/uaparser/')));
+$uaparserModule = new UaParser($logger, new Memory());
 $uaparserModule
     ->setId(5)
     ->setName('UAParser')
@@ -177,7 +177,7 @@ echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -
 
 echo 'initializing UASParser ...';
 
-$uasparserModule = new UasParser($logger, new File(array('dir' => 'data/cache/uasparser/')));
+$uasparserModule = new UasParser($logger, new Memory());
 $uasparserModule
     ->setId(6)
     ->setName('UASParser')
@@ -194,8 +194,7 @@ echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -
 echo 'initializing Wurfl API (PHP-API 5.3 port) ...';
 
 ini_set('max_input_time', '6000');
-$adapter     = new File(array('dir' => 'data/cache/wurfl/'));
-$wurflModule = new Wurfl($logger, $adapter, 'data/wurfl-config.xml');
+$wurflModule = new Wurfl($logger, new File(array('dir' => 'data/cache/wurfl/')), 'data/wurfl-config.xml');
 $wurflModule
     ->setId(11)
     ->setName('WURFL API (PHP-API 5.3)')
@@ -211,8 +210,7 @@ echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -
 
 echo 'initializing Wurfl API (PHP-API 5.2 original) ...';
 
-$adapter        = new File(array('dir' => 'data/cache/wurfl_old/'));
-$oldWurflModule = new WurflOld($logger, $adapter, 'data/wurfl-config.xml');
+$oldWurflModule = new WurflOld($logger, new File(array('dir' => 'data/cache/wurfl_old/')), 'data/wurfl-config.xml');
 $oldWurflModule
     ->setId(7)
     ->setName('WURFL API (PHP-API 5.2 original)')
@@ -228,7 +226,7 @@ echo ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -
 
 echo 'initializing Piwik Parser ...';
 
-$adapter     = new File(array('dir' => 'data/cache/piwik/'));
+$adapter     = new Memory();
 $piwikModule = new \UaComparator\Module\PiwikDetector($logger, $adapter);
 $piwikModule
     ->setId(12)
@@ -556,7 +554,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'Browser',
-        'mobile_browser',
+        array('getFullBrowser', array(true, Version::MAJORMINOR)),
         $startString,
         $ok
     );
@@ -566,7 +564,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'Engine',
-        'renderingengine_name',
+        array('getFullEngine'), array(Version::MAJORMINOR),
         $startString,
         $ok
     );
@@ -576,7 +574,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'OS',
-        'device_os',
+        array('getFullPlatform', array(true, Version::MAJORMINOR)),
         $startString,
         $ok
     );
@@ -586,7 +584,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'Device',
-        'model_name',
+        array('getFullDevice', array(true)),
         $startString,
         $ok
     );
@@ -596,7 +594,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'Desktop',
-        'ux_full_desktop',
+        array('isDesktop'),
         $startString,
         $ok
     );
@@ -606,7 +604,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'TV',
-        'is_smarttv',
+        array('isTvDevice'),
         $startString,
         $ok
     );
@@ -616,13 +614,14 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'Mobile',
-        'is_wireless_device',
+        array('isMobileDevice'),
         $startString,
         $ok
     );
 
     $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|';
 
+    /*
     try {
         list($ok, $content, $matches) = $messageFormatter->formatMessage(
             $content,
@@ -636,12 +635,13 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $logger->error($e);
         $ok = false;
     }
+    /**/
 
     list($ok, $content, $matches) = $messageFormatter->formatMessage(
         $content,
         $matches,
         'Tablet',
-        'is_tablet',
+        array('isTablet'),
         $startString,
         $ok
     );
@@ -650,7 +650,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'Bot',
-        'is_bot',
+        array('isCrawler'),
         $startString,
         $ok
     );
@@ -668,7 +668,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'Console',
-        'is_console',
+        array('isConsole'),
         $startString,
         $ok
     );
@@ -739,19 +739,19 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
     $checks = array();
 
     $checks['pointing_method'] = array('key' => 'pointing_method', 'include' => true);
-    /*
-    if (!$browser->getCapability('is_bot', false)
-        // && false === stripos($browser->getFullDevice(true), 'general')
-        && ('' !== $browser->getFullDevice(true) || '' !== $browser->getFullBrowser(true))
+
+    if (!$collection[0]->getDetectionResult()->isCrawler()
+        // && false === stripos($collection[0]->getDetectionResult()->getFullDevice(true), 'general')
+        && ('' !== $collection[0]->getDetectionResult()->getFullDevice(true) || '' !== $collection[0]->getDetectionResult()->getFullBrowser(true))
     ) {
         $checks['model_name'] = array('key' => 'model_name', 'include' => true);
-        // $checks['model_version'] = array('key' => 'model_version', 'include' => false);
         $checks['manufacturer_name'] = array('key' => 'manufacturer_name', 'include' => true);
         $checks['brand_name'] = array('key' => 'brand_name', 'include' => true);
         $checks['model_extra_info'] = array('key' => 'model_extra_info', 'include' => false);
         $checks['marketing_name'] = array('key' => 'marketing_name', 'include' => true);
         $checks['has_qwerty_keyboard'] = array('key' => 'has_qwerty_keyboard', 'include' => true);
 
+        /*
         // product info
         $checks['can_skip_aligned_link_row'] = array('key' => 'can_skip_aligned_link_row', 'include' => false);
         $checks['device_claims_web_support'] = array('key' => 'device_claims_web_support', 'include' => false);
@@ -923,6 +923,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
 
         // chips
         $checks['nfc_support'] = array('key' => 'nfc_support', 'include' => false);
+        /**/
     }
 
     foreach ($checks as $label => $x) {
@@ -934,19 +935,21 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
 
         $returnMatches = array();
         $returnContent = '';
+        $returnOk      = false;
 
-        list($ok, $returnContent, $returnMatches) = $messageFormatter->formatMessage(
+        list($returnOk, $returnContent, $returnMatches) = $messageFormatter->formatMessage(
             $returnContent,
             $returnMatches,
             $label,
             $key,
             $startString,
-            $ok
+            $returnOk
         );
 
-        if (in_array('-', $returnMatches)) {
+        if (!$returnOk) {
             $matches  = $matches + $returnMatches;
             $content .= $returnContent;
+            $ok       = $ok && $returnOk;
         }
     }
     /**/

@@ -31,6 +31,7 @@
 namespace UaComparator\Helper;
 
 use UaComparator\Module\ModuleCollection;
+use BrowserDetector\Detector\Version;
 
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
@@ -78,12 +79,12 @@ class MessageFormatter
     }
 
     /**
-     * @param string $content
-     * @param array  $matches
-     * @param string $propertyTitel
-     * @param string $propertyName
-     * @param string $start
-     * @param bool   $ok
+     * @param string       $content
+     * @param array        $matches
+     * @param string       $propertyTitel
+     * @param string|array $propertyName
+     * @param string       $start
+     * @param bool         $ok
      *
      * @return array
      */
@@ -96,8 +97,19 @@ class MessageFormatter
         $testresult    = '|';
         $prefix        = ' ';
         $propertyTitel = trim($propertyTitel);
-        $reality       = $this->collection[0]->getDetectionResult()->getCapability($propertyName);
-        $start         = substr($start, 0, -1 * (1 + $this->collection->count()));
+
+        if (is_string($propertyName)) {
+            $reality = $this->collection[0]->getDetectionResult()->getCapability($propertyName);
+        } elseif (is_array($propertyName) && is_callable(array($this->collection[0]->getDetectionResult(), $propertyName[0]))) {
+            $reality = call_user_func_array(
+                array($this->collection[0]->getDetectionResult(), $propertyName[0]),
+                isset($propertyName[1]) ? $propertyName[1] : array()
+            );
+        } else {
+            $reality = '(n/a)';
+        }
+
+        $start = substr($start, 0, -1 * (1 + $this->collection->count()));
 
         if (null === $reality || 'null' === $reality) {
             $strReality = '(NULL)';
@@ -118,7 +130,16 @@ class MessageFormatter
                 continue;
             }
 
-            $target = $this->collection[$id]->getDetectionResult()->getCapability($propertyName);
+            if (is_string($propertyName)) {
+                $target = $this->collection[$id]->getDetectionResult()->getCapability($propertyName);
+            } elseif (is_array($propertyName) && is_callable(array($this->collection[$id]->getDetectionResult(), $propertyName[0]))) {
+                $target = call_user_func_array(
+                    array($this->collection[$id]->getDetectionResult(), $propertyName[0]),
+                    isset($propertyName[1]) ? $propertyName[1] : array()
+                );
+            } else {
+                $target = '(n/a)';
+            }
 
             if (null === $target || 'null' === $target) {
                 $strTarget = '(NULL)';
@@ -132,7 +153,7 @@ class MessageFormatter
                 $strTarget = (string) $target;
             }
 
-            $fullname = $this->collection[0]->getDetectionResult()->getFullBrowserName(true);
+            $fullname = $this->collection[0]->getDetectionResult()->getFullBrowser(true, Version::MAJORMINOR);
 
             if (strtolower($strTarget) === strtolower($strReality)) {
                 $r  = ' ';

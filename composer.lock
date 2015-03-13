@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "e0b93d1f2799ed513fbd366ad5869248c77b6ad5"
+                "reference": "5120f3a046029d22d38123e9754295e3980d6834"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/e0b93d1f2799ed513fbd366ad5869248c77b6ad5",
-                "reference": "e0b93d1f2799ed513fbd366ad5869248c77b6ad5",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/5120f3a046029d22d38123e9754295e3980d6834",
+                "reference": "5120f3a046029d22d38123e9754295e3980d6834",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-03-06 08:59:07"
+            "time": "2015-03-09 14:03:51"
         },
         {
             "name": "browscap/browscap-php",
@@ -195,12 +195,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "2c5ad5374d5673a9c42f390f69faf3a68c607ff0"
+                "reference": "5a03fa06fe0e58a034f42a0a173784f0878ea9d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/2c5ad5374d5673a9c42f390f69faf3a68c607ff0",
-                "reference": "2c5ad5374d5673a9c42f390f69faf3a68c607ff0",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/5a03fa06fe0e58a034f42a0a173784f0878ea9d6",
+                "reference": "5a03fa06fe0e58a034f42a0a173784f0878ea9d6",
                 "shasum": ""
             },
             "require": {
@@ -245,7 +245,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-03-05 16:00:01"
+            "time": "2015-03-11 16:46:23"
         },
         {
             "name": "mimmi20/file-loader",
@@ -586,12 +586,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "ff74cc6b0c1259e0590a14c4356b15cc8b3c7146"
+                "reference": "02ba56985f796c31d745f768b0729377479fab46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/ff74cc6b0c1259e0590a14c4356b15cc8b3c7146",
-                "reference": "ff74cc6b0c1259e0590a14c4356b15cc8b3c7146",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/02ba56985f796c31d745f768b0729377479fab46",
+                "reference": "02ba56985f796c31d745f768b0729377479fab46",
                 "shasum": ""
             },
             "require": {
@@ -628,7 +628,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-03-07 16:39:01"
+            "time": "2015-03-09 19:17:34"
         },
         {
             "name": "psr/log",

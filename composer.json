@@ -29,6 +29,7 @@
     "require": {
         "php": ">= 5.5.0",
         "symfony/console": "~2",
+        "composer/composer": "dev-master",
         "monolog/monolog": "~1",
         "browscap/browscap": "dev-master",
         "mimmi20/browser-detector": "dev-master",
@@ -54,5 +55,9 @@
         "psr-4": {
             "UaComparatorTest\\": "tests/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": ["UaComparator\\Tool\\ComposerHook::postInstall"],
+        "post-update-cmd": ["UaComparator\\Tool\\ComposerHook::postUpdate"]
     }
 }

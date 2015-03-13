@@ -7,3 +7,4 @@ vendor/
 data/
 error.log
 ergebnis.txt
+resources/browscap-*/
