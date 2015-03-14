@@ -564,7 +564,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $content,
         $matches,
         'Engine',
-        array('getFullEngine'), array(Version::MAJORMINOR),
+        array('getFullEngine', array(Version::MAJORMINOR)),
         $startString,
         $ok
     );
