@@ -844,6 +844,9 @@ class InputMapper
             case 'xperia sgp312':
                 $deviceName = 'SGP312';
                 break;
+            case 'galaxy tabpro 10.1" wifi':
+                $deviceName = 'Galaxy Tab Pro 10.1 WiFi';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -1152,6 +1155,12 @@ class InputMapper
         switch (strtolower($brandName)) {
             case 'htc corporation':
                 $brandName = 'HTC';
+                break;
+            case 'au':
+                $brandName = 'Asus';
+                break;
+            case 'sa':
+                $brandName = 'Samsung';
                 break;
             case '':
             case 'unknown':

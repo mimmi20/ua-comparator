@@ -166,10 +166,10 @@ class MessageFormatter
                 $r1 = '%';
             } else {
                 $mismatch = true;
-                //$passed = false;
+                // $passed = false;
 
                 if (isset($allErrors[$fullname][$propertyTitel])) {
-                    $passed = false;
+                    // $passed = false;
                     $r      = ':';
                     $r1     = ':';
                 } elseif ((strlen($strTarget) > strlen($strReality))
