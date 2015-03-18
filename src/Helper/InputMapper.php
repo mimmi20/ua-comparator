@@ -823,6 +823,7 @@ class InputMapper
                 $deviceName = 'Asha 201';
                 break;
             case 'nokia asha 300':
+            case 'asha 300':
                 $deviceName = '300';
                 break;
             // Medion
@@ -846,6 +847,21 @@ class InputMapper
                 break;
             case 'galaxy tabpro 10.1" wifi':
                 $deviceName = 'Galaxy Tab Pro 10.1 WiFi';
+                break;
+            case 'galaxy tab 3 10.1" wifi':
+                $deviceName = 'Galaxy Tab 3 10.1 3G WiFi';
+                break;
+            case 'galaxy tab 4 10.1" wifi':
+                $deviceName = 'Galaxy Tab 4 10.1 WiFi';
+                break;
+            case 'galaxy tab 4 10.1" lte':
+                $deviceName = 'Galaxy Tab 4 10.1 LTE';
+                break;
+            case 'galaxy tab 2 10.1" wifi':
+                $deviceName = 'Galaxy Tab 2 10.1 WiFi';
+                break;
+            case 'd802':
+                $deviceName = 'G2';
                 break;
             default:
                 // nothing to do here
@@ -1054,6 +1070,16 @@ class InputMapper
             case 'people\'s tablet':
                 $marketingName = 'Peoples Tablet';
                 break;
+            case 'lumia 530 dual sim':
+                $marketingName = 'Lumia 530';
+                break;
+            case 'droid razr i':
+                $marketingName = 'RAZR i';
+                break;
+            case 'nokia asha 300':
+            case '300':
+                $marketingName = 'Asha 300';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -1161,6 +1187,30 @@ class InputMapper
                 break;
             case 'sa':
                 $brandName = 'Samsung';
+                break;
+            case 'so':
+                $brandName = 'Sony';
+                break;
+            case 'rm':
+                $brandName = 'BlackBerry';
+                break;
+            case 'nk':
+                $brandName = 'Nokia';
+                break;
+            case 'ac':
+                $brandName = 'Acer';
+                break;
+            case 'go':
+                $brandName = 'Google';
+                break;
+            case 'le':
+                $brandName = 'Lenovo';
+                break;
+            case 'mr':
+                $brandName = 'Motorola';
+                break;
+            case 'kn':
+                $brandName = 'Amazon';
                 break;
             case '':
             case 'unknown':

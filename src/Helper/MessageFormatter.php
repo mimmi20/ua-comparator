@@ -124,6 +124,7 @@ class MessageFormatter
         }
 
         $detectionMessage = array(0 => str_pad($prefix . $strReality, $this->columnsLength, ' ') . '|');
+        $fullname         = $this->collection[0]->getDetectionResult()->getFullBrowser(true, Version::MAJORMINOR);
 
         foreach (array_keys($this->collection->getModules()) as $id) {
             if (0 === $id) {
@@ -152,8 +153,6 @@ class MessageFormatter
             } else {
                 $strTarget = (string) $target;
             }
-
-            $fullname = $this->collection[0]->getDetectionResult()->getFullBrowser(true, Version::MAJORMINOR);
 
             if (strtolower($strTarget) === strtolower($strReality)) {
                 $r  = ' ';
@@ -197,6 +196,7 @@ class MessageFormatter
 
             if (!isset($allErrors[$fullname][$propertyTitel])
                 && $mismatch
+                && !$passed
             ) {
                 $allErrors[$fullname][$propertyTitel] = $reality;
             }

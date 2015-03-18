@@ -935,7 +935,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
 
         $returnMatches = array();
         $returnContent = '';
-        $returnOk      = false;
+        $returnOk      = true;
 
         list($returnOk, $returnContent, $returnMatches) = $messageFormatter->formatMessage(
             $returnContent,
