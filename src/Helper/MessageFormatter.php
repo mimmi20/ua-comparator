@@ -165,13 +165,8 @@ class MessageFormatter
                 $r1 = '%';
             } else {
                 $mismatch = true;
-                // $passed = false;
 
-                if (isset($allErrors[$fullname][$propertyTitel])) {
-                    // $passed = false;
-                    $r      = ':';
-                    $r1     = ':';
-                } elseif ((strlen($strTarget) > strlen($strReality))
+                if ((strlen($strTarget) > strlen($strReality))
                     && (0 < strlen($strReality))
                     && (0 === strpos($strTarget, $strReality))
                 ) {
@@ -184,6 +179,9 @@ class MessageFormatter
                 ) {
                     $r  = ' ';
                     $r1 = '>';
+                } elseif (isset($allErrors[$fullname][$propertyTitel])) {
+                    $r      = ':';
+                    $r1     = ':';
                 } else {
                     $passed = false;
                     $r      = '-';

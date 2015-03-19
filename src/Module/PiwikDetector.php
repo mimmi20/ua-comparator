@@ -273,7 +273,7 @@ class PiwikDetector implements ModuleInterface
         $deviceBrandName = $parserResult['device']['brand'];
 
         $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
-        $result->setCapability('marketing_name', $mapper->mapDeviceName($deviceName));
+        $result->setCapability('marketing_name', $mapper->mapDeviceMarketingName($deviceName));
         $result->setCapability('brand_name', $mapper->mapDeviceBrandName($deviceBrandName, $deviceName));
 
         return $result;
