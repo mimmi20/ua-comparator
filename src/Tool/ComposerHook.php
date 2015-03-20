@@ -2,17 +2,13 @@
 
 namespace UaComparator\Tool;
 
-use Composer\Script\Event;
-use Composer\Package\PackageInterface;
-use Composer\IO\IOInterface;
-use Browscap\Generator\CollectionParser;
-use Browscap\Helper\CollectionCreator;
-use Browscap\Helper\Generator;
-use Browscap\Writer\Factory\FullCollectionFactory;
-use Browscap\Generator\BrowscapJsonGenerator;
 use Browscap\Generator\BuildGenerator;
+use Browscap\Helper\CollectionCreator;
 use Browscap\Helper\LoggerHelper;
-use Browscap\Data\PropertyHolder;
+use Browscap\Writer\Factory\FullCollectionFactory;
+use Composer\IO\IOInterface;
+use Composer\Package\PackageInterface;
+use Composer\Script\Event;
 
 class ComposerHook
 {
@@ -59,6 +55,7 @@ class ComposerHook
      * Try to determine the build number from a composer package
      *
      * @param \Composer\Package\PackageInterface $package
+     *
      * @return string
      */
     public static function determineBuildNumberFromPackage(PackageInterface $package)
@@ -68,7 +65,7 @@ class ComposerHook
             $buildNumber = self::determineBuildNumberFromBrowscapBuildFile();
 
             if (is_null($buildNumber)) {
-               $buildNumber = substr($package->getSourceReference(), 0, 8);
+                $buildNumber = substr($package->getSourceReference(), 0, 8);
             }
         } else {
             $installedVersion = $package->getPrettyVersion();
@@ -84,7 +81,7 @@ class ComposerHook
                 $buildNumber = self::determineBuildNumberFromBrowscapBuildFile();
 
                 if (is_null($buildNumber)) {
-                   $buildNumber = $installedVersion;
+                    $buildNumber = $installedVersion;
                 }
             }
         }
@@ -103,6 +100,7 @@ class ComposerHook
 
         if (file_exists($buildFile)) {
             $buildNumber = file_get_contents($buildFile);
+
             return trim($buildNumber);
         } else {
             return null;
@@ -116,25 +114,10 @@ class ComposerHook
 
         if (file_exists($metadataFile)) {
             $metadata = require $metadataFile;
+
             return $metadata['version'];
         } else {
             return null;
-        }
-    }
-
-    private static function moveSymlink($buildNumber)
-    {
-        $buildLink = 'build/build';
-
-        if (file_exists($buildLink) && !is_link($buildLink)) {
-            throw new \RuntimeException("Build folder '{$buildLink}' was not a symbolic link");
-        } else if (file_exists($buildLink) && is_link($buildLink)) {
-            unlink($buildLink);
-        }
-
-        $target = realpath($buildLink . '-' . $buildNumber);
-        if (!symlink($target, $buildLink)) {
-            throw new \RuntimeException("Unable to create symbolic link for target '{$target}'");
         }
     }
 
@@ -145,8 +128,11 @@ class ComposerHook
      * @param \Composer\IO\IOInterface $io
      * @param bool                     $debug
      */
-    public static function createBuild($buildNumber, IOInterface $io = null, $debug = false)
-    {
+    public static function createBuild(
+        $buildNumber,
+        IOInterface $io = null,
+        $debug = false
+    ) {
         $buildFolder    = 'build/build-' . $buildNumber . '/';
         $resourceFolder = 'vendor/browscap/browscap/resources/';
 
@@ -179,131 +165,8 @@ class ComposerHook
         }
 
         $buildGenerator = new BuildGenerator($resourceFolder, $buildFolder);
-        $buildGenerator
-            ->setLogger($logger)
-            ->setCollectionCreator($collectionCreator)
-            ->setWriterCollection($writerCollection)
-            ->run($buildNumber)
-        ;
-
-        $jsonFile           = $buildFolder . '/browscap.preprocessed.json';
-        $buildJsonGenerator = new BrowscapJsonGenerator($resourceFolder, $buildFolder);
-        $buildJsonGenerator
-            ->setLogger($logger)
-            ->run($buildNumber, $jsonFile)
-        ;
-
-        // Generate the metadata for the site
-        if ($io) {
-            $io->write('  - Generating metadata');
-        }
-
-        // Update the symlink
-        if ($io) {
-            $io->write('  - Updating symlink to point to ' . $buildNumber);
-        }
-
-        self::createTestfiles($buildFolder);
-    }
-
-    /**
-     * creates the testfiles for browscap.js
-     *
-     * @param string $buildFolder
-     */
-    private static function createTestfiles($buildFolder)
-    {
-        if (!file_exists($buildFolder . 'test/')) {
-            mkdir($buildFolder . 'test/', 0775, true);
-        }
-
-        $sourceDirectory = 'vendor/browscap/browscap/tests/fixtures/issues/';
-
-        $iterator = new \RecursiveDirectoryIterator($sourceDirectory);
-
-        foreach (new \RecursiveIteratorIterator($iterator) as $file) {
-            /** @var $file \SplFileInfo */
-            if (!$file->isFile() || $file->getExtension() != 'php') {
-                continue;
-            }
-
-            self::createTestFile($file, $buildFolder);
-        }
-    }
-
-    /**
-     * @param \SplFileInfo $file
-     * @param string       $buildFolder
-     */
-    private static function createTestFile(\SplFileInfo $file, $buildFolder)
-    {
-        $filename    = str_replace('.php', '.js', $file->getFilename());
-        $testnumber  = str_replace('issue-', '', $file->getBasename($file->getExtension()));
-        $filecontent = 'var assert = require(\'assert\'),
-    browscap = require(\'../browscap.js\'),
-    browser;
-
-suite(\'checking for issue ' . $testnumber . '\', function () {
-';
-
-        $tests = require_once $file->getPathname();
-
-        $propertyHolder = new PropertyHolder();
-
-        foreach ($tests as $key => $test) {
-            if (isset($data[$key])) {
-                throw new \RuntimeException('Test data is duplicated for key "' . $key . '"');
-            }
-
-            if (isset($checks[$test[0]])) {
-                throw new \RuntimeException(
-                    'UA "' . $test[0] . '" added more than once, now for key "' . $key . '", before for key "'
-                    . $checks[$test[0]] . '"'
-                );
-            }
-
-            $filecontent .= '  test(\'' . $key . '\', function () {' . "\n";
-
-            $rule = $test[0];
-            $rule = str_replace(array('\\', '"'), array('\\\\', '\"'), $rule);
-
-            $filecontent .= '    browser = browscap.getBrowser("' . $rule . '");' . "\n\n";
-
-            foreach ($test[1] as $property => $value) {
-                if (!$propertyHolder->isOutputProperty($property)) {
-                    continue;
-                }
-
-                $valueOutput = '\'' . $value . '\'';
-
-                switch ($propertyHolder->getPropertyType($property)) {
-                    case PropertyHolder::TYPE_BOOLEAN:
-                        if (true === $value || $value === 'true') {
-                            $valueOutput = 'true';
-                        } else {
-                            $valueOutput = 'false';
-                        }
-                        break;
-                    case PropertyHolder::TYPE_IN_ARRAY:
-                        try {
-                            $valueOutput = '\'' . $propertyHolder->checkValueInArray($property, $value) . '\'';
-                        } catch (\InvalidArgumentException $e) {
-                            $valueOutput = '""';
-                        }
-                        break;
-                    default:
-                        // nothing t do here
-                        break;
-                }
-
-                $filecontent .= '    assert.strictEqual(browser[\'' . $property . '\'], ' . $valueOutput . ');' . "\n";
-            }
-
-            $filecontent .= '  });' . "\n";
-        }
-
-        $filecontent .= '});' . "\n";
-
-        file_put_contents($buildFolder . 'test/' . $filename, $filecontent);
+        $buildGenerator->setLogger($logger)->setCollectionCreator($collectionCreator)->setWriterCollection(
+                $writerCollection
+            )->run($buildNumber);
     }
 }

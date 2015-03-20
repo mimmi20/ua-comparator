@@ -131,6 +131,7 @@ class InputMapper
                 $browserName = 'Dolfin';
                 break;
             case 'facebookexternalhit':
+            case 'facebook external hit':
             case 'facebookbot':
                 $browserName = 'FaceBook Bot';
                 break;
@@ -190,6 +191,16 @@ class InputMapper
                 break;
             case 'sistrix crawler':
                 $browserName = 'Sistrix Crawler';
+                break;
+            case 'exabot':
+                $browserName = 'Exabot';
+                break;
+            case 'curl':
+                $browserName = 'cURL';
+                break;
+            case 'pale moon (firefox variant)':
+            case 'pale moon':
+                $browserName = 'PaleMoon';
                 break;
             default:
                 // nothing to do here
@@ -483,6 +494,9 @@ class InputMapper
                 break;
             case 'chrome os':
                 $osName = 'ChromeOS';
+                break;
+            case 'mint':
+                $osName = 'Linux Mint';
                 break;
             default:
                 // nothing to do here
@@ -1104,6 +1118,15 @@ class InputMapper
             case 'b8000-f':
                 $marketingName = 'Yoga B8000-F';
                 break;
+            case 'iconia a3':
+                $marketingName = 'Iconia Tab A3';
+                break;
+            case 'galaxy trend lite':
+                $marketingName = 'Galaxy Trend Lite';
+                break;
+            case 'one touch 6030x':
+                $marketingName = 'One Touch Idol';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -1242,6 +1265,12 @@ class InputMapper
                 break;
             case 'ni':
                 $brandName = 'Nintendo';
+                break;
+            case 'ap':
+                $brandName = 'Apple';
+                break;
+            case 'al':
+                $brandName = 'Alcatel';
                 break;
             case '':
             case 'unknown':

@@ -24,6 +24,10 @@
         {
             "type": "git",
             "url":  "https://github.com/mimmi20/uasparser.git"
+        },
+        {
+            "type": "git",
+            "url":  "https://github.com/mimmi20/browscap-php.git"
         }
     ],
     "require": {
@@ -37,7 +41,7 @@
         "mimmi20/wurflcache": "*",
         "mimmi20/wurfl-data": "dev-master",
         "ua-parser/uap-php": "dev-master",
-        "browscap/browscap-php": "3.x@dev",
+        "browscap/browscap-php": "dev-update-symfony",
         "crossjoin/browscap": "dev-master",
         "wurfl/wurfl-api": "dev-master",
         "piwik/device-detector": "dev-master"
