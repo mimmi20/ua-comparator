@@ -106,8 +106,17 @@ class Browscap implements ModuleInterface
         $browscap
             ->setLogger($this->logger)
             ->setCache($this->cache)
-            ->update(IniLoader::PHP_INI)
         ;
+
+        $buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
+        $fileName    = 'build/build-' . $buildNumber . '/full_php_browscap.ini';
+
+        if (file_exists($fileName) && is_readable($fileName)) {
+            $browscap->convertFile($fileName);
+        } else {
+            $browscap->update(IniLoader::PHP_INI);
+        }
+
         $this->detect('');
 
         return $this;

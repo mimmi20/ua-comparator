@@ -202,6 +202,9 @@ class InputMapper
             case 'pale moon':
                 $browserName = 'PaleMoon';
                 break;
+            case 'opera next':
+                $browserName = 'Opera';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -455,6 +458,7 @@ class InputMapper
             case 'windows 7':
             case 'windows 8':
             case 'windows 8.1':
+            case 'windows server':
                 $osName = 'Windows';
                 break;
             case 'winphone7':
@@ -1126,6 +1130,9 @@ class InputMapper
                 break;
             case 'one touch 6030x':
                 $marketingName = 'One Touch Idol';
+                break;
+            case 'one mini2':
+                $marketingName = 'One Mini 2';
                 break;
             default:
                 // nothing to do here
