@@ -1279,6 +1279,9 @@ class InputMapper
             case 'al':
                 $brandName = 'Alcatel';
                 break;
+            case 'mb':
+                $brandName = 'Mobistel';
+                break;
             case '':
             case 'unknown':
             case 'other':
