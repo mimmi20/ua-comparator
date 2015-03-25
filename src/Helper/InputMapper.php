@@ -205,6 +205,12 @@ class InputMapper
             case 'opera next':
                 $browserName = 'Opera';
                 break;
+            case 'yeti/naverbot':
+                $browserName = 'NaverBot';
+                break;
+            case 'ahrefs bot':
+                $browserName = 'AhrefsBot';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -732,6 +738,7 @@ class InputMapper
             case 'mozilla firefox for android':
             case 'firefox for android tablet':
             case 'firefox for android':
+            case 'firefox os':
                 $deviceName = 'general Mobile Device';
                 break;
             case 'spider':
