@@ -397,6 +397,9 @@ class InputMapper
             case 'majestic-12':
                 $maker = 'Majestic-12 Ltd';
                 break;
+            case 'zum internet':
+                $maker = 'ZUMinternet Corp';
+                break;
             default:
                 // nothing to do here
                 break;
