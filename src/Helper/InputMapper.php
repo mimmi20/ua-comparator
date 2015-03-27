@@ -211,6 +211,9 @@ class InputMapper
             case 'ahrefs bot':
                 $browserName = 'AhrefsBot';
                 break;
+            case 'picsearch bot':
+                $browserName = 'Picsearch Bot';
+                break;
             default:
                 // nothing to do here
                 break;
