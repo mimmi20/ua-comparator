@@ -286,8 +286,12 @@ class InputMapper
                 $browserType = new BrowserType\Unknown();
                 break;
             case 'email client':
+            case 'pim':
                 $browserType = new BrowserType\EmailClient();
                 break;
+            //case 'pim':
+            //    $browserType = new BrowserType\Pim();
+            //    break;
             case 'feed reader':
                 $browserType = new BrowserType\FeedReader();
                 break;
@@ -303,9 +307,6 @@ class InputMapper
                 break;
             case 'wap browser':
                 $browserType = new BrowserType\WapBrowser();
-                break;
-            case 'pim':
-                $browserType = new BrowserType\Pim();
                 break;
             case 'mobile app':
                 $browserType = new BrowserType\Application();
@@ -402,6 +403,9 @@ class InputMapper
                 break;
             case 'zum internet':
                 $maker = 'ZUMinternet Corp';
+                break;
+            case 'mojeek ltd.':
+                $maker = 'Linkdex Limited';
                 break;
             default:
                 // nothing to do here
@@ -563,6 +567,9 @@ class InputMapper
             case 'unknown':
             case 'other':
                 $osVersion = null;
+                break;
+            case 'server 2003':
+                $osVersion = '2003';
                 break;
             default:
                 // nothing to do here
