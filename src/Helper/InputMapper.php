@@ -214,6 +214,12 @@ class InputMapper
             case 'picsearch bot':
                 $browserName = 'Picsearch Bot';
                 break;
+            case 'androiddownloadmanager':
+                $browserName = 'Android Download Manager';
+                break;
+            case 'elinks':
+                $browserName = 'ELinks';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -1301,6 +1307,12 @@ class InputMapper
                 break;
             case 'mb':
                 $brandName = 'Mobistel';
+                break;
+            case 'wi':
+                $brandName = 'Wiko';
+                break;
+            case 'xi':
+                $brandName = 'Xiaomi';
                 break;
             case '':
             case 'unknown':
