@@ -575,7 +575,7 @@ class InputMapper
                 $osVersion = null;
                 break;
             case 'server 2003':
-                $osVersion = '2003';
+                $osVersion = 'XP';
                 break;
             default:
                 // nothing to do here
