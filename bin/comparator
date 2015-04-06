@@ -20,5 +20,5 @@ foreach ($autoloadPaths as $path) {
 
 ini_set('memory_limit', '-1');
 
-$browscap = new \UaComparator\Browscap();
-$browscap->run();
+$comparator = new \UaComparator\UaComparator();
+$comparator->run();

@@ -93,9 +93,9 @@ class CompareCommand extends Command
             ->addOption(
                 'modules',
                 null,
-                InputArgument::REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'The Modules to compare',
-                $defaultModules
+                InputArgument::REQUIRED,
+                'The Modules to compare. Available modules are: ' . implode(', ', $defaultModules),
+                implode(',', $defaultModules)
             )
 //            ->addArgument('version', InputArgument::REQUIRED, 'Version number to apply')
 //            ->addOption('resources', null, InputOption::VALUE_REQUIRED, 'Where the resource files are located', $defaultResourceFolder)
