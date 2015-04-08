@@ -151,9 +151,9 @@ class InputMapper
             case 'blackberry browser':
                 $browserName = 'BlackBerry';
                 break;
-            //case 'outlook':
-            //    $browserName = 'Microsoft Outlook';
-            //    break;
+            case 'microsoft outlook':
+                $browserName = 'Outlook';
+                break;
             case 'mj12 bot':
                 $browserName = 'MJ12bot';
                 break;
