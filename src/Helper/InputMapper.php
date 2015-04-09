@@ -1314,6 +1314,12 @@ class InputMapper
             case 'xi':
                 $brandName = 'Xiaomi';
                 break;
+            case 'ar':
+                $brandName = 'Archos';
+                break;
+            case 'kz':
+                $brandName = 'KAZAM';
+                break;
             case '':
             case 'unknown':
             case 'other':
