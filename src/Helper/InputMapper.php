@@ -1320,6 +1320,9 @@ class InputMapper
             case 'kz':
                 $brandName = 'KAZAM';
                 break;
+            case 'ms':
+                $brandName = 'Microsoft';
+                break;
             case '':
             case 'unknown':
             case 'other':
