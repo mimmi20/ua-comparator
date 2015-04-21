@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a1337fadade22ef3319fb274979281bf",
+    "hash": "12fb32cc0090f13064b7aa856b6b24d2",
     "packages": [
         {
             "name": "browscap/browscap",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "6e7623b3cc76f4487d86ade1f976eb158bef7ac2"
+                "reference": "f02d7db6cefa425bf6e69c68c3ed6ac057047a43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/6e7623b3cc76f4487d86ade1f976eb158bef7ac2",
-                "reference": "6e7623b3cc76f4487d86ade1f976eb158bef7ac2",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/f02d7db6cefa425bf6e69c68c3ed6ac057047a43",
+                "reference": "f02d7db6cefa425bf6e69c68c3ed6ac057047a43",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-04-01 08:03:08"
+            "time": "2015-04-16 07:58:06"
         },
         {
             "name": "browscap/browscap-php",
@@ -151,12 +151,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "f10c71475167a4661225b14560ca0a400d730829"
+                "reference": "a32c91914558a3ff293d83f7b99c49f4a7931798"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/f10c71475167a4661225b14560ca0a400d730829",
-                "reference": "f10c71475167a4661225b14560ca0a400d730829",
+                "url": "https://api.github.com/repos/composer/composer/zipball/a32c91914558a3ff293d83f7b99c49f4a7931798",
+                "reference": "a32c91914558a3ff293d83f7b99c49f4a7931798",
                 "shasum": ""
             },
             "require": {
@@ -211,7 +211,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-03-29 14:37:42"
+            "time": "2015-04-18 18:11:12"
         },
         {
             "name": "crossjoin/browscap",
@@ -331,18 +331,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "39c9fc15dad50aa9bca417332d60436b5cb202fd"
+                "reference": "fc56c99b28c0680e94824139b386d2d017ece780"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/39c9fc15dad50aa9bca417332d60436b5cb202fd",
-                "reference": "39c9fc15dad50aa9bca417332d60436b5cb202fd",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/fc56c99b28c0680e94824139b386d2d017ece780",
+                "reference": "fc56c99b28c0680e94824139b386d2d017ece780",
                 "shasum": ""
             },
             "require": {
                 "browscap/browscap": "dev-master",
-                "mimmi20/wurfl-data": "dev-master",
-                "mimmi20/wurflcache": "~1.2",
+                "mimmi20/wurfl-data": "~1.6",
+                "mimmi20/wurflcache": "~1.3",
                 "php": ">=5.4.0",
                 "psr/log": "~1.0"
             },
@@ -381,7 +381,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-04-06 12:17:13"
+            "time": "2015-04-19 14:52:54"
         },
         {
             "name": "mimmi20/file-loader",
@@ -433,20 +433,20 @@
         },
         {
             "name": "mimmi20/wurfl",
-            "version": "dev-master",
+            "version": "dev-update-to-version-1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/Wurfl.git",
-                "reference": "6150513e7e1daf7f21446e350b0a9fd4a1f65f83"
+                "reference": "8b0db2159e59add801693af344ac655d4d837487"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/Wurfl/zipball/6150513e7e1daf7f21446e350b0a9fd4a1f65f83",
-                "reference": "6150513e7e1daf7f21446e350b0a9fd4a1f65f83",
+                "url": "https://api.github.com/repos/mimmi20/Wurfl/zipball/8b0db2159e59add801693af344ac655d4d837487",
+                "reference": "8b0db2159e59add801693af344ac655d4d837487",
                 "shasum": ""
             },
             "require": {
-                "mimmi20/wurflcache": "1.2.*",
+                "mimmi20/wurflcache": "~1.3",
                 "php": ">=5.3.3",
                 "psr/log": "~1.0"
             },
@@ -481,20 +481,20 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-01-31 00:00:51"
+            "time": "2015-04-19 15:03:36"
         },
         {
             "name": "mimmi20/wurfl-data",
-            "version": "dev-master",
+            "version": "1.6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/wurfl-data.git",
-                "reference": "43d556868dff7ca41dc2bd2067eaecd864a70269"
+                "reference": "95103ed120ce278f1e63af725c9db81fa51ca206"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/43d556868dff7ca41dc2bd2067eaecd864a70269",
-                "reference": "43d556868dff7ca41dc2bd2067eaecd864a70269",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/95103ed120ce278f1e63af725c9db81fa51ca206",
+                "reference": "95103ed120ce278f1e63af725c9db81fa51ca206",
                 "shasum": ""
             },
             "require": {
@@ -533,20 +533,20 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-02-08 22:05:05"
+            "time": "2015-04-18 09:45:59"
         },
         {
             "name": "mimmi20/wurflcache",
-            "version": "1.2.5",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/WurflCache.git",
-                "reference": "2d7366cb36b1a85da63e862ef806b190538be590"
+                "reference": "36468806f216fc4342e4718b257074f9f49e2cdb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/WurflCache/zipball/2d7366cb36b1a85da63e862ef806b190538be590",
-                "reference": "2d7366cb36b1a85da63e862ef806b190538be590",
+                "url": "https://api.github.com/repos/mimmi20/WurflCache/zipball/36468806f216fc4342e4718b257074f9f49e2cdb",
+                "reference": "36468806f216fc4342e4718b257074f9f49e2cdb",
                 "shasum": ""
             },
             "require": {
@@ -594,7 +594,7 @@
                 "Wurfl",
                 "cache"
             ],
-            "time": "2014-11-22 20:59:23"
+            "time": "2015-04-14 21:19:12"
         },
         {
             "name": "monolog/monolog",
@@ -722,12 +722,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "f14dc390d61da81e6516bc2d17e564bb1b6cf6bd"
+                "reference": "740afbdb6194f9ffe494bb93f238897755090c19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/f14dc390d61da81e6516bc2d17e564bb1b6cf6bd",
-                "reference": "f14dc390d61da81e6516bc2d17e564bb1b6cf6bd",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/740afbdb6194f9ffe494bb93f238897755090c19",
+                "reference": "740afbdb6194f9ffe494bb93f238897755090c19",
                 "shasum": ""
             },
             "require": {
@@ -764,7 +764,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-04-05 17:35:31"
+            "time": "2015-04-18 22:50:21"
         },
         {
             "name": "psr/log",
@@ -1114,12 +1114,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ua-parser/uap-php.git",
-                "reference": "a0f36e6f786c7f71b18717b5a5cd7116b666c9b3"
+                "reference": "3adb23a1ecf4ecdf11cb183530b9651282aa6e87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ua-parser/uap-php/zipball/a0f36e6f786c7f71b18717b5a5cd7116b666c9b3",
-                "reference": "a0f36e6f786c7f71b18717b5a5cd7116b666c9b3",
+                "url": "https://api.github.com/repos/ua-parser/uap-php/zipball/3adb23a1ecf4ecdf11cb183530b9651282aa6e87",
+                "reference": "3adb23a1ecf4ecdf11cb183530b9651282aa6e87",
                 "shasum": ""
             },
             "require": {
@@ -1155,20 +1155,20 @@
                 }
             ],
             "description": "A multi-language port of Browserscope's user agent parser.",
-            "time": "2015-04-03 15:29:08"
+            "time": "2015-04-07 05:11:32"
         },
         {
             "name": "wurfl/wurfl-api",
-            "version": "dev-master",
+            "version": "1.6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sam-media/wurfl-api.git",
-                "reference": "220ede818fa9f49b6ac7e77c42418558a31f5289"
+                "reference": "9b239ee01a7152ef5d182683776ad5340ad069b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sam-media/wurfl-api/zipball/220ede818fa9f49b6ac7e77c42418558a31f5289",
-                "reference": "220ede818fa9f49b6ac7e77c42418558a31f5289",
+                "url": "https://api.github.com/repos/sam-media/wurfl-api/zipball/9b239ee01a7152ef5d182683776ad5340ad069b2",
+                "reference": "9b239ee01a7152ef5d182683776ad5340ad069b2",
                 "shasum": ""
             },
             "require": {
@@ -1178,11 +1178,6 @@
                 "phpunit/phpunit": "*"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.5-dev"
-                }
-            },
             "autoload": {
                 "psr-0": {
                     "WURFL_": "./"
@@ -1200,7 +1195,7 @@
                 }
             ],
             "description": "WURFL, the Wireless Universal Resource FiLe, is a Device Description Repository (DDR), i.e. a software component that maps HTTP Request headers to the profile of the HTTP client (Desktop, Mobile Device, Tablet, etc.) that issued the request",
-            "time": "2014-11-24 01:17:55"
+            "time": "2015-04-17 07:10:21"
         }
     ],
     "packages-dev": [
@@ -1369,16 +1364,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.0.15",
+            "version": "2.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "34cc484af1ca149188d0d9e91412191e398e0b67"
+                "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/34cc484af1ca149188d0d9e91412191e398e0b67",
-                "reference": "34cc484af1ca149188d0d9e91412191e398e0b67",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/934fd03eb6840508231a7f73eb8940cf32c3b66c",
+                "reference": "934fd03eb6840508231a7f73eb8940cf32c3b66c",
                 "shasum": ""
             },
             "require": {
@@ -1427,7 +1422,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-01-24 10:06:35"
+            "time": "2015-04-11 04:35:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1566,16 +1561,16 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "db32c18eba00b121c145575fcbcd4d4d24e6db74"
+                "reference": "eab81d02569310739373308137284e0158424330"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/db32c18eba00b121c145575fcbcd4d4d24e6db74",
-                "reference": "db32c18eba00b121c145575fcbcd4d4d24e6db74",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/eab81d02569310739373308137284e0158424330",
+                "reference": "eab81d02569310739373308137284e0158424330",
                 "shasum": ""
             },
             "require": {
@@ -1611,20 +1606,20 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-01-17 09:51:32"
+            "time": "2015-04-08 04:46:07"
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.6.1",
+            "version": "4.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "08b2aacdd8433abbba468f995d6d64b76a7a62ec"
+                "reference": "163232991e652e6efed2f8470326fffa61e848e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/08b2aacdd8433abbba468f995d6d64b76a7a62ec",
-                "reference": "08b2aacdd8433abbba468f995d6d64b76a7a62ec",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/163232991e652e6efed2f8470326fffa61e848e2",
+                "reference": "163232991e652e6efed2f8470326fffa61e848e2",
                 "shasum": ""
             },
             "require": {
@@ -1663,9 +1658,6 @@
             "autoload": {
                 "classmap": [
                     "src/"
-                ],
-                "files": [
-                    "src/Framework/Assert/Functions.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1686,7 +1678,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-04-03 13:46:59"
+            "time": "2015-04-11 05:23:21"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2122,11 +2114,9 @@
         "browscap/browscap": 20,
         "mimmi20/browser-detector": 20,
         "mimmi20/wurfl": 20,
-        "mimmi20/wurfl-data": 20,
         "ua-parser/uap-php": 20,
         "browscap/browscap-php": 20,
         "crossjoin/browscap": 20,
-        "wurfl/wurfl-api": 20,
         "piwik/device-detector": 20
     },
     "prefer-stable": false,
