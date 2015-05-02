@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "f02d7db6cefa425bf6e69c68c3ed6ac057047a43"
+                "reference": "1974fd50228b37f6128e830b049caa33a671d8aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/f02d7db6cefa425bf6e69c68c3ed6ac057047a43",
-                "reference": "f02d7db6cefa425bf6e69c68c3ed6ac057047a43",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/1974fd50228b37f6128e830b049caa33a671d8aa",
+                "reference": "1974fd50228b37f6128e830b049caa33a671d8aa",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-04-16 07:58:06"
+            "time": "2015-04-30 10:32:55"
         },
         {
             "name": "browscap/browscap-php",
@@ -151,24 +151,27 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "a32c91914558a3ff293d83f7b99c49f4a7931798"
+                "reference": "d426246b8000c503ad047186eb7fb5315bcf9771"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/a32c91914558a3ff293d83f7b99c49f4a7931798",
-                "reference": "a32c91914558a3ff293d83f7b99c49f4a7931798",
+                "url": "https://api.github.com/repos/composer/composer/zipball/d426246b8000c503ad047186eb7fb5315bcf9771",
+                "reference": "d426246b8000c503ad047186eb7fb5315bcf9771",
                 "shasum": ""
             },
             "require": {
                 "justinrainbow/json-schema": "~1.4",
                 "php": ">=5.3.2",
+                "seld/cli-prompt": "~1.0",
                 "seld/jsonlint": "~1.0",
+                "seld/phar-utils": "~1.0",
                 "symfony/console": "~2.5",
                 "symfony/finder": "~2.2",
                 "symfony/process": "~2.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.5"
+                "phpunit/phpunit": "~4.5",
+                "phpunit/phpunit-mock-objects": "2.3.0"
             },
             "suggest": {
                 "ext-openssl": "Enabling the openssl extension allows you to access https URLs for repositories and packages",
@@ -211,7 +214,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-04-18 18:11:12"
+            "time": "2015-05-01 15:26:59"
         },
         {
             "name": "crossjoin/browscap",
@@ -331,12 +334,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "fc56c99b28c0680e94824139b386d2d017ece780"
+                "reference": "1c61ad206c546de47fa2150c5af7a45b96a4ae59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/fc56c99b28c0680e94824139b386d2d017ece780",
-                "reference": "fc56c99b28c0680e94824139b386d2d017ece780",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/1c61ad206c546de47fa2150c5af7a45b96a4ae59",
+                "reference": "1c61ad206c546de47fa2150c5af7a45b96a4ae59",
                 "shasum": ""
             },
             "require": {
@@ -381,7 +384,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-04-19 14:52:54"
+            "time": "2015-04-28 20:17:02"
         },
         {
             "name": "mimmi20/file-loader",
@@ -437,12 +440,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/Wurfl.git",
-                "reference": "8b0db2159e59add801693af344ac655d4d837487"
+                "reference": "c522f6ad36559b43ce5453196225c2b61cbe637f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/Wurfl/zipball/8b0db2159e59add801693af344ac655d4d837487",
-                "reference": "8b0db2159e59add801693af344ac655d4d837487",
+                "url": "https://api.github.com/repos/mimmi20/Wurfl/zipball/c522f6ad36559b43ce5453196225c2b61cbe637f",
+                "reference": "c522f6ad36559b43ce5453196225c2b61cbe637f",
                 "shasum": ""
             },
             "require": {
@@ -481,7 +484,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-04-19 15:03:36"
+            "time": "2015-04-28 20:10:43"
         },
         {
             "name": "mimmi20/wurfl-data",
@@ -722,12 +725,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "740afbdb6194f9ffe494bb93f238897755090c19"
+                "reference": "3caaad426d18a3d2b85390e56af1193d416f5cb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/740afbdb6194f9ffe494bb93f238897755090c19",
-                "reference": "740afbdb6194f9ffe494bb93f238897755090c19",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/3caaad426d18a3d2b85390e56af1193d416f5cb0",
+                "reference": "3caaad426d18a3d2b85390e56af1193d416f5cb0",
                 "shasum": ""
             },
             "require": {
@@ -735,6 +738,7 @@
                 "php": ">=5.3.2"
             },
             "require-dev": {
+                "fabpot/php-cs-fixer": "~1.7",
                 "phpunit/phpunit": "4.1.*"
             },
             "suggest": {
@@ -764,7 +768,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-04-18 22:50:21"
+            "time": "2015-04-22 19:26:54"
         },
         {
             "name": "psr/log",
@@ -803,6 +807,54 @@
                 "psr-3"
             ],
             "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "seld/cli-prompt",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/cli-prompt.git",
+                "reference": "fe114c7a6ac5cb0ce76932ae4017024d9842a49c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/cli-prompt/zipball/fe114c7a6ac5cb0ce76932ae4017024d9842a49c",
+                "reference": "fe114c7a6ac5cb0ce76932ae4017024d9842a49c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Seld\\CliPrompt\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be"
+                }
+            ],
+            "description": "Allows you to prompt for user input on the command line, and optionally hide the characters they type",
+            "keywords": [
+                "cli",
+                "console",
+                "hidden",
+                "input",
+                "prompt"
+            ],
+            "time": "2015-04-30 20:24:49"
         },
         {
             "name": "seld/jsonlint",
@@ -849,6 +901,50 @@
                 "validator"
             ],
             "time": "2015-01-04 21:18:15"
+        },
+        {
+            "name": "seld/phar-utils",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/phar-utils.git",
+                "reference": "336bb5ee20de511f3c1a164222fcfd194afcab3a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/336bb5ee20de511f3c1a164222fcfd194afcab3a",
+                "reference": "336bb5ee20de511f3c1a164222fcfd194afcab3a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Seld\\PharUtils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be"
+                }
+            ],
+            "description": "PHAR file format utilities, for when PHP phars you up",
+            "keywords": [
+                "phra"
+            ],
+            "time": "2015-05-01 12:45:48"
         },
         {
             "name": "symfony/console",
@@ -1304,16 +1400,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.4.0",
+            "version": "v1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "8724cd239f8ef4c046f55a3b18b4d91cc7f3e4c5"
+                "reference": "3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/8724cd239f8ef4c046f55a3b18b4d91cc7f3e4c5",
-                "reference": "8724cd239f8ef4c046f55a3b18b4d91cc7f3e4c5",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373",
+                "reference": "3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373",
                 "shasum": ""
             },
             "require": {
@@ -1360,7 +1456,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-03-27 19:31:25"
+            "time": "2015-04-27 22:15:08"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1610,16 +1706,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.6.4",
+            "version": "4.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "163232991e652e6efed2f8470326fffa61e848e2"
+                "reference": "3afe303d873a4d64c62ef84de491b97b006fbdac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/163232991e652e6efed2f8470326fffa61e848e2",
-                "reference": "163232991e652e6efed2f8470326fffa61e848e2",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3afe303d873a4d64c62ef84de491b97b006fbdac",
+                "reference": "3afe303d873a4d64c62ef84de491b97b006fbdac",
                 "shasum": ""
             },
             "require": {
@@ -1678,7 +1774,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-04-11 05:23:21"
+            "time": "2015-04-29 15:18:52"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
