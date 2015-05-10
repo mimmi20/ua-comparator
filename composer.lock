@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "1974fd50228b37f6128e830b049caa33a671d8aa"
+                "reference": "abe17e2f400935ce87b2e8073a5953025ac9dd01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/1974fd50228b37f6128e830b049caa33a671d8aa",
-                "reference": "1974fd50228b37f6128e830b049caa33a671d8aa",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/abe17e2f400935ce87b2e8073a5953025ac9dd01",
+                "reference": "abe17e2f400935ce87b2e8073a5953025ac9dd01",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-04-30 10:32:55"
+            "time": "2015-05-07 19:42:32"
         },
         {
             "name": "browscap/browscap-php",
@@ -79,7 +79,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/browscap-php.git",
-                "reference": "3a471e32a10488311edbd74de92af603741e2bd3"
+                "reference": "6dc7181a92b8ac9200172c229ab3223d11583c6c"
             },
             "require": {
                 "mimmi20/file-loader": "2.0.*",
@@ -143,7 +143,7 @@
                 "issues": "https://github.com/browscap/browscap-php/issues",
                 "source": "https://github.com/browscap/browscap-php"
             },
-            "time": "2015-03-16 20:16:32"
+            "time": "2015-05-08 19:26:50"
         },
         {
             "name": "composer/composer",
@@ -151,12 +151,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "d426246b8000c503ad047186eb7fb5315bcf9771"
+                "reference": "c8c452de13f626ab105c5414f05302a2cbcd8a75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/d426246b8000c503ad047186eb7fb5315bcf9771",
-                "reference": "d426246b8000c503ad047186eb7fb5315bcf9771",
+                "url": "https://api.github.com/repos/composer/composer/zipball/c8c452de13f626ab105c5414f05302a2cbcd8a75",
+                "reference": "c8c452de13f626ab105c5414f05302a2cbcd8a75",
                 "shasum": ""
             },
             "require": {
@@ -208,13 +208,13 @@
                 }
             ],
             "description": "Composer helps you declare, manage and install dependencies of PHP projects, ensuring you have the right stack everywhere.",
-            "homepage": "http://getcomposer.org/",
+            "homepage": "https://getcomposer.org/",
             "keywords": [
                 "autoload",
                 "dependency",
                 "package"
             ],
-            "time": "2015-05-01 15:26:59"
+            "time": "2015-05-10 14:20:27"
         },
         {
             "name": "crossjoin/browscap",
@@ -334,12 +334,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "1c61ad206c546de47fa2150c5af7a45b96a4ae59"
+                "reference": "79be073968397d8f164ee78891136f6ed19a4a96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/1c61ad206c546de47fa2150c5af7a45b96a4ae59",
-                "reference": "1c61ad206c546de47fa2150c5af7a45b96a4ae59",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/79be073968397d8f164ee78891136f6ed19a4a96",
+                "reference": "79be073968397d8f164ee78891136f6ed19a4a96",
                 "shasum": ""
             },
             "require": {
@@ -384,7 +384,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-04-28 20:17:02"
+            "time": "2015-05-04 17:04:31"
         },
         {
             "name": "mimmi20/file-loader",
@@ -725,12 +725,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "3caaad426d18a3d2b85390e56af1193d416f5cb0"
+                "reference": "99d4a659c8e2397a424991157e3300c20bef334f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/3caaad426d18a3d2b85390e56af1193d416f5cb0",
-                "reference": "3caaad426d18a3d2b85390e56af1193d416f5cb0",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/99d4a659c8e2397a424991157e3300c20bef334f",
+                "reference": "99d4a659c8e2397a424991157e3300c20bef334f",
                 "shasum": ""
             },
             "require": {
@@ -768,7 +768,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-04-22 19:26:54"
+            "time": "2015-05-07 18:50:41"
         },
         {
             "name": "psr/log",
