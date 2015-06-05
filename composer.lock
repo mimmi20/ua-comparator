@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "abe17e2f400935ce87b2e8073a5953025ac9dd01"
+                "reference": "0b4319ce229d2e40f90dbb114daec8e027752997"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/abe17e2f400935ce87b2e8073a5953025ac9dd01",
-                "reference": "abe17e2f400935ce87b2e8073a5953025ac9dd01",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/0b4319ce229d2e40f90dbb114daec8e027752997",
+                "reference": "0b4319ce229d2e40f90dbb114daec8e027752997",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-05-07 19:42:32"
+            "time": "2015-05-17 20:48:32"
         },
         {
             "name": "browscap/browscap-php",
@@ -151,12 +151,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "c8c452de13f626ab105c5414f05302a2cbcd8a75"
+                "reference": "bc45d9185513575434021527d7756420e9f4b2cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/c8c452de13f626ab105c5414f05302a2cbcd8a75",
-                "reference": "c8c452de13f626ab105c5414f05302a2cbcd8a75",
+                "url": "https://api.github.com/repos/composer/composer/zipball/bc45d9185513575434021527d7756420e9f4b2cf",
+                "reference": "bc45d9185513575434021527d7756420e9f4b2cf",
                 "shasum": ""
             },
             "require": {
@@ -214,7 +214,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-05-10 14:20:27"
+            "time": "2015-05-11 14:49:39"
         },
         {
             "name": "crossjoin/browscap",
@@ -334,25 +334,27 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "79be073968397d8f164ee78891136f6ed19a4a96"
+                "reference": "13f53c3ea601b5cce8513977c5ce962f98004057"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/79be073968397d8f164ee78891136f6ed19a4a96",
-                "reference": "79be073968397d8f164ee78891136f6ed19a4a96",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/13f53c3ea601b5cce8513977c5ce962f98004057",
+                "reference": "13f53c3ea601b5cce8513977c5ce962f98004057",
                 "shasum": ""
             },
             "require": {
-                "browscap/browscap": "dev-master",
                 "mimmi20/wurfl-data": "~1.6",
                 "mimmi20/wurflcache": "~1.3",
                 "php": ">=5.4.0",
                 "psr/log": "~1.0"
             },
             "require-dev": {
+                "browscap/browscap": "dev-master",
+                "fabpot/php-cs-fixer": "*",
                 "mikey179/vfsstream": "dev-master",
                 "monolog/monolog": "dev-master",
-                "phpunit/phpunit": "*"
+                "phpunit/phpunit": "*",
+                "squizlabs/php_codesniffer": "2.*"
             },
             "type": "library",
             "autoload": {
@@ -384,7 +386,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-05-04 17:04:31"
+            "time": "2015-05-15 14:20:57"
         },
         {
             "name": "mimmi20/file-loader",
@@ -488,22 +490,24 @@
         },
         {
             "name": "mimmi20/wurfl-data",
-            "version": "1.6.0.0",
+            "version": "1.6.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/wurfl-data.git",
-                "reference": "95103ed120ce278f1e63af725c9db81fa51ca206"
+                "reference": "cce7fe55da0985e1c35c3c74613dd7897addf361"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/95103ed120ce278f1e63af725c9db81fa51ca206",
-                "reference": "95103ed120ce278f1e63af725c9db81fa51ca206",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/cce7fe55da0985e1c35c3c74613dd7897addf361",
+                "reference": "cce7fe55da0985e1c35c3c74613dd7897addf361",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.4.0",
+                "psr/log": "~1.0"
             },
             "require-dev": {
+                "monolog/monolog": "dev-master",
                 "phpunit/phpunit": "*"
             },
             "type": "library",
@@ -536,7 +540,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-04-18 09:45:59"
+            "time": "2015-05-11 18:54:47"
         },
         {
             "name": "mimmi20/wurflcache",
@@ -725,12 +729,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "99d4a659c8e2397a424991157e3300c20bef334f"
+                "reference": "785c404ecb73b626d24f14ed9d76ff4be1614dd6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/99d4a659c8e2397a424991157e3300c20bef334f",
-                "reference": "99d4a659c8e2397a424991157e3300c20bef334f",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/785c404ecb73b626d24f14ed9d76ff4be1614dd6",
+                "reference": "785c404ecb73b626d24f14ed9d76ff4be1614dd6",
                 "shasum": ""
             },
             "require": {
@@ -768,7 +772,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-05-07 18:50:41"
+            "time": "2015-05-15 17:43:48"
         },
         {
             "name": "psr/log",
@@ -948,17 +952,17 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.6.6",
+            "version": "v2.6.7",
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "5b91dc4ed5eb08553f57f6df04c4730a73992667"
+                "reference": "ebc5679854aa24ed7d65062e9e3ab0b18a917272"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/5b91dc4ed5eb08553f57f6df04c4730a73992667",
-                "reference": "5b91dc4ed5eb08553f57f6df04c4730a73992667",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/ebc5679854aa24ed7d65062e9e3ab0b18a917272",
+                "reference": "ebc5679854aa24ed7d65062e9e3ab0b18a917272",
                 "shasum": ""
             },
             "require": {
@@ -992,31 +996,31 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony Console Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-03-30 15:54:10"
+            "homepage": "https://symfony.com",
+            "time": "2015-05-02 15:18:45"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.6.6",
+            "version": "v2.6.7",
             "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "4983964b3693e4f13449cb3800c64a9112c301b4"
+                "reference": "f73904bd2dae525c42ea1f0340c7c98480ecacde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/4983964b3693e4f13449cb3800c64a9112c301b4",
-                "reference": "4983964b3693e4f13449cb3800c64a9112c301b4",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/f73904bd2dae525c42ea1f0340c7c98480ecacde",
+                "reference": "f73904bd2dae525c42ea1f0340c7c98480ecacde",
                 "shasum": ""
             },
             "require": {
@@ -1042,31 +1046,31 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony Filesystem Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-03-22 16:55:57"
+            "homepage": "https://symfony.com",
+            "time": "2015-05-08 00:09:07"
         },
         {
             "name": "symfony/finder",
-            "version": "v2.6.6",
+            "version": "v2.6.7",
             "target-dir": "Symfony/Component/Finder",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "5dbe2e73a580618f5b4880fda93406eed25de251"
+                "reference": "704c64c8b12c8882640d5c0330a8414b1e06dc99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/5dbe2e73a580618f5b4880fda93406eed25de251",
-                "reference": "5dbe2e73a580618f5b4880fda93406eed25de251",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/704c64c8b12c8882640d5c0330a8414b1e06dc99",
+                "reference": "704c64c8b12c8882640d5c0330a8414b1e06dc99",
                 "shasum": ""
             },
             "require": {
@@ -1092,31 +1096,31 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony Finder Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-03-30 15:54:10"
+            "homepage": "https://symfony.com",
+            "time": "2015-05-02 15:18:45"
         },
         {
             "name": "symfony/process",
-            "version": "v2.6.6",
+            "version": "v2.6.7",
             "target-dir": "Symfony/Component/Process",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "a8bebaec1a9dc6cde53e0250e32917579b0be552"
+                "reference": "9f3c4baaf840ed849e1b1f7bfd5ae246e8509562"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/a8bebaec1a9dc6cde53e0250e32917579b0be552",
-                "reference": "a8bebaec1a9dc6cde53e0250e32917579b0be552",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/9f3c4baaf840ed849e1b1f7bfd5ae246e8509562",
+                "reference": "9f3c4baaf840ed849e1b1f7bfd5ae246e8509562",
                 "shasum": ""
             },
             "require": {
@@ -1142,31 +1146,31 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony Process Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-03-30 15:54:10"
+            "homepage": "https://symfony.com",
+            "time": "2015-05-02 15:18:45"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.6.6",
+            "version": "v2.6.7",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "174f009ed36379a801109955fc5a71a49fe62dd4"
+                "reference": "f157ab074e453ecd4c0fa775f721f6e67a99d9e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/174f009ed36379a801109955fc5a71a49fe62dd4",
-                "reference": "174f009ed36379a801109955fc5a71a49fe62dd4",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/f157ab074e453ecd4c0fa775f721f6e67a99d9e2",
+                "reference": "f157ab074e453ecd4c0fa775f721f6e67a99d9e2",
                 "shasum": ""
             },
             "require": {
@@ -1192,17 +1196,17 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony Yaml Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-03-30 15:54:10"
+            "homepage": "https://symfony.com",
+            "time": "2015-05-02 15:18:45"
         },
         {
             "name": "ua-parser/uap-php",

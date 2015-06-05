@@ -10,19 +10,19 @@
  */
 
 use Browscap\Generator\BuildFullFileOnlyGenerator;
-use BrowserDetector\Detector\Version;
+use UaComparator\Helper\Check;
+use UaComparator\Helper\LineHandler;
 use UaComparator\Helper\LoggerFactory;
 use UaComparator\Module\Browscap;
 use UaComparator\Module\BrowserDetectorModule;
 use UaComparator\Module\CrossJoin;
 use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\UaParser;
+use UaComparator\Source\DirectorySource;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
 use UaComparator\Helper\MessageFormatter;
 use UaComparator\Helper\TimeFormatter;
-use BrowscapPHP\Helper\IniLoader;
-use Monolog\Logger;
 
 echo 'initializing App ...';
 
@@ -99,8 +99,8 @@ $resourceFolder = 'vendor/browscap/browscap/resources/';
 
 $buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
 
-$buildFolder = 'data/browscap-ua-test-' . $buildNumber;
-$iniFile     = $buildFolder . '/full_php_browscap.ini';
+$buildFolder = 'build/build-' . $buildNumber . '/';
+$iniFile     = $buildFolder . 'full_php_browscap.ini';
 $newFile     = false;
 
 if (!file_exists($iniFile)) {
@@ -225,124 +225,53 @@ $weights   = array(
 echo "\n";
 
 $uaSourceDirectory = 'data/useragents';
+$source            = new DirectorySource();
+$lineHandler       = new LineHandler();
 
-$iterator = new \RecursiveDirectoryIterator($uaSourceDirectory);
-$files    = array();
-$loader   = new IniLoader();
-
-foreach (new \RecursiveIteratorIterator($iterator) as $file) {
-    /** @var $file \SplFileInfo */
-    if (!$file->isFile()) {
-        continue;
-    }
-
-    $files[] = $file->getPathname();
-}
+$checkHelper = new Check();
+$checks      = $checkHelper->getChecks(Check::MINIMUM, $collection);
 
 /*******************************************************************************
  * Loop
  */
-foreach ($files as $path) {
-    $loader->setLocalFile($path);
-    $internalLoader = $loader->getLoader();
-
-    if ($internalLoader->isSupportingLoadingLines()) {
-        if (!$internalLoader->init($path)) {
-            $logger->info('Skipping empty file "'.$file->getPathname().'"');
-            continue;
+foreach ($source->getUserAgents($uaSourceDirectory, $logger) as $line) {
+    try {
+        $lineHandler->handleLine($line, $collection, $messageFormatter, $i, $checks);
+    } catch (\Exception $e) {
+        if (1 === $e->getCode()) {
+            $nokfound++;
+        } elseif (2 === $e->getCode()) {
+            $sosofound++;
+        } else {
+            $okfound++;
         }
-
-        while ($internalLoader->isValid()) {
-            try {
-                handleLine($internalLoader->getLine(), $collection, $messageFormatter, $i);
-            } catch (\Exception $e) {
-                if (1 === $e->getCode()) {
-                    $nokfound++;
-                } elseif (2 === $e->getCode()) {
-                    $sosofound++;
-                } else {
-                    $okfound++;
-                }
-            }
-
-            $content = str_replace(
-                array(
-                    '#count#',
-                    '#plus#',
-                    '#minus#',
-                    '#soso#',
-                    '#percent1#',
-                    '#percent2#',
-                    '#percent3#',
-                ),
-                array(
-                    str_pad(number_format(0, 0, ',', '.'), FIRST_COL_LENGTH - 7, ' ', STR_PAD_LEFT),
-                    str_pad($okfound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT) ,
-                    str_pad($nokfound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
-                    str_pad($sosofound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
-                    str_pad(number_format((100 * $okfound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
-                    str_pad(number_format((100 * $nokfound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
-                    str_pad(number_format((100 * $sosofound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
-                ),
-                $e->getMessage()
-            );
-
-            echo $content;
-
-            $i++;
-        }
-
-        $internalLoader->close();
-        $i--;
-    } else {
-        $lines = file($path);
-
-        if (empty($lines)) {
-            $logger->info('Skipping empty file "'.$file->getPathname().'"');
-            continue;
-        }
-
-        foreach ($lines as $line) {
-            try {
-                handleLine($line, $collection, $messageFormatter, $i);
-            } catch (\Exception $e) {
-                if (1 === $e->getCode()) {
-                    $nokfound++;
-                } elseif (2 === $e->getCode()) {
-                    $sosofound++;
-                } else {
-                    $okfound++;
-                }
-            }
-
-            $content = str_replace(
-                array(
-                    '#count#',
-                    '#plus#',
-                    '#minus#',
-                    '#soso#',
-                    '#percent1#',
-                    '#percent2#',
-                    '#percent3#',
-                ),
-                array(
-                    str_pad(number_format(0, 0, ',', '.'), FIRST_COL_LENGTH - 7, ' ', STR_PAD_LEFT),
-                    str_pad($okfound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT) ,
-                    str_pad($nokfound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
-                    str_pad($sosofound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
-                    str_pad(number_format((100 * $okfound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
-                    str_pad(number_format((100 * $nokfound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
-                    str_pad(number_format((100 * $sosofound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
-                ),
-                $e->getMessage()
-            );
-
-            echo $content;
-
-            $i++;
-        }
-        $i--;
     }
+
+    $content = str_replace(
+        array(
+            '#count#',
+            '#plus#',
+            '#minus#',
+            '#soso#',
+            '#percent1#',
+            '#percent2#',
+            '#percent3#',
+        ),
+        array(
+            str_pad(number_format(0, 0, ',', '.'), FIRST_COL_LENGTH - 7, ' ', STR_PAD_LEFT),
+            str_pad($okfound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT) ,
+            str_pad($nokfound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
+            str_pad($sosofound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
+            str_pad(number_format((100 * $okfound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
+            str_pad(number_format((100 * $nokfound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
+            str_pad(number_format((100 * $sosofound / $i), 9, ',', '.'), FIRST_COL_LENGTH - 4, ' ', STR_PAD_LEFT),
+        ),
+        $e->getMessage()
+    );
+
+    echo $content;
+
+    $i++;
 }
 
 echo "\n" . str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n";
@@ -440,486 +369,3 @@ echo str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->coun
 
 // End
 echo str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2) . "\n";
-
-/**
- * @param string                                $agent
- * @param \UaComparator\Module\ModuleCollection $collection
- * @param \UaComparator\Helper\MessageFormatter $messageFormatter
- * @param integer                               $i
- *
- * @throws \Exception
- */
-function handleLine($agent, ModuleCollection $collection, MessageFormatter $messageFormatter, $i)
-{
-    $startTime = microtime(true);
-    $ok        = true;
-    $matches   = array();
-    $aLength   = ($collection->count() + 1) * (COL_LENGTH + 1);
-
-    /***************************************************************************
-     * handle modules
-     */
-
-    foreach ($collection as $module) {
-        $module
-            ->startTimer()
-            ->detect($agent)
-            ->endTimer()
-        ;
-    }
-
-    /***************************************************************************
-     * handle modules - end
-     */
-
-    /**
-     * Auswertung
-     */
-
-    $content  = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '| ' . $agent . "\n";
-    $content .= str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength);
-    $content .= "\n";
-
-    $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat(' ', COL_LENGTH) . '|';
-    foreach ($collection as $target) {
-        $content .= str_pad($target->getName(), COL_LENGTH, ' ', STR_PAD_RIGHT) . '|';
-    }
-    $content .= "\n";
-
-    $content .= str_pad($i, FIRST_COL_LENGTH, ' ', STR_PAD_LEFT) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat('-', COL_LENGTH) . '|';
-    for ($i = 0, $count = $collection->count(); $i < $count; $i++) {
-        $content .= str_repeat('-', COL_LENGTH) . '|';
-    }
-    $content .= "\n";
-
-    $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|';
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Browser',
-        array('getFullBrowser', array(true, Version::MAJORMINOR)),
-        $startString,
-        $ok
-    );
-
-    $startString = '#plus# + detected|' . str_repeat(' ', $collection->count() - 1) . '|';
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Engine',
-        array('getFullEngine', array(Version::MAJORMINOR)),
-        $startString,
-        $ok
-    );
-
-    $startString = '#percent1# % +|' . str_repeat(' ', $collection->count() - 1) . '|';
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'OS',
-        array('getFullPlatform', array(true, Version::MAJORMINOR)),
-        $startString,
-        $ok
-    );
-
-    $startString = '#minus# - detected|' . str_repeat(' ', $collection->count() - 1) . '|';
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Device',
-        array('getFullDevice', array(true)),
-        $startString,
-        $ok
-    );
-
-    $startString = '#percent2# % -|' . str_repeat(' ', $collection->count() - 1) . '|';
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Desktop',
-        array('isDesktop'),
-        $startString,
-        $ok
-    );
-
-    $startString = '#soso# : detected|' . str_repeat(' ', $collection->count() - 1) . '|';
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'TV',
-        array('isTvDevice'),
-        $startString,
-        $ok
-    );
-
-    $startString = '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|';
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Mobile',
-        array('isMobileDevice'),
-        $startString,
-        $ok
-    );
-
-    $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|';
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Tablet',
-        array('isTablet'),
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Bot',
-        array('isCrawler'),
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Device Typ',
-        'device_type',
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Console',
-        array('isConsole'),
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Transcoder',
-        'is_transcoder',
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Syndication-Reader',
-        'is_syndication_reader',
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Browser Typ',
-        'browser_type',
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Device-Hersteller',
-        'manufacturer_name',
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Browser-Hersteller',
-        'mobile_browser_manufacturer',
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'OS-Hersteller',
-        'device_os_manufacturer',
-        $startString,
-        $ok
-    );
-
-    list($ok, $content, $matches) = $messageFormatter->formatMessage(
-        $content,
-        $matches,
-        'Engine-Hersteller',
-        'renderingengine_manufacturer',
-        $startString,
-        $ok
-    );
-
-    $checks = array();
-
-    $checks['pointing_method'] = array('key' => 'pointing_method', 'include' => true);
-
-    if (!$collection[0]->getDetectionResult()->isCrawler()
-        // && false === stripos($collection[0]->getDetectionResult()->getFullDevice(true), 'general')
-        && ('' !== $collection[0]->getDetectionResult()->getFullDevice(true) || '' !== $collection[0]->getDetectionResult()->getFullBrowser(true))
-    ) {
-        $checks['model_name'] = array('key' => 'model_name', 'include' => true);
-        $checks['manufacturer_name'] = array('key' => 'manufacturer_name', 'include' => true);
-        $checks['brand_name'] = array('key' => 'brand_name', 'include' => true);
-        $checks['model_extra_info'] = array('key' => 'model_extra_info', 'include' => false);
-        $checks['marketing_name'] = array('key' => 'marketing_name', 'include' => true);
-        $checks['has_qwerty_keyboard'] = array('key' => 'has_qwerty_keyboard', 'include' => true);
-
-        /*
-        // product info
-        $checks['can_skip_aligned_link_row'] = array('key' => 'can_skip_aligned_link_row', 'include' => false);
-        $checks['device_claims_web_support'] = array('key' => 'device_claims_web_support', 'include' => false);
-        $checks['can_assign_phone_number'] = array('key' => 'can_assign_phone_number', 'include' => true);
-        //  $checks['nokia_feature_pack'] = array('key' => 'nokia_feature_pack', 'include' => false);
-        // $checks['nokia_series'] = array('key' => 'nokia_series', 'include' => false);
-        // $checks['nokia_edition'] = array('key' => 'nokia_edition', 'include' => false);
-        // $checks['ununiqueness_handler'] = array('key' => 'ununiqueness_handler', 'include' => false);
-        // $checks['uaprof'] = array('key' => 'uaprof', 'include' => false);
-        // $checks['uaprof2'] = array('key' => 'uaprof2', 'include' => false);
-        // $checks['uaprof3'] = array('key' => 'uaprof3', 'include' => false);
-        // $checks['unique'] = array('key' => 'unique', 'include' => false);
-
-        // display
-        $checks['physical_screen_width'] = array('key' => 'physical_screen_width', 'include' => false);
-        $checks['physical_screen_height'] = array('key' => 'physical_screen_height', 'include' => false);
-        $checks['columns'] = array('key' => 'columns', 'include' => false);
-        $checks['rows'] = array('key' => 'rows', 'include' => false);
-        $checks['max_image_width'] = array('key' => 'max_image_width', 'include' => false);
-        $checks['max_image_height'] = array('key' => 'max_image_height', 'include' => false);
-        $checks['resolution_width'] = array('key' => 'resolution_width', 'include' => true);
-        $checks['resolution_height'] = array('key' => 'resolution_height', 'include' => true);
-        $checks['dual_orientation'] = array('key' => 'dual_orientation', 'include' => true);
-        $checks['colors'] = array('key' => 'colors', 'include' => true);
-
-        // markup
-        $checks['utf8_support'] = array('key' => 'utf8_support', 'include' => true);
-        $checks['multipart_support'] = array('key' => 'multipart_support', 'include' => true);
-        // $checks['supports_background_sounds'] = array('key' => 'supports_background_sounds', 'include' => true);
-        // $checks['supports_vb_script'] = array('key' => 'supports_vb_script', 'include' => true);
-        // $checks['supports_java_applets'] = array('key' => 'supports_java_applets', 'include' => true);
-        // $checks['supports_activex_controls'] = array('key' => 'supports_activex_controls', 'include' => true);
-        $checks['preferred_markup'] = array('key' => 'preferred_markup', 'include' => true);
-        $checks['html_web_3_2'] = array('key' => 'html_web_3_2', 'include' => true);
-        $checks['html_web_4_0'] = array('key' => 'html_web_4_0', 'include' => true);
-        $checks['html_wi_oma_xhtmlmp_1_0'] = array('key' => 'html_wi_oma_xhtmlmp_1_0', 'include' => true);
-        $checks['wml_1_1'] = array('key' => 'wml_1_1', 'include' => true);
-        $checks['wml_1_2'] = array('key' => 'wml_1_2', 'include' => true);
-        $checks['wml_1_3'] = array('key' => 'wml_1_3', 'include' => true);
-        $checks['xhtml_support_level'] = array('key' => 'xhtml_support_level', 'include' => true);
-        $checks['html_wi_imode_html_1'] = array('key' => 'html_wi_imode_html_1', 'include' => true);
-        $checks['html_wi_imode_html_2'] = array('key' => 'html_wi_imode_html_2', 'include' => true);
-        $checks['html_wi_imode_html_3'] = array('key' => 'html_wi_imode_html_3', 'include' => true);
-        $checks['html_wi_imode_html_4'] = array('key' => 'html_wi_imode_html_4', 'include' => true);
-        $checks['html_wi_imode_html_5'] = array('key' => 'html_wi_imode_html_5', 'include' => true);
-        $checks['html_wi_imode_htmlx_1'] = array('key' => 'html_wi_imode_htmlx_1', 'include' => true);
-        $checks['html_wi_imode_htmlx_1_1'] = array('key' => 'html_wi_imode_htmlx_1_1', 'include' => true);
-        $checks['html_wi_w3_xhtmlbasic'] = array('key' => 'html_wi_w3_xhtmlbasic', 'include' => true);
-        $checks['html_wi_imode_compact_generic'] = array('key' => 'html_wi_imode_compact_generic', 'include' => true);
-        $checks['voicexml'] = array('key' => 'voicexml', 'include' => true);
-
-        // chtml
-        $checks['chtml_table_support'] = array('key' => 'chtml_table_support', 'include' => true);
-        $checks['imode_region'] = array('key' => 'imode_region', 'include' => true);
-        $checks['chtml_can_display_images_and_text_on_same_line'] = array('key' => 'chtml_can_display_images_and_text_on_same_line', 'include' => true);
-        $checks['chtml_displays_image_in_center'] = array('key' => 'chtml_displays_image_in_center', 'include' => true);
-        $checks['chtml_make_phone_call_string'] = array('key' => 'chtml_make_phone_call_string', 'include' => true);
-        $checks['emoji'] = array('key' => 'emoji', 'include' => true);
-
-        // xhtml
-        $checks['xhtml_select_as_radiobutton'] = array('key' => 'xhtml_select_as_radiobutton', 'include' => true);
-        $checks['xhtml_avoid_accesskeys'] = array('key' => 'xhtml_avoid_accesskeys', 'include' => true);
-        $checks['xhtml_select_as_dropdown'] = array('key' => 'xhtml_select_as_dropdown', 'include' => true);
-        $checks['xhtml_supports_iframe'] = array('key' => 'xhtml_supports_iframe', 'include' => false);
-        $checks['xhtml_supports_forms_in_table'] = array('key' => 'xhtml_supports_forms_in_table', 'include' => true);
-        $checks['xhtmlmp_preferred_mime_type'] = array('key' => 'xhtmlmp_preferred_mime_type', 'include' => true);
-        $checks['xhtml_select_as_popup'] = array('key' => 'xhtml_select_as_popup', 'include' => true);
-        $checks['xhtml_honors_bgcolor'] = array('key' => 'xhtml_honors_bgcolor', 'include' => true);
-        $checks['xhtml_file_upload'] = array('key' => 'xhtml_file_upload', 'include' => true);
-        $checks['xhtml_preferred_charset'] = array('key' => 'xhtml_preferred_charset', 'include' => true);
-        $checks['xhtml_supports_css_cell_table_coloring'] = array('key' => 'xhtml_supports_css_cell_table_coloring', 'include' => true);
-        $checks['xhtml_autoexpand_select'] = array('key' => 'xhtml_autoexpand_select', 'include' => true);
-        $checks['accept_third_party_cookie'] = array('key' => 'accept_third_party_cookie', 'include' => true);
-        $checks['xhtml_make_phone_call_string'] = array('key' => 'xhtml_make_phone_call_string', 'include' => true);
-        $checks['xhtml_allows_disabled_form_elements'] = array('key' => 'xhtml_allows_disabled_form_elements', 'include' => true);
-        $checks['xhtml_supports_invisible_text'] = array('key' => 'xhtml_supports_invisible_text', 'include' => true);
-        $checks['cookie_support'] = array('key' => 'cookie_support', 'include' => true);
-        $checks['xhtml_send_mms_string'] = array('key' => 'xhtml_send_mms_string', 'include' => true);
-        $checks['xhtml_table_support'] = array('key' => 'xhtml_table_support', 'include' => false);
-        $checks['xhtml_display_accesskey'] = array('key' => 'xhtml_display_accesskey', 'include' => true);
-        $checks['xhtml_can_embed_video'] = array('key' => 'xhtml_can_embed_video', 'include' => false);
-        $checks['xhtml_supports_monospace_font'] = array('key' => 'xhtml_supports_monospace_font', 'include' => true);
-        $checks['xhtml_supports_inline_input'] = array('key' => 'xhtml_supports_inline_input', 'include' => true);
-        $checks['xhtml_document_title_support'] = array('key' => 'xhtml_document_title_support', 'include' => true);
-        $checks['xhtml_support_wml2_namespace'] = array('key' => 'xhtml_support_wml2_namespace', 'include' => true);
-        $checks['xhtml_readable_background_color1'] = array('key' => 'xhtml_readable_background_color1', 'include' => true);
-        $checks['xhtml_format_as_attribute'] = array('key' => 'xhtml_format_as_attribute', 'include' => true);
-        $checks['xhtml_supports_table_for_layout'] = array('key' => 'xhtml_supports_table_for_layout', 'include' => true);
-        $checks['xhtml_readable_background_color2'] = array('key' => 'xhtml_readable_background_color2', 'include' => true);
-        $checks['xhtml_send_sms_string'] = array('key' => 'xhtml_send_sms_string', 'include' => true);
-        $checks['xhtml_format_as_css_property'] = array('key' => 'xhtml_format_as_css_property', 'include' => true);
-        $checks['opwv_xhtml_extensions_support'] = array('key' => 'opwv_xhtml_extensions_support', 'include' => true);
-        $checks['xhtml_marquee_as_css_property'] = array('key' => 'xhtml_marquee_as_css_property', 'include' => true);
-        $checks['xhtml_nowrap_mode'] = array('key' => 'xhtml_nowrap_mode', 'include' => true);
-
-        // image format
-        $checks['jpg'] = array('key' => 'jpg', 'include' => true);
-        $checks['gif'] = array('key' => 'gif', 'include' => true);
-        $checks['bmp'] = array('key' => 'bmp', 'include' => true);
-        $checks['wbmp'] = array('key' => 'wbmp', 'include' => true);
-        $checks['gif_animated'] = array('key' => 'gif_animated', 'include' => true);
-        $checks['png'] = array('key' => 'png', 'include' => true);
-        $checks['greyscale'] = array('key' => 'greyscale', 'include' => true);
-        $checks['transparent_png_index'] = array('key' => 'transparent_png_index', 'include' => true);
-        $checks['epoc_bmp'] = array('key' => 'epoc_bmp', 'include' => true);
-        $checks['svgt_1_1_plus'] = array('key' => 'svgt_1_1_plus', 'include' => true);
-        $checks['svgt_1_1'] = array('key' => 'svgt_1_1', 'include' => true);
-        $checks['transparent_png_alpha'] = array('key' => 'transparent_png_alpha', 'include' => true);
-        $checks['tiff'] = array('key' => 'tiff', 'include' => true);
-
-        // security
-        $checks['https_support'] = array('key' => 'https_support', 'include' => true);
-
-        // storage
-        $checks['max_url_length_bookmark'] = array('key' => 'max_url_length_bookmark', 'include' => true);
-        $checks['max_url_length_cached_page'] = array('key' => 'max_url_length_cached_page', 'include' => true);
-        $checks['max_url_length_in_requests'] = array('key' => 'max_url_length_in_requests', 'include' => true);
-        $checks['max_url_length_homepage'] = array('key' => 'max_url_length_homepage', 'include' => true);
-
-        // ajax
-        $checks['ajax_support_getelementbyid'] = array('key' => 'ajax_support_getelementbyid', 'include' => true);
-        $checks['ajax_xhr_type'] = array('key' => 'ajax_xhr_type', 'include' => true);
-        $checks['ajax_support_event_listener'] = array('key' => 'ajax_support_event_listener', 'include' => true);
-        $checks['ajax_support_javascript'] = array('key' => 'ajax_support_javascript', 'include' => true);
-        $checks['ajax_manipulate_dom'] = array('key' => 'ajax_manipulate_dom', 'include' => true);
-        $checks['ajax_support_inner_html'] = array('key' => 'ajax_support_inner_html', 'include' => true);
-        $checks['ajax_manipulate_css'] = array('key' => 'ajax_manipulate_css', 'include' => true);
-        $checks['ajax_support_events'] = array('key' => 'ajax_support_events', 'include' => true);
-        $checks['ajax_preferred_geoloc_api'] = array('key' => 'ajax_preferred_geoloc_api', 'include' => true);
-
-        // pdf
-        $checks['pdf_support'] = array('key' => 'pdf_support', 'include' => true);
-
-        // third_party
-        $checks['jqm_grade'] = array('key' => 'jqm_grade', 'include' => true);
-        $checks['is_sencha_touch_ok'] = array('key' => 'is_sencha_touch_ok', 'include' => true);
-
-        // html
-        $checks['image_inlining'] = array('key' => 'image_inlining', 'include' => false);
-        $checks['canvas_support'] = array('key' => 'canvas_support', 'include' => true);
-        $checks['viewport_width'] = array('key' => 'viewport_width', 'include' => true);
-        $checks['html_preferred_dtd'] = array('key' => 'html_preferred_dtd', 'include' => true);
-        $checks['viewport_supported'] = array('key' => 'viewport_supported', 'include' => true);
-        $checks['viewport_minimum_scale'] = array('key' => 'viewport_minimum_scale', 'include' => true);
-        $checks['viewport_initial_scale'] = array('key' => 'viewport_initial_scale', 'include' => true);
-        $checks['mobileoptimized'] = array('key' => 'mobileoptimized', 'include' => true);
-        $checks['viewport_maximum_scale'] = array('key' => 'viewport_maximum_scale', 'include' => true);
-        $checks['viewport_userscalable'] = array('key' => 'viewport_userscalable', 'include' => true);
-        $checks['handheldfriendly'] = array('key' => 'handheldfriendly', 'include' => true);
-
-        // css
-        $checks['css_spriting'] = array('key' => 'css_spriting', 'include' => false);
-        $checks['css_gradient'] = array('key' => 'css_gradient', 'include' => true);
-        $checks['css_gradient_linear'] = array('key' => 'css_gradient_linear', 'include' => true);
-        $checks['css_border_image'] = array('key' => 'css_border_image', 'include' => true);
-        $checks['css_rounded_corners'] = array('key' => 'css_rounded_corners', 'include' => true);
-        $checks['css_supports_width_as_percentage'] = array('key' => 'css_supports_width_as_percentage', 'include' => true);
-
-        // bugs
-        $checks['empty_option_value_support'] = array('key' => 'empty_option_value_support', 'include' => true);
-        $checks['basic_authentication_support'] = array('key' => 'basic_authentication_support', 'include' => true);
-        $checks['post_method_support'] = array('key' => 'post_method_support', 'include' => true);
-
-        // rss
-        $checks['rss_support'] = array('key' => 'rss_support', 'include' => true);
-
-        // sms
-        $checks['sms_enabled'] = array('key' => 'sms_enabled', 'include' => true);
-
-        // chips
-        $checks['nfc_support'] = array('key' => 'nfc_support', 'include' => false);
-        /**/
-    }
-
-    foreach ($checks as $label => $x) {
-        if (empty($x['key'])) {
-            $key = $label;
-        } else {
-            $key = $x['key'];
-        }
-
-        $returnMatches = array();
-        $returnContent = '';
-        $returnOk      = true;
-
-        list($returnOk, $returnContent, $returnMatches) = $messageFormatter->formatMessage(
-            $returnContent,
-            $returnMatches,
-            $label,
-            $key,
-            $startString,
-            $returnOk
-        );
-
-        if (!$returnOk) {
-            $matches  = $matches + $returnMatches;
-            $content .= $returnContent;
-            $ok       = $ok && $returnOk;
-        }
-    }
-    /**/
-
-    if (!$ok) {
-        $content = "\n" . str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat('-', $aLength) . "\n" . $content;
-
-        $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . str_repeat('-', COL_LENGTH) . '|';
-        foreach ($collection as $target) {
-            $content .= str_repeat('-', COL_LENGTH) . '|';
-        }
-        $content .= "\n";
-        $content .= str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|' . "\n";
-
-        $fullTime = microtime(true) - $startTime;
-
-        $content .= $startString . 'Time:' . "\n";
-        foreach ($collection as $target) {
-            $content .= $startString . '        Detection (' . $target->getName() . ')' . str_repeat(' ', 60 - strlen($target->getName())) . ':' . number_format($target->getTime(), 10, ',', '.') . ' Sek.' . "\n";
-        }
-        $content .= $startString . '        Complete                         :' . number_format($fullTime, 10, ',', '.') . ' Sek.' . "\n";
-        $content .= $startString . '        Absolute TOTAL                   :' . TimeFormatter::formatTime(microtime(true) - START_TIME) . "\n";
-    } else {
-        $content = '';
-    }
-
-    if (in_array('-', $matches)) {
-        $content .= '-';
-    } elseif (in_array(':', $matches)) {
-        $content .= ':';
-    } else {
-        $content .= '.';
-    }
-
-    if (($i % 100) == 0) {
-        $content .= "\n";
-    }
-
-    if (in_array('-', $matches)) {
-        throw new \Exception($content, 1);
-    } elseif (in_array(':', $matches)) {
-        throw new \Exception($content, 2);
-    } else {
-        throw new \Exception($content, 3);
-    }
-}
