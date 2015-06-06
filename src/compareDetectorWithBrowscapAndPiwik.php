@@ -9,7 +9,8 @@
  * Mobile-Detect: https://github.com/serbanghita/Mobile-Detect
  */
 
-use Browscap\Generator\BuildFullFileOnlyGenerator;
+use Browscap\Generator\BuildGenerator;
+use Browscap\Writer\Factory\FullPhpWriterFactory;
 use BrowserDetector\Detector\Version;
 use UaComparator\Helper\LoggerFactory;
 use UaComparator\Module\Browscap;
@@ -22,7 +23,6 @@ use WurflCache\Adapter\Memory;
 use UaComparator\Helper\MessageFormatter;
 use UaComparator\Helper\TimeFormatter;
 use BrowscapPHP\Helper\IniLoader;
-use Monolog\Logger;
 
 echo 'initializing App ...';
 
@@ -106,10 +106,18 @@ $newFile     = false;
 if (!file_exists($iniFile)) {
     mkdir($buildFolder, 0777, true);
 
-    $builder = new BuildFullFileOnlyGenerator($resourceFolder, $buildFolder);
-    $builder
+    $collectionCreator = new \Browscap\Helper\CollectionCreator();
+
+    $writerCollectionFactory = new FullPhpWriterFactory();
+    $writerCollection        = $writerCollectionFactory->createCollection($logger, $buildFolder);
+
+    // Generate the actual browscap.ini files
+    $buildGenerator = new BuildGenerator($resourceFolder, $buildFolder);
+    $buildGenerator
         ->setLogger($logger)
-        ->run($buildNumber, $iniFile)
+        ->setCollectionCreator($collectionCreator)
+        ->setWriterCollection($writerCollection)
+        ->run($buildNumber)
     ;
 
     $newFile = true;
