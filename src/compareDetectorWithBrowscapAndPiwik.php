@@ -99,7 +99,7 @@ $resourceFolder = 'vendor/browscap/browscap/resources/';
 
 $buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
 
-$buildFolder = 'data/browscap-ua-test-' . $buildNumber;
+$buildFolder = 'build/build-' . $buildNumber;
 $iniFile     = $buildFolder . '/full_php_browscap.ini';
 $newFile     = false;
 
@@ -109,7 +109,7 @@ if (!file_exists($iniFile)) {
     $collectionCreator = new \Browscap\Helper\CollectionCreator();
 
     $writerCollectionFactory = new FullPhpWriterFactory();
-    $writerCollection        = $writerCollectionFactory->createCollection($logger, $buildFolder);
+    $writerCollection        = $writerCollectionFactory->createCollection($logger, $buildFolder, $iniFile);
 
     // Generate the actual browscap.ini files
     $buildGenerator = new BuildGenerator($resourceFolder, $buildFolder);
