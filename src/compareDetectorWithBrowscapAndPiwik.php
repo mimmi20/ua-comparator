@@ -9,7 +9,8 @@
  * Mobile-Detect: https://github.com/serbanghita/Mobile-Detect
  */
 
-use Browscap\Generator\BuildFullFileOnlyGenerator;
+use Browscap\Generator\BuildGenerator;
+use Browscap\Writer\Factory\FullPhpWriterFactory;
 use UaComparator\Helper\Check;
 use UaComparator\Helper\LineHandler;
 use UaComparator\Helper\LoggerFactory;
@@ -99,17 +100,25 @@ $resourceFolder = 'vendor/browscap/browscap/resources/';
 
 $buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
 
-$buildFolder = 'build/build-' . $buildNumber . '/';
-$iniFile     = $buildFolder . 'full_php_browscap.ini';
+$buildFolder = 'build/build-' . $buildNumber;
+$iniFile     = $buildFolder . '/full_php_browscap.ini';
 $newFile     = false;
 
 if (!file_exists($iniFile)) {
     mkdir($buildFolder, 0777, true);
 
-    $builder = new BuildFullFileOnlyGenerator($resourceFolder, $buildFolder);
-    $builder
+    $collectionCreator = new \Browscap\Helper\CollectionCreator();
+
+    $writerCollectionFactory = new FullPhpWriterFactory();
+    $writerCollection        = $writerCollectionFactory->createCollection($logger, $buildFolder, $iniFile);
+
+    // Generate the actual browscap.ini files
+    $buildGenerator = new BuildGenerator($resourceFolder, $buildFolder);
+    $buildGenerator
         ->setLogger($logger)
-        ->run($buildNumber, $iniFile)
+        ->setCollectionCreator($collectionCreator)
+        ->setWriterCollection($writerCollection)
+        ->run($buildNumber)
     ;
 
     $newFile = true;

@@ -52,13 +52,11 @@ class Check
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input  An InputInterface instance
-     * @param \Symfony\Component\Console\Output\OutputInterface $output An OutputInterface instance
+     * @param int                                      $checklevel
+     * @param \UaComparator\Module\ModuleCollection $collection
      *
-     * @return null|integer null or 0 if everything went fine, or an error code
+     * @return array
      *
-     * @throws \LogicException When this abstract method is not implemented
-     * @see    setCode()
      */
     public function getChecks(
         $checklevel,
