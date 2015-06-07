@@ -503,7 +503,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
     );
 
     $startString = str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(' ', $collection->count() - 1) . '|';
-
+/*
     try {
         list($ok, $content, $matches) = $messageFormatter->formatMessage(
             $content,
@@ -517,7 +517,7 @@ function handleLine($agent, ModuleCollection $collection, Logger $logger, Messag
         $logger->error($e);
         $ok = false;
     }
-
+*/
     list($ok, $content, $matches) = $messageFormatter->formatMessage(
         $content,
         $matches,
