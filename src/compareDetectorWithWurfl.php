@@ -177,12 +177,12 @@ foreach ($source->getUserAgents($uaSourceDirectory, $logger) as $line) {
     try {
         $lineHandler->handleLine($line, $collection, $messageFormatter, $i, $checks);
     } catch (\Exception $e) {
-        if (1 === $e->getCode()) {
-            $nokfound++;
+        if (3 === $e->getCode()) {
+            $okfound++;
         } elseif (2 === $e->getCode()) {
             $sosofound++;
         } else {
-            $okfound++;
+            $nokfound++;
         }
     }
 

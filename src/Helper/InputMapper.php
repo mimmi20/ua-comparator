@@ -1160,6 +1160,9 @@ class InputMapper
             case 'one mini2':
                 $marketingName = 'One Mini 2';
                 break;
+            case 's iii mini':
+                $marketingName = 'Galaxy S III Mini';
+                break;
             default:
                 // nothing to do here
                 break;
@@ -1260,6 +1263,7 @@ class InputMapper
     {
         switch (strtolower($brandName)) {
             case 'htc corporation':
+            case 'ht':
                 $brandName = 'HTC';
                 break;
             case 'au':

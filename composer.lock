@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "12fb32cc0090f13064b7aa856b6b24d2",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "ef0fcae0718dae8cf1f637dadc59787b0c42dc95"
+                "reference": "461884906b3ea019710494ece495064c9a875b97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/ef0fcae0718dae8cf1f637dadc59787b0c42dc95",
-                "reference": "ef0fcae0718dae8cf1f637dadc59787b0c42dc95",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/461884906b3ea019710494ece495064c9a875b97",
+                "reference": "461884906b3ea019710494ece495064c9a875b97",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-06-04 08:43:42"
+            "time": "2015-06-09 18:05:49"
         },
         {
             "name": "browscap/browscap-php",
@@ -151,12 +151,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "9fb2d4f2d642a0749decb41bc2fe4be2bf8bef7a"
+                "reference": "4f80e7ff68466cab970c22b425725b8058c32970"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/9fb2d4f2d642a0749decb41bc2fe4be2bf8bef7a",
-                "reference": "9fb2d4f2d642a0749decb41bc2fe4be2bf8bef7a",
+                "url": "https://api.github.com/repos/composer/composer/zipball/4f80e7ff68466cab970c22b425725b8058c32970",
+                "reference": "4f80e7ff68466cab970c22b425725b8058c32970",
                 "shasum": ""
             },
             "require": {
@@ -214,7 +214,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-06-05 13:07:39"
+            "time": "2015-06-09 00:03:48"
         },
         {
             "name": "crossjoin/browscap",
@@ -335,12 +335,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "946107201f0dd55de8480bc803c789643fb9f666"
+                "reference": "8335ca2b87244acf94d0ec248d300a2ebc144d33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/946107201f0dd55de8480bc803c789643fb9f666",
-                "reference": "946107201f0dd55de8480bc803c789643fb9f666",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/8335ca2b87244acf94d0ec248d300a2ebc144d33",
+                "reference": "8335ca2b87244acf94d0ec248d300a2ebc144d33",
                 "shasum": ""
             },
             "require": {
@@ -385,7 +385,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-06-07 13:52:58"
+            "time": "2015-06-09 19:15:32"
         },
         {
             "name": "mimmi20/file-loader",
@@ -1461,16 +1461,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.1.4",
+            "version": "2.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "3703c4bb67c8700957dd41c843254658539d091d"
+                "reference": "be2286cb8c7e1773eded49d9719219e6f74f9e3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/3703c4bb67c8700957dd41c843254658539d091d",
-                "reference": "3703c4bb67c8700957dd41c843254658539d091d",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/be2286cb8c7e1773eded49d9719219e6f74f9e3e",
+                "reference": "be2286cb8c7e1773eded49d9719219e6f74f9e3e",
                 "shasum": ""
             },
             "require": {
@@ -1519,7 +1519,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-06-06 08:33:23"
+            "time": "2015-06-09 13:05:42"
         },
         {
             "name": "phpunit/php-file-iterator",

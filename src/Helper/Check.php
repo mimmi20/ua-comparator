@@ -192,13 +192,6 @@ class Check
                         $collection->count() - 1
                     ) . '|'
             ),
-            'model_extra_info'                               => array(
-                'key'         => 'model_extra_info',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
             'marketing_name'                                 => array(
                 'key'         => 'marketing_name',
                 'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
@@ -290,6 +283,13 @@ class Check
                 ),
                 'unique'                                         => array(
                     'key'         => 'unique',
+                    'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                            ' ',
+                            $collection->count() - 1
+                        ) . '|'
+                ),
+                'model_extra_info'                               => array(
+                    'key'         => 'model_extra_info',
                     'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
                             ' ',
                             $collection->count() - 1
