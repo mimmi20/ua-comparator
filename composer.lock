@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "461884906b3ea019710494ece495064c9a875b97"
+                "reference": "37051fc1b0dab9f1852b0a6099bf3ccbef4683fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/461884906b3ea019710494ece495064c9a875b97",
-                "reference": "461884906b3ea019710494ece495064c9a875b97",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/37051fc1b0dab9f1852b0a6099bf3ccbef4683fc",
+                "reference": "37051fc1b0dab9f1852b0a6099bf3ccbef4683fc",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-06-09 18:05:49"
+            "time": "2015-06-10 07:38:53"
         },
         {
             "name": "browscap/browscap-php",
@@ -335,12 +335,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "8335ca2b87244acf94d0ec248d300a2ebc144d33"
+                "reference": "fdb4ec5ad6c0eaaedccd53007909bdce60ad4665"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/8335ca2b87244acf94d0ec248d300a2ebc144d33",
-                "reference": "8335ca2b87244acf94d0ec248d300a2ebc144d33",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/fdb4ec5ad6c0eaaedccd53007909bdce60ad4665",
+                "reference": "fdb4ec5ad6c0eaaedccd53007909bdce60ad4665",
                 "shasum": ""
             },
             "require": {
@@ -385,7 +385,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-06-09 19:15:32"
+            "time": "2015-06-10 22:02:20"
         },
         {
             "name": "mimmi20/file-loader",
