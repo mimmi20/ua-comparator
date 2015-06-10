@@ -206,6 +206,35 @@ class Check
                         $collection->count() - 1
                     ) . '|'
             ),
+            // display
+            'resolution_width'                               => array(
+                'key'         => 'resolution_width',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'resolution_height'                              => array(
+                'key'         => 'resolution_height',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'dual_orientation'                               => array(
+                'key'         => 'dual_orientation',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'colors'                                         => array(
+                'key'         => 'colors',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
         );
 
         if ($checklevel == self::MEDIUM) {
@@ -333,34 +362,6 @@ class Check
                 ),
                 'max_image_height'                               => array(
                     'key'         => 'max_image_height',
-                    'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                            ' ',
-                            $collection->count() - 1
-                        ) . '|'
-                ),
-                'resolution_width'                               => array(
-                    'key'         => 'resolution_width',
-                    'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                            ' ',
-                            $collection->count() - 1
-                        ) . '|'
-                ),
-                'resolution_height'                              => array(
-                    'key'         => 'resolution_height',
-                    'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                            ' ',
-                            $collection->count() - 1
-                        ) . '|'
-                ),
-                'dual_orientation'                               => array(
-                    'key'         => 'dual_orientation',
-                    'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                            ' ',
-                            $collection->count() - 1
-                        ) . '|'
-                ),
-                'colors'                                         => array(
-                    'key'         => 'colors',
                     'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
                             ' ',
                             $collection->count() - 1
