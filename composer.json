@@ -27,7 +27,7 @@
         },
         {
             "type": "git",
-            "url":  "https://github.com/mimmi20/browscap-php.git"
+            "url":  "https://github.com/browscap/browscap-php.git"
         }
     ],
     "require": {
@@ -41,7 +41,7 @@
         "mimmi20/wurflcache": "~1.3",
         "mimmi20/wurfl-data": "~1.6",
         "ua-parser/uap-php": "dev-master",
-        "browscap/browscap-php": "dev-update-symfony",
+        "browscap/browscap-php": "3.x@dev",
         "crossjoin/browscap": "dev-master",
         "wurfl/wurfl-api": "~1.6",
         "piwik/device-detector": "dev-master"
