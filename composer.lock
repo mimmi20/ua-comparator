@@ -492,16 +492,16 @@
         },
         {
             "name": "mimmi20/wurfl-data",
-            "version": "1.6.0.1",
+            "version": "1.6.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/wurfl-data.git",
-                "reference": "cce7fe55da0985e1c35c3c74613dd7897addf361"
+                "reference": "2dc2d5b0fdce6999cce85691c9968bf37f6d679b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/cce7fe55da0985e1c35c3c74613dd7897addf361",
-                "reference": "cce7fe55da0985e1c35c3c74613dd7897addf361",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/2dc2d5b0fdce6999cce85691c9968bf37f6d679b",
+                "reference": "2dc2d5b0fdce6999cce85691c9968bf37f6d679b",
                 "shasum": ""
             },
             "require": {
@@ -542,7 +542,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-05-11 18:54:47"
+            "time": "2015-06-13 03:14:55"
         },
         {
             "name": "mimmi20/wurflcache",
@@ -1614,16 +1614,16 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "19689d4354b295ee3d8c54b4f42c3efb69cbc17c"
+                "reference": "83fe1bdc5d47658b727595c14da140da92b3d66d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/19689d4354b295ee3d8c54b4f42c3efb69cbc17c",
-                "reference": "19689d4354b295ee3d8c54b4f42c3efb69cbc17c",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/83fe1bdc5d47658b727595c14da140da92b3d66d",
+                "reference": "83fe1bdc5d47658b727595c14da140da92b3d66d",
                 "shasum": ""
             },
             "require": {
@@ -1632,13 +1632,10 @@
             "type": "library",
             "autoload": {
                 "classmap": [
-                    "PHP/"
+                    "src/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                ""
-            ],
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1654,7 +1651,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2013-08-02 07:42:54"
+            "time": "2015-06-13 07:35:30"
         },
         {
             "name": "phpunit/php-token-stream",
