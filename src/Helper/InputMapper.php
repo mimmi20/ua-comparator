@@ -473,6 +473,7 @@ class InputMapper
             case 'win2003':
             case 'win98':
             case 'win95':
+            case 'win31':
             case 'winnt':
             case 'winme':
             case 'windows xp':
@@ -494,6 +495,9 @@ class InputMapper
             case 'winrt8':
             case 'winrt8.1':
                 $osName = 'Windows RT';
+                break;
+            case 'winmobile':
+                $osName = 'Windows Mobile OS';
                 break;
             case 'blackberry os':
                 $osName = 'RIM OS';
@@ -638,6 +642,9 @@ class InputMapper
                 break;
             case 'winme':
                 $osVersion = 'ME';
+                break;
+            case 'win31':
+                $osVersion = '3.1';
                 break;
             default:
                 // nothing to do here
