@@ -499,6 +499,9 @@ class InputMapper
             case 'winmobile':
                 $osName = 'Windows Mobile OS';
                 break;
+            case 'wince':
+                $osName = 'Windows CE';
+                break;
             case 'blackberry os':
                 $osName = 'RIM OS';
                 break;
