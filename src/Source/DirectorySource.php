@@ -10,19 +10,32 @@ use Monolog\Logger;
  * @package UaComparator\Source
  * @author  Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  */
-class DirectorySource
+class DirectorySource implements SourceInterface
 {
     /**
-     * @param string          $uaSourceDirectory
+     * @var string
+     */
+    private $dir = null;
+
+    /**
+     * @param string $dir
+     */
+    public function __construct($dir)
+    {
+        $this->dir = $dir;
+    }
+
+    /**
      * @param \Monolog\Logger $logger
      *
      * @return \Generator
      * @throws \BrowscapPHP\Helper\Exception
      */
-    public function getUserAgents($uaSourceDirectory, Logger $logger)
+    public function getUserAgents(Logger $logger)
     {
-        $iterator = new \RecursiveDirectoryIterator($uaSourceDirectory);
+        $iterator = new \RecursiveDirectoryIterator($this->dir);
         $loader   = new IniLoader();
+        $allLines = array();
 
         foreach (new \RecursiveIteratorIterator($iterator) as $file) {
             /** @var $file \SplFileInfo */
@@ -42,7 +55,15 @@ class DirectorySource
                 }
 
                 while ($internalLoader->isValid()) {
-                    yield $internalLoader->getLine();
+                    $line = $internalLoader->getLine();
+
+                    if (isset($allLines[$line])) {
+                        continue;
+                    }
+
+                    $allLines[$line] = 1;
+
+                    yield $line;
                 }
 
                 $internalLoader->close();
@@ -55,6 +76,12 @@ class DirectorySource
                 }
 
                 foreach ($lines as $line) {
+                    if (isset($allLines[$line])) {
+                        continue;
+                    }
+
+                    $allLines[$line] = 1;
+
                     yield $line;
                 }
             }

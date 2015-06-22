@@ -31,13 +31,13 @@
 namespace UaComparator\Command;
 
 use Browscap\Helper\LoggerHelper;
-use BrowserDetector\Detector\Version;
 use Monolog\Processor\MemoryUsageProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
+use UaComparator\Helper\LineHandler;
 use UaComparator\Helper\MessageFormatter;
 use UaComparator\Helper\TimeFormatter;
 use UaComparator\Module\Browscap;
@@ -48,6 +48,7 @@ use UaComparator\Module\PiwikDetector;
 use UaComparator\Module\UaParser;
 use UaComparator\Module\Wurfl;
 use UaComparator\Module\WurflOld;
+use UaComparator\Source\DirectorySource;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
 
@@ -108,7 +109,7 @@ class CompareCommand
                 '-c',
                 InputOption::VALUE_REQUIRED,
                 'the level for the checks to do. Available Options:' . implode(',', $allChecks),
-                self::MINIMUM
+                Check::MINIMUM
             )
             //            ->addArgument('version', InputArgument::REQUIRED, 'Version number to apply')
             //            ->addOption('resources', null, InputOption::VALUE_REQUIRED, 'Where the resource files are located', $defaultResourceFolder)
@@ -411,10 +412,10 @@ class CompareCommand
          * Loop
          */
         $uaSourceDirectory = 'data/useragents';
-        $source            = new \UaComparator\Source\DirectorySource();
-        $lineHandler       = new \UaComparator\Helper\LineHandler();
+        $source            = new DirectorySource($uaSourceDirectory);
+        $lineHandler       = new LineHandler();
 
-        foreach ($source->getUserAgents($uaSourceDirectory, $logger) as $line) {
+        foreach ($source->getUserAgents($logger) as $line) {
             try {
                 $lineHandler->handleLine($line, $collection, $messageFormatter, $i, $checks);
                 continue;

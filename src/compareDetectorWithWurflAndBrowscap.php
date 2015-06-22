@@ -286,7 +286,7 @@ $weights   = array(
 echo "\n";
 
 $uaSourceDirectory = 'data/useragents';
-$source            = new DirectorySource();
+$source            = new DirectorySource($uaSourceDirectory);
 $lineHandler       = new LineHandler();
 
 $checkHelper = new Check();
@@ -295,7 +295,7 @@ $checks      = $checkHelper->getChecks(Check::MINIMUM, $collection);
 /*******************************************************************************
  * Loop
  */
-foreach ($source->getUserAgents($uaSourceDirectory, $logger) as $line) {
+foreach ($source->getUserAgents($logger) as $line) {
     try {
         $lineHandler->handleLine($line, $collection, $messageFormatter, $i, $checks);
     } catch (\Exception $e) {
