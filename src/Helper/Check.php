@@ -64,35 +64,127 @@ class Check
     ) {
         $checks     = array(
             'Browser'                                        => array(
-                'key'         => array('getFullBrowser', array(true, Version::MAJORMINOR)),
+                'key'         => 'mobile_browser',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'Browser Version'                                        => array(
+                'key'         => 'mobile_browser_version',
+                'startString' => '#plus# + detected|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'Browser Modus'                                        => array(
+                'key'         => 'mobile_browser_modus',
+                'startString' => '#percent1# % +|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'Browser Bits'                                        => array(
+                'key'         => 'mobile_browser_bits',
+                'startString' => '#minus# - detected|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'Browser Typ'                                    => array(
+                'key'         => 'browser_type',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'Browser Hersteller'                             => array(
+                'key'         => 'mobile_browser_manufacturer',
                 'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
                         ' ',
                         $collection->count() - 1
                     ) . '|'
             ),
             'Engine'                                         => array(
-                'key'         => array('getFullEngine', array(Version::MAJORMINOR)),
-                'startString' => '#plus# + detected|' . str_repeat(' ', $collection->count() - 1) . '|'
+                'key'         => 'renderingengine_name',
+                'startString' => '#percent2# % -|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'Engine Version'                                         => array(
+                'key'         => 'renderingengine_version',
+                'startString' => '#soso# : detected|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'Engine Hersteller'                              => array(
+                'key'         => 'renderingengine_manufacturer',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
             ),
             'OS'                                             => array(
-                'key'         => array('getFullPlatform', array(true, Version::MAJORMINOR)),
-                'startString' => '#percent1# % +|' . str_repeat(' ', $collection->count() - 1) . '|'
+                'key'         => 'device_os',
+                'startString' => '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|'
             ),
-            'Device'                                         => array(
-                'key'         => array('getFullDevice', array(true)),
-                'startString' => '#minus# - detected|' . str_repeat(' ', $collection->count() - 1) . '|'
+            'OS Version'                                             => array(
+                'key'         => 'device_os_version',
+                'startString' => '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'OS Bits'                                             => array(
+                'key'         => 'device_os_bits',
+                'startString' => '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'OS Hersteller'                                  => array(
+                'key'         => 'device_os_manufacturer',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'Device Brand Name'                                     => array(
+                'key'         => 'brand_name',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'Device Marketing Name'                                 => array(
+                'key'         => 'marketing_name',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'Device Model Name'                                         => array(
+                'key'         => 'model_name',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'Device Hersteller'                              => array(
+                'key'         => 'manufacturer_name',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
+            ),
+            'Device Typ'                                     => array(
+                'key'         => 'device_type',
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
             ),
             'Desktop'                                        => array(
                 'key'         => array('isDesktop'),
-                'startString' => '#percent2# % -|' . str_repeat(' ', $collection->count() - 1) . '|'
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
             ),
             'TV'                                             => array(
                 'key'         => array('isTvDevice'),
-                'startString' => '#soso# : detected|' . str_repeat(' ', $collection->count() - 1) . '|'
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
             ),
             'Mobile'                                         => array(
                 'key'         => array('isMobileDevice'),
-                'startString' => '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|'
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
             ),
             'Tablet'                                         => array(
                 'key'         => array('isTablet'),
@@ -129,71 +221,8 @@ class Check
                         $collection->count() - 1
                     ) . '|'
             ),
-            'Device Typ'                                     => array(
-                'key'         => 'device_type',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
-            'Browser Typ'                                    => array(
-                'key'         => 'browser_type',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
-            'Device-Hersteller'                              => array(
-                'key'         => 'manufacturer_name',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
-            'Browser-Hersteller'                             => array(
-                'key'         => 'mobile_browser_manufacturer',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
-            'OS-Hersteller'                                  => array(
-                'key'         => 'device_os_manufacturer',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
-            'Engine-Hersteller'                              => array(
-                'key'         => 'renderingengine_manufacturer',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
             'pointing_method'                                => array(
                 'key'         => 'pointing_method',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
-            'model_name'                                     => array(
-                'key'         => 'model_name',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
-            'brand_name'                                     => array(
-                'key'         => 'brand_name',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
-            ),
-            'marketing_name'                                 => array(
-                'key'         => 'marketing_name',
                 'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
                         ' ',
                         $collection->count() - 1
