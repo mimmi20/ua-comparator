@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "1ee4daddf0b2860615787b2c3b33fb8d518a5b0f"
+                "reference": "6f0763301ac1c2d7b30439b0fc28023c29752645"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/1ee4daddf0b2860615787b2c3b33fb8d518a5b0f",
-                "reference": "1ee4daddf0b2860615787b2c3b33fb8d518a5b0f",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/6f0763301ac1c2d7b30439b0fc28023c29752645",
+                "reference": "6f0763301ac1c2d7b30439b0fc28023c29752645",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-06-19 07:08:46"
+            "time": "2015-06-23 19:49:29"
         },
         {
             "name": "browscap/browscap-php",
@@ -151,12 +151,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "d0ff01698de0eb74e45ebe379b6ac8ccd5a6b0db"
+                "reference": "943107cfe717a74aa791f57b87fa514c88582b0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/d0ff01698de0eb74e45ebe379b6ac8ccd5a6b0db",
-                "reference": "d0ff01698de0eb74e45ebe379b6ac8ccd5a6b0db",
+                "url": "https://api.github.com/repos/composer/composer/zipball/943107cfe717a74aa791f57b87fa514c88582b0d",
+                "reference": "943107cfe717a74aa791f57b87fa514c88582b0d",
                 "shasum": ""
             },
             "require": {
@@ -214,7 +214,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-06-20 11:58:19"
+            "time": "2015-06-26 13:40:26"
         },
         {
             "name": "crossjoin/browscap",
@@ -335,12 +335,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "ea36cbe3a7a218ae5fe8834292084817b83c6668"
+                "reference": "591cc478df9ee57e6f9688e738491b57e0fae0ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/ea36cbe3a7a218ae5fe8834292084817b83c6668",
-                "reference": "ea36cbe3a7a218ae5fe8834292084817b83c6668",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/591cc478df9ee57e6f9688e738491b57e0fae0ae",
+                "reference": "591cc478df9ee57e6f9688e738491b57e0fae0ae",
                 "shasum": ""
             },
             "require": {
@@ -385,7 +385,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-06-19 19:38:31"
+            "time": "2015-06-26 19:12:21"
         },
         {
             "name": "mimmi20/file-loader",
@@ -734,12 +734,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "a906633110bb0a9a1d2452900db4a7f2732beeb7"
+                "reference": "5717941ad9c3d8766ac77f5a58c68962ed9d5ca0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/a906633110bb0a9a1d2452900db4a7f2732beeb7",
-                "reference": "a906633110bb0a9a1d2452900db4a7f2732beeb7",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/5717941ad9c3d8766ac77f5a58c68962ed9d5ca0",
+                "reference": "5717941ad9c3d8766ac77f5a58c68962ed9d5ca0",
                 "shasum": ""
             },
             "require": {
@@ -777,7 +777,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-06-19 20:36:58"
+            "time": "2015-06-24 09:17:01"
         },
         {
             "name": "psr/log",
@@ -1214,12 +1214,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ua-parser/uap-php.git",
-                "reference": "3adb23a1ecf4ecdf11cb183530b9651282aa6e87"
+                "reference": "712f53e659e8a6772668f8293a3657d499a0300f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ua-parser/uap-php/zipball/3adb23a1ecf4ecdf11cb183530b9651282aa6e87",
-                "reference": "3adb23a1ecf4ecdf11cb183530b9651282aa6e87",
+                "url": "https://api.github.com/repos/ua-parser/uap-php/zipball/712f53e659e8a6772668f8293a3657d499a0300f",
+                "reference": "712f53e659e8a6772668f8293a3657d499a0300f",
                 "shasum": ""
             },
             "require": {
@@ -1255,7 +1255,7 @@
                 }
             ],
             "description": "A multi-language port of Browserscope's user agent parser.",
-            "time": "2015-04-07 05:11:32"
+            "time": "2015-06-24 12:40:17"
         },
         {
             "name": "wurfl/wurfl-api",
