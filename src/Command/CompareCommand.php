@@ -32,6 +32,7 @@ namespace UaComparator\Command;
 
 use Browscap\Helper\LoggerHelper;
 use Monolog\Processor\MemoryUsageProcessor;
+use PDO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,6 +50,7 @@ use UaComparator\Module\UaParser;
 use UaComparator\Module\Wurfl;
 use UaComparator\Module\WurflOld;
 use UaComparator\Source\DirectorySource;
+use UaComparator\Source\PdoSource;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
 
@@ -411,9 +413,31 @@ class CompareCommand
         /*******************************************************************************
          * Loop
          */
-        $uaSourceDirectory = 'data/useragents';
-        $source            = new DirectorySource($uaSourceDirectory);
-        $lineHandler       = new LineHandler();
+        $dsn      = 'mysql:dbname=browscap;host=localhost';
+        $user     = 'root';
+        $password = '';
+
+        try {
+            $adapter = new PDO(
+                $dsn,
+                $user,
+                $password,
+                array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
+                    PDO::MYSQL_ATTR_MAX_BUFFER_SIZE => 1024 * 1024 * 50,
+                )
+            );
+            $adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $source = new PdoSource($adapter);
+        } catch (\Exception $e) {
+            $logger->debug($e);
+
+            $uaSourceDirectory = 'data/useragents';
+            $source            = new DirectorySource($uaSourceDirectory);
+        }
+
+        $lineHandler = new LineHandler();
 
         foreach ($source->getUserAgents($logger) as $line) {
             try {
