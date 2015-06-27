@@ -175,7 +175,7 @@ try {
         $password,
         array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
-            PDO::MYSQL_ATTR_MAX_BUFFER_SIZE => 1024 * 1024 * 50,
+            1005 => 1024 * 1024 * 50, // PDO::MYSQL_ATTR_MAX_BUFFER_SIZE
         )
     );
     $adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
