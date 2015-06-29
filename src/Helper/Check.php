@@ -84,25 +84,22 @@ class Check
             ),
             'Browser Typ'                                    => array(
                 'key'         => 'browser_type',
-                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
-                        ' ',
-                        $collection->count() - 1
-                    ) . '|'
+                'startString' => '#percent2# % -|' . str_repeat(' ', $collection->count() - 1) . '|'
             ),
             'Browser Hersteller'                             => array(
                 'key'         => 'mobile_browser_manufacturer',
+                'startString' => '#soso# : detected|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'Engine'                                         => array(
+                'key'         => 'renderingengine_name',
+                'startString' => '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|'
+            ),
+            'Engine Version'                                         => array(
+                'key'         => 'renderingengine_version',
                 'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
                         ' ',
                         $collection->count() - 1
                     ) . '|'
-            ),
-            'Engine'                                         => array(
-                'key'         => 'renderingengine_name',
-                'startString' => '#percent2# % -|' . str_repeat(' ', $collection->count() - 1) . '|'
-            ),
-            'Engine Version'                                         => array(
-                'key'         => 'renderingengine_version',
-                'startString' => '#soso# : detected|' . str_repeat(' ', $collection->count() - 1) . '|'
             ),
             'Engine Hersteller'                              => array(
                 'key'         => 'renderingengine_manufacturer',
@@ -113,15 +110,24 @@ class Check
             ),
             'OS'                                             => array(
                 'key'         => 'device_os',
-                'startString' => '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|'
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
             ),
             'OS Version'                                             => array(
                 'key'         => 'device_os_version',
-                'startString' => '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|'
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
             ),
             'OS Bits'                                             => array(
                 'key'         => 'device_os_bits',
-                'startString' => '#percent3# % :|' . str_repeat(' ', $collection->count() - 1) . '|'
+                'startString' => str_repeat(' ', FIRST_COL_LENGTH) . '|' . str_repeat(
+                        ' ',
+                        $collection->count() - 1
+                    ) . '|'
             ),
             'OS Hersteller'                                  => array(
                 'key'         => 'device_os_manufacturer',
