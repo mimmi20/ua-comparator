@@ -142,6 +142,10 @@ class MessageFormatter
                 $target = '(n/a)';
             }
 
+            if ($target instanceof Version) {
+                $target = $target->getVersion(Version::MAJORMINOR);
+            }
+
             if (null === $target || 'null' === $target) {
                 $strTarget = '(NULL)';
             } elseif ('' === $target) {
