@@ -45,7 +45,8 @@
         "browscap/browscap-php": "3.x@dev",
         "crossjoin/browscap": "dev-master",
         "wurfl/wurfl-api": "~1.6",
-        "piwik/device-detector": "dev-master"
+        "piwik/device-detector": "dev-master",
+        "mimmi20/wurfl-generic-request": "~1.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
