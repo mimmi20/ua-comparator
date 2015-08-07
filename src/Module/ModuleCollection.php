@@ -86,7 +86,6 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\ModuleCollection
      */
     public function init()

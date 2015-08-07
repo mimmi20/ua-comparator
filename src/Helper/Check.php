@@ -30,7 +30,6 @@
 
 namespace UaComparator\Helper;
 
-use BrowserDetector\Detector\Version;
 use UaComparator\Module\ModuleCollection;
 
 /**

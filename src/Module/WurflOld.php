@@ -33,9 +33,6 @@ namespace UaComparator\Module;
 use Monolog\Logger;
 use WURFL_CustomDevice;
 use WurflCache\Adapter\AdapterInterface;
-use BrowserDetector\Detector\Result;
-use BrowserDetector\Detector\Version;
-use UaComparator\Helper\InputMapper;
 use Exception;
 
 /**
@@ -106,7 +103,6 @@ class WurflOld implements ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\WurflOld
      */
     public function init()
@@ -243,7 +239,7 @@ class WurflOld implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult()
     {

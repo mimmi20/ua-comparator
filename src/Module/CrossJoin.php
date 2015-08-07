@@ -106,7 +106,6 @@ class CrossJoin implements ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\CrossJoin
      */
     public function init()
@@ -120,7 +119,6 @@ class CrossJoin implements ModuleInterface
      * @param string $agent
      *
      * @return \UaComparator\Module\CrossJoin
-     * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
@@ -206,7 +204,7 @@ class CrossJoin implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult()
     {

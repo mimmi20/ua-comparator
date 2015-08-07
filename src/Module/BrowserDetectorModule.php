@@ -31,7 +31,6 @@
 namespace UaComparator\Module;
 
 use BrowserDetector\BrowserDetector;
-use BrowserDetector\Input\UserAgent;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
 
@@ -82,7 +81,7 @@ class BrowserDetectorModule implements ModuleInterface
     private $id = 0;
 
     /**
-     * @var \BrowserDetector\Detector\Result
+     * @var \BrowserDetector\Detector\Result\Result
      */
     private $detectionResult = null;
 
@@ -101,16 +100,13 @@ class BrowserDetectorModule implements ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\BrowserDetectorModule
      */
     public function init()
     {
         $this->input = new BrowserDetector();
-        $this->input->setInterface(new UserAgent());
         $this->input->setLogger($this->logger);
         $this->input->setCache($this->cache);
-        $this->input->setCachePrefix('browser-detector');
 
         $this->detect('');
 
@@ -124,14 +120,12 @@ class BrowserDetectorModule implements ModuleInterface
      * @param string $agent
      *
      * @return \UaComparator\Module\BrowserDetectorModule
-     * @throws \BrowserDetector\Input\Exception
+     * @throws \Exception
      */
     public function detect($agent)
     {
-        $this->input->setAgent($agent);
-
         try {
-            $this->detectionResult = $this->input->getBrowser(true);
+            $this->detectionResult = $this->input->getBrowser($agent, true);
         } catch (\Exception $e) {
             $this->logger->err($e);
 
@@ -217,7 +211,7 @@ class BrowserDetectorModule implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult()
     {

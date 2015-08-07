@@ -32,8 +32,8 @@ namespace UaComparator\Module;
 
 use Monolog\Logger;
 use Wurfl\Configuration\XmlConfig;
-use Wurfl\CustomDevice;
 use Wurfl\Manager;
+use Wurfl\Storage\Storage;
 use WurflCache\Adapter\AdapterInterface;
 use WurflCache\Adapter\Memory;
 use Exception;
@@ -106,7 +106,6 @@ class Wurfl implements ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\Wurfl
      */
     public function init()
@@ -126,9 +125,10 @@ class Wurfl implements ModuleInterface
      */
     public function detect($agent)
     {
-        $wurflConfig  = new XmlConfig($this->configFile);
-        $wurflCache   = new Memory();
-        $wurflManager = new Manager($wurflConfig, $this->cache, $wurflCache);
+        $wurflConfig      = new XmlConfig($this->configFile);
+        $wurflCache       = new Storage(new Memory());
+        $persistanceCache = new Storage($this->cache);
+        $wurflManager     = new Manager($wurflConfig, $persistanceCache, $wurflCache);
 
         $agent = str_replace('Toolbar', '', $agent);
 
@@ -219,7 +219,7 @@ class Wurfl implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult()
     {

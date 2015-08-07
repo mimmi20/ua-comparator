@@ -1,7 +1,6 @@
 <?php
 namespace UaComparator\Source;
 
-use BrowscapPHP\Helper\IniLoader;
 use Monolog\Logger;
 
 /**

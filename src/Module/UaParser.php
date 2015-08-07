@@ -34,7 +34,7 @@ use Monolog\Logger;
 use UAParser\Parser;
 use UAParser\Result\Client;
 use WurflCache\Adapter\AdapterInterface;
-use BrowserDetector\Detector\Result;
+use BrowserDetector\Detector\Result\Result;
 use UaComparator\Helper\InputMapper;
 
 /**
@@ -84,6 +84,11 @@ class UaParser implements ModuleInterface
     private $detectionResult = null;
 
     /**
+     * @var string
+     */
+    private $agent = '';
+
+    /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
@@ -98,7 +103,6 @@ class UaParser implements ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\UaParser
      */
     public function init()
@@ -112,12 +116,12 @@ class UaParser implements ModuleInterface
      * @param string $agent
      *
      * @return \UaComparator\Module\UaParser
-     * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
         $parser = Parser::create();
 
+        $this->agent           = $agent;
         $this->detectionResult = $parser->parse($agent);
 
         return $this;
@@ -199,7 +203,7 @@ class UaParser implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult()
     {
@@ -211,11 +215,11 @@ class UaParser implements ModuleInterface
      *
      * @param \UAParser\Result\Client $parserResult
      *
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     private function map(Client $parserResult)
     {
-        $result = new Result();
+        $result = new Result($this->agent);
         $mapper = new InputMapper();
 
         $browserName    = $mapper->mapBrowserName($parserResult->ua->family);

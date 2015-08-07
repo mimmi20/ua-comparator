@@ -30,7 +30,9 @@
 
 namespace UaComparator\Module;
 
-use BrowserDetector\Detector\Result;
+use BrowserDetector\Detector\Result\Result;
+use DeviceDetector\Parser\Client\Browser;
+use DeviceDetector\Parser\OperatingSystem;
 use UaComparator\Helper\InputMapper;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Device\DeviceParserAbstract;
@@ -84,6 +86,11 @@ class PiwikDetector implements ModuleInterface
     private $detectionResult = null;
 
     /**
+     * @var string
+     */
+    private $agent = '';
+
+    /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
@@ -98,7 +105,6 @@ class PiwikDetector implements ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\CrossJoin
      */
     public function init()
@@ -114,11 +120,32 @@ class PiwikDetector implements ModuleInterface
      * @param string $agent
      *
      * @return \UaComparator\Module\CrossJoin
-     * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
-        $this->detectionResult = DeviceDetector::getInfoFromUserAgent($agent);
+        $this->agent           = $agent;
+
+        $deviceDetector = new DeviceDetector($agent);
+        $deviceDetector->parse();
+
+        $osFamily      = OperatingSystem::getOsFamily($deviceDetector->getOs('short_name'));
+        $browserFamily = Browser::getBrowserFamily($deviceDetector->getClient('short_name'));
+
+        $processed = array(
+            'user_agent'     => $deviceDetector->getUserAgent(),
+            'bot'            => ($deviceDetector->isBot() ? $deviceDetector->getBot() : array()),
+            'os'             => $deviceDetector->getOs(),
+            'client'         => $deviceDetector->getClient(),
+            'device'         => array(
+                'type'       => $deviceDetector->getDeviceName(),
+                'brand'      => $deviceDetector->getBrand(),
+                'model'      => $deviceDetector->getModel(),
+            ),
+            'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
+            'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
+        );
+
+        $this->detectionResult = $processed;
 
         return $this;
     }
@@ -199,7 +226,7 @@ class PiwikDetector implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult()
     {
@@ -211,14 +238,14 @@ class PiwikDetector implements ModuleInterface
      *
      * @param array $parserResult
      *
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     private function map(array $parserResult)
     {
-        $result = new Result();
+        $result = new Result($this->agent);
         $mapper = new InputMapper();
 
-        if (isset($parserResult['bot'])) {
+        if (!empty($parserResult['bot'])) {
             $browserName  = $mapper->mapBrowserName($parserResult['bot']['name']);
 
             $result->setCapability('mobile_browser', $browserName);
