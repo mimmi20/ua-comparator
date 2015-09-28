@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bf4e4bb0af8e5a685066aee9871ebe17",
+    "hash": "3986e4795ea255d799a34c40c037ba0c",
+    "content-hash": "5252ec6520126b3ab1135962d081eb57",
     "packages": [
         {
             "name": "browscap/browscap",
@@ -12,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap.git",
-                "reference": "6f0763301ac1c2d7b30439b0fc28023c29752645"
+                "reference": "d55e75971499f54ba70aeb0f10c1fed149a649c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/browscap/browscap/zipball/6f0763301ac1c2d7b30439b0fc28023c29752645",
-                "reference": "6f0763301ac1c2d7b30439b0fc28023c29752645",
+                "url": "https://api.github.com/repos/browscap/browscap/zipball/d55e75971499f54ba70aeb0f10c1fed149a649c9",
+                "reference": "d55e75971499f54ba70aeb0f10c1fed149a649c9",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +72,7 @@
             "keywords": [
                 "Browscap"
             ],
-            "time": "2015-06-23 19:49:29"
+            "time": "2015-09-28 16:44:05"
         },
         {
             "name": "browscap/browscap-php",
@@ -79,7 +80,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/browscap/browscap-php.git",
-                "reference": "298f6c9558c52e5d034b956d27575b73bd1b0a40"
+                "reference": "beb3cc58a95ef937f8f89f8189b5cc2fa7eb8ff0"
             },
             "require": {
                 "mimmi20/file-loader": "~2.0",
@@ -143,7 +144,7 @@
                 "issues": "https://github.com/browscap/browscap-php/issues",
                 "source": "https://github.com/browscap/browscap-php"
             },
-            "time": "2015-06-26 22:03:49"
+            "time": "2015-06-10 07:26:21"
         },
         {
             "name": "composer/composer",
@@ -151,21 +152,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "2438105e11da443f72628fb9d4bf4e089d229c6c"
+                "reference": "c41079192f38f0fc446b17baa8f628dcb3b61e7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/2438105e11da443f72628fb9d4bf4e089d229c6c",
-                "reference": "2438105e11da443f72628fb9d4bf4e089d229c6c",
+                "url": "https://api.github.com/repos/composer/composer/zipball/c41079192f38f0fc446b17baa8f628dcb3b61e7d",
+                "reference": "c41079192f38f0fc446b17baa8f628dcb3b61e7d",
                 "shasum": ""
             },
             "require": {
-                "justinrainbow/json-schema": "~1.4",
+                "composer/semver": "^1.0",
+                "composer/spdx-licenses": "^1.0",
+                "justinrainbow/json-schema": "^1.4.4",
                 "php": ">=5.3.2",
                 "seld/cli-prompt": "~1.0",
                 "seld/jsonlint": "~1.0",
                 "seld/phar-utils": "~1.0",
                 "symfony/console": "~2.5",
+                "symfony/filesystem": "~2.5",
                 "symfony/finder": "~2.2",
                 "symfony/process": "~2.1"
             },
@@ -214,7 +218,128 @@
                 "dependency",
                 "package"
             ],
-            "time": "2015-07-03 23:55:50"
+            "time": "2015-09-28 09:38:16"
+        },
+        {
+            "name": "composer/semver",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/semver.git",
+                "reference": "d0e1ccc6d44ab318b758d709e19176037da6b1ba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/semver/zipball/d0e1ccc6d44ab318b758d709e19176037da6b1ba",
+                "reference": "d0e1ccc6d44ab318b758d709e19176037da6b1ba",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.5",
+                "phpunit/phpunit-mock-objects": "~2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Semver\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com"
+                },
+                {
+                    "name": "Nils Adermann",
+                    "email": "naderman@naderman.de",
+                    "homepage": "http://www.naderman.de"
+                },
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                }
+            ],
+            "description": "Semver library that offers utilities, version constraint parsing and validation.",
+            "keywords": [
+                "semantic",
+                "semver",
+                "validation",
+                "versioning"
+            ],
+            "time": "2015-09-21 09:42:36"
+        },
+        {
+            "name": "composer/spdx-licenses",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/spdx-licenses.git",
+                "reference": "324b3530ac3e6277ff4bedf82a34fbf35836eb8d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/324b3530ac3e6277ff4bedf82a34fbf35836eb8d",
+                "reference": "324b3530ac3e6277ff4bedf82a34fbf35836eb8d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.5",
+                "phpunit/phpunit-mock-objects": "~2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Spdx\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com"
+                },
+                {
+                    "name": "Nils Adermann",
+                    "email": "naderman@naderman.de",
+                    "homepage": "http://www.naderman.de"
+                },
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                }
+            ],
+            "description": "SPDX licenses list and validation library.",
+            "keywords": [
+                "license",
+                "spdx",
+                "validator"
+            ],
+            "time": "2015-09-07 16:25:20"
         },
         {
             "name": "crossjoin/browscap",
@@ -222,16 +347,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/crossjoin/Browscap.git",
-                "reference": "df4f6c0ecbe11887faf47c0460b4afe63f1ec9bd"
+                "reference": "d15f3974d222f5d44f0b013734c5d9ff60bb28f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crossjoin/Browscap/zipball/df4f6c0ecbe11887faf47c0460b4afe63f1ec9bd",
-                "reference": "df4f6c0ecbe11887faf47c0460b4afe63f1ec9bd",
+                "url": "https://api.github.com/repos/crossjoin/Browscap/zipball/d15f3974d222f5d44f0b013734c5d9ff60bb28f7",
+                "reference": "d15f3974d222f5d44f0b013734c5d9ff60bb28f7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
+            },
+            "suggest": {
+                "php": ">=5.5.0"
             },
             "type": "library",
             "autoload": {
@@ -250,7 +378,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "Standalone Browscap parser for PHP 5.3+ that allows to check for browser settings based on the user agent string (replacement for the PHP native function get_browser()).",
+            "description": "The standalone PHP Browscap parser Crossjoin\\Browscap detects browser properties as well as device information based on the user agent string of the requesting browsers and search engines, using the data from the Browser Capabilities Project. It's several hundred times faster than the build-in PHP function get_browser(), and faster than other Browscap PHP libraries, with much lower memory consumption. Optionally Crossjoin\\Browscap automatically updates the Browscap data, so you're always up-to-date. It supports PHP 5.3 to PHP 7.0 (PHP 5.5+ recommended).",
             "homepage": "https://github.com/crossjoin/Browscap",
             "keywords": [
                 "Browscap",
@@ -258,23 +386,26 @@
                 "capabilities",
                 "client",
                 "detection",
+                "device",
                 "get_browser",
+                "php",
+                "properties",
                 "user agent"
             ],
-            "time": "2015-05-31 12:28:26"
+            "time": "2015-09-07 17:00:02"
         },
         {
             "name": "justinrainbow/json-schema",
-            "version": "1.4.2",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/justinrainbow/json-schema.git",
-                "reference": "7dfe4f1db8a62be3dd35710efce663537d515653"
+                "reference": "a4bee9f4b344b66e0a0d96c7afae1e92edf385fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/7dfe4f1db8a62be3dd35710efce663537d515653",
-                "reference": "7dfe4f1db8a62be3dd35710efce663537d515653",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/a4bee9f4b344b66e0a0d96c7afae1e92edf385fe",
+                "reference": "a4bee9f4b344b66e0a0d96c7afae1e92edf385fe",
                 "shasum": ""
             },
             "require": {
@@ -295,8 +426,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "JsonSchema": "src/"
+                "psr-4": {
+                    "JsonSchema\\": "src/JsonSchema/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -327,7 +458,7 @@
                 "json",
                 "schema"
             ],
-            "time": "2015-06-14 20:01:28"
+            "time": "2015-09-08 22:28:04"
         },
         {
             "name": "mimmi20/browser-detector",
@@ -335,18 +466,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/BrowserDetector.git",
-                "reference": "ac8626ef09793de237db5b96e700b355a428ad51"
+                "reference": "c94c501a8de32fa70a4c0257b43b836d981702fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/ac8626ef09793de237db5b96e700b355a428ad51",
-                "reference": "ac8626ef09793de237db5b96e700b355a428ad51",
+                "url": "https://api.github.com/repos/mimmi20/BrowserDetector/zipball/c94c501a8de32fa70a4c0257b43b836d981702fa",
+                "reference": "c94c501a8de32fa70a4c0257b43b836d981702fa",
                 "shasum": ""
             },
             "require": {
                 "browscap/browscap": "dev-master",
                 "mimmi20/wurfl-data": "~1.6",
-                "mimmi20/wurfl-generic-request": "dev-master",
+                "mimmi20/wurfl-generic-request": "1.0.*",
                 "mimmi20/wurflcache": "~1.3",
                 "php": ">=5.5.0",
                 "psr/log": "~1.0"
@@ -386,7 +517,7 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-07-04 09:22:38"
+            "time": "2015-08-07 16:28:47"
         },
         {
             "name": "mimmi20/file-loader",
@@ -441,39 +572,40 @@
         },
         {
             "name": "mimmi20/wurfl",
-            "version": "dev-extract-request",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/Wurfl.git",
-                "reference": "46e95034345f477b591562093a0a8028e4d70910"
+                "reference": "77fa82f731925d29389c82f0a984755b427742f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/Wurfl/zipball/46e95034345f477b591562093a0a8028e4d70910",
-                "reference": "46e95034345f477b591562093a0a8028e4d70910",
+                "url": "https://api.github.com/repos/mimmi20/Wurfl/zipball/77fa82f731925d29389c82f0a984755b427742f7",
+                "reference": "77fa82f731925d29389c82f0a984755b427742f7",
                 "shasum": ""
             },
             "require": {
-                "mimmi20/wurfl-generic-request": "dev-master",
+                "mimmi20/wurfl-config": "*",
+                "mimmi20/wurfl-custom-device": "*",
+                "mimmi20/wurfl-generic-request": "*",
+                "mimmi20/wurfl-storage": "*",
+                "mimmi20/wurfl-virtual-capability": "*",
                 "mimmi20/wurflcache": "~1.3",
                 "php": ">=5.3.3",
                 "psr/log": "~1.0"
             },
             "require-dev": {
-                "mikey179/vfsstream": "1.3.*@dev",
+                "mikey179/vfsstream": "1.3.*",
                 "monolog/monolog": "1.*@dev",
-                "phpunit/phpunit": "*",
-                "zendframework/zend-config": "2.*"
+                "phpunit/phpunit": "*"
             },
             "suggest": {
-                "monolog/monolog": "if you want to log to more than a file",
-                "zendframework/zend-config": "to use an other configuration"
+                "monolog/monolog": "if you want to log to more than a file"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Wurfl\\": "src/",
-                    "WurflTest\\": "tests/WurflTest/"
+                    "Wurfl\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -490,20 +622,169 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-07-02 19:44:51"
+            "time": "2015-08-17 19:16:28"
         },
         {
-            "name": "mimmi20/wurfl-data",
-            "version": "1.6.0.2",
+            "name": "mimmi20/wurfl-config",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mimmi20/wurfl-data.git",
-                "reference": "2dc2d5b0fdce6999cce85691c9968bf37f6d679b"
+                "url": "https://github.com/mimmi20/wurfl-config.git",
+                "reference": "6f0e9c526c293a5bb0d3f76fd393c2a531541c7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/2dc2d5b0fdce6999cce85691c9968bf37f6d679b",
-                "reference": "2dc2d5b0fdce6999cce85691c9968bf37f6d679b",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-config/zipball/6f0e9c526c293a5bb0d3f76fd393c2a531541c7d",
+                "reference": "6f0e9c526c293a5bb0d3f76fd393c2a531541c7d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "dev-master",
+                "phpunit/phpunit": "*",
+                "zendframework/zend-config": "2.5.0",
+                "zendframework/zend-stdlib": "2.5.0"
+            },
+            "suggest": {
+                "zendframework/zend-config": "to use an other configuration"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wurfl\\Configuration\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Müller",
+                    "homepage": "https://github.com/mimmi20",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/mimmi20/wurfl-config/graphs/contributors"
+                }
+            ],
+            "description": "the Configuration Classes from Wurfl PHP Library for PHP 5.3",
+            "homepage": "https://github.com/mimmi20/wurfl-config",
+            "keywords": [
+                "Wurfl",
+                "configuration"
+            ],
+            "time": "2015-08-13 16:28:28"
+        },
+        {
+            "name": "mimmi20/wurfl-constants",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mimmi20/wurfl-constants.git",
+                "reference": "b97ce44840e5957aa9501faaa3fc2b1e77c25be7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-constants/zipball/b97ce44840e5957aa9501faaa3fc2b1e77c25be7",
+                "reference": "b97ce44840e5957aa9501faaa3fc2b1e77c25be7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wurfl\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "description": "the Constants extracted from Wurfl for PHP 5.3",
+            "homepage": "https://github.com/mimmi20/wurfl-constants",
+            "keywords": [
+                "Wurfl",
+                "browser",
+                "http",
+                "parser",
+                "user agent",
+                "user-agent"
+            ],
+            "time": "2015-07-21 18:23:08"
+        },
+        {
+            "name": "mimmi20/wurfl-custom-device",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mimmi20/wurfl-custom-device.git",
+                "reference": "02bb3262d40c17299967d71e6271dc8af1d4f357"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-custom-device/zipball/02bb3262d40c17299967d71e6271dc8af1d4f357",
+                "reference": "02bb3262d40c17299967d71e6271dc8af1d4f357",
+                "shasum": ""
+            },
+            "require": {
+                "mimmi20/wurfl-generic-request": "*",
+                "mimmi20/wurfl-virtual-capability": "*",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "mimmi20/wurfl": "dev-extract-request",
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wurfl\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Müller",
+                    "homepage": "https://github.com/mimmi20",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/mimmi20/wurfl-custom-device/graphs/contributors"
+                }
+            ],
+            "description": "the Custom Device Class from Wurfl PHP Library for PHP 5.3",
+            "homepage": "https://github.com/mimmi20/wurfl-custom-device",
+            "keywords": [
+                "Custom Device",
+                "Wurfl"
+            ],
+            "time": "2015-08-13 16:27:53"
+        },
+        {
+            "name": "mimmi20/wurfl-data",
+            "version": "1.6.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mimmi20/wurfl-data.git",
+                "reference": "885cfe233d8f73ae9f8ff8a3c6eecc487ebed845"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-data/zipball/885cfe233d8f73ae9f8ff8a3c6eecc487ebed845",
+                "reference": "885cfe233d8f73ae9f8ff8a3c6eecc487ebed845",
                 "shasum": ""
             },
             "require": {
@@ -511,7 +792,7 @@
                 "psr/log": "~1.0"
             },
             "require-dev": {
-                "monolog/monolog": "dev-master",
+                "monolog/monolog": "~1.13",
                 "phpunit/phpunit": "*"
             },
             "type": "library",
@@ -544,23 +825,24 @@
                 "user agent",
                 "user-agent"
             ],
-            "time": "2015-06-13 03:14:55"
+            "time": "2015-08-13 16:33:24"
         },
         {
             "name": "mimmi20/wurfl-generic-request",
-            "version": "dev-master",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mimmi20/wurfl-generic-request.git",
-                "reference": "2de9fc887899a9560cad2e70e04f4719542e5765"
+                "reference": "c1e06ab9de5b5616c3dae182732a9aa81f720810"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/wurfl-generic-request/zipball/2de9fc887899a9560cad2e70e04f4719542e5765",
-                "reference": "2de9fc887899a9560cad2e70e04f4719542e5765",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-generic-request/zipball/c1e06ab9de5b5616c3dae182732a9aa81f720810",
+                "reference": "c1e06ab9de5b5616c3dae182732a9aa81f720810",
                 "shasum": ""
             },
             "require": {
+                "mimmi20/wurfl-constants": "*",
                 "php": ">=5.3.3"
             },
             "require-dev": {
@@ -574,32 +856,141 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-2.1"
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Müller",
+                    "homepage": "https://github.com/mimmi20",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/mimmi20/wurfl-generic-request/graphs/contributors"
+                }
             ],
             "description": "the Generic Request Object extracted from Wurfl for PHP 5.3",
-            "homepage": "https://github.com/mimmi20/Wurfl",
+            "homepage": "https://github.com/mimmi20/wurfl-generic-request",
             "keywords": [
                 "Wurfl",
-                "browser",
-                "http",
-                "parser",
-                "user agent",
-                "user-agent"
+                "generic request"
             ],
-            "time": "2015-07-02 19:10:47"
+            "time": "2015-08-13 16:26:56"
         },
         {
-            "name": "mimmi20/wurflcache",
-            "version": "1.3.1",
+            "name": "mimmi20/wurfl-storage",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mimmi20/WurflCache.git",
-                "reference": "f163c666a3965a59b7ae8e47302ef64dc8d3f3ea"
+                "url": "https://github.com/mimmi20/wurfl-storage.git",
+                "reference": "71b9b86c56a3df279eb78388693997421f606875"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mimmi20/WurflCache/zipball/f163c666a3965a59b7ae8e47302ef64dc8d3f3ea",
-                "reference": "f163c666a3965a59b7ae8e47302ef64dc8d3f3ea",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-storage/zipball/71b9b86c56a3df279eb78388693997421f606875",
+                "reference": "71b9b86c56a3df279eb78388693997421f606875",
+                "shasum": ""
+            },
+            "require": {
+                "mimmi20/wurflcache": "~1.3",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wurfl\\Storage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Müller",
+                    "homepage": "https://github.com/mimmi20",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/mimmi20/wurfl-storage/graphs/contributors"
+                }
+            ],
+            "description": "the Storage Classes from Wurfl PHP Library for PHP 5.3",
+            "homepage": "https://github.com/mimmi20/wurfl-storage",
+            "keywords": [
+                "Wurfl",
+                "storage"
+            ],
+            "time": "2015-08-13 16:26:26"
+        },
+        {
+            "name": "mimmi20/wurfl-virtual-capability",
+            "version": "1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mimmi20/wurfl-virtual-capability.git",
+                "reference": "59e37affbb8186edede22d5a5e4f393a2c74700c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mimmi20/wurfl-virtual-capability/zipball/59e37affbb8186edede22d5a5e4f393a2c74700c",
+                "reference": "59e37affbb8186edede22d5a5e4f393a2c74700c",
+                "shasum": ""
+            },
+            "require": {
+                "mimmi20/wurfl-custom-device": "*",
+                "mimmi20/wurfl-generic-request": "*",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "mimmi20/wurfl": "dev-extract-request",
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wurfl\\VirtualCapability\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Müller",
+                    "homepage": "https://github.com/mimmi20",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/mimmi20/wurfl-virtual-capability/graphs/contributors"
+                }
+            ],
+            "description": "the Virtual Capabilities from the Wurfl PHP Library for PHP 5.3",
+            "homepage": "https://github.com/mimmi20/wurfl-virtual-capability",
+            "keywords": [
+                "Virtual Capability",
+                "Wurfl"
+            ],
+            "time": "2015-08-13 16:25:57"
+        },
+        {
+            "name": "mimmi20/wurflcache",
+            "version": "1.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mimmi20/WurflCache.git",
+                "reference": "ee1498822c23d579a15286b79c50d4f4fd7fdb48"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mimmi20/WurflCache/zipball/ee1498822c23d579a15286b79c50d4f4fd7fdb48",
+                "reference": "ee1498822c23d579a15286b79c50d4f4fd7fdb48",
                 "shasum": ""
             },
             "require": {
@@ -608,10 +999,11 @@
             },
             "require-dev": {
                 "desarrolla2/cache": "*",
-                "doctrine/cache": "1.4.*@dev",
-                "mikey179/vfsstream": "1.3.*@dev",
+                "doctrine/cache": "1.4.*",
+                "mikey179/vfsstream": "1.3.*",
                 "phpunit/phpunit": "*",
-                "zendframework/zend-cache": "2.3.*",
+                "zendframework/zend-cache": "2.4.*",
+                "zendframework/zend-stdlib": "2.4.*",
                 "zetacomponents/cache": "dev-master"
             },
             "suggest": {
@@ -647,20 +1039,20 @@
                 "Wurfl",
                 "cache"
             ],
-            "time": "2015-06-05 21:53:23"
+            "time": "2015-08-13 16:25:15"
         },
         {
             "name": "monolog/monolog",
-            "version": "1.14.0",
+            "version": "1.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "b287fbbe1ca27847064beff2bad7fb6920bf08cc"
+                "reference": "0524c87587ab85bc4c2d6f5b41253ccb930a5422"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/b287fbbe1ca27847064beff2bad7fb6920bf08cc",
-                "reference": "b287fbbe1ca27847064beff2bad7fb6920bf08cc",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/0524c87587ab85bc4c2d6f5b41253ccb930a5422",
+                "reference": "0524c87587ab85bc4c2d6f5b41253ccb930a5422",
                 "shasum": ""
             },
             "require": {
@@ -677,7 +1069,7 @@
                 "php-console/php-console": "^3.1.3",
                 "phpunit/phpunit": "~4.5",
                 "phpunit/phpunit-mock-objects": "2.3.0",
-                "raven/raven": "~0.8",
+                "raven/raven": "~0.11",
                 "ruflin/elastica": ">=0.90 <3.0",
                 "swiftmailer/swiftmailer": "~5.3",
                 "videlalvaro/php-amqplib": "~2.4"
@@ -697,7 +1089,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.14.x-dev"
+                    "dev-master": "1.16.x-dev"
                 }
             },
             "autoload": {
@@ -723,7 +1115,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2015-06-19 13:29:54"
+            "time": "2015-08-31 09:17:37"
         },
         {
             "name": "mustangostang/spyc",
@@ -778,12 +1170,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/piwik/device-detector.git",
-                "reference": "5717941ad9c3d8766ac77f5a58c68962ed9d5ca0"
+                "reference": "951d744f6b5e8d357a29071b9fd7c38857c39677"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piwik/device-detector/zipball/5717941ad9c3d8766ac77f5a58c68962ed9d5ca0",
-                "reference": "5717941ad9c3d8766ac77f5a58c68962ed9d5ca0",
+                "url": "https://api.github.com/repos/piwik/device-detector/zipball/951d744f6b5e8d357a29071b9fd7c38857c39677",
+                "reference": "951d744f6b5e8d357a29071b9fd7c38857c39677",
                 "shasum": ""
             },
             "require": {
@@ -821,7 +1213,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2015-06-24 09:17:01"
+            "time": "2015-09-27 18:18:52"
         },
         {
             "name": "psr/log",
@@ -1001,16 +1393,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.7.1",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Console.git",
-                "reference": "564398bc1f33faf92fc2ec86859983d30eb81806"
+                "url": "https://github.com/symfony/console.git",
+                "reference": "06cb17c013a82f94a3d840682b49425cd00a2161"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/564398bc1f33faf92fc2ec86859983d30eb81806",
-                "reference": "564398bc1f33faf92fc2ec86859983d30eb81806",
+                "url": "https://api.github.com/repos/symfony/console/zipball/06cb17c013a82f94a3d840682b49425cd00a2161",
+                "reference": "06cb17c013a82f94a3d840682b49425cd00a2161",
                 "shasum": ""
             },
             "require": {
@@ -1054,20 +1446,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-10 15:30:22"
+            "time": "2015-09-25 08:32:23"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.7.1",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "a0d43eb3e17d4f4c6990289805a488a0482a07f3"
+                "url": "https://github.com/symfony/filesystem.git",
+                "reference": "a17f8a17c20e8614c15b8e116e2f4bcde102cfab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/a0d43eb3e17d4f4c6990289805a488a0482a07f3",
-                "reference": "a0d43eb3e17d4f4c6990289805a488a0482a07f3",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/a17f8a17c20e8614c15b8e116e2f4bcde102cfab",
+                "reference": "a17f8a17c20e8614c15b8e116e2f4bcde102cfab",
                 "shasum": ""
             },
             "require": {
@@ -1103,20 +1495,20 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-08 09:37:21"
+            "time": "2015-09-09 17:42:36"
         },
         {
             "name": "symfony/finder",
-            "version": "v2.7.1",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Finder.git",
-                "reference": "c13a40d638aeede1e8400f8c956c7f9246c05f75"
+                "url": "https://github.com/symfony/finder.git",
+                "reference": "8262ab605973afbb3ef74b945daabf086f58366f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/c13a40d638aeede1e8400f8c956c7f9246c05f75",
-                "reference": "c13a40d638aeede1e8400f8c956c7f9246c05f75",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/8262ab605973afbb3ef74b945daabf086f58366f",
+                "reference": "8262ab605973afbb3ef74b945daabf086f58366f",
                 "shasum": ""
             },
             "require": {
@@ -1152,20 +1544,20 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-04 20:11:48"
+            "time": "2015-09-19 19:59:23"
         },
         {
             "name": "symfony/process",
-            "version": "v2.7.1",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Process.git",
-                "reference": "552d8efdc80980cbcca50b28d626ac8e36e3cdd1"
+                "url": "https://github.com/symfony/process.git",
+                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/552d8efdc80980cbcca50b28d626ac8e36e3cdd1",
-                "reference": "552d8efdc80980cbcca50b28d626ac8e36e3cdd1",
+                "url": "https://api.github.com/repos/symfony/process/zipball/b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
+                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
                 "shasum": ""
             },
             "require": {
@@ -1201,20 +1593,20 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-08 09:37:21"
+            "time": "2015-09-19 19:59:23"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.1",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Yaml.git",
-                "reference": "9808e75c609a14f6db02f70fccf4ca4aab53c160"
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "31cb2ad0155c95b88ee55fe12bc7ff92232c1770"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/9808e75c609a14f6db02f70fccf4ca4aab53c160",
-                "reference": "9808e75c609a14f6db02f70fccf4ca4aab53c160",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/31cb2ad0155c95b88ee55fe12bc7ff92232c1770",
+                "reference": "31cb2ad0155c95b88ee55fe12bc7ff92232c1770",
                 "shasum": ""
             },
             "require": {
@@ -1250,20 +1642,20 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-10 15:30:22"
+            "time": "2015-09-14 14:14:09"
         },
         {
             "name": "ua-parser/uap-php",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ua-parser/uap-php.git",
-                "reference": "712f53e659e8a6772668f8293a3657d499a0300f"
+                "url": "git@github.com:ua-parser/uap-php.git",
+                "reference": "b82962ec72b559bcb9666c2095b13e935bc04cf1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ua-parser/uap-php/zipball/712f53e659e8a6772668f8293a3657d499a0300f",
-                "reference": "712f53e659e8a6772668f8293a3657d499a0300f",
+                "url": "https://api.github.com/repos/ua-parser/uap-php/zipball/b82962ec72b559bcb9666c2095b13e935bc04cf1",
+                "reference": "b82962ec72b559bcb9666c2095b13e935bc04cf1",
                 "shasum": ""
             },
             "require": {
@@ -1299,20 +1691,20 @@
                 }
             ],
             "description": "A multi-language port of Browserscope's user agent parser.",
-            "time": "2015-06-24 12:40:17"
+            "time": "2015-09-03 08:38:19"
         },
         {
             "name": "wurfl/wurfl-api",
-            "version": "1.6.0.0",
+            "version": "1.6.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sam-media/wurfl-api.git",
-                "reference": "9b239ee01a7152ef5d182683776ad5340ad069b2"
+                "reference": "b25bf0f592862ccfb410ba1a25a3841131740304"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sam-media/wurfl-api/zipball/9b239ee01a7152ef5d182683776ad5340ad069b2",
-                "reference": "9b239ee01a7152ef5d182683776ad5340ad069b2",
+                "url": "https://api.github.com/repos/sam-media/wurfl-api/zipball/b25bf0f592862ccfb410ba1a25a3841131740304",
+                "reference": "b25bf0f592862ccfb410ba1a25a3841131740304",
                 "shasum": ""
             },
             "require": {
@@ -1320,6 +1712,10 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "*"
+            },
+            "suggest": {
+                "ext-redis": "phpredis extension allows to use the Redis storage",
+                "predis/predis": "predis library allows to use the Redis storage"
             },
             "type": "library",
             "autoload": {
@@ -1339,7 +1735,7 @@
                 }
             ],
             "description": "WURFL, the Wireless Universal Resource FiLe, is a Device Description Repository (DDR), i.e. a software component that maps HTTP Request headers to the profile of the HTTP client (Desktop, Mobile Device, Tablet, etc.) that issued the request",
-            "time": "2015-04-17 07:10:21"
+            "time": "2015-07-10 19:44:51"
         }
     ],
     "packages-dev": [
@@ -1448,16 +1844,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.4.1",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373"
+                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373",
-                "reference": "3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/4745ded9307786b730d7a60df5cb5a6c43cf95f7",
+                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7",
                 "shasum": ""
             },
             "require": {
@@ -1504,20 +1900,20 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-04-27 22:15:08"
+            "time": "2015-08-13 10:07:40"
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.1.7",
+            "version": "2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "07e27765596d72c378a6103e80da5d84e802f1e4"
+                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/07e27765596d72c378a6103e80da5d84e802f1e4",
-                "reference": "07e27765596d72c378a6103e80da5d84e802f1e4",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ef1ca6835468857944d5c3b48fa503d5554cff2f",
+                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f",
                 "shasum": ""
             },
             "require": {
@@ -1525,7 +1921,7 @@
                 "phpunit/php-file-iterator": "~1.3",
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-token-stream": "~1.3",
-                "sebastian/environment": "~1.0",
+                "sebastian/environment": "^1.3.2",
                 "sebastian/version": "~1.0"
             },
             "require-dev": {
@@ -1540,7 +1936,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1.x-dev"
+                    "dev-master": "2.2.x-dev"
                 }
             },
             "autoload": {
@@ -1566,20 +1962,20 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-06-30 06:52:35"
+            "time": "2015-09-14 06:51:16"
         },
         {
             "name": "phpunit/php-file-iterator",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
-                "reference": "a923bb15680d0089e2316f7a4af8f437046e96bb"
+                "reference": "6150bf2c35d3fc379e50c7602b75caceaa39dbf0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/a923bb15680d0089e2316f7a4af8f437046e96bb",
-                "reference": "a923bb15680d0089e2316f7a4af8f437046e96bb",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/6150bf2c35d3fc379e50c7602b75caceaa39dbf0",
+                "reference": "6150bf2c35d3fc379e50c7602b75caceaa39dbf0",
                 "shasum": ""
             },
             "require": {
@@ -1613,7 +2009,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2015-04-02 05:19:05"
+            "time": "2015-06-21 13:08:43"
         },
         {
             "name": "phpunit/php-text-template",
@@ -1658,16 +2054,16 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "1.0.6",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "83fe1bdc5d47658b727595c14da140da92b3d66d"
+                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/83fe1bdc5d47658b727595c14da140da92b3d66d",
-                "reference": "83fe1bdc5d47658b727595c14da140da92b3d66d",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
+                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
                 "shasum": ""
             },
             "require": {
@@ -1695,20 +2091,20 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2015-06-13 07:35:30"
+            "time": "2015-06-21 08:01:12"
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.4.3",
+            "version": "1.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "7a9b0969488c3c54fd62b4d504b3ec758fd005d9"
+                "reference": "3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/7a9b0969488c3c54fd62b4d504b3ec758fd005d9",
-                "reference": "7a9b0969488c3c54fd62b4d504b3ec758fd005d9",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da",
+                "reference": "3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da",
                 "shasum": ""
             },
             "require": {
@@ -1744,20 +2140,20 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-06-19 03:43:16"
+            "time": "2015-09-15 10:49:45"
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.7.6",
+            "version": "4.8.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "0ebabb4cda7d066be8391dfdbaf57fe70ac9a99b"
+                "reference": "73fad41adb5b7bc3a494bb930d90648df1d5e74b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0ebabb4cda7d066be8391dfdbaf57fe70ac9a99b",
-                "reference": "0ebabb4cda7d066be8391dfdbaf57fe70ac9a99b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/73fad41adb5b7bc3a494bb930d90648df1d5e74b",
+                "reference": "73fad41adb5b7bc3a494bb930d90648df1d5e74b",
                 "shasum": ""
             },
             "require": {
@@ -1767,7 +2163,7 @@
                 "ext-reflection": "*",
                 "ext-spl": "*",
                 "php": ">=5.3.3",
-                "phpspec/prophecy": "~1.3,>=1.3.1",
+                "phpspec/prophecy": "^1.3.1",
                 "phpunit/php-code-coverage": "~2.1",
                 "phpunit/php-file-iterator": "~1.4",
                 "phpunit/php-text-template": "~1.2",
@@ -1775,7 +2171,7 @@
                 "phpunit/phpunit-mock-objects": "~2.3",
                 "sebastian/comparator": "~1.1",
                 "sebastian/diff": "~1.2",
-                "sebastian/environment": "~1.2",
+                "sebastian/environment": "~1.3",
                 "sebastian/exporter": "~1.2",
                 "sebastian/global-state": "~1.0",
                 "sebastian/version": "~1.0",
@@ -1790,7 +2186,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.7.x-dev"
+                    "dev-master": "4.8.x-dev"
                 }
             },
             "autoload": {
@@ -1816,26 +2212,27 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-06-30 06:53:57"
+            "time": "2015-09-20 12:56:44"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "2.3.5",
+            "version": "2.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "1c330b1b6e1ea8fd15f2fbea46770576e366855c"
+                "reference": "5e2645ad49d196e020b85598d7c97e482725786a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/1c330b1b6e1ea8fd15f2fbea46770576e366855c",
-                "reference": "1c330b1b6e1ea8fd15f2fbea46770576e366855c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/5e2645ad49d196e020b85598d7c97e482725786a",
+                "reference": "5e2645ad49d196e020b85598d7c97e482725786a",
                 "shasum": ""
             },
             "require": {
-                "doctrine/instantiator": "~1.0,>=1.0.2",
+                "doctrine/instantiator": "^1.0.2",
                 "php": ">=5.3.3",
-                "phpunit/php-text-template": "~1.2"
+                "phpunit/php-text-template": "~1.2",
+                "sebastian/exporter": "~1.2"
             },
             "require-dev": {
                 "phpunit/phpunit": "~4.4"
@@ -1871,20 +2268,20 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-07-04 05:41:32"
+            "time": "2015-08-19 09:14:08"
         },
         {
             "name": "sebastian/comparator",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "1dd8869519a225f7f2b9eb663e225298fade819e"
+                "reference": "937efb279bd37a375bcadf584dec0726f84dbf22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/1dd8869519a225f7f2b9eb663e225298fade819e",
-                "reference": "1dd8869519a225f7f2b9eb663e225298fade819e",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/937efb279bd37a375bcadf584dec0726f84dbf22",
+                "reference": "937efb279bd37a375bcadf584dec0726f84dbf22",
                 "shasum": ""
             },
             "require": {
@@ -1898,7 +2295,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -1935,7 +2332,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2015-01-29 16:28:08"
+            "time": "2015-07-26 15:48:44"
         },
         {
             "name": "sebastian/diff",
@@ -1991,16 +2388,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.2.2",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "5a8c7d31914337b69923db26c4221b81ff5a196e"
+                "reference": "6324c907ce7a52478eeeaede764f48733ef5ae44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/5a8c7d31914337b69923db26c4221b81ff5a196e",
-                "reference": "5a8c7d31914337b69923db26c4221b81ff5a196e",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6324c907ce7a52478eeeaede764f48733ef5ae44",
+                "reference": "6324c907ce7a52478eeeaede764f48733ef5ae44",
                 "shasum": ""
             },
             "require": {
@@ -2037,20 +2434,20 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-01-01 10:01:08"
+            "time": "2015-08-03 06:14:51"
         },
         {
             "name": "sebastian/exporter",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "84839970d05254c73cde183a721c7af13aede943"
+                "reference": "7ae5513327cb536431847bcc0c10edba2701064e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/84839970d05254c73cde183a721c7af13aede943",
-                "reference": "84839970d05254c73cde183a721c7af13aede943",
+                "url": "https://api.github.com/repos/sebastianbergmann/exporter/zipball/7ae5513327cb536431847bcc0c10edba2701064e",
+                "reference": "7ae5513327cb536431847bcc0c10edba2701064e",
                 "shasum": ""
             },
             "require": {
@@ -2103,7 +2500,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2015-01-27 07:23:06"
+            "time": "2015-06-21 07:55:53"
         },
         {
             "name": "sebastian/global-state",
@@ -2158,16 +2555,16 @@
         },
         {
             "name": "sebastian/recursion-context",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/recursion-context.git",
-                "reference": "3989662bbb30a29d20d9faa04a846af79b276252"
+                "reference": "994d4a811bafe801fb06dccbee797863ba2792ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/recursion-context/zipball/3989662bbb30a29d20d9faa04a846af79b276252",
-                "reference": "3989662bbb30a29d20d9faa04a846af79b276252",
+                "url": "https://api.github.com/repos/sebastianbergmann/recursion-context/zipball/994d4a811bafe801fb06dccbee797863ba2792ba",
+                "reference": "994d4a811bafe801fb06dccbee797863ba2792ba",
                 "shasum": ""
             },
             "require": {
@@ -2207,7 +2604,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2015-01-24 09:48:32"
+            "time": "2015-06-21 08:04:50"
         },
         {
             "name": "sebastian/version",
@@ -2251,7 +2648,6 @@
         "composer/composer": 20,
         "mimmi20/browser-detector": 20,
         "mimmi20/wurfl": 20,
-        "mimmi20/wurfl-generic-request": 20,
         "ua-parser/uap-php": 20,
         "browscap/browscap": 20,
         "browscap/browscap-php": 20,
