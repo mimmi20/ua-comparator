@@ -33,7 +33,6 @@ namespace UaComparator\Module;
 use BrowscapPHP\Helper\IniLoader;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
-use UaComparator\Module\Mapper\Browscap as BrowscapMapper;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -82,6 +81,11 @@ class Browscap implements ModuleInterface
     private $detectionResult = null;
 
     /**
+     * @var string
+     */
+    private $agent = '';
+
+    /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
@@ -96,8 +100,7 @@ class Browscap implements ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
-     * @return \UaComparator\Module\Browscap
+     ,* @return \UaComparator\Module\Browscap
      */
     public function init()
     {
@@ -126,7 +129,6 @@ class Browscap implements ModuleInterface
      * @param string $agent
      *
      * @return \UaComparator\Module\Browscap
-     * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
@@ -136,6 +138,7 @@ class Browscap implements ModuleInterface
             ->setCache($this->cache)
         ;
 
+        $this->agent           = $agent;
         $this->detectionResult = $parser->getBrowser($agent);
 
         return $this;
@@ -217,11 +220,11 @@ class Browscap implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult()
     {
         $mapper = new Mapper\Browscap();
-        return $mapper->map($this->detectionResult);
+        return $mapper->map($this->detectionResult, $this->agent);
     }
 }

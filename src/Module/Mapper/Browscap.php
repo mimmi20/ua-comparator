@@ -30,7 +30,7 @@
 
 namespace UaComparator\Module\Mapper;
 
-use BrowserDetector\Detector\Result;
+use BrowserDetector\Detector\Result\Result;
 use BrowserDetector\Detector\Version;
 use UaComparator\Helper\InputMapper;
 
@@ -49,12 +49,13 @@ class Browscap implements MapperInterface
      * Gets the information about the browser by User Agent
      *
      * @param \stdClass $parserResult
+     * @param string    $agent
      *
-     * @return \BrowserDetector\Detector\Result the object containing the browsers details.
+     * @return \BrowserDetector\Detector\Result\Result the object containing the browsers details.
      */
-    public function map($parserResult)
+    public function map($parserResult, $agent = '')
     {
-        $result = new Result();
+        $result = new Result($agent);
         $mapper = new InputMapper();
 
         $browserName    = $this->detectProperty($parserResult, 'browser');

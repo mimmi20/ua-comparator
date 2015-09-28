@@ -32,7 +32,6 @@ namespace UaComparator\Helper;
 
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;

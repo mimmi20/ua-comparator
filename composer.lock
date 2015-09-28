@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3986e4795ea255d799a34c40c037ba0c",
-    "content-hash": "5252ec6520126b3ab1135962d081eb57",
+    "hash": "9febb03638ba170c1bee33388bc0ca72",
+    "content-hash": "268af1aacd05d0ade695008f69c0c4c4",
     "packages": [
         {
             "name": "browscap/browscap",
@@ -1645,6 +1645,61 @@
             "time": "2015-09-14 14:14:09"
         },
         {
+            "name": "synchro/uasparser",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mimmi20/uasparser.git",
+                "reference": "580f5a709224b2b87e2f6f3a528fd4ba7f2da527"
+            },
+            "require": {
+                "mimmi20/file-loader": "2.0.*",
+                "mimmi20/wurflcache": ">=1.2.5",
+                "php": ">=5.3.0",
+                "psr/log": "~1.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "1.4.*@dev",
+                "phpunit/phpunit": "~4.4.0",
+                "phpunit/phpunit-story": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "UAS\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "UASTest\\": "tests/UAS/"
+                }
+            },
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "Jaroslav Mallat",
+                    "homepage": "http://user-agent-string.info/",
+                    "role": "developer"
+                },
+                {
+                    "name": "Marcus Bointon",
+                    "email": "marcus@synchromedia.co.uk",
+                    "homepage": "https://github.com/Synchro",
+                    "role": "developer"
+                }
+            ],
+            "description": "UASparser is a PHP parser and classifier for user agent strings presented by HTTP clients using databases from http://user-agent-string.info/.",
+            "homepage": "https://github.com/Synchro/UASparser",
+            "keywords": [
+                "http",
+                "parser",
+                "user-agent"
+            ],
+            "time": "2015-02-08 15:12:21"
+        },
+        {
             "name": "ua-parser/uap-php",
             "version": "dev-master",
             "source": {
@@ -2649,6 +2704,7 @@
         "mimmi20/browser-detector": 20,
         "mimmi20/wurfl": 20,
         "ua-parser/uap-php": 20,
+        "synchro/uasparser": 20,
         "browscap/browscap": 20,
         "browscap/browscap-php": 20,
         "crossjoin/browscap": 20,

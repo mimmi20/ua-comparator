@@ -30,7 +30,7 @@
 
 namespace UaComparator\Module\Mapper;
 
-use BrowserDetector\Detector\Result;
+use BrowserDetector\Detector\Result\Result;
 use BrowserDetector\Detector\Version;
 use UaComparator\Helper\InputMapper;
 use Wurfl\CustomDevice;
@@ -51,11 +51,12 @@ class Wurfl implements MapperInterface
      *
      * @param \Wurfl\CustomDevice|\WURFL_CustomDevice $device
      *
-     * @return \BrowserDetector\Detector\Result the object containing the browsers details.
+     * @return \BrowserDetector\Detector\Result\Result the object containing the browsers details.
      */
     public function map($device)
     {
-        $result = new Result();
+        $apiKey = $device->id;
+        $result = new Result($device->userAgent, $apiKey);
 
         if (!($device instanceof CustomDevice) && !($device instanceof \WURFL_CustomDevice)) {
             return $result;
@@ -66,7 +67,6 @@ class Wurfl implements MapperInterface
         try {
             $allProperties = $device->getAllCapabilities();
 
-            $apiKey = $device->id;
             $apiMob = ('true' === $device->getCapability('is_wireless_device'));
 
             if ($apiMob) {
@@ -556,7 +556,6 @@ class Wurfl implements MapperInterface
                 $xhtmlLevel = $device->getCapability('xhtml_support_level');
             }
         } catch (\Exception $e) {
-            $apiKey = 'error';
             $apiMob = false;
             $apiOs  = 'error';
             $apiBro = $e->getMessage();
@@ -692,7 +691,6 @@ class Wurfl implements MapperInterface
             $result->setCapability('xhtml_support_level', (int)$xhtmlLevel);
         }
 
-        $result->setCapability('wurflKey', $apiKey);
         $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
 
         if (in_array($deviceType, array('Mobile Phone', 'Tablet', 'FonePad', 'Feature Phone', 'Mobile Device'))

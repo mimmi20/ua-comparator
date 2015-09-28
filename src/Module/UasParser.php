@@ -30,7 +30,7 @@
 
 namespace UaComparator\Module;
 
-use BrowserDetector\Detector\Result;
+use BrowserDetector\Detector\Result\Result;
 use BrowserDetector\Detector\Version;
 use Monolog\Logger;
 use UaComparator\Helper\InputMapper;
@@ -84,6 +84,11 @@ class UasParser implements ModuleInterface
     private $detectionResult = null;
 
     /**
+     * @var string
+     */
+    private $agent = '';
+
+    /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
@@ -98,7 +103,6 @@ class UasParser implements ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\UasParser
      */
     public function init()
@@ -112,12 +116,12 @@ class UasParser implements ModuleInterface
      * @param string $agent
      *
      * @return \UaComparator\Module\UasParser
-     * @throws \BrowserDetector\Input\Exception
      */
     public function detect($agent)
     {
         $parser = new Parser('data/cache/uasparser');
 
+        $this->agent           = $agent;
         $this->detectionResult = $parser->Parse($agent);
 
         return $this;
@@ -199,7 +203,7 @@ class UasParser implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult()
     {
@@ -211,11 +215,11 @@ class UasParser implements ModuleInterface
      *
      * @param array $parserResult
      *
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     private function map(array $parserResult)
     {
-        $result = new Result();
+        $result = new Result($this->agent);
         $mapper = new InputMapper();
 
         $browserName    = $mapper->mapBrowserName($parserResult['ua_family']);

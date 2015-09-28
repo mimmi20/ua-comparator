@@ -30,7 +30,6 @@
 
 namespace UaComparator\Module;
 
-use BrowserDetector\BrowserDetector;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
 
@@ -56,7 +55,6 @@ interface ModuleInterface
     /**
      * initializes the module
      *
-     * @throws \BrowserDetector\Input\Exception
      * @return \UaComparator\Module\ModuleInterface
      */
     public function init();
@@ -114,7 +112,7 @@ interface ModuleInterface
     public function setName($name);
 
     /**
-     * @return \BrowserDetector\Detector\Result
+     * @return \BrowserDetector\Detector\Result\Result
      */
     public function getDetectionResult();
 }

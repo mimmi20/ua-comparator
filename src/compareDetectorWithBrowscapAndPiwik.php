@@ -105,7 +105,7 @@ $buildFolder = 'build/build-' . $buildNumber;
 $iniFile     = $buildFolder . '/full_php_browscap.ini';
 $newFile     = false;
 
-if (!file_exists($iniFile)) {
+if (!file_exists($iniFile) || !file_get_contents($iniFile)) {
     mkdir($buildFolder, 0777, true);
 
     $collectionCreator = new \Browscap\Helper\CollectionCreator();
