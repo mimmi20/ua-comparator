@@ -217,4 +217,3 @@ class MessageFormatter
         return array(($passed && $ok), $content, $matches);
     }
 }
-

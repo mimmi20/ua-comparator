@@ -601,7 +601,8 @@ class Wurfl implements MapperInterface
             );
 
             $allProperties = array_intersect_key(
-                $allProperties, $result->getCapabilities()
+                $allProperties,
+                $result->getCapabilities()
             );
 
             foreach ($allProperties as $capabilityName => $capabilityValue) {

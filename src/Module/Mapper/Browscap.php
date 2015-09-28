@@ -60,20 +60,30 @@ class Browscap implements MapperInterface
 
         $browserName    = $this->detectProperty($parserResult, 'browser');
         $browserVersion = $this->detectProperty(
-            $parserResult, 'version', true, $browserName
+            $parserResult,
+            'version',
+            true,
+            $browserName
         );
 
         $browserName    = $mapper->mapBrowserName(trim($browserName));
         $browserVersion = $mapper->mapBrowserVersion(
-            trim($browserVersion), $browserName
+            trim($browserVersion),
+            $browserName
         );
 
         $browserBits = $this->detectProperty(
-            $parserResult, 'browser_bits', true, $browserName
+            $parserResult,
+            'browser_bits',
+            true,
+            $browserName
         );
 
         $browserMaker = $this->detectProperty(
-            $parserResult, 'browser_maker', true, $browserName
+            $parserResult,
+            'browser_maker',
+            true,
+            $browserName
         );
 
         $result->setCapability('mobile_browser', $browserName);
@@ -103,17 +113,26 @@ class Browscap implements MapperInterface
         $platform = $this->detectProperty($parserResult, 'platform');
 
         $platformVersion = $this->detectProperty(
-            $parserResult, 'platform_version', true, $platform
+            $parserResult,
+            'platform_version',
+            true,
+            $platform
         );
 
         $platformVersion = $mapper->mapOsVersion(trim($platformVersion), trim($platform));
         $platform        = $mapper->mapOsName(trim($platform));
 
         $platformbits  = $this->detectProperty(
-            $parserResult, 'platform_bits', true, $platform
+            $parserResult,
+            'platform_bits',
+            true,
+            $platform
         );
         $platformMaker = $this->detectProperty(
-            $parserResult, 'platform_maker', true, $platform
+            $parserResult,
+            'platform_maker',
+            true,
+            $platform
         );
 
         $result->setCapability('device_os', $platform);
@@ -129,19 +148,31 @@ class Browscap implements MapperInterface
         $deviceName = $mapper->mapDeviceName($deviceName);
 
         $deviceMaker = $this->detectProperty(
-            $parserResult, 'device_maker', true, $deviceName
+            $parserResult,
+            'device_maker',
+            true,
+            $deviceName
         );
 
         $deviceMarketingName = $this->detectProperty(
-            $parserResult, 'device_name', true, $deviceName
+            $parserResult,
+            'device_name',
+            true,
+            $deviceName
         );
 
         $deviceBrandName = $this->detectProperty(
-            $parserResult, 'device_brand_name', true, $deviceName
+            $parserResult,
+            'device_brand_name',
+            true,
+            $deviceName
         );
 
         $devicePointingMethod = $this->detectProperty(
-            $parserResult, 'device_pointing_method', true, $deviceName
+            $parserResult,
+            'device_pointing_method',
+            true,
+            $deviceName
         );
 
         $result->setCapability('model_name', $deviceName);
@@ -177,7 +208,8 @@ class Browscap implements MapperInterface
 
         if (!empty($parserResult->ismobiledevice)) {
             $result->setCapability(
-                'is_wireless_device', $parserResult->ismobiledevice
+                'is_wireless_device',
+                $parserResult->ismobiledevice
             );
         }
 
@@ -189,7 +221,8 @@ class Browscap implements MapperInterface
         $result->setCapability('is_bot', $parserResult->crawler);
 
         $result->setCapability(
-            'is_syndication_reader', $parserResult->issyndicationreader
+            'is_syndication_reader',
+            $parserResult->issyndicationreader
         );
 
         if (!empty($parserResult->frames)) {
@@ -278,7 +311,9 @@ class Browscap implements MapperInterface
      * @return string|integer|boolean The value of the detected property
      */
     private function detectProperty(
-        \stdClass $allProperties, $propertyName, $depended = false,
+        \stdClass $allProperties,
+        $propertyName,
+        $depended = false,
         $dependingValue = null
     ) {
         $propertyName  = strtolower($propertyName);

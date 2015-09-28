@@ -58,8 +58,7 @@ class LineHandler
         MessageFormatter $messageFormatter,
         $i,
         array $checks = array()
-    )
-    {
+    ) {
         $startTime = microtime(true);
         $ok        = true;
         $matches   = array();
@@ -177,4 +176,3 @@ class LineHandler
         }
     }
 }
-

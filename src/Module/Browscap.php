@@ -104,7 +104,7 @@ class Browscap implements ModuleInterface
      */
     public function init()
     {
-        $browscap = new \BrowscapPHP\Browscap();;
+        $browscap = new \BrowscapPHP\Browscap();
 
         $browscap
             ->setLogger($this->logger)

@@ -41,7 +41,6 @@ class PdoSource implements SourceInterface
         $stmt->execute();
 
         while ($row = $stmt->fetch(\PDO::FETCH_OBJ)) {
-
             yield trim($row->agent);
         }
     }

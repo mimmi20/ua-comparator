@@ -250,7 +250,8 @@ class UasParser implements ModuleInterface
         );
 
         $result->setCapability(
-            'device_os_version', $version->setVersion($osVersion)
+            'device_os_version',
+            $version->setVersion($osVersion)
         );
         $result->setCapability('device_os_manufacturer', $osMaker);
 

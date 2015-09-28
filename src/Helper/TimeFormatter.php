@@ -64,4 +64,3 @@ class TimeFormatter
         . substr('00' . $sekunden, -2) . ' Sekunden';
     }
 }
-

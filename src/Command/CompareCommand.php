@@ -72,8 +72,7 @@ define('COLOR_START_GREEN', "\x1b[30;42m");
  * @package    Command
  * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
  */
-class CompareCommand
-    extends Command
+class CompareCommand extends Command
 {
     /**
      * Configures the current command.

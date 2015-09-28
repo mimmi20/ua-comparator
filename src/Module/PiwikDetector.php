@@ -252,8 +252,10 @@ class PiwikDetector implements ModuleInterface
 
             if (isset($parserResult['bot']['producer']['name'])) {
                 $browserMaker = $parserResult['bot']['producer']['name'];
-                $result->setCapability('mobile_browser_manufacturer',
-                    $mapper->mapBrowserMaker($browserMaker, $browserName))
+                $result->setCapability(
+                    'mobile_browser_manufacturer',
+                    $mapper->mapBrowserMaker($browserMaker, $browserName)
+                )
                 ;
             }
 

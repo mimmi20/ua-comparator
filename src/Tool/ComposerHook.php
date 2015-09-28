@@ -61,7 +61,6 @@ class ComposerHook
     public static function determineBuildNumberFromPackage(PackageInterface $package)
     {
         if ($package->isDev()) {
-
             $buildNumber = self::determineBuildNumberFromBrowscapBuildFile();
 
             if (is_null($buildNumber)) {
@@ -166,7 +165,7 @@ class ComposerHook
 
         $buildGenerator = new BuildGenerator($resourceFolder, $buildFolder);
         $buildGenerator->setLogger($logger)->setCollectionCreator($collectionCreator)->setWriterCollection(
-                $writerCollection
-            )->run($buildNumber);
+            $writerCollection
+        )->run($buildNumber);
     }
 }
