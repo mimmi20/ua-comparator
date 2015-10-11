@@ -5,6 +5,7 @@
 .idea/
 vendor/
 composer.phar
+composer.lock
 build/build*/
 data/browscap-ua-test-*/
 data/browser/

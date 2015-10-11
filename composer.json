@@ -68,9 +68,5 @@
     "psr-4": {
       "UaComparatorTest\\": "tests/"
     }
-  },
-  "scripts": {
-    "post-install-cmd": ["UaComparator\\Tool\\ComposerHook::postInstall"],
-    "post-update-cmd": ["UaComparator\\Tool\\ComposerHook::postUpdate"]
   }
 }
