@@ -225,6 +225,6 @@ class Browscap implements ModuleInterface
     public function getDetectionResult()
     {
         $mapper = new Mapper\Browscap();
-        return $mapper->map($this->detectionResult, $this->agent);
+        return $mapper->map($this->detectionResult, $this->agent, $this->logger);
     }
 }

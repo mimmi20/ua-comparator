@@ -104,9 +104,7 @@ class BrowserDetectorModule implements ModuleInterface
      */
     public function init()
     {
-        $this->input = new BrowserDetector();
-        $this->input->setLogger($this->logger);
-        $this->input->setCache($this->cache);
+        $this->input = new BrowserDetector($this->cache, $this->logger);
 
         $this->detect('');
 

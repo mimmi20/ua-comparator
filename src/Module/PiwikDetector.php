@@ -30,13 +30,13 @@
 
 namespace UaComparator\Module;
 
-use BrowserDetector\Detector\Result\Result;
 use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\OperatingSystem;
 use UaComparator\Helper\InputMapper;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Device\DeviceParserAbstract;
 use Monolog\Logger;
+use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
 
 /**
@@ -242,7 +242,7 @@ class PiwikDetector implements ModuleInterface
      */
     private function map(array $parserResult)
     {
-        $result = new Result($this->agent);
+        $result = new Result($this->agent, $this->logger);
         $mapper = new InputMapper();
 
         if (!empty($parserResult['bot'])) {

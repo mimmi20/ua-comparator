@@ -32,7 +32,7 @@ namespace UaComparator\Helper;
 
 use BrowserDetector\Detector\Type\Browser as BrowserType;
 use BrowserDetector\Detector\Type\Device as DeviceType;
-use BrowserDetector\Detector\Version;
+use UaResult\Version;
 
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
@@ -234,7 +234,7 @@ class InputMapper
      * @param string $browserVersion
      * @param string $browserName
      *
-     * @return \BrowserDetector\Detector\Version
+     * @return \UaResult\Version
      */
     public function mapBrowserVersion($browserVersion, $browserName = null)
     {
@@ -571,7 +571,7 @@ class InputMapper
      * @param string $osVersion
      * @param string $osName
      *
-     * @return \BrowserDetector\Detector\Version
+     * @return \UaResult\Version
      */
     public function mapOsVersion($osVersion, $osName = null)
     {
@@ -1445,7 +1445,7 @@ class InputMapper
      *
      * @param string $engineVersion
      *
-     * @return \BrowserDetector\Detector\Version
+     * @return \UaResult\Version
      */
     public function mapEngineVersion($engineVersion)
     {

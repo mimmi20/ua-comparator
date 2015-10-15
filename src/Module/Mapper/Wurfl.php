@@ -30,9 +30,10 @@
 
 namespace UaComparator\Module\Mapper;
 
-use BrowserDetector\Detector\Result\Result;
-use BrowserDetector\Detector\Version;
+use Monolog\Logger;
 use UaComparator\Helper\InputMapper;
+use UaResult\Result;
+use UaResult\Version;
 use Wurfl\CustomDevice;
 
 /**
@@ -50,13 +51,14 @@ class Wurfl implements MapperInterface
      * Gets the information about the browser by User Agent
      *
      * @param \Wurfl\CustomDevice|\WURFL_CustomDevice $device
+     * @param \Monolog\Logger                         $logger
      *
-     * @return \BrowserDetector\Detector\Result\Result the object containing the browsers details.
+     * @return Result the object containing the browsers details.
      */
-    public function map($device)
+    public function map($device, Logger $logger = null)
     {
         $apiKey = $device->id;
-        $result = new Result($device->userAgent, $apiKey);
+        $result = new Result($device->userAgent, $logger, $apiKey);
 
         if (!($device instanceof CustomDevice) && !($device instanceof \WURFL_CustomDevice)) {
             return $result;
@@ -582,6 +584,8 @@ class Wurfl implements MapperInterface
         if (null === $device || 'robot' === strtolower($device->getVirtualCapability('form_factor'))) {
             return $result;
         }
+
+
 
         if ($apiDev || $apiBro) {
             $versionFields = array(

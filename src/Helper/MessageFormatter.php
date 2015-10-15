@@ -31,7 +31,7 @@
 namespace UaComparator\Helper;
 
 use UaComparator\Module\ModuleCollection;
-use BrowserDetector\Detector\Version;
+use UaResult\Version;
 
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities

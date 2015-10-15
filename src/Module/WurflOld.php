@@ -244,7 +244,7 @@ class WurflOld implements ModuleInterface
     public function getDetectionResult()
     {
         $mapper = new Mapper\Wurfl();
-        return $mapper->map($this->detectionResult);
+        return $mapper->map($this->detectionResult, $this->logger);
     }
 
     /**

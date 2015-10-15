@@ -33,8 +33,8 @@ namespace UaComparator\Module;
 use Monolog\Logger;
 use UAParser\Parser;
 use UAParser\Result\Client;
+use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
-use BrowserDetector\Detector\Result\Result;
 use UaComparator\Helper\InputMapper;
 
 /**
@@ -219,7 +219,7 @@ class UaParser implements ModuleInterface
      */
     private function map(Client $parserResult)
     {
-        $result = new Result($this->agent);
+        $result = new Result($this->agent, $this->logger);
         $mapper = new InputMapper();
 
         $browserName    = $mapper->mapBrowserName($parserResult->ua->family);

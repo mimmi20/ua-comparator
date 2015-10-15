@@ -52,7 +52,8 @@
     "crossjoin/browscap": "~1",
     "wurfl/wurfl-api": "~1.6",
     "piwik/device-detector": "dev-master",
-    "mimmi20/wurfl-generic-request": "*"
+    "mimmi20/wurfl-generic-request": "*",
+    "mimmi20/ua-result": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "*",
