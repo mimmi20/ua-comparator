@@ -30,7 +30,10 @@
 
 namespace UaComparator\Command;
 
+use Browscap\Generator\BuildGenerator;
+use Browscap\Helper\CollectionCreator;
 use Browscap\Helper\LoggerHelper;
+use Browscap\Writer\Factory\PhpWriterFactory;
 use Monolog\Processor\MemoryUsageProcessor;
 use PDO;
 use Symfony\Component\Console\Command\Command;
@@ -205,6 +208,25 @@ class CompareCommand extends Command
 
             if (!file_exists($iniFile)) {
                 $iniFile = null;
+
+                $resourceFolder = 'vendor/browscap/browscap/resources/';
+                $buildFolder    = 'data/browscap-ua-test-' . $buildNumber . '/';
+
+                $buildGenerator = new BuildGenerator(
+                    $resourceFolder,
+                    $buildFolder
+                );
+
+                $writerCollectionFactory = new PhpWriterFactory();
+                $writerCollection        = $writerCollectionFactory->createCollection($logger, $buildFolder);
+
+                $buildGenerator
+                    ->setLogger($logger)
+                    ->setCollectionCreator(new CollectionCreator())
+                    ->setWriterCollection($writerCollection)
+                ;
+
+                $buildGenerator->run('test', false);
             }
 
             $output->writeln(
