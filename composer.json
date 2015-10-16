@@ -53,7 +53,8 @@
     "wurfl/wurfl-api": "~1.6",
     "piwik/device-detector": "dev-master",
     "mimmi20/wurfl-generic-request": "*",
-    "mimmi20/ua-result": "*"
+    "mimmi20/ua-result": "~1.0.5",
+    "mimmi20/ua-matcher-interface": "~1.0.11"
   },
   "require-dev": {
     "phpunit/phpunit": "*",
