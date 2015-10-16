@@ -86,15 +86,22 @@ class Browscap implements ModuleInterface
     private $agent = '';
 
     /**
+     * @var string
+     */
+    private $inifile = '';
+
+    /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
      * @param \WurflCache\Adapter\AdapterInterface $cache
+     * @param string                               $iniFile
      */
-    public function __construct(Logger $logger, AdapterInterface $cache)
+    public function __construct(Logger $logger, AdapterInterface $cache, $iniFile = '')
     {
-        $this->logger = $logger;
-        $this->cache  = $cache;
+        $this->logger  = $logger;
+        $this->cache   = $cache;
+        $this->inifile = $iniFile;
     }
 
     /**
@@ -111,11 +118,8 @@ class Browscap implements ModuleInterface
             ->setCache($this->cache)
         ;
 
-        $buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
-        $fileName    = 'build/build-' . $buildNumber . '/full_php_browscap.ini';
-
-        if (file_exists($fileName) && is_readable($fileName)) {
-            $browscap->convertFile($fileName);
+        if ('' !== $this->inifile && file_exists($this->inifile) && is_readable($this->inifile)) {
+            $browscap->convertFile($this->inifile);
         } else {
             $browscap->update(IniLoader::PHP_INI);
         }

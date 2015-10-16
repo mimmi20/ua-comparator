@@ -248,7 +248,7 @@ class CompareCommand extends Command
         if (in_array('Browscap', $modules) && null !== $iniFile) {
             $output->write('initializing Browscap-PHP ...', false);
 
-            $browscapModule = new Browscap($logger, new File(array('dir' => 'data/cache/browscap/')));
+            $browscapModule = new Browscap($logger, new File(array('dir' => 'data/cache/browscap/')), $iniFile);
             $browscapModule->setId(9)->setName('Browscap-PHP');
 
             $collection->addModule($browscapModule);
