@@ -207,10 +207,12 @@ class CompareCommand extends Command
             $iniFile     = 'data/browscap-ua-test-' . $buildNumber . '/full_php_browscap.ini';
 
             if (!file_exists($iniFile)) {
-                $iniFile = null;
-
                 $resourceFolder = 'vendor/browscap/browscap/resources/';
                 $buildFolder    = 'data/browscap-ua-test-' . $buildNumber . '/';
+
+                if (!file_exists($buildFolder)) {
+                    mkdir($buildFolder);
+                }
 
                 $buildGenerator = new BuildGenerator(
                     $resourceFolder,
