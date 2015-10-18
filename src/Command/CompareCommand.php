@@ -34,6 +34,12 @@ use Browscap\Generator\BuildGenerator;
 use Browscap\Helper\CollectionCreator;
 use Browscap\Helper\LoggerHelper;
 use Browscap\Writer\Factory\PhpWriterFactory;
+use Monolog\ErrorHandler;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use PDO;
 use Symfony\Component\Console\Command\Command;
@@ -41,7 +47,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
-use UaComparator\Helper\LineHandler;
 use UaComparator\Helper\MessageFormatter;
 use UaComparator\Helper\TimeFormatter;
 use UaComparator\Module\Browscap;
@@ -84,11 +89,11 @@ class CompareCommand extends Command
     {
         $defaultModules = array(
             'BrowserDetector',
-            'Wurfl',
             'Browscap',
             'CrossJoin',
             'Piwik',
             'UaParser',
+            'Wurfl',
             'Wurfl52',
             /*'UASParser',*/
         );
@@ -114,6 +119,12 @@ class CompareCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'the level for the checks to do. Available Options:' . implode(',', $allChecks),
                 Check::MINIMUM
+            )
+            ->addOption(
+                'limit',
+                '-l',
+                InputOption::VALUE_OPTIONAL,
+                'the amount of useragents to compare'
             )
             //            ->addArgument('version', InputArgument::REQUIRED, 'Version number to apply')
             //            ->addOption('resources', null, InputOption::VALUE_REQUIRED, 'Where the resource files are located', $defaultResourceFolder)
@@ -141,8 +152,23 @@ class CompareCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
-        $loggerHelper = new LoggerHelper();
-        $logger       = $loggerHelper->create();
+        $logger = new Logger('ua-comparator');
+
+        $stream = new StreamHandler('php://output', Logger::ERROR);
+        $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
+
+        /** @var callable $memoryProcessor */
+        $memoryProcessor = new MemoryUsageProcessor(true);
+        $logger->pushProcessor($memoryProcessor);
+
+        /** @var callable $peakMemoryProcessor */
+        $peakMemoryProcessor = new MemoryPeakUsageProcessor(true);
+        $logger->pushProcessor($peakMemoryProcessor);
+
+        $logger->pushHandler($stream);
+        $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::ERROR));
+
+        ErrorHandler::register($logger);
 
         /** @var callable $memoryProcessor */
         $memoryProcessor = new MemoryUsageProcessor(true);
@@ -161,7 +187,7 @@ class CompareCommand extends Command
         setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
         $output->writeln(
-            ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+            ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                 memory_get_usage(true),
                 0,
                 ',',
@@ -179,13 +205,13 @@ class CompareCommand extends Command
         if (in_array('BrowserDetector', $modules)) {
             $output->write('initializing BrowserDetectorModule ...', false);
 
-            $detectorModule = new BrowserDetectorModule($logger, new File(array('dir' => 'data/cache/browser/')));
+            $detectorModule = new BrowserDetectorModule($logger, new File(array(File::DIR => 'data/cache/browser/')));
             $detectorModule->setId(0)->setName('BrowserDetector');
 
             $collection->addModule($detectorModule);
 
             $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                     memory_get_usage(true),
                     0,
                     ',',
@@ -232,7 +258,7 @@ class CompareCommand extends Command
             }
 
             $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                     memory_get_usage(true),
                     0,
                     ',',
@@ -248,13 +274,13 @@ class CompareCommand extends Command
         if (in_array('Browscap', $modules) && null !== $iniFile) {
             $output->write('initializing Browscap-PHP ...', false);
 
-            $browscapModule = new Browscap($logger, new File(array('dir' => 'data/cache/browscap/')), $iniFile);
+            $browscapModule = new Browscap($logger, new File(array(File::DIR => 'data/cache/browscap/')), $iniFile);
             $browscapModule->setId(9)->setName('Browscap-PHP');
 
             $collection->addModule($browscapModule);
 
             $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                     memory_get_usage(true),
                     0,
                     ',',
@@ -270,13 +296,13 @@ class CompareCommand extends Command
         if (in_array('CrossJoin', $modules) && null !== $iniFile) {
             $output->write('initializing Crossjoin\Browscap ...', false);
 
-            $crossjoinModule = new CrossJoin($logger, new File(array('dir' => 'data/cache/crossjoin/')), $iniFile);
+            $crossjoinModule = new CrossJoin($logger, new File(array(File::DIR => 'data/cache/crossjoin/')), $iniFile);
             $crossjoinModule->setId(10)->setName('Crossjoin\Browscap');
 
             $collection->addModule($crossjoinModule);
 
             $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                     memory_get_usage(true),
                     0,
                     ',',
@@ -292,13 +318,13 @@ class CompareCommand extends Command
         if (in_array('UaParser', $modules)) {
             $output->write('initializing UAParser ...', false);
 
-            $uaparserModule = new UaParser($logger, new Memory());
+            $uaparserModule = new UaParser($logger, new File(array(File::DIR => 'data/cache/uaparser/')));
             $uaparserModule->setId(5)->setName('UAParser');
 
             $collection->addModule($uaparserModule);
 
             $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                     memory_get_usage(true),
                     0,
                     ',',
@@ -313,7 +339,7 @@ class CompareCommand extends Command
          * if (in_array('UASParser', $modules)) {
          * $output->write('initializing UASParser ...', false);
          *
-         * $uasparserModule = new UasParser($logger, new Memory());
+         * $uasparserModule = new UasParser($logger, new File(array(File::DIR => 'data/cache/uasparser/')));
          * $uasparserModule
          * ->setId(6)
          * ->setName('UASParser')
@@ -321,7 +347,8 @@ class CompareCommand extends Command
          *
          * $collection->addModule($uasparserModule);
          *
-         * $output->writeln(' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes');
+         * $output->writeln(' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - '
+         * . number_format(memory_get_usage(true), 0, ',', '.') . ' Bytes');
          * }
          */
 
@@ -333,13 +360,13 @@ class CompareCommand extends Command
             $output->write('initializing Wurfl API (PHP-API 5.3 port) ...', false);
 
             ini_set('max_input_time', '6000');
-            $wurflModule = new Wurfl($logger, new File(array('dir' => 'data/cache/wurfl/')), 'data/wurfl-config.xml');
+            $wurflModule = new Wurfl($logger, new File(array(File::DIR => 'data/cache/wurfl/')), 'data/wurfl-config.xml');
             $wurflModule->setId(11)->setName('WURFL API (PHP-API 5.3)');
 
             $collection->addModule($wurflModule);
 
             $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                     memory_get_usage(true),
                     0,
                     ',',
@@ -357,7 +384,7 @@ class CompareCommand extends Command
 
             $oldWurflModule = new WurflOld(
                 $logger,
-                new File(array('dir' => 'data/cache/wurfl_old/')),
+                new File(array(File::DIR => 'data/cache/wurfl_old/')),
                 'data/wurfl-config.xml'
             );
             $oldWurflModule->setId(7)->setName('WURFL API (PHP-API 5.2 original)');
@@ -365,7 +392,7 @@ class CompareCommand extends Command
             $collection->addModule($oldWurflModule);
 
             $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                     memory_get_usage(true),
                     0,
                     ',',
@@ -388,7 +415,7 @@ class CompareCommand extends Command
             $collection->addModule($piwikModule);
 
             $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                     memory_get_usage(true),
                     0,
                     ',',
@@ -402,7 +429,7 @@ class CompareCommand extends Command
         $collection->init();
 
         $output->writeln(
-            'ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' -  ' . number_format(
+            'ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                 memory_get_usage(true),
                 0,
                 ',',
@@ -460,73 +487,152 @@ class CompareCommand extends Command
             $source            = new DirectorySource($uaSourceDirectory);
         }
 
-        $lineHandler = new LineHandler();
+        $allTimes = array();
 
-        foreach ($source->getUserAgents($logger) as $line) {
-            try {
-                $lineHandler->handleLine($line, $collection, $messageFormatter, $i, $checks);
-                continue;
-            } catch (\Exception $e) {
-                if (1 === $e->getCode()) {
-                    $nokfound++;
-                } elseif (2 === $e->getCode()) {
-                    $sosofound++;
-                } else {
-                    $okfound++;
+        foreach ($collection as $module) {
+            $allTimes[$module->getName()] = array(
+                'min'     => array('time' => 1.0, 'agent' => ''),
+                'max'     => array('time' => 0.0, 'agent' => ''),
+                'summary' => 0.0,
+            );
+        }
+
+        $limit = (int) $input->getOption('limit');
+
+        foreach ($source->getUserAgents($logger, $limit) as $agent) {
+            $matches = array();
+
+            /***************************************************************************
+             * handle modules
+             */
+
+            foreach ($collection as $module) {
+                $module
+                    ->startTimer()
+                    ->detect($agent)
+                    ->endTimer()
+                ;
+
+                $actualTime = $module->getTime();
+
+                $allTimes[$module->getName()]['summary'] += $actualTime;
+
+                if ($allTimes[$module->getName()]['min']['time'] > $actualTime) {
+                    $allTimes[$module->getName()]['min']['time']  = $actualTime;
+                    $allTimes[$module->getName()]['min']['agent'] = $agent;
                 }
 
+                if ($allTimes[$module->getName()]['max']['time'] < $actualTime) {
+                    $allTimes[$module->getName()]['max']['time']  = $actualTime;
+                    $allTimes[$module->getName()]['max']['agent'] = $agent;
+                }
+            }
+
+            /***************************************************************************
+             * handle modules - end
+             */
+
+            /**
+             * Auswertung
+             */
+            $allResults = array();
+
+            foreach ($checks as $propertyTitel => $x) {
+                if (empty($x['key'])) {
+                    $propertyName = $propertyTitel;
+                } else {
+                    $propertyName = $x['key'];
+                }
+
+                $detectionResults = $messageFormatter->formatMessage($propertyTitel, $propertyName);
+
+                foreach ($detectionResults as $result) {
+                    $matches[] = substr($result, 0, 1);
+                }
+
+                $allResults[$propertyTitel] = $detectionResults;
+            }
+
+            if (in_array('-', $matches)) {
+                $content = file_get_contents('src/templates/single-line.txt');
+                $content = str_replace('#ua#', $agent, $content);
+                $content = str_replace('#               id#', str_pad($i, FIRST_COL_LENGTH, ' ', STR_PAD_LEFT), $content);
+                foreach ($collection as $module) {
+                    $content = str_replace('#' . $module->getName() . '#', number_format($module->getTime(), 10, ',', '.'), $content);
+                }
+
+                $content .= file_get_contents('src/templates/result-head.txt');
+                $content = str_replace('#ua#', $agent, $content);
+
+                foreach ($allResults as $propertyTitel => $detectionResults) {
+                    $content .= file_get_contents('src/templates/result-line.txt');
+
+                    $content = str_replace('#Title                                           #', $propertyTitel, $content);
+
+                    foreach ($detectionResults as $key => $value) {
+                        $content = str_replace($key, $value, $content);
+                    }
+                }
+
+                $content .= '-';
+                $nokfound++;
+            } elseif (in_array(':', $matches)) {
+                $content = ':';
+                $sosofound++;
+            } else {
+                $content = '.';
+                $okfound++;
+            }
+
+            if (($i % 100) == 0) {
+                $content .= "\n";
+            }
+
+            if (in_array('-', $matches)) {
                 $content = str_replace(
                     array(
-                        '#count#',
-                        '#plus#',
-                        '#minus#',
-                        '#soso#',
-                        '#percent1#',
-                        '#percent2#',
-                        '#percent3#',
+                        '#  plus#',
+                        '# minus#',
+                        '#  soso#',
+                        '#     percent1#',
+                        '#     percent2#',
+                        '#     percent3#',
                     ),
                     array(
-                        str_pad(number_format(0, 0, ',', '.'), FIRST_COL_LENGTH - 7, ' ', STR_PAD_LEFT),
-                        str_pad($okfound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
-                        str_pad($nokfound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
-                        str_pad($sosofound, FIRST_COL_LENGTH - 11, ' ', STR_PAD_LEFT),
+                        str_pad($okfound, 8, ' ', STR_PAD_LEFT),
+                        str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
+                        str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
                         str_pad(
                             number_format((100 * $okfound / $i), 9, ',', '.'),
-                            FIRST_COL_LENGTH - 4,
+                            15,
                             ' ',
                             STR_PAD_LEFT
                         ),
                         str_pad(
                             number_format((100 * $nokfound / $i), 9, ',', '.'),
-                            FIRST_COL_LENGTH - 4,
+                            15,
                             ' ',
                             STR_PAD_LEFT
                         ),
                         str_pad(
                             number_format((100 * $sosofound / $i), 9, ',', '.'),
-                            FIRST_COL_LENGTH - 4,
+                            15,
                             ' ',
                             STR_PAD_LEFT
                         ),
                     ),
-                    $e->getMessage()
+                    $content
                 );
-
-                $output->write($content, false);
             }
+
+            $output->write($content, false);
 
             $i++;
         }
 
         $output->writeln('');
-        $output->writeln(
-            str_repeat('-', FIRST_COL_LENGTH) . '+' . str_repeat('-', $collection->count() - 1) . '+' . str_repeat(
-                '-',
-                $aLength
-            )
-        );
 
-        $content = '#plus# + detected|' . "\n" . '#percent1# % +|' . "\n" . '#minus# - detected|' . "\n" . '#percent2# % -|' . "\n" . '#soso# : detected|' . "\n" . '#percent3# % :|' . "\n";
+        $content = file_get_contents('src/templates/end-line.txt');
 
         --$i;
 
@@ -536,35 +642,57 @@ class CompareCommand extends Command
 
         $content = str_replace(
             array(
-                '#plus#',
-                '#minus#',
-                '#soso#',
-                '#percent1#',
-                '#percent2#',
-                '#percent3#',
+                '#  plus#',
+                '# minus#',
+                '#  soso#',
+                '#     percent1#',
+                '#     percent2#',
+                '#     percent3#',
             ),
             array(
-                substr(str_repeat(' ', FIRST_COL_LENGTH) . $okfound, -(FIRST_COL_LENGTH - 11)),
-                substr(str_repeat(' ', FIRST_COL_LENGTH) . $nokfound, -(FIRST_COL_LENGTH - 11)),
-                substr(str_repeat(' ', FIRST_COL_LENGTH) . $sosofound, -(FIRST_COL_LENGTH - 11)),
-                substr(
-                    str_repeat(' ', FIRST_COL_LENGTH) . number_format((100 * $okfound / $i), 9, ',', '.'),
-                    -(FIRST_COL_LENGTH - 4)
+                str_pad($okfound, 8, ' ', STR_PAD_LEFT),
+                str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
+                str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
+                str_pad(
+                    number_format((100 * $okfound / $i), 9, ',', '.'),
+                    15,
+                    ' ',
+                    STR_PAD_LEFT
                 ),
-                substr(
-                    str_repeat(' ', FIRST_COL_LENGTH) . number_format((100 * $nokfound / $i), 9, ',', '.'),
-                    -(FIRST_COL_LENGTH - 4)
+                str_pad(
+                    number_format((100 * $nokfound / $i), 9, ',', '.'),
+                    15,
+                    ' ',
+                    STR_PAD_LEFT
                 ),
-                substr(
-                    str_repeat(' ', FIRST_COL_LENGTH) . number_format((100 * $sosofound / $i), 9, ',', '.'),
-                    -(FIRST_COL_LENGTH - 4)
+                str_pad(
+                    number_format((100 * $sosofound / $i), 9, ',', '.'),
+                    15,
+                    ' ',
+                    STR_PAD_LEFT
                 ),
             ),
             $content
         );
 
-        $output->writeln(
-            substr(str_repeat(' ', FIRST_COL_LENGTH) . $i . '/' . $count, -1 * FIRST_COL_LENGTH) . '|' . "\n" . $content
-        );
+        foreach ($allTimes as $moduleName => $timeData) {
+            $content = str_replace(
+                array(
+                    '#' . $moduleName . ' - Summary#',
+                    '#' . $moduleName . ' - Max#',
+                    '#' . $moduleName . ' - Average#',
+                    '#' . $moduleName . ' - Min#',
+                ),
+                array(
+                    str_pad(number_format($timeData['summary'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                    str_pad(number_format($timeData['max']['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                    str_pad(number_format(($timeData['summary'] / $i), 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                    str_pad(number_format($timeData['min']['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                ),
+                $content
+            );
+        }
+
+        $output->writeln($content);
     }
 }

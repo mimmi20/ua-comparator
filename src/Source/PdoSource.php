@@ -26,13 +26,18 @@ class PdoSource implements SourceInterface
 
     /**
      * @param \Monolog\Logger $logger
+     * @param integer         $limit
      *
      * @return \Generator
      * @throws \BrowscapPHP\Helper\Exception
      */
-    public function getUserAgents(Logger $logger)
+    public function getUserAgents(Logger $logger, $limit = 0)
     {
         $sql = 'SELECT DISTINCT SQL_BIG_RESULT HIGH_PRIORITY `agent` FROM `agents` ORDER BY `count` DESC, `idAgents` DESC';
+
+        if ($limit) {
+            $sql .= ' LIMIT ' . $this->pdo->quote($limit, \PDO::PARAM_INT);
+        }
 
         $driverOptions = array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY);
 

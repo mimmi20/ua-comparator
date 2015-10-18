@@ -88,6 +88,13 @@ interface ModuleInterface
     public function getTime();
 
     /**
+     * returns the required memory
+     *
+     * @return int
+     */
+    public function getMemory();
+
+    /**
      * @return int
      */
     public function getId();

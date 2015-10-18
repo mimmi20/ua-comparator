@@ -27,11 +27,12 @@ class DirectorySource implements SourceInterface
 
     /**
      * @param \Monolog\Logger $logger
+     * @param integer         $limit
      *
      * @return \Generator
      * @throws \BrowscapPHP\Helper\Exception
      */
-    public function getUserAgents(Logger $logger)
+    public function getUserAgents(Logger $logger, $limit = 0)
     {
         $iterator = new \RecursiveDirectoryIterator($this->dir);
         $loader   = new IniLoader();
@@ -64,6 +65,10 @@ class DirectorySource implements SourceInterface
                     $allLines[$line] = 1;
 
                     yield $line;
+
+                    if ($limit && count($allLines) >= $limit) {
+                        return;
+                    }
                 }
 
                 $internalLoader->close();
@@ -83,6 +88,10 @@ class DirectorySource implements SourceInterface
                     $allLines[$line] = 1;
 
                     yield $line;
+
+                    if ($limit && count($allLines) >= $limit) {
+                        return;
+                    }
                 }
             }
         }

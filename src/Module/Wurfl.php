@@ -179,6 +179,16 @@ class Wurfl implements ModuleInterface
     }
 
     /**
+     * returns the required memory
+     *
+     * @return int
+     */
+    public function getMemory()
+    {
+        return 0;
+    }
+
+    /**
      * @return int
      */
     public function getId()

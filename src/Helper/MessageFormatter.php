@@ -79,23 +79,17 @@ class MessageFormatter
     }
 
     /**
-     * @param string       $content
-     * @param array        $matches
      * @param string       $propertyTitel
      * @param string|array $propertyName
-     * @param string       $start
-     * @param bool         $ok
      *
-     * @return array
+     * @return string[]
      */
-    public function formatMessage($content, $matches, $propertyTitel, $propertyName, $start = '', $ok = false)
+    public function formatMessage($propertyTitel, $propertyName)
     {
         static $allErrors = array();
 
         $mismatch      = false;
         $passed        = true;
-        $testresult    = '|';
-        $prefix        = ' ';
         $propertyTitel = trim($propertyTitel);
 
         if (is_string($propertyName)) {
@@ -109,8 +103,6 @@ class MessageFormatter
             $reality = '(n/a)';
         }
 
-        $start = substr($start, 0, -1 * (1 + $this->collection->count()));
-
         if (null === $reality || 'null' === $reality) {
             $strReality = '(NULL)';
         } elseif ('' === $reality) {
@@ -123,14 +115,10 @@ class MessageFormatter
             $strReality = (string) $reality;
         }
 
-        $detectionMessage = array(0 => str_pad($prefix . $strReality, $this->columnsLength, ' ') . '|');
+        $detectionResults = array();
         $fullname         = $this->collection[0]->getDetectionResult()->getFullBrowser(true, Version::MAJORMINOR);
 
         foreach (array_keys($this->collection->getModules()) as $id) {
-            if (0 === $id) {
-                continue;
-            }
-
             if (is_string($propertyName)) {
                 $target = $this->collection[$id]->getDetectionResult()->getCapability($propertyName);
             } elseif (is_array($propertyName) && is_callable(array($this->collection[$id]->getDetectionResult(), $propertyName[0]))) {
@@ -159,13 +147,10 @@ class MessageFormatter
             }
 
             if (strtolower($strTarget) === strtolower($strReality)) {
-                $r  = ' ';
                 $r1 = '+';
             } elseif (((null === $reality) || ('' === $reality) || ('' === $strReality)) && ((null === $target) || ('' === $target))) {
-                $r  = ' ';
                 $r1 = '?';
             } elseif ((null === $target) || ('' === $target) || ('' === $strTarget)) {
-                $r  = ' ';
                 $r1 = '%';
             } else {
                 $mismatch = true;
@@ -175,26 +160,19 @@ class MessageFormatter
                     && (0 === strpos($strTarget, $strReality))
                 ) {
                     $passed = false;
-                    $r      = '-';
-                    $r1     = '<';
+                    $r1     = '-';
                 } elseif ((strlen($strTarget) < strlen($strReality))
                     && (0 < strlen($strTarget))
                     && (0 === strpos($strReality, $strTarget))
                 ) {
-                    $r  = ' ';
                     $r1 = '>';
                 } elseif (isset($allErrors[$fullname][$propertyTitel])) {
-                    $r      = ':';
                     $r1     = ':';
                 } else {
                     $passed = false;
-                    $r      = '-';
                     $r1     = '-';
                 }
             }
-
-            $testresult .= $r;
-            $matches[]   = $r1;
 
             if (!isset($allErrors[$fullname][$propertyTitel])
                 && $mismatch
@@ -203,17 +181,9 @@ class MessageFormatter
                 $allErrors[$fullname][$propertyTitel] = $reality;
             }
 
-            $detectionMessage[] = str_pad($r1 . $strTarget, $this->columnsLength, ' ') . '|';
+            $detectionResults['#' . str_pad($propertyTitel, $this->columnsLength - 2, ' ', STR_PAD_RIGHT) . '#'] = str_pad($r1 . $strTarget, $this->columnsLength, ' ');
         }
 
-        $prefix = ' ';
-
-        $detectionMessage[0] = str_pad($prefix . $strReality, $this->columnsLength, ' ') . '|';
-
-        $content .= $start . $testresult . '|' . substr(str_repeat(' ', $this->columnsLength)
-                . $propertyTitel, -1 * $this->columnsLength) . '|' . implode('', $detectionMessage)
-            . "\n";
-
-        return array(($passed && $ok), $content, $matches);
+        return $detectionResults;
     }
 }
