@@ -9,7 +9,8 @@
 | Timing                                       | summary                   | max                       | average                   | min                       |
 +----------------------------------------------+---------------------------+---------------------------+---------------------------+---------------------------+
 | Detection (BrowserDetector)                  | #BrowserDetector - Summary# Sek. | #BrowserDetector - Max# Sek. | #BrowserDetector - Average# Sek. | #BrowserDetector - Min# Sek. |
-| Detection (Browscap-PHP)                     | #Browscap-PHP - Summary# Sek. | #BrowserDetector - Max# Sek. | #BrowserDetector - Average# Sek. | #BrowserDetector - Min# Sek. |
+| Detection (Browscap-PHP (3.x))               | #Browscap-PHP (3.x) - Summary# Sek. | #Browscap-PHP (3.x) - Max# Sek. | #Browscap-PHP (3.x) - Average# Sek. | #Browscap-PHP (3.x) - Min# Sek. |
+| Detection (Browscap-PHP (2.x))               | #Browscap-PHP (2.x) - Summary# Sek. | #Browscap-PHP (2.x) - Max# Sek. | #Browscap-PHP (2.x) - Average# Sek. | #Browscap-PHP (2.x) - Min# Sek. |
 | Detection (Crossjoin\Browscap)               | #Crossjoin\Browscap - Summary# Sek. | #Crossjoin\Browscap - Max# Sek. | #Crossjoin\Browscap - Average# Sek. | #Crossjoin\Browscap - Min# Sek. |
 | Detection (UAParser)                         | #UAParser - Summary# Sek. | #UAParser - Max# Sek. | #UAParser - Average# Sek. | #UAParser - Min# Sek. |
 | Detection (WURFL API (PHP-API 5.3))          | #WURFL API (PHP-API 5.3) - Summary# Sek. | #WURFL API (PHP-API 5.3) - Max# Sek. | #WURFL API (PHP-API 5.3) - Average# Sek. | #WURFL API (PHP-API 5.3) - Min# Sek. |

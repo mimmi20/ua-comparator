@@ -32,7 +32,6 @@ namespace UaComparator\Command;
 
 use Browscap\Generator\BuildGenerator;
 use Browscap\Helper\CollectionCreator;
-use Browscap\Helper\LoggerHelper;
 use Browscap\Writer\Factory\PhpWriterFactory;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
@@ -49,7 +48,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
 use UaComparator\Helper\MessageFormatter;
 use UaComparator\Helper\TimeFormatter;
-use UaComparator\Module\Browscap;
+use UaComparator\Module\Browscap2;
+use UaComparator\Module\Browscap3;
 use UaComparator\Module\BrowserDetectorModule;
 use UaComparator\Module\CrossJoin;
 use UaComparator\Module\ModuleCollection;
@@ -62,16 +62,7 @@ use UaComparator\Source\PdoSource;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
 
-define('ROW_LENGTH', 397);
-define('COL_LENGTH', 50);
-define('FIRST_COL_LENGTH', 20);
-
 define('START_TIME', microtime(true));
-
-define('COLOR_END', "\x1b[0m");
-define('COLOR_START_RED', "\x1b[37;41m");
-define('COLOR_START_YELLOW', "\x1b[30;43m");
-define('COLOR_START_GREEN', "\x1b[30;42m");
 
 /**
  * Class CompareCommand
@@ -82,6 +73,9 @@ define('COLOR_START_GREEN', "\x1b[30;42m");
  */
 class CompareCommand extends Command
 {
+    const COL_LENGTH = 50;
+    const FIRST_COL_LENGTH = 20;
+
     /**
      * Configures the current command.
      */
@@ -89,7 +83,8 @@ class CompareCommand extends Command
     {
         $defaultModules = array(
             'BrowserDetector',
-            'Browscap',
+            'Browscap3',
+            'Browscap2',
             'CrossJoin',
             'Piwik',
             'UaParser',
@@ -226,7 +221,7 @@ class CompareCommand extends Command
 
         $iniFile = null;
 
-        if (in_array('Browscap', $modules) || in_array('CrossJoin', $modules)) {
+        if (in_array('Browscap3', $modules) || in_array('Browscap2', $modules) || in_array('CrossJoin', $modules)) {
             $output->write('checking full_php_browscap.ini ...', false);
 
             $buildNumber = (int)file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
@@ -268,16 +263,38 @@ class CompareCommand extends Command
         }
 
         /*******************************************************************************
-         * Browscap-PHP
+         * Browscap-PHP 3.x
          */
 
-        if (in_array('Browscap', $modules) && null !== $iniFile) {
-            $output->write('initializing Browscap-PHP ...', false);
+        if (in_array('Browscap3', $modules) && null !== $iniFile) {
+            $output->write('initializing Browscap-PHP (3.x) ...', false);
 
-            $browscapModule = new Browscap($logger, new File(array(File::DIR => 'data/cache/browscap/')), $iniFile);
-            $browscapModule->setId(9)->setName('Browscap-PHP');
+            $browscap3Module = new Browscap3($logger, new File(array(File::DIR => 'data/cache/browscap3/')), $iniFile);
+            $browscap3Module->setId(9)->setName('Browscap-PHP (3.x)');
 
-            $collection->addModule($browscapModule);
+            $collection->addModule($browscap3Module);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
+         * Browscap-PHP 2.x
+         */
+
+        if (in_array('Browscap2', $modules) && null !== $iniFile) {
+            $output->write('initializing Browscap-PHP (2.x) ...', false);
+
+            $browscap2Module = new Browscap2($logger, new Memory(), 'data/cache/browscap2/', $iniFile);
+            $browscap2Module->setId(13)->setName('Browscap-PHP (2.x)');
+
+            $collection->addModule($browscap2Module);
 
             $output->writeln(
                 ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
@@ -442,13 +459,12 @@ class CompareCommand extends Command
          */
 
         $i       = 1;
-        $count   = 0;
-        $aLength = COL_LENGTH + 1 + COL_LENGTH + 1 + (($collection->count() - 1) * (COL_LENGTH + 1));
+        $aLength = self::COL_LENGTH + 1 + self::COL_LENGTH + 1 + (($collection->count() - 1) * (self::COL_LENGTH + 1));
 
         $messageFormatter = new MessageFormatter();
-        $messageFormatter->setCollection($collection)->setColumnsLength(COL_LENGTH);
+        $messageFormatter->setCollection($collection)->setColumnsLength(self::COL_LENGTH);
 
-        $output->write(str_repeat('+', FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2), false);
+        $output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2), false);
 
         $okfound   = 0;
         $nokfound  = 0;
@@ -458,7 +474,7 @@ class CompareCommand extends Command
 
         $checklevel  = $input->getOption('check-level');
         $checkHelper = new Check();
-        $checks      = $checkHelper->getChecks($checklevel, $collection);
+        $checks      = $checkHelper->getChecks($checklevel);
 
         /*******************************************************************************
          * Loop
@@ -506,6 +522,8 @@ class CompareCommand extends Command
              * handle modules
              */
 
+            $timeStart = microtime(true);
+
             foreach ($collection as $module) {
                 $module
                     ->startTimer()
@@ -527,6 +545,8 @@ class CompareCommand extends Command
                     $allTimes[$module->getName()]['max']['agent'] = $agent;
                 }
             }
+
+            $fullTime = microtime(true) - $timeStart;
 
             /***************************************************************************
              * handle modules - end
@@ -556,23 +576,33 @@ class CompareCommand extends Command
             if (in_array('-', $matches)) {
                 $content = file_get_contents('src/templates/single-line.txt');
                 $content = str_replace('#ua#', $agent, $content);
-                $content = str_replace('#               id#', str_pad($i, FIRST_COL_LENGTH, ' ', STR_PAD_LEFT), $content);
+                $content = str_replace('#               id#', str_pad($i, self::FIRST_COL_LENGTH - 1, ' ', STR_PAD_LEFT), $content);
                 foreach ($collection as $module) {
-                    $content = str_replace('#' . $module->getName() . '#', number_format($module->getTime(), 10, ',', '.'), $content);
+                    $content = str_replace('#' . str_pad($module->getName(), 32, ' ') . '#', str_pad(number_format($module->getTime(), 10, ',', '.'), 20, ' ', STR_PAD_LEFT), $content);
                 }
+
+                $content = str_replace('#TimeSummary                     #', str_pad(number_format($fullTime, 10, ',', '.'), 20, ' ', STR_PAD_LEFT), $content);
 
                 $content .= file_get_contents('src/templates/result-head.txt');
-                $content = str_replace('#ua#', $agent, $content);
 
                 foreach ($allResults as $propertyTitel => $detectionResults) {
-                    $content .= file_get_contents('src/templates/result-line.txt');
+                    $lineContent = file_get_contents('src/templates/result-line.txt');
+                    $lineContent = str_replace(
+                        '#Title                                           #',
+                        str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT),
+                        $lineContent
+                    );
 
-                    $content = str_replace('#Title                                           #', $propertyTitel, $content);
-
-                    foreach ($detectionResults as $key => $value) {
-                        $content = str_replace($key, $value, $content);
+                    foreach ($detectionResults as $moduletName => $value) {
+                        // #BrowserDetector                                 #
+                        $moduleColumnName = '#' . str_pad($moduletName, 48, ' ') . '#';
+                        $lineContent      = str_replace($moduleColumnName, $value, $lineContent);
                     }
+
+                    $content .= $lineContent;
                 }
+
+                $content .= file_get_contents('src/templates/result-foot.txt');
 
                 $content .= '-';
                 $nokfound++;

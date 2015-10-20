@@ -147,11 +147,11 @@ class MessageFormatter
             }
 
             if (strtolower($strTarget) === strtolower($strReality)) {
-                $r1 = '+';
+                $r1 = ' ';
             } elseif (((null === $reality) || ('' === $reality) || ('' === $strReality)) && ((null === $target) || ('' === $target))) {
-                $r1 = '?';
+                $r1 = ' ';
             } elseif ((null === $target) || ('' === $target) || ('' === $strTarget)) {
-                $r1 = '%';
+                $r1 = ' ';
             } else {
                 $mismatch = true;
 
@@ -165,7 +165,7 @@ class MessageFormatter
                     && (0 < strlen($strTarget))
                     && (0 === strpos($strReality, $strTarget))
                 ) {
-                    $r1 = '>';
+                    $r1 = ' ';
                 } elseif (isset($allErrors[$fullname][$propertyTitel])) {
                     $r1     = ':';
                 } else {
@@ -181,7 +181,12 @@ class MessageFormatter
                 $allErrors[$fullname][$propertyTitel] = $reality;
             }
 
-            $detectionResults['#' . str_pad($propertyTitel, $this->columnsLength - 2, ' ', STR_PAD_RIGHT) . '#'] = str_pad($r1 . $strTarget, $this->columnsLength, ' ');
+            $result = $r1 . $strTarget;
+            if (strlen($result) > $this->columnsLength) {
+                $result = substr($result, 0, $this->columnsLength - 3) . '...';
+            }
+
+            $detectionResults[$this->collection[$id]->getName()] = str_pad($result, $this->columnsLength, ' ');
         }
 
         return $detectionResults;

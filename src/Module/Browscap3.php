@@ -30,6 +30,7 @@
 
 namespace UaComparator\Module;
 
+use BrowscapPHP\Browscap;
 use BrowscapPHP\Helper\IniLoader;
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
@@ -43,7 +44,7 @@ use WurflCache\Adapter\AdapterInterface;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class Browscap implements ModuleInterface
+class Browscap3 implements ModuleInterface
 {
     /**
      * @var \Monolog\Logger
@@ -111,7 +112,7 @@ class Browscap implements ModuleInterface
      */
     public function init()
     {
-        $browscap = new \BrowscapPHP\Browscap();
+        $browscap = new Browscap();
 
         $browscap
             ->setLogger($this->logger)
@@ -132,11 +133,11 @@ class Browscap implements ModuleInterface
     /**
      * @param string $agent
      *
-     * @return \UaComparator\Module\Browscap
+     * @return \UaComparator\Module\Browscap3
      */
     public function detect($agent)
     {
-        $parser = new \BrowscapPHP\Browscap();
+        $parser = new Browscap();
         $parser
             ->setLogger($this->logger)
             ->setCache($this->cache)
@@ -151,7 +152,7 @@ class Browscap implements ModuleInterface
     /**
      * starts the detection timer
      *
-     * @return \UaComparator\Module\Browscap
+     * @return \UaComparator\Module\Browscap3
      */
     public function startTimer()
     {
@@ -163,7 +164,7 @@ class Browscap implements ModuleInterface
 
     /**
      * stops the detection timer
-     * @return \UaComparator\Module\Browscap
+     * @return \UaComparator\Module\Browscap3
      */
     public function endTimer()
     {
@@ -204,7 +205,7 @@ class Browscap implements ModuleInterface
     /**
      * @param int $id
      *
-     * @return \UaComparator\Module\Browscap
+     * @return \UaComparator\Module\Browscap3
      */
     public function setId($id)
     {
@@ -224,7 +225,7 @@ class Browscap implements ModuleInterface
     /**
      * @param string $name
      *
-     * @return \UaComparator\Module\Browscap
+     * @return \UaComparator\Module\Browscap3
      */
     public function setName($name)
     {
