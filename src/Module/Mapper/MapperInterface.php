@@ -46,7 +46,7 @@ interface MapperInterface
      *
      * @param mixed $parserResult
      *
-     * @return \BrowserDetector\Detector\Result\Result the object containing the browsers details.
+     * @return \UaResult\Result the object containing the browsers details.
      * @throws \UnexpectedValueException
      */
     public function map($parserResult);

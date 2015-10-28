@@ -213,7 +213,7 @@ class UaParser implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result\Result
+     * @return \UaResult\Result
      */
     public function getDetectionResult()
     {
@@ -225,7 +225,7 @@ class UaParser implements ModuleInterface
      *
      * @param \UAParser\Result\Client $parserResult
      *
-     * @return \BrowserDetector\Detector\Result\Result
+     * @return \UaResult\Result
      */
     private function map(Client $parserResult)
     {

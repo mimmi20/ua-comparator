@@ -156,6 +156,9 @@ class Check
             'colors'                => array(
                 'key'         => 'colors',
             ),
+            'wurflKey'              => array(
+                'key'         => 'wurflKey',
+            ),
         );
 
         if ($checklevel == self::MEDIUM) {

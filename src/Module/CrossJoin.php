@@ -214,7 +214,7 @@ class CrossJoin implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result\Result
+     * @return \UaResult\Result
      */
     public function getDetectionResult()
     {

@@ -53,7 +53,7 @@ class Wurfl implements MapperInterface
      * @param \Wurfl\CustomDevice|\WURFL_CustomDevice $device
      * @param \Monolog\Logger                         $logger
      *
-     * @return Result the object containing the browsers details.
+     * @return \UaResult\Result the object containing the browsers details.
      */
     public function map($device, Logger $logger = null)
     {

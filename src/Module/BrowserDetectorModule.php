@@ -81,7 +81,7 @@ class BrowserDetectorModule implements ModuleInterface
     private $id = 0;
 
     /**
-     * @var \BrowserDetector\Detector\Result\Result
+     * @var \UaResult\Result
      */
     private $detectionResult = null;
 
@@ -219,7 +219,7 @@ class BrowserDetectorModule implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result\Result
+     * @return \UaResult\Result
      */
     public function getDetectionResult()
     {

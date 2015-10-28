@@ -506,6 +506,7 @@ class CompareCommand extends Command
         $allTimes = array();
 
         foreach ($collection as $module) {
+            /** @var \UaResult\Result $module */
             $allTimes[$module->getName()] = array(
                 'min'     => array('time' => 1.0, 'agent' => ''),
                 'max'     => array('time' => 0.0, 'agent' => ''),
@@ -525,6 +526,7 @@ class CompareCommand extends Command
             $timeStart = microtime(true);
 
             foreach ($collection as $module) {
+                /** @var \UaResult\Result $module */
                 $module
                     ->startTimer()
                     ->detect($agent)
@@ -576,33 +578,78 @@ class CompareCommand extends Command
             if (in_array('-', $matches)) {
                 $content = file_get_contents('src/templates/single-line.txt');
                 $content = str_replace('#ua#', $agent, $content);
-                $content = str_replace('#               id#', str_pad($i, self::FIRST_COL_LENGTH - 1, ' ', STR_PAD_LEFT), $content);
+                $content = str_replace(
+                    '#               id#',
+                    str_pad($i, self::FIRST_COL_LENGTH - 1, ' ', STR_PAD_LEFT),
+                    $content
+                );
+
                 foreach ($collection as $module) {
-                    $content = str_replace('#' . str_pad($module->getName(), 32, ' ') . '#', str_pad(number_format($module->getTime(), 10, ',', '.'), 20, ' ', STR_PAD_LEFT), $content);
+                    /** @var \UaResult\Result $module */
+                    $content = str_replace(
+                        '#' . str_pad($module->getName(), 32, ' ') . '#',
+                        str_pad(number_format($module->getTime(), 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                        $content
+                    );
                 }
 
-                $content = str_replace('#TimeSummary                     #', str_pad(number_format($fullTime, 10, ',', '.'), 20, ' ', STR_PAD_LEFT), $content);
+                $content = str_replace(
+                    '#TimeSummary                     #',
+                    str_pad(number_format($fullTime, 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                    $content
+                );
 
-                $content .= file_get_contents('src/templates/result-head.txt');
+                $content = str_replace(
+                    array(
+                        '#BrowserDetector                 # Sek.',
+                        '#Browscap-PHP (3.x)              # Sek.',
+                        '#Browscap-PHP (2.x)              # Sek.',
+                        '#Crossjoin\Browscap              # Sek.',
+                        '#UAParser                        # Sek.',
+                        '#WURFL API (PHP-API 5.3)         # Sek.',
+                        '#WURFL API (PHP-API 5.2 original)# Sek.',
+                        '#Piwik Parser                    # Sek.',
+                    ),
+                    ' (n/a)                   ',
+                    $content
+                );
+
+                $content .= '+--------------------+--------------------------------------------------+';
+                foreach ($collection as $module) {
+                    $content .= '--------------------------------------------------+';
+                }
+                $content .= "\n";
+
+                $content .= '|                    |                                                  |';
+                foreach ($collection as $module) {
+                    /** @var \UaResult\Result $module */
+                    $content .= str_pad($module->getName(), self::COL_LENGTH, ' ') . '|';
+                }
+                $content .= "\n";
+
+                $content .= '|                    +--------------------------------------------------+';
+                foreach ($collection as $module) {
+                    $content .= '--------------------------------------------------+';
+                }
+                $content .= "\n";
 
                 foreach ($allResults as $propertyTitel => $detectionResults) {
-                    $lineContent = file_get_contents('src/templates/result-line.txt');
-                    $lineContent = str_replace(
-                        '#Title                                           #',
-                        str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT),
-                        $lineContent
-                    );
+                    $lineContent = '|                    |'
+                        . str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT)
+                        . '|';
 
                     foreach ($detectionResults as $moduletName => $value) {
-                        // #BrowserDetector                                 #
-                        $moduleColumnName = '#' . str_pad($moduletName, 48, ' ') . '#';
-                        $lineContent      = str_replace($moduleColumnName, $value, $lineContent);
+                        $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
                     }
 
-                    $content .= $lineContent;
+                    $content .= $lineContent .  "\n";
                 }
 
-                $content .= file_get_contents('src/templates/result-foot.txt');
+                $content .= '+--------------------+--------------------------------------------------+';
+                foreach ($collection as $module) {
+                    $content .= '--------------------------------------------------+';
+                }
+                $content .= "\n";
 
                 $content .= '-';
                 $nokfound++;

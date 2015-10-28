@@ -92,7 +92,9 @@ class MessageFormatter
         $passed        = true;
         $propertyTitel = trim($propertyTitel);
 
-        if (is_string($propertyName)) {
+        if ('wurflKey' === $propertyName) {
+            $reality = $this->collection[0]->getDetectionResult()->id;
+        } elseif (is_string($propertyName)) {
             $reality = $this->collection[0]->getDetectionResult()->getCapability($propertyName);
         } elseif (is_array($propertyName) && is_callable(array($this->collection[0]->getDetectionResult(), $propertyName[0]))) {
             $reality = call_user_func_array(
@@ -119,7 +121,9 @@ class MessageFormatter
         $fullname         = $this->collection[0]->getDetectionResult()->getFullBrowser(true, Version::MAJORMINOR);
 
         foreach (array_keys($this->collection->getModules()) as $id) {
-            if (is_string($propertyName)) {
+            if ('wurflKey' === $propertyName) {
+                $target = $this->collection[$id]->getDetectionResult()->id;
+            } elseif (is_string($propertyName)) {
                 $target = $this->collection[$id]->getDetectionResult()->getCapability($propertyName);
             } elseif (is_array($propertyName) && is_callable(array($this->collection[$id]->getDetectionResult(), $propertyName[0]))) {
                 $target = call_user_func_array(

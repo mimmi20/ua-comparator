@@ -201,7 +201,7 @@ class Detector implements ModuleInterface
     }
 
     /**
-     * @return \BrowserDetector\Detector\Result\Result
+     * @return \UaResult\Result
      */
     public function getDetectionResult()
     {

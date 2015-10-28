@@ -119,7 +119,7 @@ interface ModuleInterface
     public function setName($name);
 
     /**
-     * @return \BrowserDetector\Detector\Result\Result
+     * @return \UaResult\Result
      */
     public function getDetectionResult();
 }
