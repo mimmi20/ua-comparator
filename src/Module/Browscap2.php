@@ -104,6 +104,7 @@ class Browscap2 implements ModuleInterface
         $this->browscap->doAutoUpdate  = false;
         $this->browscap->silent        = false;
         $this->browscap->updateMethod  = Browscap::UPDATE_LOCAL;
+        $this->browscap->lowercase     = true;
     }
 
     /**
@@ -114,6 +115,8 @@ class Browscap2 implements ModuleInterface
     public function init()
     {
         $this->browscap->updateCache();
+
+        $this->detect('');
 
         return $this;
     }

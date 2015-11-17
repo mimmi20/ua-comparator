@@ -220,6 +220,7 @@ class Browscap implements MapperInterface
         } else {
             $result->setCapability('is_tablet', null);
         }
+
         $result->setCapability('is_bot', $parserResult->crawler);
 
         $result->setCapability(

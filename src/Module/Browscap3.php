@@ -92,6 +92,11 @@ class Browscap3 implements ModuleInterface
     private $inifile = '';
 
     /**
+     * @var \BrowscapPHP\Browscap
+     */
+    private $browscap = null;
+
+    /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
@@ -103,6 +108,13 @@ class Browscap3 implements ModuleInterface
         $this->logger  = $logger;
         $this->cache   = $cache;
         $this->inifile = $iniFile;
+
+        $this->browscap = new Browscap();
+
+        $this->browscap
+            ->setLogger($this->logger)
+            ->setCache($this->cache)
+        ;
     }
 
     /**
@@ -112,17 +124,10 @@ class Browscap3 implements ModuleInterface
      */
     public function init()
     {
-        $browscap = new Browscap();
-
-        $browscap
-            ->setLogger($this->logger)
-            ->setCache($this->cache)
-        ;
-
         if ('' !== $this->inifile && file_exists($this->inifile) && is_readable($this->inifile)) {
-            $browscap->convertFile($this->inifile);
+            $this->browscap->convertFile($this->inifile);
         } else {
-            $browscap->update(IniLoader::PHP_INI);
+            $this->browscap->update(IniLoader::PHP_INI);
         }
 
         $this->detect('');
@@ -137,14 +142,8 @@ class Browscap3 implements ModuleInterface
      */
     public function detect($agent)
     {
-        $parser = new Browscap();
-        $parser
-            ->setLogger($this->logger)
-            ->setCache($this->cache)
-        ;
-
         $this->agent           = $agent;
-        $this->detectionResult = $parser->getBrowser($agent);
+        $this->detectionResult = $this->browscap->getBrowser($agent);
 
         return $this;
     }
