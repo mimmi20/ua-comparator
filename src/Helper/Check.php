@@ -30,8 +30,6 @@
 
 namespace UaComparator\Helper;
 
-use UaComparator\Module\ModuleCollection;
-
 /**
  * Class Check
  *

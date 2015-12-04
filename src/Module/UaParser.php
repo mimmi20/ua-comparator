@@ -35,7 +35,7 @@ use UAParser\Parser;
 use UAParser\Result\Client;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
-use UaComparator\Helper\InputMapper;
+use UaDataMapper\InputMapper;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities

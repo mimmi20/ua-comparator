@@ -615,9 +615,7 @@ class CompareCommand extends Command
                 );
 
                 $content .= '+--------------------+--------------------------------------------------+';
-                foreach ($collection as $module) {
-                    $content .= '--------------------------------------------------+';
-                }
+                $content .= str_repeat('--------------------------------------------------+', $collection->count());
                 $content .= "\n";
 
                 $content .= '|                    |                                                  |';
@@ -628,9 +626,7 @@ class CompareCommand extends Command
                 $content .= "\n";
 
                 $content .= '|                    +--------------------------------------------------+';
-                foreach ($collection as $module) {
-                    $content .= '--------------------------------------------------+';
-                }
+                $content .= str_repeat('--------------------------------------------------+', $collection->count());
                 $content .= "\n";
 
                 foreach ($allResults as $propertyTitel => $detectionResults) {
@@ -646,9 +642,7 @@ class CompareCommand extends Command
                 }
 
                 $content .= '+--------------------+--------------------------------------------------+';
-                foreach ($collection as $module) {
-                    $content .= '--------------------------------------------------+';
-                }
+                $content .= str_repeat('--------------------------------------------------+', $collection->count());
                 $content .= "\n";
 
                 $content .= '-';

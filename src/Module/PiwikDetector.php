@@ -32,7 +32,7 @@ namespace UaComparator\Module;
 
 use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\OperatingSystem;
-use UaComparator\Helper\InputMapper;
+use UaDataMapper\InputMapper;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Device\DeviceParserAbstract;
 use Monolog\Logger;

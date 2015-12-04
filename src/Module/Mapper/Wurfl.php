@@ -31,7 +31,7 @@
 namespace UaComparator\Module\Mapper;
 
 use Monolog\Logger;
-use UaComparator\Helper\InputMapper;
+use UaDataMapper\InputMapper;
 use UaResult\Result;
 use UaResult\Version;
 use Wurfl\CustomDevice;
@@ -65,6 +65,7 @@ class Wurfl implements MapperInterface
         }
 
         $marketingName = null;
+        $mapper        = new InputMapper();
 
         try {
             $allProperties = $device->getAllCapabilities();
@@ -133,8 +134,6 @@ class Wurfl implements MapperInterface
             }
 
             $marketingName = $device->getCapability('marketing_name');
-
-            $mapper = new InputMapper();
 
             $apiDev        = $mapper->mapDeviceName($apiDev);
             $apiMan        = $mapper->mapDeviceMaker($apiMan, $apiDev);
@@ -636,7 +635,6 @@ class Wurfl implements MapperInterface
             }
         }
 
-        $mapper  = new InputMapper();
         $version = new Version();
 
         $browserName = $mapper->mapBrowserName($apiBro);

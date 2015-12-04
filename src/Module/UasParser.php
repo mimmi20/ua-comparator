@@ -31,7 +31,7 @@
 namespace UaComparator\Module;
 
 use Monolog\Logger;
-use UaComparator\Helper\InputMapper;
+use UaDataMapper\InputMapper;
 use UaResult\Result;
 use UaResult\Version;
 use UAS\Parser;
