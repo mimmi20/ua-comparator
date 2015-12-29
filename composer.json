@@ -68,6 +68,10 @@
           }
         }
       }
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/mimmi20/browscap.git"
     }
   ],
   "require": {
@@ -80,16 +84,16 @@
     "mimmi20/wurfl-data": "~1.6",
     "ua-parser/uap-php": "dev-master",
     "synchro/uasparser": "dev-master",
-    "browscap/browscap": "dev-master",
+    "browscap/browscap": "dev-detection-issues",
     "browscap/browscap-php/3.x": "dev-master",
     "browscap/browscap-php/2.x": "2.0",
     "crossjoin/browscap": "~1",
     "wurfl/wurfl-api": "~1.6",
     "piwik/device-detector": "dev-master",
-    "mimmi20/wurfl-generic-request": "*",
-    "mimmi20/ua-result": "~1.0.6",
-    "mimmi20/ua-matcher-interface": "~1.0.11",
-    "mimmi20/ua-data-mapper": "~1.0.1",
+    "mimmi20/wurfl-generic-request": "1.0.*",
+    "mimmi20/ua-result": "~1.1.0",
+    "mimmi20/ua-matcher-interface": "~1.1.0",
+    "mimmi20/ua-data-mapper": "~1.1.2",
     "mimmi20/ua-browser-type": "~1.0.0",
     "mimmi20/ua-device-type": "~1.0.0"
   },
