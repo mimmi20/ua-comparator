@@ -112,23 +112,6 @@ class WurflOld implements ModuleInterface
         $device = $this->getDetectionResult();
         $device->getAllCapabilities();
 
-        // Create WURFL Configuration from an XML config file
-        $wurflConfigOrig  = new \WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
-        $wurflCacheOrig   = new \WURFL_Storage_Memory();
-        $wurflStorageOrig = new \WURFL_Storage_File(array(\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
-
-        // Create a WURFL Manager Factory from the WURFL Configuration
-        $wurflManagerFactoryOrig = new \WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
-        ini_set('max_input_time', '6000');
-        // Create a WURFL Manager
-        $wurflManagerOrig = $wurflManagerFactoryOrig->create();
-
-        foreach ($wurflManagerOrig->getAllDevicesID() as $deviceId) {
-            $result = $wurflManagerOrig->getDevice($deviceId);
-
-            $this->storeProperties($result);
-        }
-
         return $this;
     }
 
@@ -140,7 +123,7 @@ class WurflOld implements ModuleInterface
     public function detect($agent)
     {
         // Create WURFL Configuration from an XML config file
-        $wurflConfigOrig  = new \WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
+        $wurflConfigOrig  = new \WURFL_Configuration_XmlConfig($this->configFile);
         $wurflCacheOrig   = new \WURFL_Storage_Memory();
         $wurflStorageOrig = new \WURFL_Storage_File(array(\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
 
@@ -149,6 +132,8 @@ class WurflOld implements ModuleInterface
         ini_set('max_input_time', '6000');
         // Create a WURFL Manager
         $wurflManagerOrig = $wurflManagerFactoryOrig->create();
+
+        $agent = str_replace('Toolbar', '', $agent);
 
         $wurflManagerOrig->getAllDevicesID();
 
@@ -255,19 +240,5 @@ class WurflOld implements ModuleInterface
     {
         $mapper = new Mapper\Wurfl();
         return $mapper->map($this->detectionResult, $this->logger);
-    }
-
-    /**
-     * @var \WURFL_CustomDevice $deviceOrig
-     */
-    private function storeProperties(WURFL_CustomDevice $deviceOrig = null)
-    {
-        if (null !== $deviceOrig && !file_exists('data/browser/' . $deviceOrig->id . '.php')) {
-            $props = $deviceOrig->getAllCapabilities();
-
-            $content   = "<?php\nreturn " . var_export($props, true) . ";\n";
-
-            file_put_contents('data/browser/' . $deviceOrig->id . '.php', $content);
-        }
     }
 }

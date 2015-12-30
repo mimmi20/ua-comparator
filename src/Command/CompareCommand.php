@@ -194,7 +194,7 @@ class CompareCommand extends Command
         $collection = new ModuleCollection();
 
         /*******************************************************************************
-         * BrowserDetectorModule
+         * BrowserDetector
          */
 
         if (in_array('BrowserDetector', $modules)) {
@@ -377,7 +377,11 @@ class CompareCommand extends Command
             $output->write('initializing Wurfl API (PHP-API 5.3 port) ...', false);
 
             ini_set('max_input_time', '6000');
-            $wurflModule = new Wurfl($logger, new File(array(File::DIR => 'data/cache/wurfl/')), 'data/wurfl-config.xml');
+            $wurflModule = new Wurfl(
+                $logger,
+                new File(array(File::DIR => 'data/cache/wurfl/')),
+                'data/wurfl-config.xml'
+            );
             $wurflModule->setId(11)->setName('WURFL API (PHP-API 5.3)');
 
             $collection->addModule($wurflModule);
@@ -506,7 +510,7 @@ class CompareCommand extends Command
         $allTimes = array();
 
         foreach ($collection as $module) {
-            /** @var \UaResult\Result $module */
+            /** @var \UaComparator\Module\ModuleInterface $module */
             $allTimes[$module->getName()] = array(
                 'min'     => array('time' => 1.0, 'agent' => ''),
                 'max'     => array('time' => 0.0, 'agent' => ''),
@@ -526,7 +530,7 @@ class CompareCommand extends Command
             $timeStart = microtime(true);
 
             foreach ($collection as $module) {
-                /** @var \UaResult\Result $module */
+                /** @var \UaComparator\Module\ModuleInterface $module */
                 $module
                     ->startTimer()
                     ->detect($agent)
@@ -585,7 +589,7 @@ class CompareCommand extends Command
                 );
 
                 foreach ($collection as $module) {
-                    /** @var \UaResult\Result $module */
+                    /** @var \UaComparator\Module\ModuleInterface $module */
                     $content = str_replace(
                         '#' . str_pad($module->getName(), 32, ' ') . '#',
                         str_pad(number_format($module->getTime(), 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
@@ -620,7 +624,7 @@ class CompareCommand extends Command
 
                 $content .= '|                    |                                                  |';
                 foreach ($collection as $module) {
-                    /** @var \UaResult\Result $module */
+                    /** @var \UaComparator\Module\ModuleInterface $module */
                     $content .= str_pad($module->getName(), self::COL_LENGTH, ' ') . '|';
                 }
                 $content .= "\n";

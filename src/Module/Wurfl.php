@@ -125,12 +125,15 @@ class Wurfl implements ModuleInterface
      */
     public function detect($agent)
     {
+        // Create WURFL Configuration from an XML config file
         $wurflConfig      = new XmlConfig($this->configFile);
         $wurflCache       = new Storage(new Memory());
         $persistanceCache = new Storage($this->cache);
         $wurflManager     = new Manager($wurflConfig, $persistanceCache, $wurflCache);
 
         $agent = str_replace('Toolbar', '', $agent);
+
+        $wurflManager->getAllDevicesID();
 
         try {
             $this->detectionResult = $wurflManager->getDeviceForUserAgent($agent);
