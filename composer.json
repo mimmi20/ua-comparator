@@ -93,8 +93,8 @@
     "mimmi20/wurfl-generic-request": "1.0.*",
     "mimmi20/ua-result": "~1.1.0",
     "mimmi20/ua-matcher-interface": "~1.1.0",
-    "mimmi20/ua-data-mapper": "~1.1.2",
-    "mimmi20/ua-browser-type": "~1.0.0",
+    "mimmi20/ua-data-mapper": "~1.1.4",
+    "mimmi20/ua-browser-type": "~1.0.1",
     "mimmi20/ua-device-type": "~1.0.0"
   },
   "require-dev": {
