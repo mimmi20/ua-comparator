@@ -57,12 +57,12 @@ class Wurfl implements MapperInterface
      */
     public function map($device, Logger $logger = null)
     {
+        if (!($device instanceof CustomDevice) && !($device instanceof \WURFL_CustomDevice)) {
+            return new Result(null, $logger, null);
+        }
+
         $apiKey = $device->id;
         $result = new Result($device->userAgent, $logger, $apiKey);
-
-        if (!($device instanceof CustomDevice) && !($device instanceof \WURFL_CustomDevice)) {
-            return $result;
-        }
 
         $marketingName = null;
         $mapper        = new InputMapper();
