@@ -55,6 +55,7 @@ use UaComparator\Module\CrossJoin;
 use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\PiwikDetector;
 use UaComparator\Module\UaParser;
+use UaComparator\Module\WhichBrowser;
 use UaComparator\Module\Wurfl;
 use UaComparator\Module\WurflOld;
 use UaComparator\Source\DirectorySource;
@@ -82,7 +83,6 @@ class CompareCommand extends Command
     protected function configure()
     {
         $defaultModules = array(
-            'BrowserDetector',
             'Browscap3',
             'Browscap2',
             'CrossJoin',
@@ -90,6 +90,7 @@ class CompareCommand extends Command
             'UaParser',
             'Wurfl',
             'Wurfl52',
+            'WhichBrowser',
             /*'UASParser',*/
         );
 
@@ -197,23 +198,21 @@ class CompareCommand extends Command
          * BrowserDetector
          */
 
-        if (in_array('BrowserDetector', $modules)) {
-            $output->write('initializing BrowserDetectorModule ...', false);
+        $output->write('initializing BrowserDetectorModule ...', false);
 
-            $detectorModule = new BrowserDetectorModule($logger, new File(array(File::DIR => 'data/cache/browser/')));
-            $detectorModule->setId(0)->setName('BrowserDetector');
+        $detectorModule = new BrowserDetectorModule($logger, new File(array(File::DIR => 'data/cache/browser/')));
+        $detectorModule->setId(0)->setName('BrowserDetector');
 
-            $collection->addModule($detectorModule);
+        $collection->addModule($detectorModule);
 
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
+        $output->writeln(
+            ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                memory_get_usage(true),
+                0,
+                ',',
+                '.'
+            ) . ' Bytes'
+        );
 
         /*******************************************************************************
          * checking full_php_browscap.ini
@@ -445,6 +444,29 @@ class CompareCommand extends Command
             );
         }
 
+        /*******************************************************************************
+         * WhichBrowser Parser
+         */
+
+        if (in_array('Whichbrowser', $modules)) {
+            $output->write('initializing WhichBrowser ...', false);
+
+            $adapter  = new Memory();
+            $wbModule = new WhichBrowser($logger, $adapter);
+            $wbModule->setId(14)->setName('WhichBrowser');
+
+            $collection->addModule($wbModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
         $output->writeln('initializing all Modules ...');
 
         $collection->init();
@@ -603,21 +625,7 @@ class CompareCommand extends Command
                     $content
                 );
 
-                $content = str_replace(
-                    array(
-                        '#BrowserDetector                 # Sek.',
-                        '#Browscap-PHP (3.x)              # Sek.',
-                        '#Browscap-PHP (2.x)              # Sek.',
-                        '#Crossjoin\Browscap              # Sek.',
-                        '#UAParser                        # Sek.',
-                        '#WURFL API (PHP-API 5.3)         # Sek.',
-                        '#WURFL API (PHP-API 5.2 original)# Sek.',
-                        '#Piwik Parser                    # Sek.',
-                    ),
-                    ' (n/a)                   ',
-                    $content
-                );
-
+                $content = preg_replace('/\#.*\#/', ' (n/a)                   ', $content);
                 $content .= '+--------------------+--------------------------------------------------+';
                 $content .= str_repeat('--------------------------------------------------+', $collection->count());
                 $content .= "\n";
@@ -767,6 +775,8 @@ class CompareCommand extends Command
                 $content
             );
         }
+
+        $content = preg_replace('/\#[^#]*\# Sek\./', ' (n/a)                   ', $content);
 
         $output->writeln($content);
     }
