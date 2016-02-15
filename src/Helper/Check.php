@@ -38,8 +38,8 @@ namespace UaComparator\Helper;
  */
 class Check
 {
-    const MINIMUM = 1;
-    const MEDIUM  = 2;
+    const MINIMUM = 'minimum';
+    const MEDIUM  = 'medium';
 
     /**
      * Executes the current command.

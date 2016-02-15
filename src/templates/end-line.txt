@@ -19,4 +19,5 @@
 | Detection (WhichBrowser)                     | #WhichBrowser - Summary# Sek. | #WhichBrowser - Max# Sek. | #WhichBrowser - Average# Sek. | #WhichBrowser - Min# Sek. |
 | Detection (Woothee)                          | #Woothee - Summary# Sek. | #Woothee - Max# Sek. | #Woothee - Average# Sek. | #Woothee - Min# Sek. |
 | Detection (DonatjUAParser)                   | #DonatjUAParser - Summary# Sek. | #DonatjUAParser - Max# Sek. | #DonatjUAParser - Average# Sek. | #DonatjUAParser - Min# Sek. |
+| Detection (SinergiBrowserDetector)           | #SinergiBrowserDetector - Summary# Sek. | #SinergiBrowserDetector - Max# Sek. | #SinergiBrowserDetector - Average# Sek. | #SinergiBrowserDetector - Min# Sek. |
 +----------------------------------------------+---------------------------+---------------------------+---------------------------+---------------------------+

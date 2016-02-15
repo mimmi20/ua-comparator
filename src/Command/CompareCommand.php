@@ -94,6 +94,7 @@ class CompareCommand extends Command
             'WhichBrowser',
             'Woothee',
             'DonatjUAParser',
+            'SinergiBrowserDetector',
             /*'UASParser',*/
         );
 
@@ -517,6 +518,29 @@ var_dump($modules);
         }
 
         /*******************************************************************************
+         * SinergiBrowserDetector
+         */
+
+        if (in_array('SinergiBrowserDetector', $modules)) {
+            $output->write('initializing SinergiBrowserDetector ...', false);
+
+            $adapter      = new Memory();
+            $donatjModule = new Woothee($logger, $adapter);
+            $donatjModule->setId(17)->setName('SinergiBrowserDetector');
+
+            $collection->addModule($donatjModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
          * init Modules
          */
 
@@ -666,19 +690,18 @@ var_dump($modules);
                 foreach ($collection as $module) {
                     /** @var \UaComparator\Module\ModuleInterface $module */
                     $content = str_replace(
-                        '#' . str_pad($module->getName(), 32, ' ') . '#',
+                        '#' . $module->getName() . '#',
                         str_pad(number_format($module->getTime(), 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
                         $content
                     );
                 }
 
                 $content = str_replace(
-                    '#TimeSummary                     #',
+                    '#TimeSummary#',
                     str_pad(number_format($fullTime, 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
                     $content
                 );
 
-                $content = preg_replace('/\#.*\#/', ' (n/a)                   ', $content);
                 $content .= '+--------------------+--------------------------------------------------+';
                 $content .= str_repeat('--------------------------------------------------+', $collection->count());
                 $content .= "\n";
@@ -760,6 +783,8 @@ var_dump($modules);
                     $content
                 );
             }
+
+            $content = preg_replace('/\#[^#]*\#/', '               (n/a)', $content);
 
             $output->write($content, false);
 
