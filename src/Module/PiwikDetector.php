@@ -279,7 +279,6 @@ class PiwikDetector implements ModuleInterface
 
         $result->setCapability('mobile_browser', $browserName);
         $result->setCapability('mobile_browser_version', $browserVersion);
-        $result->setCapability('browser_type', $mapper->mapBrowserType('browser', $browserName)->getName());
 
         if (!empty($parserResult['client']['type'])) {
             $browserType = $parserResult['client']['type'];

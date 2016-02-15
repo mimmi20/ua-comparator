@@ -17,4 +17,5 @@
 | Detection (WURFL API (PHP-API 5.2 original)) | #WURFL API (PHP-API 5.2 original) - Summary# Sek. | #WURFL API (PHP-API 5.2 original) - Max# Sek. | #WURFL API (PHP-API 5.2 original) - Average# Sek. | #WURFL API (PHP-API 5.2 original) - Min# Sek. |
 | Detection (Piwik Parser)                     | #Piwik Parser - Summary# Sek. | #Piwik Parser - Max# Sek. | #Piwik Parser - Average# Sek. | #Piwik Parser - Min# Sek. |
 | Detection (WhichBrowser)                     | #WhichBrowser - Summary# Sek. | #WhichBrowser - Max# Sek. | #WhichBrowser - Average# Sek. | #WhichBrowser - Min# Sek. |
+| Detection (Woothee)                          | #Woothee - Summary# Sek. | #Woothee - Max# Sek. | #Woothee - Average# Sek. | #Woothee - Min# Sek. |
 +----------------------------------------------+---------------------------+---------------------------+---------------------------+---------------------------+

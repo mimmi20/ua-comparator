@@ -56,6 +56,7 @@ use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\PiwikDetector;
 use UaComparator\Module\UaParser;
 use UaComparator\Module\WhichBrowser;
+use UaComparator\Module\Woothee;
 use UaComparator\Module\Wurfl;
 use UaComparator\Module\WurflOld;
 use UaComparator\Source\DirectorySource;
@@ -91,6 +92,7 @@ class CompareCommand extends Command
             'Wurfl',
             'Wurfl52',
             'WhichBrowser',
+            'Woothee',
             /*'UASParser',*/
         );
 
@@ -447,8 +449,8 @@ class CompareCommand extends Command
         /*******************************************************************************
          * WhichBrowser Parser
          */
-
-        if (in_array('Whichbrowser', $modules)) {
+var_dump($modules);
+        if (in_array('WhichBrowser', $modules)) {
             $output->write('initializing WhichBrowser ...', false);
 
             $adapter  = new Memory();
@@ -466,6 +468,33 @@ class CompareCommand extends Command
                 ) . ' Bytes'
             );
         }
+
+        /*******************************************************************************
+         * WhichBrowser Parser
+         */
+
+        if (in_array('Woothee', $modules)) {
+            $output->write('initializing Woothee ...', false);
+
+            $adapter  = new Memory();
+            $wootheeModule = new Woothee($logger, $adapter);
+            $wootheeModule->setId(15)->setName('Woothee');
+
+            $collection->addModule($wootheeModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
+         * init Modules
+         */
 
         $output->writeln('initializing all Modules ...');
 
@@ -776,7 +805,7 @@ class CompareCommand extends Command
             );
         }
 
-        $content = preg_replace('/\#[^#]*\# Sek\./', ' (n/a)                   ', $content);
+        $content = preg_replace('/\#[^#]*\# Sek\./', '                    (n/a)', $content);
 
         $output->writeln($content);
     }
