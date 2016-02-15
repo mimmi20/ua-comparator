@@ -93,6 +93,7 @@ class CompareCommand extends Command
             'Wurfl52',
             'WhichBrowser',
             'Woothee',
+            'DonatjUAParser',
             /*'UASParser',*/
         );
 
@@ -476,11 +477,34 @@ var_dump($modules);
         if (in_array('Woothee', $modules)) {
             $output->write('initializing Woothee ...', false);
 
-            $adapter  = new Memory();
+            $adapter       = new Memory();
             $wootheeModule = new Woothee($logger, $adapter);
             $wootheeModule->setId(15)->setName('Woothee');
 
             $collection->addModule($wootheeModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
+         * DonatjUAParser
+         */
+
+        if (in_array('DonatjUAParser', $modules)) {
+            $output->write('initializing DonatjUAParser ...', false);
+
+            $adapter      = new Memory();
+            $donatjModule = new Woothee($logger, $adapter);
+            $donatjModule->setId(16)->setName('DonatjUAParser');
+
+            $collection->addModule($donatjModule);
 
             $output->writeln(
                 ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(

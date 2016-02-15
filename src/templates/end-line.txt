@@ -18,4 +18,5 @@
 | Detection (Piwik Parser)                     | #Piwik Parser - Summary# Sek. | #Piwik Parser - Max# Sek. | #Piwik Parser - Average# Sek. | #Piwik Parser - Min# Sek. |
 | Detection (WhichBrowser)                     | #WhichBrowser - Summary# Sek. | #WhichBrowser - Max# Sek. | #WhichBrowser - Average# Sek. | #WhichBrowser - Min# Sek. |
 | Detection (Woothee)                          | #Woothee - Summary# Sek. | #Woothee - Max# Sek. | #Woothee - Average# Sek. | #Woothee - Min# Sek. |
+| Detection (DonatjUAParser)                   | #DonatjUAParser - Summary# Sek. | #DonatjUAParser - Max# Sek. | #DonatjUAParser - Average# Sek. | #DonatjUAParser - Min# Sek. |
 +----------------------------------------------+---------------------------+---------------------------+---------------------------+---------------------------+
