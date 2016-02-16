@@ -89,12 +89,12 @@ class CompareCommand extends Command
             'CrossJoin',
             'Piwik',
             'UaParser',
-            'Wurfl',
-            'Wurfl52',
             'WhichBrowser',
             'Woothee',
             'DonatjUAParser',
             'SinergiBrowserDetector',
+            //'Wurfl',
+            //'Wurfl52',
             /*'UASParser',*/
         );
 
@@ -451,7 +451,7 @@ class CompareCommand extends Command
         /*******************************************************************************
          * WhichBrowser Parser
          */
-var_dump($modules);
+
         if (in_array('WhichBrowser', $modules)) {
             $output->write('initializing WhichBrowser ...', false);
 
@@ -702,34 +702,37 @@ var_dump($modules);
                     $content
                 );
 
-                $content .= '+--------------------+--------------------------------------------------+';
+                $content .= '+--------------------+' . str_repeat('-', $collection->count()) . '+--------------------------------------------------+';
                 $content .= str_repeat('--------------------------------------------------+', $collection->count());
                 $content .= "\n";
 
-                $content .= '|                    |                                                  |';
+                $content .= '|                    |' . str_repeat(' ', $collection->count()) . '|                                                  |';
                 foreach ($collection as $module) {
                     /** @var \UaComparator\Module\ModuleInterface $module */
                     $content .= str_pad($module->getName(), self::COL_LENGTH, ' ') . '|';
                 }
                 $content .= "\n";
 
-                $content .= '|                    +--------------------------------------------------+';
+                $content .= '|                    +' . str_repeat('-', $collection->count()) . '+--------------------------------------------------+';
                 $content .= str_repeat('--------------------------------------------------+', $collection->count());
                 $content .= "\n";
 
                 foreach ($allResults as $propertyTitel => $detectionResults) {
-                    $lineContent = '|                    |'
+                    $lineContent = '|                    |' . str_repeat(' ', $collection->count()) . '|'
                         . str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT)
                         . '|';
 
-                    foreach ($detectionResults as $moduletName => $value) {
+                    foreach (array_values($detectionResults) as $index => $value) {
                         $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
+                        $lineContent = substr_replace($lineContent, substr($value, 0, 1), 22 + $index, 1);
                     }
 
                     $content .= $lineContent .  "\n";
                 }
 
-                $content .= '+--------------------+--------------------------------------------------+';
+                $content .= '+--------------------+';
+                $content .= str_repeat('-', $collection->count());
+                $content .= '+--------------------------------------------------+';
                 $content .= str_repeat('--------------------------------------------------+', $collection->count());
                 $content .= "\n";
 
