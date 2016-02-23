@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -36,7 +37,7 @@ use Symfony\Component\Console\Application;
  * Class UaComparator
  *
  * @category   UaComparator
- * @package    UaComparator
+ *
  * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
  */
 class UaComparator extends Application
@@ -45,9 +46,9 @@ class UaComparator extends Application
     {
         parent::__construct('Useragent Parser Comparator Project', 'dev-master');
 
-        $commands = array(
+        $commands = [
             new Command\CompareCommand(),
-        );
+        ];
 
         foreach ($commands as $command) {
             $this->add($command);

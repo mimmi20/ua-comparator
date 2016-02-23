@@ -1,4 +1,5 @@
 <?php
+
 namespace UaComparator\Source;
 
 use BrowscapPHP\Helper\IniLoader;
@@ -7,7 +8,6 @@ use Monolog\Logger;
 /**
  * Class DirectorySource
  *
- * @package UaComparator\Source
  * @author  Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  */
 class DirectorySource implements SourceInterface
@@ -27,16 +27,17 @@ class DirectorySource implements SourceInterface
 
     /**
      * @param \Monolog\Logger $logger
-     * @param integer         $limit
+     * @param int             $limit
+     *
+     * @throws \BrowscapPHP\Helper\Exception
      *
      * @return \Generator
-     * @throws \BrowscapPHP\Helper\Exception
      */
     public function getUserAgents(Logger $logger, $limit = 0)
     {
         $iterator = new \RecursiveDirectoryIterator($this->dir);
         $loader   = new IniLoader();
-        $allLines = array();
+        $allLines = [];
 
         foreach (new \RecursiveIteratorIterator($iterator) as $file) {
             /** @var $file \SplFileInfo */
@@ -51,7 +52,7 @@ class DirectorySource implements SourceInterface
 
             if ($internalLoader->isSupportingLoadingLines()) {
                 if (!$internalLoader->init($path)) {
-                    $logger->info('Skipping empty file "'.$file->getPathname().'"');
+                    $logger->info('Skipping empty file "' . $file->getPathname() . '"');
                     continue;
                 }
 
@@ -76,7 +77,7 @@ class DirectorySource implements SourceInterface
                 $lines = file($path);
 
                 if (empty($lines)) {
-                    $logger->info('Skipping empty file "'.$file->getPathname().'"');
+                    $logger->info('Skipping empty file "' . $file->getPathname() . '"');
                     continue;
                 }
 

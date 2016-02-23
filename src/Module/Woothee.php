@@ -21,18 +21,19 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
 namespace UaComparator\Module;
 
 use DeviceDetector\Parser\Client\Browser;
-use UaDataMapper\InputMapper;
 use Monolog\Logger;
+use UaDataMapper\InputMapper;
 use UaResult\Result;
 use Woothee\Classifier;
 use WurflCache\Adapter\AdapterInterface;
@@ -41,7 +42,7 @@ use WurflCache\Adapter\AdapterInterface;
  * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -150,6 +151,7 @@ class Woothee implements ModuleInterface
 
     /**
      * stops the detection timer
+     *
      * @return \UaComparator\Module\CrossJoin
      */
     public function endTimer()
@@ -225,6 +227,8 @@ class Woothee implements ModuleInterface
      */
     public function getDetectionResult()
     {
+        file_put_contents($this->getName() . '.txt', var_export($this->detectionResult, true), FILE_TEXT);
+
         return $this->map($this->detectionResult);
     }
 
@@ -250,7 +254,7 @@ class Woothee implements ModuleInterface
             $mapper->mapBrowserType($parserResult['category'], $browserName)->getName()
         );
 
-        if (isset($parserResult['os']) && !in_array($parserResult['os'], array('iPad', 'iPhone'))) {
+        if (isset($parserResult['os']) && !in_array($parserResult['os'], ['iPad', 'iPhone'])) {
             $osName    = $mapper->mapOsName($parserResult['os']);
             $osVersion = $mapper->mapOsVersion($parserResult['os_version'], $osName);
 
@@ -260,7 +264,7 @@ class Woothee implements ModuleInterface
 
         if (isset($parserResult['category'])
             && isset($parserResult['os'])
-            && !in_array($parserResult['os'], array('iPad', 'iPhone'))
+            && !in_array($parserResult['os'], ['iPad', 'iPhone'])
         ) {
             $result->setCapability('device_type', $mapper->mapDeviceType($parserResult['category']));
         }

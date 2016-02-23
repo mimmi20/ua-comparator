@@ -21,21 +21,22 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
 namespace UaComparator\Module;
 
-use DeviceDetector\Parser\Client\Browser;
-use DeviceDetector\Parser\OperatingSystem;
-use UaDataMapper\InputMapper;
 use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\Device\DeviceParserAbstract;
+use DeviceDetector\Parser\OperatingSystem;
 use Monolog\Logger;
+use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
 
@@ -43,7 +44,7 @@ use WurflCache\Adapter\AdapterInterface;
  * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -131,19 +132,19 @@ class PiwikDetector implements ModuleInterface
         $osFamily      = OperatingSystem::getOsFamily($deviceDetector->getOs('short_name'));
         $browserFamily = Browser::getBrowserFamily($deviceDetector->getClient('short_name'));
 
-        $processed = array(
+        $processed = [
             'user_agent'     => $deviceDetector->getUserAgent(),
-            'bot'            => ($deviceDetector->isBot() ? $deviceDetector->getBot() : array()),
+            'bot'            => ($deviceDetector->isBot() ? $deviceDetector->getBot() : []),
             'os'             => $deviceDetector->getOs(),
             'client'         => $deviceDetector->getClient(),
-            'device'         => array(
+            'device'         => [
                 'type'       => $deviceDetector->getDeviceName(),
                 'brand'      => $deviceDetector->getBrand(),
                 'model'      => $deviceDetector->getModel(),
-            ),
+            ],
             'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
             'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
-        );
+        ];
 
         $this->detectionResult = $processed;
 
@@ -165,6 +166,7 @@ class PiwikDetector implements ModuleInterface
 
     /**
      * stops the detection timer
+     *
      * @return \UaComparator\Module\CrossJoin
      */
     public function endTimer()
@@ -240,6 +242,8 @@ class PiwikDetector implements ModuleInterface
      */
     public function getDetectionResult()
     {
+        file_put_contents($this->getName() . '.txt', var_export($this->detectionResult, true), FILE_TEXT);
+
         return $this->map($this->detectionResult);
     }
 
@@ -265,8 +269,7 @@ class PiwikDetector implements ModuleInterface
                 $result->setCapability(
                     'mobile_browser_manufacturer',
                     $mapper->mapBrowserMaker($browserMaker, $browserName)
-                )
-                ;
+                );
             }
 
             $result->setCapability('browser_type', $mapper->mapBrowserType('robot', $browserName)->getName());

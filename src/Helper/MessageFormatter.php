@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  BrowserDetectorModule
- * @package   BrowserDetectorModule
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2012-2014 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/BrowserDetectorModule
  */
 
@@ -37,7 +38,7 @@ use UaResult\Version;
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
  *
  * @category  BrowserDetectorModule
- * @package   BrowserDetectorModule
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2012-2014 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -86,7 +87,7 @@ class MessageFormatter
      */
     public function formatMessage($propertyTitel, $propertyName)
     {
-        static $allErrors = array();
+        static $allErrors = [];
 
         $mismatch      = false;
         $passed        = true;
@@ -96,10 +97,10 @@ class MessageFormatter
             $reality = $this->collection[0]->getDetectionResult()->id;
         } elseif (is_string($propertyName)) {
             $reality = $this->collection[0]->getDetectionResult()->getCapability($propertyName);
-        } elseif (is_array($propertyName) && is_callable(array($this->collection[0]->getDetectionResult(), $propertyName[0]))) {
+        } elseif (is_array($propertyName) && is_callable([$this->collection[0]->getDetectionResult(), $propertyName[0]])) {
             $reality = call_user_func_array(
-                array($this->collection[0]->getDetectionResult(), $propertyName[0]),
-                isset($propertyName[1]) ? $propertyName[1] : array()
+                [$this->collection[0]->getDetectionResult(), $propertyName[0]],
+                isset($propertyName[1]) ? $propertyName[1] : []
             );
         } else {
             $reality = '(n/a)';
@@ -117,7 +118,7 @@ class MessageFormatter
             $strReality = (string) $reality;
         }
 
-        $detectionResults = array();
+        $detectionResults = [];
         $fullname         = $this->collection[0]->getDetectionResult()->getFullBrowser(true, Version::MAJORMINOR);
 
         foreach (array_keys($this->collection->getModules()) as $id) {
@@ -125,10 +126,10 @@ class MessageFormatter
                 $target = $this->collection[$id]->getDetectionResult()->id;
             } elseif (is_string($propertyName)) {
                 $target = $this->collection[$id]->getDetectionResult()->getCapability($propertyName);
-            } elseif (is_array($propertyName) && is_callable(array($this->collection[$id]->getDetectionResult(), $propertyName[0]))) {
+            } elseif (is_array($propertyName) && is_callable([$this->collection[$id]->getDetectionResult(), $propertyName[0]])) {
                 $target = call_user_func_array(
-                    array($this->collection[$id]->getDetectionResult(), $propertyName[0]),
-                    isset($propertyName[1]) ? $propertyName[1] : array()
+                    [$this->collection[$id]->getDetectionResult(), $propertyName[0]],
+                    isset($propertyName[1]) ? $propertyName[1] : []
                 );
             } else {
                 $target = '(n/a)';

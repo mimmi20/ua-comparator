@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -34,7 +35,7 @@ namespace UaComparator\Module\Mapper;
  * Browscap.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -46,8 +47,9 @@ interface MapperInterface
      *
      * @param mixed $parserResult
      *
-     * @return \UaResult\Result the object containing the browsers details.
      * @throws \UnexpectedValueException
+     *
+     * @return \UaResult\Result the object containing the browsers details.
      */
     public function map($parserResult);
 }

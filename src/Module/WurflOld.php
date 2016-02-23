@@ -21,25 +21,24 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
 namespace UaComparator\Module;
 
 use Monolog\Logger;
-use WURFL_CustomDevice;
 use WurflCache\Adapter\AdapterInterface;
-use Exception;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -125,7 +124,7 @@ class WurflOld implements ModuleInterface
         // Create WURFL Configuration from an XML config file
         $wurflConfigOrig  = new \WURFL_Configuration_XmlConfig($this->configFile);
         $wurflCacheOrig   = new \WURFL_Storage_Memory();
-        $wurflStorageOrig = new \WURFL_Storage_File(array(\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/'));
+        $wurflStorageOrig = new \WURFL_Storage_File([\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/']);
 
         // Create a WURFL Manager Factory from the WURFL Configuration
         $wurflManagerFactoryOrig = new \WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
@@ -163,6 +162,7 @@ class WurflOld implements ModuleInterface
 
     /**
      * stops the detection timer
+     *
      * @return float
      */
     public function endTimer()
@@ -238,7 +238,9 @@ class WurflOld implements ModuleInterface
      */
     public function getDetectionResult()
     {
+        file_put_contents($this->getName() . '.txt', var_export($this->detectionResult, true), FILE_TEXT);
         $mapper = new Mapper\Wurfl();
+
         return $mapper->map($this->detectionResult, $this->logger);
     }
 }

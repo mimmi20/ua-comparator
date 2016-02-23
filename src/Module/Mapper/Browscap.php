@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -39,7 +40,7 @@ use UaResult\Version;
  * Browscap.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -308,10 +309,10 @@ class Browscap implements MapperInterface
      *
      * @param \stdClass $allProperties  The parser result array
      * @param string    $propertyName   The name of the property to detect
-     * @param boolean   $depended       If TRUE the parameter $dependingValue has to be set
+     * @param bool      $depended       If TRUE the parameter $dependingValue has to be set
      * @param string    $dependingValue An master value
      *
-     * @return string|integer|boolean The value of the detected property
+     * @return string|int|bool The value of the detected property
      */
     private function detectProperty(
         \stdClass $allProperties,
@@ -323,7 +324,7 @@ class Browscap implements MapperInterface
         $propertyValue = (empty($allProperties->$propertyName) ? null : trim($allProperties->$propertyName));
 
         if (empty($propertyValue)
-            || '' == $propertyValue
+            || '' === $propertyValue
         ) {
             $propertyValue = null;
         }

@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -70,12 +71,12 @@ define('START_TIME', microtime(true));
  * Class CompareCommand
  *
  * @category   UaComparator
- * @package    Command
+ *
  * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
  */
 class CompareCommand extends Command
 {
-    const COL_LENGTH = 50;
+    const COL_LENGTH       = 50;
     const FIRST_COL_LENGTH = 20;
 
     /**
@@ -83,7 +84,7 @@ class CompareCommand extends Command
      */
     protected function configure()
     {
-        $defaultModules = array(
+        $defaultModules = [
             'Browscap3',
             'Browscap2',
             'CrossJoin',
@@ -96,12 +97,12 @@ class CompareCommand extends Command
             //'Wurfl',
             //'Wurfl52',
             /*'UASParser',*/
-        );
+        ];
 
-        $allChecks = array(
+        $allChecks = [
             Check::MINIMUM,
             Check::MEDIUM,
-        );
+        ];
 
         $this
             ->setName('compare')
@@ -143,9 +144,10 @@ class CompareCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface   $input  An InputInterface instance
      * @param \Symfony\Component\Console\Output\OutputInterface $output An OutputInterface instance
      *
-     * @return null|integer null or 0 if everything went fine, or an error code
-     *
      * @throws \LogicException When this abstract method is not implemented
+     *
+     * @return null|int null or 0 if everything went fine, or an error code
+     *
      * @see    setCode()
      */
     protected function execute(
@@ -204,7 +206,7 @@ class CompareCommand extends Command
 
         $output->write('initializing BrowserDetectorModule ...', false);
 
-        $detectorModule = new BrowserDetectorModule($logger, new File(array(File::DIR => 'data/cache/browser/')));
+        $detectorModule = new BrowserDetectorModule($logger, new File([File::DIR => 'data/cache/browser/']));
         $detectorModule->setId(0)->setName('BrowserDetector');
 
         $collection->addModule($detectorModule);
@@ -227,7 +229,7 @@ class CompareCommand extends Command
         if (in_array('Browscap3', $modules) || in_array('Browscap2', $modules) || in_array('CrossJoin', $modules)) {
             $output->write('checking full_php_browscap.ini ...', false);
 
-            $buildNumber = (int)file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
+            $buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
             $iniFile     = 'data/browscap-ua-test-' . $buildNumber . '/full_php_browscap.ini';
 
             if (!file_exists($iniFile)) {
@@ -249,8 +251,7 @@ class CompareCommand extends Command
                 $buildGenerator
                     ->setLogger($logger)
                     ->setCollectionCreator(new CollectionCreator())
-                    ->setWriterCollection($writerCollection)
-                ;
+                    ->setWriterCollection($writerCollection);
 
                 $buildGenerator->run('test', false);
             }
@@ -272,7 +273,7 @@ class CompareCommand extends Command
         if (in_array('Browscap3', $modules) && null !== $iniFile) {
             $output->write('initializing Browscap-PHP (3.x) ...', false);
 
-            $browscap3Module = new Browscap3($logger, new File(array(File::DIR => 'data/cache/browscap3/')), $iniFile);
+            $browscap3Module = new Browscap3($logger, new File([File::DIR => 'data/cache/browscap3/']), $iniFile);
             $browscap3Module->setId(9)->setName('Browscap-PHP (3.x)');
 
             $collection->addModule($browscap3Module);
@@ -316,7 +317,7 @@ class CompareCommand extends Command
         if (in_array('CrossJoin', $modules) && null !== $iniFile) {
             $output->write('initializing Crossjoin\Browscap ...', false);
 
-            $crossjoinModule = new CrossJoin($logger, new File(array(File::DIR => 'data/cache/crossjoin/')), $iniFile);
+            $crossjoinModule = new CrossJoin($logger, new File([File::DIR => 'data/cache/crossjoin/']), $iniFile);
             $crossjoinModule->setId(10)->setName('Crossjoin\Browscap');
 
             $collection->addModule($crossjoinModule);
@@ -338,7 +339,7 @@ class CompareCommand extends Command
         if (in_array('UaParser', $modules)) {
             $output->write('initializing UAParser ...', false);
 
-            $uaparserModule = new UaParser($logger, new File(array(File::DIR => 'data/cache/uaparser/')));
+            $uaparserModule = new UaParser($logger, new File([File::DIR => 'data/cache/uaparser/']));
             $uaparserModule->setId(5)->setName('UAParser');
 
             $collection->addModule($uaparserModule);
@@ -382,7 +383,7 @@ class CompareCommand extends Command
             ini_set('max_input_time', '6000');
             $wurflModule = new Wurfl(
                 $logger,
-                new File(array(File::DIR => 'data/cache/wurfl/')),
+                new File([File::DIR => 'data/cache/wurfl/']),
                 'data/wurfl-config.xml'
             );
             $wurflModule->setId(11)->setName('WURFL API (PHP-API 5.3)');
@@ -408,7 +409,7 @@ class CompareCommand extends Command
 
             $oldWurflModule = new WurflOld(
                 $logger,
-                new File(array(File::DIR => 'data/cache/wurfl_old/')),
+                new File([File::DIR => 'data/cache/wurfl_old/']),
                 'data/wurfl-config.xml'
             );
             $oldWurflModule->setId(7)->setName('WURFL API (PHP-API 5.2 original)');
@@ -591,10 +592,10 @@ class CompareCommand extends Command
                 $dsn,
                 $user,
                 $password,
-                array(
+                [
                     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
-                    1005 => 1024 * 1024 * 50, // PDO::MYSQL_ATTR_MAX_BUFFER_SIZE
-                )
+                    1005                         => 1024 * 1024 * 50, // PDO::MYSQL_ATTR_MAX_BUFFER_SIZE
+                ]
             );
             $adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -606,21 +607,21 @@ class CompareCommand extends Command
             $source            = new DirectorySource($uaSourceDirectory);
         }
 
-        $allTimes = array();
+        $allTimes = [];
 
         foreach ($collection as $module) {
-            /** @var \UaComparator\Module\ModuleInterface $module */
-            $allTimes[$module->getName()] = array(
-                'min'     => array('time' => 1.0, 'agent' => ''),
-                'max'     => array('time' => 0.0, 'agent' => ''),
+            /* @var \UaComparator\Module\ModuleInterface $module */
+            $allTimes[$module->getName()] = [
+                'min'     => ['time' => 1.0, 'agent' => ''],
+                'max'     => ['time' => 0.0, 'agent' => ''],
                 'summary' => 0.0,
-            );
+            ];
         }
 
         $limit = (int) $input->getOption('limit');
 
         foreach ($source->getUserAgents($logger, $limit) as $agent) {
-            $matches = array();
+            $matches = [];
 
             /***************************************************************************
              * handle modules
@@ -629,12 +630,11 @@ class CompareCommand extends Command
             $timeStart = microtime(true);
 
             foreach ($collection as $module) {
-                /** @var \UaComparator\Module\ModuleInterface $module */
+                /* @var \UaComparator\Module\ModuleInterface $module */
                 $module
                     ->startTimer()
                     ->detect($agent)
-                    ->endTimer()
-                ;
+                    ->endTimer();
 
                 $actualTime = $module->getTime();
 
@@ -657,10 +657,10 @@ class CompareCommand extends Command
              * handle modules - end
              */
 
-            /**
+            /*
              * Auswertung
              */
-            $allResults = array();
+            $allResults = [];
 
             foreach ($checks as $propertyTitel => $x) {
                 if (empty($x['key'])) {
@@ -688,7 +688,7 @@ class CompareCommand extends Command
                 );
 
                 foreach ($collection as $module) {
-                    /** @var \UaComparator\Module\ModuleInterface $module */
+                    /* @var \UaComparator\Module\ModuleInterface $module */
                     $content = str_replace(
                         '#' . $module->getName() . '#',
                         str_pad(number_format($module->getTime(), 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
@@ -708,7 +708,7 @@ class CompareCommand extends Command
 
                 $content .= '|                    |' . str_repeat(' ', $collection->count()) . '|                                                  |';
                 foreach ($collection as $module) {
-                    /** @var \UaComparator\Module\ModuleInterface $module */
+                    /* @var \UaComparator\Module\ModuleInterface $module */
                     $content .= str_pad($module->getName(), self::COL_LENGTH, ' ') . '|';
                 }
                 $content .= "\n";
@@ -737,30 +737,30 @@ class CompareCommand extends Command
                 $content .= "\n";
 
                 $content .= '-';
-                $nokfound++;
+                ++$nokfound;
             } elseif (in_array(':', $matches)) {
                 $content = ':';
-                $sosofound++;
+                ++$sosofound;
             } else {
                 $content = '.';
-                $okfound++;
+                ++$okfound;
             }
 
-            if (($i % 100) == 0) {
+            if (($i % 100) === 0) {
                 $content .= "\n";
             }
 
             if (in_array('-', $matches)) {
                 $content = str_replace(
-                    array(
+                    [
                         '#  plus#',
                         '# minus#',
                         '#  soso#',
                         '#     percent1#',
                         '#     percent2#',
                         '#     percent3#',
-                    ),
-                    array(
+                    ],
+                    [
                         str_pad($okfound, 8, ' ', STR_PAD_LEFT),
                         str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
                         str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
@@ -782,7 +782,7 @@ class CompareCommand extends Command
                             ' ',
                             STR_PAD_LEFT
                         ),
-                    ),
+                    ],
                     $content
                 );
             }
@@ -791,7 +791,8 @@ class CompareCommand extends Command
 
             $output->write($content, false);
 
-            $i++;
+            ++$i;
+            exit;
         }
 
         $output->writeln('');
@@ -805,15 +806,15 @@ class CompareCommand extends Command
         }
 
         $content = str_replace(
-            array(
+            [
                 '#  plus#',
                 '# minus#',
                 '#  soso#',
                 '#     percent1#',
                 '#     percent2#',
                 '#     percent3#',
-            ),
-            array(
+            ],
+            [
                 str_pad($okfound, 8, ' ', STR_PAD_LEFT),
                 str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
                 str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
@@ -835,24 +836,24 @@ class CompareCommand extends Command
                     ' ',
                     STR_PAD_LEFT
                 ),
-            ),
+            ],
             $content
         );
 
         foreach ($allTimes as $moduleName => $timeData) {
             $content = str_replace(
-                array(
+                [
                     '#' . $moduleName . ' - Summary#',
                     '#' . $moduleName . ' - Max#',
                     '#' . $moduleName . ' - Average#',
                     '#' . $moduleName . ' - Min#',
-                ),
-                array(
+                ],
+                [
                     str_pad(number_format($timeData['summary'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
                     str_pad(number_format($timeData['max']['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
                     str_pad(number_format(($timeData['summary'] / $i), 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
                     str_pad(number_format($timeData['min']['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                ),
+                ],
                 $content
             );
         }

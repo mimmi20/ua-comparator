@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -36,13 +37,12 @@ use Wurfl\Manager;
 use Wurfl\Storage\Storage;
 use WurflCache\Adapter\AdapterInterface;
 use WurflCache\Adapter\Memory;
-use Exception;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -161,6 +161,7 @@ class Wurfl implements ModuleInterface
 
     /**
      * stops the detection timer
+     *
      * @return float
      */
     public function endTimer()
@@ -236,7 +237,9 @@ class Wurfl implements ModuleInterface
      */
     public function getDetectionResult()
     {
+        file_put_contents($this->getName() . '.txt', var_export($this->detectionResult, true), FILE_TEXT);
         $mapper = new Mapper\Wurfl();
+
         return $mapper->map($this->detectionResult, $this->logger);
     }
 }

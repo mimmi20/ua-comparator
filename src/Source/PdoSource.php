@@ -1,4 +1,5 @@
 <?php
+
 namespace UaComparator\Source;
 
 use Monolog\Logger;
@@ -6,7 +7,6 @@ use Monolog\Logger;
 /**
  * Class DirectorySource
  *
- * @package UaComparator\Source
  * @author  Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  */
 class PdoSource implements SourceInterface
@@ -26,10 +26,11 @@ class PdoSource implements SourceInterface
 
     /**
      * @param \Monolog\Logger $logger
-     * @param integer         $limit
+     * @param int             $limit
+     *
+     * @throws \BrowscapPHP\Helper\Exception
      *
      * @return \Generator
-     * @throws \BrowscapPHP\Helper\Exception
      */
     public function getUserAgents(Logger $logger, $limit = 0)
     {
@@ -39,7 +40,7 @@ class PdoSource implements SourceInterface
             $sql .= ' LIMIT ' . $this->pdo->quote($limit, \PDO::PARAM_INT);
         }
 
-        $driverOptions = array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY);
+        $driverOptions = [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY];
 
         /** @var \PDOStatement $stmt */
         $stmt = $this->pdo->prepare($sql, $driverOptions);

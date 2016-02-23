@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -38,7 +39,7 @@ use WurflCache\Adapter\AdapterInterface;
  * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -149,6 +150,7 @@ class Browscap2 implements ModuleInterface
 
     /**
      * stops the detection timer
+     *
      * @return \UaComparator\Module\Browscap2
      */
     public function endTimer()
@@ -224,7 +226,9 @@ class Browscap2 implements ModuleInterface
      */
     public function getDetectionResult()
     {
+        file_put_contents($this->getName() . '.txt', var_export($this->detectionResult, true), FILE_TEXT);
         $mapper = new Mapper\Browscap();
+
         return $mapper->map($this->detectionResult, $this->agent, $this->logger);
     }
 }

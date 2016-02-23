@@ -31,11 +31,13 @@
 
 namespace UaComparator\Module;
 
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\Client\Browser;
+use DeviceDetector\Parser\Device\DeviceParserAbstract;
+use DeviceDetector\Parser\OperatingSystem;
 use Monolog\Logger;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
-use UaResult\Version;
-use UAS\Parser;
 use WurflCache\Adapter\AdapterInterface;
 
 /**
@@ -47,7 +49,7 @@ use WurflCache\Adapter\AdapterInterface;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class UasParser implements ModuleInterface
+class WhatIsMyBrowserCom implements ModuleInterface
 {
     /**
      * @var \Monolog\Logger
@@ -104,10 +106,12 @@ class UasParser implements ModuleInterface
     /**
      * initializes the module
      *
-     * @return \UaComparator\Module\UasParser
+     * @return \UaComparator\Module\CrossJoin
      */
     public function init()
     {
+        DeviceParserAbstract::setVersionTruncation(DeviceParserAbstract::VERSION_TRUNCATION_NONE);
+
         $this->detect('');
 
         return $this;
@@ -116,14 +120,33 @@ class UasParser implements ModuleInterface
     /**
      * @param string $agent
      *
-     * @return \UaComparator\Module\UasParser
+     * @return \UaComparator\Module\CrossJoin
      */
     public function detect($agent)
     {
-        $parser = new Parser('data/cache/uasparser');
-
         $this->agent           = $agent;
-        $this->detectionResult = $parser->Parse($agent);
+
+        $deviceDetector = new DeviceDetector($agent);
+        $deviceDetector->parse();
+
+        $osFamily      = OperatingSystem::getOsFamily($deviceDetector->getOs('short_name'));
+        $browserFamily = Browser::getBrowserFamily($deviceDetector->getClient('short_name'));
+
+        $processed = [
+            'user_agent'     => $deviceDetector->getUserAgent(),
+            'bot'            => ($deviceDetector->isBot() ? $deviceDetector->getBot() : []),
+            'os'             => $deviceDetector->getOs(),
+            'client'         => $deviceDetector->getClient(),
+            'device'         => [
+                'type'       => $deviceDetector->getDeviceName(),
+                'brand'      => $deviceDetector->getBrand(),
+                'model'      => $deviceDetector->getModel(),
+            ],
+            'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
+            'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
+        ];
+
+        $this->detectionResult = $processed;
 
         return $this;
     }
@@ -131,7 +154,7 @@ class UasParser implements ModuleInterface
     /**
      * starts the detection timer
      *
-     * @return \UaComparator\Module\UasParser
+     * @return \UaComparator\Module\CrossJoin
      */
     public function startTimer()
     {
@@ -144,7 +167,7 @@ class UasParser implements ModuleInterface
     /**
      * stops the detection timer
      *
-     * @return float
+     * @return \UaComparator\Module\CrossJoin
      */
     public function endTimer()
     {
@@ -185,7 +208,7 @@ class UasParser implements ModuleInterface
     /**
      * @param int $id
      *
-     * @return \UaComparator\Module\UasParser
+     * @return \UaComparator\Module\CrossJoin
      */
     public function setId($id)
     {
@@ -205,7 +228,7 @@ class UasParser implements ModuleInterface
     /**
      * @param string $name
      *
-     * @return \UaComparator\Module\UasParser
+     * @return \UaComparator\Module\CrossJoin
      */
     public function setName($name)
     {
@@ -234,38 +257,64 @@ class UasParser implements ModuleInterface
         $result = new Result($this->agent, $this->logger);
         $mapper = new InputMapper();
 
-        $browserName    = $mapper->mapBrowserName($parserResult['ua_family']);
-        $browserType    = $mapper->mapBrowserType($parserResult['typ'], $browserName);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult['ua_version'], $browserName);
-        $browserMaker   = $mapper->mapBrowserMaker($parserResult['ua_company'], $browserName);
+        if (!empty($parserResult['bot'])) {
+            $browserName  = $mapper->mapBrowserName($parserResult['bot']['name']);
 
-        $result->setCapability('browser_type', $browserType->getName());
-        $result->setCapability('is_bot', $browserType->isBot());
-        $result->setCapability('is_transcoder', $browserType->isTranscoder());
-        $result->setCapability('is_syndication_reader', $browserType->isSyndicationReader());
-        $result->setCapability('is_banned', $browserType->isBanned());
+            $result->setCapability('mobile_browser', $browserName);
+
+            if (isset($parserResult['bot']['producer']['name'])) {
+                $browserMaker = $parserResult['bot']['producer']['name'];
+                $result->setCapability(
+                    'mobile_browser_manufacturer',
+                    $mapper->mapBrowserMaker($browserMaker, $browserName)
+                );
+            }
+
+            $result->setCapability('browser_type', $mapper->mapBrowserType('robot', $browserName)->getName());
+
+            return $result;
+        }
+
+        $browserName    = $mapper->mapBrowserName($parserResult['client']['name']);
+        $browserVersion = $mapper->mapBrowserVersion($parserResult['client']['version'], $browserName);
+
         $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_manufacturer', $browserMaker);
         $result->setCapability('mobile_browser_version', $browserVersion);
+        $result->setCapability('browser_type', $mapper->mapBrowserType('browser', $browserName)->getName());
 
-        $osName    = $mapper->mapOsName($parserResult['os_family']);
-        $osVersion = null;
-        $osMaker   = $mapper->mapOsMaker($parserResult['os_company'], $osName);
+        if (!empty($parserResult['client']['type'])) {
+            $browserType = $parserResult['client']['type'];
+        } else {
+            $browserType = null;
+        }
 
-        $result->setCapability('device_os', $osName);
+        $result->setCapability('browser_type', $mapper->mapBrowserType($browserType, $browserName)->getName());
 
-        $version = new Version();
-        $version->setMode(
-            Version::COMPLETE
-            | Version::IGNORE_MINOR_IF_EMPTY
-            | Version::IGNORE_MICRO_IF_EMPTY
-        );
+        if (isset($parserResult['client']['engine'])) {
+            $engineName = $parserResult['client']['engine'];
 
-        $result->setCapability(
-            'device_os_version',
-            $version->setVersion($osVersion)
-        );
-        $result->setCapability('device_os_manufacturer', $osMaker);
+            if ('unknown' === $engineName || '' === $engineName) {
+                $engineName = null;
+            }
+
+            $result->setCapability('renderingengine_name', $engineName);
+        }
+
+        if (isset($parserResult['os']['name'])) {
+            $osName    = $mapper->mapOsName($parserResult['os']['name']);
+            $osVersion = $mapper->mapOsVersion($parserResult['os']['version'], $osName);
+
+            $result->setCapability('device_os', $osName);
+            $result->setCapability('device_os_version', $osVersion);
+        }
+
+        $deviceType      = $parserResult['device']['type'];
+        $deviceName      = $parserResult['device']['model'];
+        $deviceBrandName = $parserResult['device']['brand'];
+
+        $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
+        $result->setCapability('marketing_name', $mapper->mapDeviceMarketingName($deviceName));
+        $result->setCapability('brand_name', $mapper->mapDeviceBrandName($deviceBrandName, $deviceName));
 
         return $result;
     }

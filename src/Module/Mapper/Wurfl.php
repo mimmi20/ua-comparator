@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -40,7 +41,7 @@ use Wurfl\CustomDevice;
  * Browscap.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
@@ -73,7 +74,7 @@ class Wurfl implements MapperInterface
             $apiMob = ('true' === $device->getCapability('is_wireless_device'));
 
             if ($apiMob) {
-                $apiOs    = ('iPhone OS' == $device->getCapability('device_os')
+                $apiOs    = ('iPhone OS' === $device->getCapability('device_os')
                     ? 'iOS'
                     : $device->getCapability(
                         'device_os'
@@ -87,7 +88,7 @@ class Wurfl implements MapperInterface
 
                 $brandName = $device->getCapability('brand_name');
 
-                if ('Opera' == $brandName) {
+                if ('Opera' === $brandName) {
                     $brandName = null;
                 }
             } else {
@@ -140,7 +141,7 @@ class Wurfl implements MapperInterface
             $marketingName = $mapper->mapDeviceMarketingName($marketingName, $apiDev);
             $brandName     = $mapper->mapDeviceBrandName($brandName, $apiDev);
 
-            if ('Generic' == $apiMan || 'Opera' == $apiMan) {
+            if ('Generic' === $apiMan || 'Opera' === $apiMan) {
                 $apiMan        = null;
                 $apiDev        = null;
                 $marketingName = null;
@@ -254,16 +255,16 @@ class Wurfl implements MapperInterface
                     break;
                 case 'microsoft office 2007':
                     $browserMaker = 'Microsoft';
-                    $apiBro = 'Office';
-                    $apiVer = '2007';
+                    $apiBro       = 'Office';
+                    $apiVer       = '2007';
                     break;
                 case 'microsoft office':
                     $browserMaker = 'Microsoft';
-                    $apiBro = 'Office';
+                    $apiBro       = 'Office';
                     break;
                 case 'microsoft outlook':
                     $browserMaker = 'Microsoft';
-                    $apiBro = 'Outlook';
+                    $apiBro       = 'Outlook';
                     break;
                 case 'opera mobi':
                     $browserMaker = 'Opera Software ASA';
@@ -319,7 +320,7 @@ class Wurfl implements MapperInterface
                 case 'firefox':
                     $apiBro       = 'Firefox';
                     $browserMaker = 'Mozilla';
-                    if ('3.0' == $apiVer) {
+                    if ('3.0' === $apiVer) {
                         $apiVer = null;
                     }
                     break;
@@ -546,7 +547,7 @@ class Wurfl implements MapperInterface
 
                 $apiPhone      = null;
                 $apiDesktop    = null;
-                $allProperties = array();
+                $allProperties = [];
                 $marketingName = null;
                 $apiTranscoder = null;
             }
@@ -569,7 +570,7 @@ class Wurfl implements MapperInterface
 
             $apiPhone      = false;
             $apiDesktop    = false;
-            $allProperties = array();
+            $allProperties = [];
             $marketingName = null;
             $apiTranscoder = null;
 
@@ -584,24 +585,22 @@ class Wurfl implements MapperInterface
             return $result;
         }
 
-
-
         if ($apiDev || $apiBro) {
-            $versionFields = array(
+            $versionFields = [
                 'mobile_browser_version', 'renderingengine_version',
                 'device_os_version', 'controlcap_advertised_browser_version',
-                'controlcap_advertised_device_os_version'
-            );
+                'controlcap_advertised_device_os_version',
+            ];
 
-            $integerFields = array(
+            $integerFields = [
                 'max_deck_size', 'max_length_of_username', 'max_no_of_bookmarks',
                 'max_length_of_password', 'max_no_of_connection_settings',
                 'max_object_size', 'max_url_length_bookmark',
                 'max_url_length_cached_page', 'max_url_length_in_requests',
                 'max_url_length_homepage', 'colors', 'physical_screen_width',
                 'physical_screen_height', 'columns', 'rows', 'max_image_width',
-                'max_image_height', 'resolution_width', 'resolution_height'
-            );
+                'max_image_height', 'resolution_width', 'resolution_height',
+            ];
 
             $allProperties = array_intersect_key(
                 $allProperties,
@@ -612,10 +611,10 @@ class Wurfl implements MapperInterface
                 if (in_array($capabilityName, $versionFields)) {
                     $version         = new Version();
                     $capabilityValue = $version->setVersion($capabilityValue);
-                } elseif ('colors' === $capabilityName && $capabilityValue == '65536') {
+                } elseif ('colors' === $capabilityName && $capabilityValue === '65536') {
                     $capabilityValue = null;
                 } elseif (in_array($capabilityName, $integerFields)) {
-                    $capabilityValue = (int)$capabilityValue;
+                    $capabilityValue = (int) $capabilityValue;
                 } elseif ('unknown' === $capabilityValue
                     || 'null' === $capabilityValue
                     || null === $capabilityValue
@@ -691,21 +690,21 @@ class Wurfl implements MapperInterface
         $result->setCapability('can_assign_phone_number', $apiPhone);
 
         if ($apiDev || $apiBro) {
-            $result->setCapability('xhtml_support_level', (int)$xhtmlLevel);
+            $result->setCapability('xhtml_support_level', (int) $xhtmlLevel);
         }
 
         $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
 
-        if (in_array($deviceType, array('Mobile Phone', 'Tablet', 'FonePad', 'Feature Phone', 'Mobile Device'))
+        if (in_array($deviceType, ['Mobile Phone', 'Tablet', 'FonePad', 'Feature Phone', 'Mobile Device'])
             && 'true' === $device->getCapability('dual_orientation')
         ) {
-            $width  = (int)$device->getCapability('resolution_width');
-            $height = (int)$device->getCapability('resolution_height');
+            $width  = (int) $device->getCapability('resolution_width');
+            $height = (int) $device->getCapability('resolution_height');
 
-            if (in_array($deviceType, array('Mobile Phone', 'Feature Phone', 'Mobile Device'))) {
+            if (in_array($deviceType, ['Mobile Phone', 'Feature Phone', 'Mobile Device'])) {
                 $result->setCapability('resolution_width', min($height, $width));
                 $result->setCapability('resolution_height', max($height, $width));
-            } elseif (in_array($deviceType, array('Tablet', 'FonePad'))) {
+            } elseif (in_array($deviceType, ['Tablet', 'FonePad'])) {
                 $result->setCapability('resolution_width', max($height, $width));
                 $result->setCapability('resolution_height', min($height, $width));
             } else {

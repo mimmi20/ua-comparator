@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -41,7 +42,7 @@ use Monolog\Processor\MemoryUsageProcessor;
  * Class LoggerHelper
  *
  * @category   Browscap
- * @package    Helper
+ *
  * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
  */
 class LoggerFactory
@@ -49,7 +50,7 @@ class LoggerFactory
     /**
      * creates a \Monolo\Logger instance
      *
-     * @param boolean $debug If true the debug logging mode will be enabled
+     * @param bool $debug If true the debug logging mode will be enabled
      *
      * @return \Monolog\Logger
      */
@@ -68,7 +69,6 @@ class LoggerFactory
         }
 
         $logger->pushHandler(new StreamHandler('log/error.log', Logger::NOTICE));
-
 
         /** @var callable $peakMemoryProcessor */
         $peakMemoryProcessor = new MemoryPeakUsageProcessor(true);

@@ -21,10 +21,11 @@
  * THE SOFTWARE.
  *
  * @category  UaComparator
- * @package   UaComparator
+ *
  * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
+ *
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
@@ -33,7 +34,6 @@ namespace UaComparator\Helper;
 /**
  * Class Check
  *
- * @package UaComparator\Helper
  * @author  Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
  */
 class Check
@@ -52,538 +52,537 @@ class Check
      * @param int $checklevel
      *
      * @return array
-     *
      */
     public function getChecks($checklevel)
     {
-        $checks = array(
-            'Browser'               => array(
+        $checks = [
+            'Browser'               => [
                 'key'         => 'mobile_browser',
-            ),
-            'Browser Version'       => array(
+            ],
+            'Browser Version'       => [
                 'key'         => 'mobile_browser_version',
-            ),
-            'Browser Modus'         => array(
+            ],
+            'Browser Modus'         => [
                 'key'         => 'mobile_browser_modus',
-            ),
-            'Browser Bits'          => array(
+            ],
+            'Browser Bits'          => [
                 'key'         => 'mobile_browser_bits',
-            ),
-            'Browser Typ'           => array(
+            ],
+            'Browser Typ'           => [
                 'key'         => 'browser_type',
-            ),
-            'Browser Hersteller'    => array(
+            ],
+            'Browser Hersteller'    => [
                 'key'         => 'mobile_browser_manufacturer',
-            ),
-            'Engine'                => array(
+            ],
+            'Engine'                => [
                 'key'         => 'renderingengine_name',
-            ),
-            'Engine Version'        => array(
+            ],
+            'Engine Version'        => [
                 'key'         => 'renderingengine_version',
-            ),
-            'Engine Hersteller'     => array(
+            ],
+            'Engine Hersteller'     => [
                 'key'         => 'renderingengine_manufacturer',
-            ),
-            'OS'                    => array(
+            ],
+            'OS'                    => [
                 'key'         => 'device_os',
-            ),
-            'OS Version'            => array(
+            ],
+            'OS Version'            => [
                 'key'         => 'device_os_version',
-            ),
-            'OS Bits'               => array(
+            ],
+            'OS Bits'               => [
                 'key'         => 'device_os_bits',
-            ),
-            'OS Hersteller'         => array(
+            ],
+            'OS Hersteller'         => [
                 'key'         => 'device_os_manufacturer',
-            ),
-            'Device Brand Name'     => array(
+            ],
+            'Device Brand Name'     => [
                 'key'         => 'brand_name',
-            ),
-            'Device Marketing Name' => array(
+            ],
+            'Device Marketing Name' => [
                 'key'         => 'marketing_name',
-            ),
-            'Device Model Name'     => array(
+            ],
+            'Device Model Name'     => [
                 'key'         => 'model_name',
-            ),
-            'Device Hersteller'     => array(
+            ],
+            'Device Hersteller'     => [
                 'key'         => 'manufacturer_name',
-            ),
-            'Device Typ'            => array(
+            ],
+            'Device Typ'            => [
                 'key'         => 'device_type',
-            ),
-            'Desktop'               => array(
-                'key'         => array('isDesktop'),
-            ),
-            'TV'                    => array(
-                'key'         => array('isTvDevice'),
-            ),
-            'Mobile'                => array(
-                'key'         => array('isMobileDevice'),
-            ),
-            'Tablet'                => array(
-                'key'         => array('isTablet'),
-            ),
-            'Bot'                   => array(
-                'key'         => array('isCrawler'),
-            ),
-            'Console'               => array(
-                'key'         => array('isConsole'),
-            ),
-            'Transcoder'            => array(
+            ],
+            'Desktop'               => [
+                'key'         => ['isDesktop'],
+            ],
+            'TV'                    => [
+                'key'         => ['isTvDevice'],
+            ],
+            'Mobile'                => [
+                'key'         => ['isMobileDevice'],
+            ],
+            'Tablet'                => [
+                'key'         => ['isTablet'],
+            ],
+            'Bot'                   => [
+                'key'         => ['isCrawler'],
+            ],
+            'Console'               => [
+                'key'         => ['isConsole'],
+            ],
+            'Transcoder'            => [
                 'key'         => 'is_transcoder',
-            ),
-            'Syndication-Reader'    => array(
+            ],
+            'Syndication-Reader'    => [
                 'key'         => 'is_syndication_reader',
-            ),
-            'pointing_method'       => array(
+            ],
+            'pointing_method'       => [
                 'key'         => 'pointing_method',
-            ),
-            'has_qwerty_keyboard'   => array(
+            ],
+            'has_qwerty_keyboard'   => [
                 'key'         => 'has_qwerty_keyboard',
-            ),
+            ],
             // display
-            'resolution_width'      => array(
+            'resolution_width'      => [
                 'key'         => 'resolution_width',
-            ),
-            'resolution_height'     => array(
+            ],
+            'resolution_height'     => [
                 'key'         => 'resolution_height',
-            ),
-            'dual_orientation'      => array(
+            ],
+            'dual_orientation'      => [
                 'key'         => 'dual_orientation',
-            ),
-            'colors'                => array(
+            ],
+            'colors'                => [
                 'key'         => 'colors',
-            ),
-            'wurflKey'              => array(
+            ],
+            'wurflKey'              => [
                 'key'         => 'wurflKey',
-            ),
-        );
+            ],
+        ];
 
-        if ($checklevel == self::MEDIUM) {
-            $checks += array(
+        if ($checklevel === self::MEDIUM) {
+            $checks += [
                 // product info
-                'can_skip_aligned_link_row'                      => array(
+                'can_skip_aligned_link_row'                      => [
                     'key'         => 'can_skip_aligned_link_row',
-                ),
-                'device_claims_web_support'                      => array(
+                ],
+                'device_claims_web_support'                      => [
                     'key'         => 'device_claims_web_support',
-                ),
-                'can_assign_phone_number'                        => array(
+                ],
+                'can_assign_phone_number'                        => [
                     'key'         => 'can_assign_phone_number',
-                ),
-                'nokia_feature_pack'                             => array(
+                ],
+                'nokia_feature_pack'                             => [
                     'key'         => 'nokia_feature_pack',
-                ),
-                'nokia_series'                                   => array(
+                ],
+                'nokia_series'                                   => [
                     'key'         => 'nokia_series',
-                ),
-                'nokia_edition'                                  => array(
+                ],
+                'nokia_edition'                                  => [
                     'key'         => 'nokia_edition',
-                ),
-                'ununiqueness_handler'                           => array(
+                ],
+                'ununiqueness_handler'                           => [
                     'key'         => 'ununiqueness_handler',
-                ),
-                'uaprof'                                         => array(
+                ],
+                'uaprof'                                         => [
                     'key'         => 'uaprof',
-                ),
-                'uaprof2'                                        => array(
+                ],
+                'uaprof2'                                        => [
                     'key'         => 'uaprof2',
-                ),
-                'uaprof3'                                        => array(
+                ],
+                'uaprof3'                                        => [
                     'key'         => 'uaprof3',
-                ),
-                'unique'                                         => array(
+                ],
+                'unique'                                         => [
                     'key'         => 'unique',
-                ),
-                'model_extra_info'                               => array(
+                ],
+                'model_extra_info'                               => [
                     'key'         => 'model_extra_info',
-                ),
+                ],
                 // display
-                'physical_screen_width'                          => array(
+                'physical_screen_width'                          => [
                     'key'         => 'physical_screen_width',
-                ),
-                'physical_screen_height'                         => array(
+                ],
+                'physical_screen_height'                         => [
                     'key'         => 'physical_screen_height',
-                ),
-                'columns'                                        => array(
+                ],
+                'columns'                                        => [
                     'key'         => 'columns',
-                ),
-                'rows'                                           => array(
+                ],
+                'rows'                                           => [
                     'key'         => 'rows',
-                ),
-                'max_image_width'                                => array(
+                ],
+                'max_image_width'                                => [
                     'key'         => 'max_image_width',
-                ),
-                'max_image_height'                               => array(
+                ],
+                'max_image_height'                               => [
                     'key'         => 'max_image_height',
-                ),
+                ],
                 // markup
-                'utf8_support'                                   => array(
+                'utf8_support'                                   => [
                     'key'         => 'utf8_support',
-                ),
-                'multipart_support'                              => array(
+                ],
+                'multipart_support'                              => [
                     'key'         => 'multipart_support',
-                ),
-                'supports_background_sounds'                     => array(
+                ],
+                'supports_background_sounds'                     => [
                     'key'         => 'supports_background_sounds',
-                ),
-                'supports_vb_script'                             => array(
+                ],
+                'supports_vb_script'                             => [
                     'key'         => 'supports_vb_script',
-                ),
-                'supports_java_applets'                          => array(
+                ],
+                'supports_java_applets'                          => [
                     'key'         => 'supports_java_applets',
-                ),
-                'supports_activex_controls'                      => array(
+                ],
+                'supports_activex_controls'                      => [
                     'key'         => 'supports_activex_controls',
-                ),
-                'preferred_markup'                               => array(
+                ],
+                'preferred_markup'                               => [
                     'key'         => 'preferred_markup',
-                ),
-                'html_web_3_2'                                   => array(
+                ],
+                'html_web_3_2'                                   => [
                     'key'         => 'html_web_3_2',
-                ),
-                'html_web_4_0'                                   => array(
+                ],
+                'html_web_4_0'                                   => [
                     'key'         => 'html_web_4_0',
-                ),
-                'html_wi_oma_xhtmlmp_1_0'                        => array(
+                ],
+                'html_wi_oma_xhtmlmp_1_0'                        => [
                     'key'         => 'html_wi_oma_xhtmlmp_1_0',
-                ),
-                'wml_1_1'                                        => array(
+                ],
+                'wml_1_1'                                        => [
                     'key'         => 'wml_1_1',
-                ),
-                'wml_1_2'                                        => array(
+                ],
+                'wml_1_2'                                        => [
                     'key'         => 'wml_1_2',
-                ),
-                'wml_1_3'                                        => array(
+                ],
+                'wml_1_3'                                        => [
                     'key'         => 'wml_1_3',
-                ),
-                'xhtml_support_level'                            => array(
+                ],
+                'xhtml_support_level'                            => [
                     'key'         => 'xhtml_support_level',
-                ),
-                'html_wi_imode_html_1'                           => array(
+                ],
+                'html_wi_imode_html_1'                           => [
                     'key'         => 'html_wi_imode_html_1',
-                ),
-                'html_wi_imode_html_2'                           => array(
+                ],
+                'html_wi_imode_html_2'                           => [
                     'key'         => 'html_wi_imode_html_2',
-                ),
-                'html_wi_imode_html_3'                           => array(
+                ],
+                'html_wi_imode_html_3'                           => [
                     'key'         => 'html_wi_imode_html_3',
-                ),
-                'html_wi_imode_html_4'                           => array(
+                ],
+                'html_wi_imode_html_4'                           => [
                     'key'         => 'html_wi_imode_html_4',
-                ),
-                'html_wi_imode_html_5'                           => array(
+                ],
+                'html_wi_imode_html_5'                           => [
                     'key'         => 'html_wi_imode_html_5',
-                ),
-                'html_wi_imode_htmlx_1'                          => array(
+                ],
+                'html_wi_imode_htmlx_1'                          => [
                     'key'         => 'html_wi_imode_htmlx_1',
-                ),
-                'html_wi_imode_htmlx_1_1'                        => array(
+                ],
+                'html_wi_imode_htmlx_1_1'                        => [
                     'key'         => 'html_wi_imode_htmlx_1_1',
-                ),
-                'html_wi_w3_xhtmlbasic'                          => array(
+                ],
+                'html_wi_w3_xhtmlbasic'                          => [
                     'key'         => 'html_wi_w3_xhtmlbasic',
-                ),
-                'html_wi_imode_compact_generic'                  => array(
+                ],
+                'html_wi_imode_compact_generic'                  => [
                     'key'         => 'html_wi_imode_compact_generic',
-                ),
-                'voicexml'                                       => array(
+                ],
+                'voicexml'                                       => [
                     'key'         => 'voicexml',
-                ),
+                ],
                 // chtml
-                'chtml_table_support'                            => array(
+                'chtml_table_support'                            => [
                     'key'         => 'chtml_table_support',
-                ),
-                'imode_region'                                   => array(
+                ],
+                'imode_region'                                   => [
                     'key'         => 'imode_region',
-                ),
-                'chtml_can_display_images_and_text_on_same_line' => array(
+                ],
+                'chtml_can_display_images_and_text_on_same_line' => [
                     'key'         => 'chtml_can_display_images_and_text_on_same_line',
-                ),
-                'chtml_displays_image_in_center'                 => array(
+                ],
+                'chtml_displays_image_in_center'                 => [
                     'key'         => 'chtml_displays_image_in_center',
-                ),
-                'chtml_make_phone_call_string'                   => array(
+                ],
+                'chtml_make_phone_call_string'                   => [
                     'key'         => 'chtml_make_phone_call_string',
-                ),
-                'emoji'                                          => array(
+                ],
+                'emoji'                                          => [
                     'key'         => 'emoji',
-                ),
+                ],
                 // xhtml
-                'xhtml_select_as_radiobutton'                    => array(
+                'xhtml_select_as_radiobutton'                    => [
                     'key'         => 'xhtml_select_as_radiobutton',
-                ),
-                'xhtml_avoid_accesskeys'                         => array(
+                ],
+                'xhtml_avoid_accesskeys'                         => [
                     'key'         => 'xhtml_avoid_accesskeys',
-                ),
-                'xhtml_select_as_dropdown'                       => array(
+                ],
+                'xhtml_select_as_dropdown'                       => [
                     'key'         => 'xhtml_select_as_dropdown',
-                ),
-                'xhtml_supports_iframe'                          => array(
+                ],
+                'xhtml_supports_iframe'                          => [
                     'key'         => 'xhtml_supports_iframe',
-                ),
-                'xhtml_supports_forms_in_table'                  => array(
+                ],
+                'xhtml_supports_forms_in_table'                  => [
                     'key'         => 'xhtml_supports_forms_in_table',
-                ),
-                'xhtmlmp_preferred_mime_type'                    => array(
+                ],
+                'xhtmlmp_preferred_mime_type'                    => [
                     'key'         => 'xhtmlmp_preferred_mime_type',
-                ),
-                'xhtml_select_as_popup'                          => array(
+                ],
+                'xhtml_select_as_popup'                          => [
                     'key'         => 'xhtml_select_as_popup',
-                ),
-                'xhtml_honors_bgcolor'                           => array(
+                ],
+                'xhtml_honors_bgcolor'                           => [
                     'key'         => 'xhtml_honors_bgcolor',
-                ),
-                'xhtml_file_upload'                              => array(
+                ],
+                'xhtml_file_upload'                              => [
                     'key'         => 'xhtml_file_upload',
-                ),
-                'xhtml_preferred_charset'                        => array(
+                ],
+                'xhtml_preferred_charset'                        => [
                     'key'         => 'xhtml_preferred_charset',
-                ),
-                'xhtml_supports_css_cell_table_coloring'         => array(
+                ],
+                'xhtml_supports_css_cell_table_coloring'         => [
                     'key'         => 'xhtml_supports_css_cell_table_coloring',
-                ),
-                'xhtml_autoexpand_select'                        => array(
+                ],
+                'xhtml_autoexpand_select'                        => [
                     'key'         => 'xhtml_autoexpand_select',
-                ),
-                'accept_third_party_cookie'                      => array(
+                ],
+                'accept_third_party_cookie'                      => [
                     'key'         => 'accept_third_party_cookie',
-                ),
-                'xhtml_make_phone_call_string'                   => array(
+                ],
+                'xhtml_make_phone_call_string'                   => [
                     'key'         => 'xhtml_make_phone_call_string',
-                ),
-                'xhtml_allows_disabled_form_elements'            => array(
+                ],
+                'xhtml_allows_disabled_form_elements'            => [
                     'key'         => 'xhtml_allows_disabled_form_elements',
-                ),
-                'xhtml_supports_invisible_text'                  => array(
+                ],
+                'xhtml_supports_invisible_text'                  => [
                     'key'         => 'xhtml_supports_invisible_text',
-                ),
-                'cookie_support'                                 => array(
+                ],
+                'cookie_support'                                 => [
                     'key'         => 'cookie_support',
-                ),
-                'xhtml_send_mms_string'                          => array(
+                ],
+                'xhtml_send_mms_string'                          => [
                     'key'         => 'xhtml_send_mms_string',
-                ),
-                'xhtml_table_support'                            => array(
+                ],
+                'xhtml_table_support'                            => [
                     'key'         => 'xhtml_table_support',
-                ),
-                'xhtml_display_accesskey'                        => array(
+                ],
+                'xhtml_display_accesskey'                        => [
                     'key'         => 'xhtml_display_accesskey',
-                ),
-                'xhtml_can_embed_video'                          => array(
+                ],
+                'xhtml_can_embed_video'                          => [
                     'key'         => 'xhtml_can_embed_video',
-                ),
-                'xhtml_supports_monospace_font'                  => array(
+                ],
+                'xhtml_supports_monospace_font'                  => [
                     'key'         => 'xhtml_supports_monospace_font',
-                ),
-                'xhtml_supports_inline_input'                    => array(
+                ],
+                'xhtml_supports_inline_input'                    => [
                     'key'         => 'xhtml_supports_inline_input',
-                ),
-                'xhtml_document_title_support'                   => array(
+                ],
+                'xhtml_document_title_support'                   => [
                     'key'         => 'xhtml_document_title_support',
-                ),
-                'xhtml_support_wml2_namespace'                   => array(
+                ],
+                'xhtml_support_wml2_namespace'                   => [
                     'key'         => 'xhtml_support_wml2_namespace',
-                ),
-                'xhtml_readable_background_color1'               => array(
+                ],
+                'xhtml_readable_background_color1'               => [
                     'key'         => 'xhtml_readable_background_color1',
-                ),
-                'xhtml_format_as_attribute'                      => array(
+                ],
+                'xhtml_format_as_attribute'                      => [
                     'key'         => 'xhtml_format_as_attribute',
-                ),
-                'xhtml_supports_table_for_layout'                => array(
+                ],
+                'xhtml_supports_table_for_layout'                => [
                     'key'         => 'xhtml_supports_table_for_layout',
-                ),
-                'xhtml_readable_background_color2'               => array(
+                ],
+                'xhtml_readable_background_color2'               => [
                     'key'         => 'xhtml_readable_background_color2',
-                ),
-                'xhtml_send_sms_string'                          => array(
+                ],
+                'xhtml_send_sms_string'                          => [
                     'key'         => 'xhtml_send_sms_string',
-                ),
-                'xhtml_format_as_css_property'                   => array(
+                ],
+                'xhtml_format_as_css_property'                   => [
                     'key'         => 'xhtml_format_as_css_property',
-                ),
-                'opwv_xhtml_extensions_support'                  => array(
+                ],
+                'opwv_xhtml_extensions_support'                  => [
                     'key'         => 'opwv_xhtml_extensions_support',
-                ),
-                'xhtml_marquee_as_css_property'                  => array(
+                ],
+                'xhtml_marquee_as_css_property'                  => [
                     'key'         => 'xhtml_marquee_as_css_property',
-                ),
-                'xhtml_nowrap_mode'                              => array(
+                ],
+                'xhtml_nowrap_mode'                              => [
                     'key'         => 'xhtml_nowrap_mode',
-                ),
+                ],
                 // image format
-                'jpg'                                            => array(
+                'jpg'                                            => [
                     'key'         => 'jpg',
-                ),
-                'gif'                                            => array(
+                ],
+                'gif'                                            => [
                     'key'         => 'gif',
-                ),
-                'bmp'                                            => array(
+                ],
+                'bmp'                                            => [
                     'key'         => 'bmp',
-                ),
-                'wbmp'                                           => array(
+                ],
+                'wbmp'                                           => [
                     'key'         => 'wbmp',
-                ),
-                'gif_animated'                                   => array(
+                ],
+                'gif_animated'                                   => [
                     'key'         => 'gif_animated',
-                ),
-                'png'                                            => array(
+                ],
+                'png'                                            => [
                     'key'         => 'png',
-                ),
-                'greyscale'                                      => array(
+                ],
+                'greyscale'                                      => [
                     'key'         => 'greyscale',
-                ),
-                'transparent_png_index'                          => array(
+                ],
+                'transparent_png_index'                          => [
                     'key'         => 'transparent_png_index',
-                ),
-                'epoc_bmp'                                       => array(
+                ],
+                'epoc_bmp'                                       => [
                     'key'         => 'epoc_bmp',
-                ),
-                'svgt_1_1_plus'                                  => array(
+                ],
+                'svgt_1_1_plus'                                  => [
                     'key'         => 'svgt_1_1_plus',
-                ),
-                'svgt_1_1'                                       => array(
+                ],
+                'svgt_1_1'                                       => [
                     'key'         => 'svgt_1_1',
-                ),
-                'transparent_png_alpha'                          => array(
+                ],
+                'transparent_png_alpha'                          => [
                     'key'         => 'transparent_png_alpha',
-                ),
-                'tiff'                                           => array(
+                ],
+                'tiff'                                           => [
                     'key'         => 'tiff',
-                ),
+                ],
                 // security
-                'https_support'                                  => array(
+                'https_support'                                  => [
                     'key'         => 'https_support',
-                ),
+                ],
                 // storage
-                'max_url_length_bookmark'                        => array(
+                'max_url_length_bookmark'                        => [
                     'key'         => 'max_url_length_bookmark',
-                ),
-                'max_url_length_cached_page'                     => array(
+                ],
+                'max_url_length_cached_page'                     => [
                     'key'         => 'max_url_length_cached_page',
-                ),
-                'max_url_length_in_requests'                     => array(
+                ],
+                'max_url_length_in_requests'                     => [
                     'key'         => 'max_url_length_in_requests',
-                ),
-                'max_url_length_homepage'                        => array(
+                ],
+                'max_url_length_homepage'                        => [
                     'key'         => 'max_url_length_homepage',
-                ),
+                ],
                 // ajax
-                'ajax_support_getelementbyid'                    => array(
+                'ajax_support_getelementbyid'                    => [
                     'key'         => 'ajax_support_getelementbyid',
-                ),
-                'ajax_xhr_type'                                  => array(
+                ],
+                'ajax_xhr_type'                                  => [
                     'key'         => 'ajax_xhr_type',
-                ),
-                'ajax_support_event_listener'                    => array(
+                ],
+                'ajax_support_event_listener'                    => [
                     'key'         => 'ajax_support_event_listener',
-                ),
-                'ajax_support_javascript'                        => array(
+                ],
+                'ajax_support_javascript'                        => [
                     'key'         => 'ajax_support_javascript',
-                ),
-                'ajax_manipulate_dom'                            => array(
+                ],
+                'ajax_manipulate_dom'                            => [
                     'key'         => 'ajax_manipulate_dom',
-                ),
-                'ajax_support_inner_html'                        => array(
+                ],
+                'ajax_support_inner_html'                        => [
                     'key'         => 'ajax_support_inner_html',
-                ),
-                'ajax_manipulate_css'                            => array(
+                ],
+                'ajax_manipulate_css'                            => [
                     'key'         => 'ajax_manipulate_css',
-                ),
-                'ajax_support_events'                            => array(
+                ],
+                'ajax_support_events'                            => [
                     'key'         => 'ajax_support_events',
-                ),
-                'ajax_preferred_geoloc_api'                      => array(
+                ],
+                'ajax_preferred_geoloc_api'                      => [
                     'key'         => 'ajax_preferred_geoloc_api',
-                ),
+                ],
                 // pdf
-                'pdf_support'                                    => array(
+                'pdf_support'                                    => [
                     'key'         => 'pdf_support',
-                ),
+                ],
                 // third_party
-                'jqm_grade'                                      => array(
+                'jqm_grade'                                      => [
                     'key'         => 'jqm_grade',
-                ),
-                'is_sencha_touch_ok'                             => array(
+                ],
+                'is_sencha_touch_ok'                             => [
                     'key'         => 'is_sencha_touch_ok',
-                ),
+                ],
                 // html
-                'image_inlining'                                 => array(
+                'image_inlining'                                 => [
                     'key'         => 'image_inlining',
-                ),
-                'canvas_support'                                 => array(
+                ],
+                'canvas_support'                                 => [
                     'key'         => 'canvas_support',
-                ),
-                'viewport_width'                                 => array(
+                ],
+                'viewport_width'                                 => [
                     'key'         => 'viewport_width',
-                ),
-                'html_preferred_dtd'                             => array(
+                ],
+                'html_preferred_dtd'                             => [
                     'key'         => 'html_preferred_dtd',
-                ),
-                'viewport_supported'                             => array(
+                ],
+                'viewport_supported'                             => [
                     'key'         => 'viewport_supported',
-                ),
-                'viewport_minimum_scale'                         => array(
+                ],
+                'viewport_minimum_scale'                         => [
                     'key'         => 'viewport_minimum_scale',
-                ),
-                'viewport_initial_scale'                         => array(
+                ],
+                'viewport_initial_scale'                         => [
                     'key'         => 'viewport_initial_scale',
-                ),
-                'mobileoptimized'                                => array(
+                ],
+                'mobileoptimized'                                => [
                     'key'         => 'mobileoptimized',
-                ),
-                'viewport_maximum_scale'                         => array(
+                ],
+                'viewport_maximum_scale'                         => [
                     'key'         => 'viewport_maximum_scale',
-                ),
-                'viewport_userscalable'                          => array(
+                ],
+                'viewport_userscalable'                          => [
                     'key'         => 'viewport_userscalable',
-                ),
-                'handheldfriendly'                               => array(
+                ],
+                'handheldfriendly'                               => [
                     'key'         => 'handheldfriendly',
-                ),
+                ],
                 // css
-                'css_spriting'                                   => array(
+                'css_spriting'                                   => [
                     'key'         => 'css_spriting',
-                ),
-                'css_gradient'                                   => array(
+                ],
+                'css_gradient'                                   => [
                     'key'         => 'css_gradient',
-                ),
-                'css_gradient_linear'                            => array(
+                ],
+                'css_gradient_linear'                            => [
                     'key'         => 'css_gradient_linear',
-                ),
-                'css_border_image'                               => array(
+                ],
+                'css_border_image'                               => [
                     'key'         => 'css_border_image',
-                ),
-                'css_rounded_corners'                            => array(
+                ],
+                'css_rounded_corners'                            => [
                     'key'         => 'css_rounded_corners',
-                ),
-                'css_supports_width_as_percentage'               => array(
+                ],
+                'css_supports_width_as_percentage'               => [
                     'key'         => 'css_supports_width_as_percentage',
-                ),
+                ],
                 // bugs
-                'empty_option_value_support'                     => array(
+                'empty_option_value_support'                     => [
                     'key'         => 'empty_option_value_support',
-                ),
-                'basic_authentication_support'                   => array(
+                ],
+                'basic_authentication_support'                   => [
                     'key'         => 'basic_authentication_support',
-                ),
-                'post_method_support'                            => array(
+                ],
+                'post_method_support'                            => [
                     'key'         => 'post_method_support',
-                ),
+                ],
                 // rss
-                'rss_support'                                    => array(
+                'rss_support'                                    => [
                     'key'         => 'rss_support',
-                ),
+                ],
                 // sms
-                'sms_enabled'                                    => array(
+                'sms_enabled'                                    => [
                     'key'         => 'sms_enabled',
-                ),
+                ],
                 // chips
-                'nfc_support'                                    => array(
+                'nfc_support'                                    => [
                     'key'         => 'nfc_support',
-                ),
-            );
+                ],
+            ];
         }
 
         return $checks;
