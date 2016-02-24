@@ -107,7 +107,6 @@
   },
   "require-dev": {
     "phpunit/phpunit": "*",
-    "squizlabs/php_codesniffer": "2.*",
     "fabpot/php-cs-fixer": "~1.11"
   },
   "autoload": {
