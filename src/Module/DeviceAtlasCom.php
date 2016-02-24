@@ -31,14 +31,17 @@
 
 namespace UaComparator\Module;
 
-use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Client\Browser;
-use DeviceDetector\Parser\Device\DeviceParserAbstract;
-use DeviceDetector\Parser\OperatingSystem;
 use Monolog\Logger;
+use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
+use Psr\Http\Message\RequestInterface;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -82,7 +85,7 @@ class DeviceAtlasCom implements ModuleInterface
     private $id = 0;
 
     /**
-     * @var array
+     * @var \stdClass|null
      */
     private $detectionResult = null;
 
@@ -92,15 +95,43 @@ class DeviceAtlasCom implements ModuleInterface
     private $agent = '';
 
     /**
+     * @var string
+     */
+    private static $uri = 'http://region0.deviceatlascloud.com/v1/detect/properties';
+
+    /**
+     * @var string
+     */
+    private $apiKey = '';
+
+    /**
+     *
+     * @var \GuzzleHttp\Client
+     */
+    private $client = null;
+
+    /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
      * @param \WurflCache\Adapter\AdapterInterface $cache
+     * @param string|null                          $apiKey
+     * @param \GuzzleHttp\Client|null              $client
      */
-    public function __construct(Logger $logger, AdapterInterface $cache)
+    public function __construct(Logger $logger, AdapterInterface $cache, $apiKey = null, Client $client = null)
     {
         $this->logger = $logger;
         $this->cache  = $cache;
+
+        if (null !== $apiKey) {
+            $this->apiKey = $apiKey;
+        }
+
+        if (null !== $client) {
+            $this->client = $client;
+        } else {
+            $this->client = new Client();
+        }
     }
 
     /**
@@ -110,45 +141,99 @@ class DeviceAtlasCom implements ModuleInterface
      */
     public function init()
     {
-        DeviceParserAbstract::setVersionTruncation(DeviceParserAbstract::VERSION_TRUNCATION_NONE);
-
-        $this->detect('');
-
         return $this;
     }
 
     /**
      * @param string $agent
+     * @param array  $headers
      *
      * @return \UaComparator\Module\CrossJoin
      */
-    public function detect($agent)
+    public function detect($agent, array $headers = [])
     {
-        $this->agent           = $agent;
+        $this->agent = $agent;
 
-        $deviceDetector = new DeviceDetector($agent);
-        $deviceDetector->parse();
+        $parameters = '?licencekey=' . urlencode($this->apiKey);
+        $parameters .= '&useragent=' . urlencode($agent);
 
-        $osFamily      = OperatingSystem::getOsFamily($deviceDetector->getOs('short_name'));
-        $browserFamily = Browser::getBrowserFamily($deviceDetector->getClient('short_name'));
+        $uri = self::$uri . $parameters;
 
-        $processed = [
-            'user_agent'     => $deviceDetector->getUserAgent(),
-            'bot'            => ($deviceDetector->isBot() ? $deviceDetector->getBot() : []),
-            'os'             => $deviceDetector->getOs(),
-            'client'         => $deviceDetector->getClient(),
-            'device'         => [
-                'type'       => $deviceDetector->getDeviceName(),
-                'brand'      => $deviceDetector->getBrand(),
-                'model'      => $deviceDetector->getModel(),
-            ],
-            'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
-            'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
-        ];
+        // key to lower
+        $headers = array_change_key_case($headers);
 
-        $this->detectionResult = $processed;
+        $newHeaders = [];
+        foreach ($headers as $key => $value) {
+            $newHeaders['X-DA-' . $key] = $value;
+        }
+
+        $newHeaders['User-Agent'] = 'ThaDafinser/UserAgentParser:v1.4';
+
+        $request       = new GuzzleHttpRequest('GET', $uri, $newHeaders);
+        $requestHelper = new Request();
+
+        try {
+            $response = $requestHelper->getResponse($request, $this->client);
+        } catch (RequestException $e) {
+            $this->logger->error($e);
+
+            $this->detectionResult = null;
+
+            return $this;
+        }
+
+        try {
+            $this->detectionResult = $this->checkResponse($response, $request, $agent);
+        } catch (RequestException $e) {
+            $this->detectionResult = null;
+
+            /* @var $prevEx \GuzzleHttp\Exception\ClientException */
+            $prevEx = $e->getPrevious();
+
+            if ($prevEx->hasResponse() === true && $prevEx->getResponse()->getStatusCode() === 403) {
+                $this->logger->error(new RequestException('Your API key "' . $this->apiKey . '" is not valid for ' . $this->getName(), $request, null, $e));
+
+                return $this;
+            }
+
+            $this->logger->error($e);
+        }
 
         return $this;
+    }
+
+    /**
+     * @param \GuzzleHttp\Psr7\Response          $response
+     * @param \Psr\Http\Message\RequestInterface $request
+     * @param string                             $agent
+     *
+     * @throws \GuzzleHttp\Exception\RequestException
+     * @return \stdClass
+     */
+    private function checkResponse(Response $response, RequestInterface $request, $agent)
+    {
+        /*
+         * no json returned?
+         */
+        $contentType = $response->getHeader('Content-Type');
+        if (! isset($contentType[0]) || $contentType[0] != 'application/json; charset=UTF-8') {
+            throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
+
+        $content = json_decode($response->getBody()->getContents());
+
+        if (! $content instanceof \stdClass || ! isset($content->properties)) {
+            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
+
+        /*
+         * No result found?
+         */
+        if (! $content->properties instanceof \stdClass || count((array) $content->properties) === 0) {
+            throw new RequestException('No result found for user agent: ' . $agent, $request);
+        }
+
+        return $content->properties;
     }
 
     /**
@@ -248,38 +333,25 @@ class DeviceAtlasCom implements ModuleInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param array $parserResult
+     * @param \stdClass|null $parserResult
      *
      * @return \UaResult\Result
      */
-    private function map(array $parserResult)
+    private function map(\stdClass $parserResult = null)
     {
         $result = new Result($this->agent, $this->logger);
         $mapper = new InputMapper();
 
-        if (!empty($parserResult['bot'])) {
-            $browserName  = $mapper->mapBrowserName($parserResult['bot']['name']);
-
-            $result->setCapability('mobile_browser', $browserName);
-
-            if (isset($parserResult['bot']['producer']['name'])) {
-                $browserMaker = $parserResult['bot']['producer']['name'];
-                $result->setCapability(
-                    'mobile_browser_manufacturer',
-                    $mapper->mapBrowserMaker($browserMaker, $browserName)
-                );
-            }
-
-            $result->setCapability('browser_type', $mapper->mapBrowserType('robot', $browserName)->getName());
-
+        if (null === $parserResult) {
             return $result;
         }
 
-        $browserName    = $mapper->mapBrowserName($parserResult['client']['name']);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult['client']['version'], $browserName);
+        $browserName    = $mapper->mapBrowserName($parserResult->browserName);
+        $browserVersion = $mapper->mapBrowserVersion($parserResult->browserVersion, $browserName);
 
         $result->setCapability('mobile_browser', $browserName);
         $result->setCapability('mobile_browser_version', $browserVersion);
+        /*
         $result->setCapability('browser_type', $mapper->mapBrowserType('browser', $browserName)->getName());
 
         if (!empty($parserResult['client']['type'])) {
@@ -289,9 +361,10 @@ class DeviceAtlasCom implements ModuleInterface
         }
 
         $result->setCapability('browser_type', $mapper->mapBrowserType($browserType, $browserName)->getName());
+        /**/
 
-        if (isset($parserResult['client']['engine'])) {
-            $engineName = $parserResult['client']['engine'];
+        if (isset($parserResult->browserRenderingEngine)) {
+            $engineName = $parserResult->browserRenderingEngine;
 
             if ('unknown' === $engineName || '' === $engineName) {
                 $engineName = null;
@@ -300,21 +373,16 @@ class DeviceAtlasCom implements ModuleInterface
             $result->setCapability('renderingengine_name', $engineName);
         }
 
-        if (isset($parserResult['os']['name'])) {
-            $osName    = $mapper->mapOsName($parserResult['os']['name']);
-            $osVersion = $mapper->mapOsVersion($parserResult['os']['version'], $osName);
+        if (isset($parserResult->osName)) {
+            $osName    = $mapper->mapOsName($parserResult->osName);
+            $osVersion = $mapper->mapOsVersion($parserResult->osVersion, $osName);
 
             $result->setCapability('device_os', $osName);
             $result->setCapability('device_os_version', $osVersion);
         }
 
-        $deviceType      = $parserResult['device']['type'];
-        $deviceName      = $parserResult['device']['model'];
-        $deviceBrandName = $parserResult['device']['brand'];
-
+        $deviceType = $parserResult->primaryHardwareType;
         $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
-        $result->setCapability('marketing_name', $mapper->mapDeviceMarketingName($deviceName));
-        $result->setCapability('brand_name', $mapper->mapDeviceBrandName($deviceBrandName, $deviceName));
 
         return $result;
     }

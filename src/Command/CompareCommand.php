@@ -53,9 +53,15 @@ use UaComparator\Module\Browscap2;
 use UaComparator\Module\Browscap3;
 use UaComparator\Module\BrowserDetectorModule;
 use UaComparator\Module\CrossJoin;
+use UaComparator\Module\DeviceAtlasCom;
 use UaComparator\Module\ModuleCollection;
+use UaComparator\Module\NeutrinoApiCom;
 use UaComparator\Module\PiwikDetector;
 use UaComparator\Module\UaParser;
+use UaComparator\Module\UdgerCom;
+use UaComparator\Module\UserAgentApiCom;
+use UaComparator\Module\UserAgentStringCom;
+use UaComparator\Module\WhatIsMyBrowserCom;
 use UaComparator\Module\WhichBrowser;
 use UaComparator\Module\Woothee;
 use UaComparator\Module\Wurfl;
@@ -94,8 +100,14 @@ class CompareCommand extends Command
             'Woothee',
             'DonatjUAParser',
             'SinergiBrowserDetector',
-            //'Wurfl',
-            //'Wurfl52',
+            'Wurfl',
+            'Wurfl52',
+            'DeviceAtlasCom',
+            'NeutrinoApiCom',
+            'UdgerCom',
+            'UserAgentApiCom',
+            'UserAgentStringCom',
+            'WhatIsMyBrowserCom',
             /*'UASParser',*/
         ];
 
@@ -542,6 +554,144 @@ class CompareCommand extends Command
         }
 
         /*******************************************************************************
+         * DeviceAtlasCom
+         */
+
+        if (in_array('DeviceAtlasCom', $modules)) {
+            $output->write('initializing DeviceAtlasCom ...', false);
+
+            $adapter              = new Memory();
+            $deviceAtlasComModule = new DeviceAtlasCom($logger, $adapter);
+            $deviceAtlasComModule->setId(23)->setName('DeviceAtlasCom');
+
+            $collection->addModule($deviceAtlasComModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
+         * NeutrinoApiCom
+         */
+
+        if (in_array('NeutrinoApiCom', $modules)) {
+            $output->write('initializing NeutrinoApiCom ...', false);
+
+            $adapter              = new Memory();
+            $neutrinoApiComModule = new NeutrinoApiCom($logger, $adapter);
+            $neutrinoApiComModule->setId(22)->setName('NeutrinoApiCom');
+
+            $collection->addModule($neutrinoApiComModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
+         * UdgerCom
+         */
+
+        if (in_array('UdgerCom', $modules)) {
+            $output->write('initializing UdgerCom ...', false);
+
+            $adapter        = new Memory();
+            $udgerComModule = new UdgerCom($logger, $adapter);
+            $udgerComModule->setId(21)->setName('UdgerCom');
+
+            $collection->addModule($udgerComModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
+         * UserAgentApiCom
+         */
+
+        if (in_array('UserAgentApiCom', $modules)) {
+            $output->write('initializing UserAgentApiCom ...', false);
+
+            $adapter               = new Memory();
+            $userAgentApiComModule = new UserAgentApiCom($logger, $adapter);
+            $userAgentApiComModule->setId(20)->setName('UserAgentApiCom');
+
+            $collection->addModule($userAgentApiComModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
+         * UserAgentStringCom
+         */
+
+        if (in_array('UserAgentStringCom', $modules)) {
+            $output->write('initializing UserAgentStringCom ...', false);
+
+            $adapter                  = new Memory();
+            $userAgentStringComModule = new UserAgentStringCom($logger, $adapter);
+            $userAgentStringComModule->setId(19)->setName('UserAgentStringCom');
+
+            $collection->addModule($userAgentStringComModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
+         * WhatIsMyBrowserCom
+         */
+
+        if (in_array('WhatIsMyBrowserCom', $modules)) {
+            $output->write('initializing WhatIsMyBrowserCom ...', false);
+
+            $adapter                  = new Memory();
+            $whatIsMyBrowserComModule = new WhatIsMyBrowserCom($logger, $adapter);
+            $whatIsMyBrowserComModule->setId(18)->setName('WhatIsMyBrowserCom');
+
+            $collection->addModule($whatIsMyBrowserComModule);
+
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
+
+        /*******************************************************************************
          * init Modules
          */
 
@@ -792,7 +942,6 @@ class CompareCommand extends Command
             $output->write($content, false);
 
             ++$i;
-            exit;
         }
 
         $output->writeln('');

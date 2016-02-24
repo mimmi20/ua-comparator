@@ -31,14 +31,17 @@
 
 namespace UaComparator\Module;
 
-use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Client\Browser;
-use DeviceDetector\Parser\Device\DeviceParserAbstract;
-use DeviceDetector\Parser\OperatingSystem;
 use Monolog\Logger;
+use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
+use Psr\Http\Message\RequestInterface;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -82,7 +85,7 @@ class UdgerCom implements ModuleInterface
     private $id = 0;
 
     /**
-     * @var array
+     * @var \stdClass|null
      */
     private $detectionResult = null;
 
@@ -92,15 +95,43 @@ class UdgerCom implements ModuleInterface
     private $agent = '';
 
     /**
+     * @var string
+     */
+    private static $uri = 'http://api.udger.com/parse';
+
+    /**
+     * @var string
+     */
+    private $apiKey = '';
+
+    /**
+     *
+     * @var \GuzzleHttp\Client
+     */
+    private $client = null;
+
+    /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
      * @param \WurflCache\Adapter\AdapterInterface $cache
+     * @param string|null                          $apiKey
+     * @param \GuzzleHttp\Client|null              $client
      */
-    public function __construct(Logger $logger, AdapterInterface $cache)
+    public function __construct(Logger $logger, AdapterInterface $cache, $apiKey = null, Client $client = null)
     {
         $this->logger = $logger;
         $this->cache  = $cache;
+
+        if (null !== $apiKey) {
+            $this->apiKey = $apiKey;
+        }
+
+        if (null !== $client) {
+            $this->client = $client;
+        } else {
+            $this->client = new Client();
+        }
     }
 
     /**
@@ -110,10 +141,6 @@ class UdgerCom implements ModuleInterface
      */
     public function init()
     {
-        DeviceParserAbstract::setVersionTruncation(DeviceParserAbstract::VERSION_TRUNCATION_NONE);
-
-        $this->detect('');
-
         return $this;
     }
 
@@ -124,31 +151,95 @@ class UdgerCom implements ModuleInterface
      */
     public function detect($agent)
     {
-        $this->agent           = $agent;
+        $this->agent = $agent;
 
-        $deviceDetector = new DeviceDetector($agent);
-        $deviceDetector->parse();
-
-        $osFamily      = OperatingSystem::getOsFamily($deviceDetector->getOs('short_name'));
-        $browserFamily = Browser::getBrowserFamily($deviceDetector->getClient('short_name'));
-
-        $processed = [
-            'user_agent'     => $deviceDetector->getUserAgent(),
-            'bot'            => ($deviceDetector->isBot() ? $deviceDetector->getBot() : []),
-            'os'             => $deviceDetector->getOs(),
-            'client'         => $deviceDetector->getClient(),
-            'device'         => [
-                'type'       => $deviceDetector->getDeviceName(),
-                'brand'      => $deviceDetector->getBrand(),
-                'model'      => $deviceDetector->getModel(),
-            ],
-            'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
-            'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
+        $params = [
+            'accesskey' => $this->apiKey,
+            'uastrig'   => $agent,
         ];
 
-        $this->detectionResult = $processed;
+        $body = http_build_query($params, null, '&');
+
+        $request = new GuzzleHttpRequest(
+            'POST',
+            self::$uri,
+            ['Content-Type' => 'application/x-www-form-urlencoded'],
+            $body
+        );
+
+        $requestHelper = new Request();
+
+        try {
+            $response = $requestHelper->getResponse($request, $this->client);
+        } catch (RequestException $e) {
+            $this->logger->error($e);
+
+            $this->detectionResult = null;
+
+            return $this;
+        }
+
+        try {
+            $this->detectionResult = $this->checkResponse($response, $request, $agent);
+        } catch (RequestException $e) {
+            $this->logger->error($e);
+
+            $this->detectionResult = null;
+        }
 
         return $this;
+    }
+
+    /**
+     * @param \GuzzleHttp\Psr7\Response          $response
+     * @param \Psr\Http\Message\RequestInterface $request
+     * @param string                             $agent
+     *
+     * @throws \GuzzleHttp\Exception\RequestException
+     * @return \stdClass
+     */
+    private function checkResponse(Response $response, RequestInterface $request, $agent)
+    {
+        /*
+         * no json returned?
+         */
+        $contentType = $response->getHeader('Content-Type');
+        if (! isset($contentType[0]) || $contentType[0] != 'application/json') {
+            throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
+
+        $content = json_decode($response->getBody()->getContents());
+
+        /*
+         * No result found?
+         */
+        if (isset($content->flag) && $content->flag == 3) {
+            throw new RequestException('No result found for user agent: ' . $agent, $request);
+        }
+
+        /*
+         * Errors
+         */
+        if (isset($content->flag) && $content->flag == 4) {
+            throw new RequestException('Your API key "' . $this->apiKey . '" is not valid for ' . $this->getName(), $request);
+        }
+
+        if (isset($content->flag) && $content->flag == 6) {
+            throw new RequestException('Exceeded the maximum number of request with API key "' . $this->apiKey . '" for ' . $this->getName(), $request);
+        }
+
+        if (isset($content->flag) && $content->flag > 3) {
+            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
+
+        /*
+         * Missing data?
+         */
+        if (! $content instanceof \stdClass || ! isset($content->info)) {
+            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
+
+        return $content;
     }
 
     /**
@@ -248,38 +339,25 @@ class UdgerCom implements ModuleInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param array $parserResult
+     * @param \stdClass|null $parserResult
      *
      * @return \UaResult\Result
      */
-    private function map(array $parserResult)
+    private function map(\stdClass $parserResult = null)
     {
         $result = new Result($this->agent, $this->logger);
         $mapper = new InputMapper();
 
-        if (!empty($parserResult['bot'])) {
-            $browserName  = $mapper->mapBrowserName($parserResult['bot']['name']);
-
-            $result->setCapability('mobile_browser', $browserName);
-
-            if (isset($parserResult['bot']['producer']['name'])) {
-                $browserMaker = $parserResult['bot']['producer']['name'];
-                $result->setCapability(
-                    'mobile_browser_manufacturer',
-                    $mapper->mapBrowserMaker($browserMaker, $browserName)
-                );
-            }
-
-            $result->setCapability('browser_type', $mapper->mapBrowserType('robot', $browserName)->getName());
-
+        if (null === $parserResult) {
             return $result;
         }
 
-        $browserName    = $mapper->mapBrowserName($parserResult['client']['name']);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult['client']['version'], $browserName);
+        $browserName    = $mapper->mapBrowserName($parserResult->ua_family);
+        $browserVersion = $mapper->mapBrowserVersion($parserResult->ua_ver, $browserName);
 
         $result->setCapability('mobile_browser', $browserName);
         $result->setCapability('mobile_browser_version', $browserVersion);
+        /*
         $result->setCapability('browser_type', $mapper->mapBrowserType('browser', $browserName)->getName());
 
         if (!empty($parserResult['client']['type'])) {
@@ -289,32 +367,35 @@ class UdgerCom implements ModuleInterface
         }
 
         $result->setCapability('browser_type', $mapper->mapBrowserType($browserType, $browserName)->getName());
+        /**/
 
-        if (isset($parserResult['client']['engine'])) {
-            $engineName = $parserResult['client']['engine'];
+        if (isset($parserResult->ua_engine)) {
+            $engineName = $parserResult->ua_engine;
 
             if ('unknown' === $engineName || '' === $engineName) {
                 $engineName = null;
             }
 
             $result->setCapability('renderingengine_name', $engineName);
+
+            /*
+            if (!empty($parserResult->layout_engine_version)) {
+                $engineVersion = $mapper->mapEngineVersion($parserResult->layout_engine_version);
+                $result->setCapability('renderingengine_version', $engineVersion);
+            }
+            /**/
         }
 
-        if (isset($parserResult['os']['name'])) {
-            $osName    = $mapper->mapOsName($parserResult['os']['name']);
-            $osVersion = $mapper->mapOsVersion($parserResult['os']['version'], $osName);
+        if (isset($parserResult->os_family)) {
+            $osName    = $mapper->mapOsName($parserResult->os_family);
+            //$osVersion = $mapper->mapOsVersion($parserResult->operating_system_version_full, $osName);
 
             $result->setCapability('device_os', $osName);
-            $result->setCapability('device_os_version', $osVersion);
+            //$result->setCapability('device_os_version', $osVersion);
         }
 
-        $deviceType      = $parserResult['device']['type'];
-        $deviceName      = $parserResult['device']['model'];
-        $deviceBrandName = $parserResult['device']['brand'];
-
+        $deviceType = $parserResult->device_name;
         $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
-        $result->setCapability('marketing_name', $mapper->mapDeviceMarketingName($deviceName));
-        $result->setCapability('brand_name', $mapper->mapDeviceBrandName($deviceBrandName, $deviceName));
 
         return $result;
     }
