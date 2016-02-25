@@ -31,8 +31,6 @@
 
 namespace UaComparator\Module;
 
-use DeviceDetector\Parser\Client\Browser;
-use DeviceDetector\Parser\Device\DeviceParserAbstract;
 use Monolog\Logger;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
@@ -108,8 +106,6 @@ class DonatjUAParser implements ModuleInterface
      */
     public function init()
     {
-        DeviceParserAbstract::setVersionTruncation(DeviceParserAbstract::VERSION_TRUNCATION_NONE);
-
         $this->detect('');
 
         return $this;
