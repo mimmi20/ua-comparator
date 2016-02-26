@@ -41,6 +41,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
+use Noodlehaus\Config;
 use PDO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -54,9 +55,11 @@ use UaComparator\Module\Browscap3;
 use UaComparator\Module\BrowserDetectorModule;
 use UaComparator\Module\CrossJoin;
 use UaComparator\Module\DeviceAtlasCom;
+use UaComparator\Module\DonatjUAParser;
 use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\NeutrinoApiCom;
 use UaComparator\Module\PiwikDetector;
+use UaComparator\Module\SinergiBrowserDetector;
 use UaComparator\Module\UaParser;
 use UaComparator\Module\UdgerCom;
 use UaComparator\Module\UserAgentApiCom;
@@ -85,31 +88,22 @@ class CompareCommand extends Command
     const COL_LENGTH       = 50;
     const FIRST_COL_LENGTH = 20;
 
+    private $defaultModules = [];
+
     /**
      * Configures the current command.
      */
     protected function configure()
     {
-        $defaultModules = [
-            'Browscap3',
-            'Browscap2',
-            'CrossJoin',
-            'Piwik',
-            'UaParser',
-            'WhichBrowser',
-            'Woothee',
-            'DonatjUAParser',
-            'SinergiBrowserDetector',
-            'Wurfl',
-            'Wurfl52',
-            'DeviceAtlasCom',
-            'NeutrinoApiCom',
-            'UdgerCom',
-            'UserAgentApiCom',
-            'UserAgentStringCom',
-            'WhatIsMyBrowserCom',
-            /*'UASParser',*/
-        ];
+        $config = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
+
+        foreach ($config['modules'] as $key => $moduleConfig) {
+            if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
+                continue;
+            }
+
+            $this->defaultModules[] = $moduleConfig['class'];
+        }
 
         $allChecks = [
             Check::MINIMUM,
@@ -124,7 +118,7 @@ class CompareCommand extends Command
                 '-m',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'The Modules to compare',
-                $defaultModules
+                $this->defaultModules
             )
             ->addOption(
                 'check-level',
@@ -184,10 +178,6 @@ class CompareCommand extends Command
 
         ErrorHandler::register($logger);
 
-        /** @var callable $memoryProcessor */
-        $memoryProcessor = new MemoryUsageProcessor(true);
-        $logger->pushProcessor($memoryProcessor);
-
         $output->write('initializing App ...', false);
 
         ini_set('memory_limit', '2048M');
@@ -212,6 +202,51 @@ class CompareCommand extends Command
         $modules    = $input->getOption('modules');
         $collection = new ModuleCollection();
 
+        /*******************************************************************************
+         * BrowserDetector
+         */
+
+        $config = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
+var_dump($modules);
+        foreach ($modules as $module) {
+            foreach ($config['modules'] as $key => $moduleConfig) {
+                if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
+                    continue;
+                }
+
+                if ($moduleConfig['class'] === $module) {
+                    $output->write('initializing ' . $moduleConfig['name'] . ' ...', false);
+
+                    $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];
+
+                    if (!isset($moduleConfig['requires-cache'])) {
+                        $cache = new Memory();
+                    } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
+                        $cache = new File([File::DIR => $moduleConfig['cache-dir']]);
+                    } else {
+                        $cache = new Memory();
+                    }
+
+                    /** @var \UaComparator\Module\ModuleInterface $detectorModule */
+                    $detectorModule = new $moduleClassName($logger, $cache);
+                    $detectorModule->setName($moduleConfig['name']);
+
+                    $collection->addModule($detectorModule);
+
+                    $output->writeln(
+                        ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                            memory_get_usage(true),
+                            0,
+                            ',',
+                            '.'
+                        ) . ' Bytes'
+                    );
+
+                    break;
+                }
+            }
+        }
+exit;
         /*******************************************************************************
          * BrowserDetector
          */
@@ -485,7 +520,7 @@ class CompareCommand extends Command
         }
 
         /*******************************************************************************
-         * WhichBrowser Parser
+         * Woothee
          */
 
         if (in_array('Woothee', $modules)) {
@@ -515,7 +550,7 @@ class CompareCommand extends Command
             $output->write('initializing DonatjUAParser ...', false);
 
             $adapter      = new Memory();
-            $donatjModule = new Woothee($logger, $adapter);
+            $donatjModule = new DonatjUAParser($logger, $adapter);
             $donatjModule->setId(16)->setName('DonatjUAParser');
 
             $collection->addModule($donatjModule);
@@ -538,7 +573,7 @@ class CompareCommand extends Command
             $output->write('initializing SinergiBrowserDetector ...', false);
 
             $adapter      = new Memory();
-            $donatjModule = new Woothee($logger, $adapter);
+            $donatjModule = new SinergiBrowserDetector($logger, $adapter);
             $donatjModule->setId(17)->setName('SinergiBrowserDetector');
 
             $collection->addModule($donatjModule);

@@ -1,0 +1,90 @@
+{
+  "modules": {
+    "browscap2": {
+      "enabled": true
+    },
+    "browscap3": {
+      "enabled": true
+    },
+    "browser-detector": {
+      "enabled": false
+    },
+    "crossjoin": {
+      "enabled": true
+    },
+    "detector": {
+      "enabled": false
+    },
+    "device-atlas": {
+      "enabled": false,
+      "request": {
+        "params": {
+          "licencekey": ""
+        }
+      }
+    },
+    "donatij-ua-parser": {
+      "enabled": true
+    },
+    "neutrino-api":{
+      "enabled": false,
+      "request": {
+        "params": {
+          "user-id": "",
+          "api-key": ""
+        }
+      }
+    },
+    "piwik": {
+      "enabled": true
+    },
+    "sinergi-browser-detector": {
+      "enabled": true
+    },
+    "ua-parser": {
+      "enabled": true
+    },
+    "udger": {
+      "enabled": false,
+      "request": {
+        "params": {
+          "accesskey": ""
+        }
+      }
+    },
+    "useragent-api": {
+      "enabled": false,
+      "request": {
+        "params": {}
+      }
+    },
+    "useragent-string": {
+      "enabled": false,
+      "request": {
+        "params": {
+          "getJSON": "all"
+        }
+      }
+    },
+    "what-is-my-browser": {
+      "enabled": false,
+      "request": {
+        "params": {
+          "user_key": ""
+        }
+      }
+    },
+    "which-browser": {
+      "enabled": true
+    },
+    "woothee": {
+      "enabled": true
+    },
+    "wurfl": {
+      "enabled": true
+    },
+    "wurfl-old": {
+      "enabled": true
+    }
+  }
+}

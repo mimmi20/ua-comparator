@@ -80,6 +80,7 @@
     "monolog/monolog": "~1",
     "mimmi20/wurflcache": "~1.3",
     "guzzlehttp/guzzle": "^6.1",
+    "hassankhan/config": "^0.10",
     "mimmi20/wurfl-data": "~1.6",
     "browscap/browscap": "dev-detection-issues",
     "mimmi20/wurfl-generic-request": "1.0.*",
