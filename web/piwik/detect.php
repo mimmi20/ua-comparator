@@ -36,10 +36,10 @@ use DeviceDetector\Parser\OperatingSystem;
 
 chdir(dirname(__DIR__));
 
-$autoloadPaths = array(
+$autoloadPaths = [
     'vendor/autoload.php',
     '../../autoload.php',
-);
+];
 
 foreach ($autoloadPaths as $path) {
     if (file_exists($path)) {
@@ -54,7 +54,7 @@ DeviceParserAbstract::setVersionTruncation(DeviceParserAbstract::VERSION_TRUNCAT
 
 header('Content-Type: application/json', true);
 
-$start    = microtime(true);
+$start          = microtime(true);
 $deviceDetector = new DeviceDetector($_POST['useragent']);
 $deviceDetector->parse();
 

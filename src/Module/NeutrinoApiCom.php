@@ -32,16 +32,16 @@
 namespace UaComparator\Module;
 
 use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use GuzzleHttp\Psr7\Response;
 use Monolog\Logger;
+use Psr\Http\Message\RequestInterface;
 use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
-use Psr\Http\Message\RequestInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -110,7 +110,6 @@ class NeutrinoApiCom implements ModuleInterface
     private $apiUserId = '';
 
     /**
-     *
      * @var \GuzzleHttp\Client
      */
     private $client = null;
@@ -226,7 +225,7 @@ class NeutrinoApiCom implements ModuleInterface
          */
         $contentType = $response->getHeader('Content-Type');
 
-        if (! isset($contentType[0]) || $contentType[0] != 'application/json;charset=UTF-8') {
+        if (! isset($contentType[0]) || $contentType[0] !== 'application/json;charset=UTF-8') {
             throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 

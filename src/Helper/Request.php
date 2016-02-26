@@ -31,9 +31,9 @@
 
 namespace UaComparator\Helper;
 
-use Psr\Http\Message\RequestInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -52,8 +52,8 @@ class Request
      * @param \Psr\Http\Message\RequestInterface $request
      * @param \GuzzleHttp\Client                 $client
      *
-     * @return \GuzzleHttp\Psr7\Response
      * @throws \GuzzleHttp\Exception\RequestException
+     * @return \GuzzleHttp\Psr7\Response
      */
     public function getResponse(RequestInterface $request, Client $client)
     {

@@ -13,6 +13,7 @@ $finder = Symfony\CS\Finder\DefaultFinder::create()
     ->name('*.php')
     ->in(__DIR__ . '/src')
     ->in(__DIR__ . '/tests')
+    ->in(__DIR__ . '/web')
 ;
 
 return Symfony\CS\Config\Config::create()
@@ -50,8 +51,6 @@ return Symfony\CS\Config\Config::create()
             'phpdoc_no_package',
             'phpdoc_params',
             'phpdoc_scalar',
-            'phpdoc_separation',
-            'phpdoc_to_comment',
             'phpdoc_trim',
             'phpdoc_types',
             'phpdoc_var_without_name',

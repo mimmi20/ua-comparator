@@ -32,14 +32,14 @@
 namespace UaComparator\Module;
 
 use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 use Monolog\Logger;
 use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities

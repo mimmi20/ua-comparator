@@ -32,16 +32,16 @@
 namespace UaComparator\Module;
 
 use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use GuzzleHttp\Psr7\Response;
 use Monolog\Logger;
+use Psr\Http\Message\RequestInterface;
 use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
-use Psr\Http\Message\RequestInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -105,7 +105,6 @@ class UserAgentApiCom implements ModuleInterface
     private $apiKey = '';
 
     /**
-     *
      * @var \GuzzleHttp\Client
      */
     private $client = null;
@@ -178,13 +177,13 @@ class UserAgentApiCom implements ModuleInterface
                 /*
                  * Error
                  */
-                if (isset($content->error->code) && $content->error->code == 'key_invalid') {
+                if (isset($content->error->code) && $content->error->code === 'key_invalid') {
                     $this->logger->error(new RequestException('Your API key "' . $this->apiKey . '" is not valid for ' . $this->getName(), $request, null, $e));
 
                     return $this;
                 }
 
-                if (isset($content->error->code) && $content->error->code == 'useragent_invalid') {
+                if (isset($content->error->code) && $content->error->code === 'useragent_invalid') {
                     $this->logger->error(new RequestException('User agent is invalid ' . $agent, $request));
 
                     return $this;
@@ -222,7 +221,7 @@ class UserAgentApiCom implements ModuleInterface
          */
         $contentType = $response->getHeader('Content-Type');
 
-        if (! isset($contentType[0]) || $contentType[0] != 'application/json') {
+        if (! isset($contentType[0]) || $contentType[0] !== 'application/json') {
             throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
@@ -231,7 +230,7 @@ class UserAgentApiCom implements ModuleInterface
         /*
          * No result
          */
-        if (isset($content->error->code) && $content->error->code == 'useragent_not_found') {
+        if (isset($content->error->code) && $content->error->code === 'useragent_not_found') {
             throw new RequestException('No result found for user agent: ' . $agent, $request);
         }
 

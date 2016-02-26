@@ -32,16 +32,16 @@
 namespace UaComparator\Module;
 
 use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use GuzzleHttp\Psr7\Response;
 use Monolog\Logger;
+use Psr\Http\Message\RequestInterface;
 use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
-use Psr\Http\Message\RequestInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -105,7 +105,6 @@ class WhatIsMyBrowserCom implements ModuleInterface
     private $apiKey = '';
 
     /**
-     *
      * @var \GuzzleHttp\Client
      */
     private $client = null;
@@ -199,7 +198,7 @@ class WhatIsMyBrowserCom implements ModuleInterface
          */
         $contentType = $response->getHeader('Content-Type');
 
-        if (! isset($contentType[0]) || $contentType[0] != 'application/json') {
+        if (! isset($contentType[0]) || $contentType[0] !== 'application/json') {
             throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
@@ -208,25 +207,25 @@ class WhatIsMyBrowserCom implements ModuleInterface
         /*
          * No result
          */
-        if (isset($content->message_code) && $content->message_code == 'no_user_agent') {
+        if (isset($content->message_code) && $content->message_code === 'no_user_agent') {
             throw new RequestException('No result found for user agent: ' . $agent, $request);
         }
 
         /*
          * Limit exceeded
          */
-        if (isset($content->message_code) && $content->message_code == 'usage_limit_exceeded') {
+        if (isset($content->message_code) && $content->message_code === 'usage_limit_exceeded') {
             throw new RequestException('Exceeded the maximum number of request with API key "' . $this->apiKey . '" for ' . $this->getName(), $request);
         }
 
         /*
          * Error
          */
-        if (isset($content->message_code) && $content->message_code == 'no_api_user_key') {
+        if (isset($content->message_code) && $content->message_code === 'no_api_user_key') {
             throw new RequestException('Missing API key for ' . $this->getName(), $request);
         }
 
-        if (isset($content->message_code) && $content->message_code == 'user_key_invalid') {
+        if (isset($content->message_code) && $content->message_code === 'user_key_invalid') {
             throw new RequestException('Your API key "' . $this->apiKey . '" is not valid for ' . $this->getName(), $request);
         }
 

@@ -33,10 +33,10 @@ use WhichBrowser\Parser;
 
 chdir(dirname(__DIR__));
 
-$autoloadPaths = array(
+$autoloadPaths = [
     'vendor/autoload.php',
     '../../autoload.php',
-);
+];
 
 foreach ($autoloadPaths as $path) {
     if (file_exists($path)) {
@@ -49,8 +49,8 @@ ini_set('memory_limit', '-1');
 
 header('Content-Type: application/json', true);
 
-$start = microtime(true);
-$parser = new Parser(['User-Agent' => $_POST['useragent']]);
+$start       = microtime(true);
+$parser      = new Parser(['User-Agent' => $_POST['useragent']]);
 $resultArray = [
     'browser'    => [
         'using'   => $parser->browser->using,

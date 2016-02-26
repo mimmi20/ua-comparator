@@ -32,16 +32,16 @@
 namespace UaComparator\Module;
 
 use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use GuzzleHttp\Psr7\Response;
 use Monolog\Logger;
+use Psr\Http\Message\RequestInterface;
 use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
-use Psr\Http\Message\RequestInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -105,7 +105,6 @@ class UserAgentStringCom implements ModuleInterface
     private $apiKey = '';
 
     /**
-     *
      * @var \GuzzleHttp\Client
      */
     private $client = null;
@@ -155,7 +154,7 @@ class UserAgentStringCom implements ModuleInterface
 
         $params = [
             'uas'     => $agent,
-            'getJSON' => 'all'
+            'getJSON' => 'all',
         ];
 
         $uri = self::$uri . '?' . http_build_query($params, null, '&');
@@ -198,7 +197,7 @@ class UserAgentStringCom implements ModuleInterface
          */
         $contentType = $response->getHeader('Content-Type');
 
-        if (! isset($contentType[0]) || $contentType[0] != 'application/json') {
+        if (! isset($contentType[0]) || $contentType[0] !== 'application/json') {
             throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
@@ -322,7 +321,7 @@ class UserAgentStringCom implements ModuleInterface
         }
 
         $browserName    = $mapper->mapBrowserName($parserResult->agent_name);
-        $version = preg_replace('/(\d*)_(\d*)/', '$1.$2', $parserResult->agent_version);
+        $version        = preg_replace('/(\d*)_(\d*)/', '$1.$2', $parserResult->agent_version);
         $browserVersion = $mapper->mapBrowserVersion($version, $browserName);
 
         $result->setCapability('mobile_browser', $browserName);
@@ -338,7 +337,7 @@ class UserAgentStringCom implements ModuleInterface
 
         if (isset($parserResult->os_name)) {
             $osName    = $mapper->mapOsName($parserResult->os_name);
-            $version = preg_replace('/(\d*)_(\d*)/', '$1.$2', $parserResult->os_versionNumber);
+            $version   = preg_replace('/(\d*)_(\d*)/', '$1.$2', $parserResult->os_versionNumber);
             $osVersion = $mapper->mapOsVersion($version, $osName);
 
             $result->setCapability('device_os', $osName);

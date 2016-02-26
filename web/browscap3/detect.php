@@ -41,10 +41,10 @@ use WurflCache\Adapter\File;
 
 chdir(dirname(__DIR__));
 
-$autoloadPaths = array(
+$autoloadPaths = [
     'vendor/autoload.php',
     '../../autoload.php',
-);
+];
 
 foreach ($autoloadPaths as $path) {
     if (file_exists($path)) {
@@ -83,7 +83,6 @@ $browscap = new Browscap();
 $this->browscap
     ->setLogger($logger)
     ->setCache($cache);
-
 
 header('Content-Type: application/json', true);
 

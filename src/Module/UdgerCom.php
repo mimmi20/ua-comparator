@@ -32,16 +32,16 @@
 namespace UaComparator\Module;
 
 use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use GuzzleHttp\Psr7\Response;
 use Monolog\Logger;
+use Psr\Http\Message\RequestInterface;
 use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
-use Psr\Http\Message\RequestInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -105,7 +105,6 @@ class UdgerCom implements ModuleInterface
     private $apiKey = '';
 
     /**
-     *
      * @var \GuzzleHttp\Client
      */
     private $client = null;
@@ -204,7 +203,7 @@ class UdgerCom implements ModuleInterface
          * no json returned?
          */
         $contentType = $response->getHeader('Content-Type');
-        if (! isset($contentType[0]) || $contentType[0] != 'application/json') {
+        if (! isset($contentType[0]) || $contentType[0] !== 'application/json') {
             throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
@@ -213,18 +212,18 @@ class UdgerCom implements ModuleInterface
         /*
          * No result found?
          */
-        if (isset($content->flag) && $content->flag == 3) {
+        if (isset($content->flag) && $content->flag === 3) {
             throw new RequestException('No result found for user agent: ' . $agent, $request);
         }
 
         /*
          * Errors
          */
-        if (isset($content->flag) && $content->flag == 4) {
+        if (isset($content->flag) && $content->flag === 4) {
             throw new RequestException('Your API key "' . $this->apiKey . '" is not valid for ' . $this->getName(), $request);
         }
 
-        if (isset($content->flag) && $content->flag == 6) {
+        if (isset($content->flag) && $content->flag === 6) {
             throw new RequestException('Exceeded the maximum number of request with API key "' . $this->apiKey . '" for ' . $this->getName(), $request);
         }
 
