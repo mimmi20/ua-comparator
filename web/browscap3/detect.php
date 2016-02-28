@@ -39,7 +39,7 @@ use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use WurflCache\Adapter\File;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -79,15 +79,14 @@ ErrorHandler::register($logger);
 $cache = new File([File::DIR => 'data/cache/browscap3/']);
 
 $browscap = new Browscap();
-
-$this->browscap
+$browscap
     ->setLogger($logger)
     ->setCache($cache);
 
 header('Content-Type: application/json', true);
 
 $start    = microtime(true);
-$result   = $browscap->getBrowser($_POST['useragent']);
+$result   = $browscap->getBrowser($_GET['useragent']);
 $duration = microtime(true) - $start;
 
 echo json_encode(

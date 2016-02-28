@@ -29,7 +29,7 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -49,7 +49,7 @@ header('Content-Type: application/json', true);
 
 $start    = microtime(true);
 // Create WURFL Configuration from an XML config file
-$wurflConfigOrig  = new \WURFL_Configuration_XmlConfig($this->configFile);
+$wurflConfigOrig  = new \WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
 $wurflCacheOrig   = new \WURFL_Storage_Memory();
 $wurflStorageOrig = new \WURFL_Storage_File([\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/']);
 
@@ -59,7 +59,7 @@ ini_set('max_input_time', '6000');
 // Create a WURFL Manager
 $wurflManagerOrig = $wurflManagerFactoryOrig->create();
 
-$device = $wurflManagerOrig->getDeviceForUserAgent($_POST['useragent']);
+$device = $wurflManagerOrig->getDeviceForUserAgent($_GET['useragent']);
 
 $duration = microtime(true) - $start;
 

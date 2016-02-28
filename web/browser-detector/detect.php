@@ -39,7 +39,7 @@ use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use WurflCache\Adapter\File;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -83,7 +83,7 @@ $parser = new BrowserDetector($cache, $logger);
 
 try {
     /** @var \UaResult\Result $detectionResult */
-    $detectionResult = $this->input->getBrowser($_POST['useragent'], true);
+    $detectionResult = $this->input->getBrowser($_GET['useragent'], true);
 } catch (\Exception $e) {
     $detectionResult = [];
 }

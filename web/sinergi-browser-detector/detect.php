@@ -31,7 +31,7 @@
 
 use Sinergi\BrowserDetector;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -52,13 +52,13 @@ header('Content-Type: application/json', true);
 $start    = microtime(true);
 
 /** @var BrowserDetector\Browser $browserRaw */
-$browserRaw = new BrowserDetector\Browser($_POST['useragent']);
+$browserRaw = new BrowserDetector\Browser($_GET['useragent']);
 
 /** @var BrowserDetector\Os $osRaw */
-$osRaw = new BrowserDetector\Os($_POST['useragent']);
+$osRaw = new BrowserDetector\Os($_GET['useragent']);
 
 /** @var BrowserDetector\Device $deviceRaw */
-$deviceRaw  = new BrowserDetector\Device($_POST['useragent']);
+$deviceRaw  = new BrowserDetector\Device($_GET['useragent']);
 
 $result = [
     'browser' => [

@@ -32,9 +32,10 @@
 use Wurfl\Configuration\XmlConfig;
 use Wurfl\Manager;
 use Wurfl\Storage\Storage;
+use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -53,12 +54,14 @@ ini_set('memory_limit', '-1');
 header('Content-Type: application/json', true);
 
 $start            = microtime(true);
-$wurflConfig      = new XmlConfig($this->configFile);
+
+$cache = new File([File::DIR => 'data/cache/wurfl/']);
+$wurflConfig      = new XmlConfig('data/wurfl-config.xml');
 $wurflCache       = new Storage(new Memory());
-$persistanceCache = new Storage($this->cache);
+$persistanceCache = new Storage($cache);
 $wurflManager     = new Manager($wurflConfig, $persistanceCache, $wurflCache);
 
-$device = $wurflManager->getDeviceForUserAgent($_POST['useragent']);
+$device = $wurflManager->getDeviceForUserAgent($_GET['useragent']);
 
 $duration = microtime(true) - $start;
 

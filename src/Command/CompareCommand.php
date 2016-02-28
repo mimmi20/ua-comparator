@@ -56,6 +56,7 @@ use UaComparator\Module\BrowserDetectorModule;
 use UaComparator\Module\CrossJoin;
 use UaComparator\Module\DeviceAtlasCom;
 use UaComparator\Module\DonatjUAParser;
+use UaComparator\Module\Http;
 use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\NeutrinoApiCom;
 use UaComparator\Module\PiwikDetector;
@@ -207,7 +208,7 @@ class CompareCommand extends Command
          */
 
         $config = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
-var_dump($modules);
+
         foreach ($modules as $module) {
             foreach ($config['modules'] as $key => $moduleConfig) {
                 if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
@@ -217,8 +218,6 @@ var_dump($modules);
                 if ($moduleConfig['class'] === $module) {
                     $output->write('initializing ' . $moduleConfig['name'] . ' ...', false);
 
-                    $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];
-
                     if (!isset($moduleConfig['requires-cache'])) {
                         $cache = new Memory();
                     } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
@@ -227,9 +226,14 @@ var_dump($modules);
                         $cache = new Memory();
                     }
 
-                    /** @var \UaComparator\Module\ModuleInterface $detectorModule */
-                    $detectorModule = new $moduleClassName($logger, $cache);
+                    /** @var \UaComparator\Module\Http $detectorModule */
+                    $detectorModule = new Http($logger, $cache);
                     $detectorModule->setName($moduleConfig['name']);
+                    $detectorModule->setConfig($moduleConfig['request']);
+
+                    $checkName = '\\UaComparator\\Module\\Check\\' . $moduleConfig['check'];
+
+                    $detectorModule->setCheck(new $checkName());
 
                     $collection->addModule($detectorModule);
 
@@ -246,10 +250,10 @@ var_dump($modules);
                 }
             }
         }
-exit;
+
         /*******************************************************************************
          * BrowserDetector
-         */
+         *
 
         $output->write('initializing BrowserDetectorModule ...', false);
 
@@ -269,7 +273,7 @@ exit;
 
         /*******************************************************************************
          * checking full_php_browscap.ini
-         */
+         *
 
         $iniFile = null;
 
@@ -315,7 +319,7 @@ exit;
 
         /*******************************************************************************
          * Browscap-PHP 3.x
-         */
+         *
 
         if (in_array('Browscap3', $modules) && null !== $iniFile) {
             $output->write('initializing Browscap-PHP (3.x) ...', false);
@@ -337,7 +341,7 @@ exit;
 
         /*******************************************************************************
          * Browscap-PHP 2.x
-         */
+         *
 
         if (in_array('Browscap2', $modules) && null !== $iniFile) {
             $output->write('initializing Browscap-PHP (2.x) ...', false);
@@ -359,7 +363,7 @@ exit;
 
         /*******************************************************************************
          * Crossjoin\Browscap
-         */
+         *
 
         if (in_array('CrossJoin', $modules) && null !== $iniFile) {
             $output->write('initializing Crossjoin\Browscap ...', false);
@@ -381,7 +385,7 @@ exit;
 
         /*******************************************************************************
          * UAParser
-         */
+         *
 
         if (in_array('UaParser', $modules)) {
             $output->write('initializing UAParser ...', false);
@@ -422,7 +426,7 @@ exit;
 
         /*******************************************************************************
          * WURFL - PHP 5.3 port
-         */
+         *
 
         if (in_array('Wurfl', $modules)) {
             $output->write('initializing Wurfl API (PHP-API 5.3 port) ...', false);
@@ -449,7 +453,7 @@ exit;
 
         /*******************************************************************************
          * WURFL - PHP 5.2 original
-         */
+         *
 
         if (in_array('Wurfl52', $modules)) {
             $output->write('initializing Wurfl API (PHP-API 5.2 original) ...', false);
@@ -474,268 +478,15 @@ exit;
         }
 
         /*******************************************************************************
-         * Piwik Parser
-         */
-
-        if (in_array('Piwik', $modules)) {
-            $output->write('initializing Piwik Parser ...', false);
-
-            $adapter     = new Memory();
-            $piwikModule = new PiwikDetector($logger, $adapter);
-            $piwikModule->setId(12)->setName('Piwik Parser');
-
-            $collection->addModule($piwikModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * WhichBrowser Parser
-         */
-
-        if (in_array('WhichBrowser', $modules)) {
-            $output->write('initializing WhichBrowser ...', false);
-
-            $adapter  = new Memory();
-            $wbModule = new WhichBrowser($logger, $adapter);
-            $wbModule->setId(14)->setName('WhichBrowser');
-
-            $collection->addModule($wbModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * Woothee
-         */
-
-        if (in_array('Woothee', $modules)) {
-            $output->write('initializing Woothee ...', false);
-
-            $adapter       = new Memory();
-            $wootheeModule = new Woothee($logger, $adapter);
-            $wootheeModule->setId(15)->setName('Woothee');
-
-            $collection->addModule($wootheeModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * DonatjUAParser
-         */
-
-        if (in_array('DonatjUAParser', $modules)) {
-            $output->write('initializing DonatjUAParser ...', false);
-
-            $adapter      = new Memory();
-            $donatjModule = new DonatjUAParser($logger, $adapter);
-            $donatjModule->setId(16)->setName('DonatjUAParser');
-
-            $collection->addModule($donatjModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * SinergiBrowserDetector
-         */
-
-        if (in_array('SinergiBrowserDetector', $modules)) {
-            $output->write('initializing SinergiBrowserDetector ...', false);
-
-            $adapter      = new Memory();
-            $donatjModule = new SinergiBrowserDetector($logger, $adapter);
-            $donatjModule->setId(17)->setName('SinergiBrowserDetector');
-
-            $collection->addModule($donatjModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * DeviceAtlasCom
-         */
-
-        if (in_array('DeviceAtlasCom', $modules)) {
-            $output->write('initializing DeviceAtlasCom ...', false);
-
-            $adapter              = new Memory();
-            $deviceAtlasComModule = new DeviceAtlasCom($logger, $adapter);
-            $deviceAtlasComModule->setId(23)->setName('DeviceAtlasCom');
-
-            $collection->addModule($deviceAtlasComModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * NeutrinoApiCom
-         */
-
-        if (in_array('NeutrinoApiCom', $modules)) {
-            $output->write('initializing NeutrinoApiCom ...', false);
-
-            $adapter              = new Memory();
-            $neutrinoApiComModule = new NeutrinoApiCom($logger, $adapter);
-            $neutrinoApiComModule->setId(22)->setName('NeutrinoApiCom');
-
-            $collection->addModule($neutrinoApiComModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * UdgerCom
-         */
-
-        if (in_array('UdgerCom', $modules)) {
-            $output->write('initializing UdgerCom ...', false);
-
-            $adapter        = new Memory();
-            $udgerComModule = new UdgerCom($logger, $adapter);
-            $udgerComModule->setId(21)->setName('UdgerCom');
-
-            $collection->addModule($udgerComModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * UserAgentApiCom
-         */
-
-        if (in_array('UserAgentApiCom', $modules)) {
-            $output->write('initializing UserAgentApiCom ...', false);
-
-            $adapter               = new Memory();
-            $userAgentApiComModule = new UserAgentApiCom($logger, $adapter);
-            $userAgentApiComModule->setId(20)->setName('UserAgentApiCom');
-
-            $collection->addModule($userAgentApiComModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * UserAgentStringCom
-         */
-
-        if (in_array('UserAgentStringCom', $modules)) {
-            $output->write('initializing UserAgentStringCom ...', false);
-
-            $adapter                  = new Memory();
-            $userAgentStringComModule = new UserAgentStringCom($logger, $adapter);
-            $userAgentStringComModule->setId(19)->setName('UserAgentStringCom');
-
-            $collection->addModule($userAgentStringComModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
-         * WhatIsMyBrowserCom
-         */
-
-        if (in_array('WhatIsMyBrowserCom', $modules)) {
-            $output->write('initializing WhatIsMyBrowserCom ...', false);
-
-            $adapter                  = new Memory();
-            $whatIsMyBrowserComModule = new WhatIsMyBrowserCom($logger, $adapter);
-            $whatIsMyBrowserComModule->setId(18)->setName('WhatIsMyBrowserCom');
-
-            $collection->addModule($whatIsMyBrowserComModule);
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
-        }
-
-        /*******************************************************************************
          * init Modules
          */
 
-        $output->writeln('initializing all Modules ...');
+        $output->write('initializing all Modules ...', false);
 
         $collection->init();
 
         $output->writeln(
-            'ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+            ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
                 memory_get_usage(true),
                 0,
                 ',',
@@ -754,19 +505,10 @@ exit;
         $messageFormatter->setCollection($collection)->setColumnsLength(self::COL_LENGTH);
 
         $output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2), false);
-
-        $okfound   = 0;
-        $nokfound  = 0;
-        $sosofound = 0;
-
         $output->writeln('');
 
-        $checklevel  = $input->getOption('check-level');
-        $checkHelper = new Check();
-        $checks      = $checkHelper->getChecks($checklevel);
-
         /*******************************************************************************
-         * Loop
+         * initialize Source
          */
         $dsn      = 'mysql:dbname=browscap;host=localhost';
         $user     = 'root';
@@ -792,19 +534,40 @@ exit;
             $source            = new DirectorySource($uaSourceDirectory);
         }
 
-        $allTimes = [];
+        $benchAll = [];
 
         foreach ($collection as $module) {
             /* @var \UaComparator\Module\ModuleInterface $module */
-            $allTimes[$module->getName()] = [
-                'min'     => ['time' => 1.0, 'agent' => ''],
-                'max'     => ['time' => 0.0, 'agent' => ''],
-                'summary' => 0.0,
+            $benchAll[$module->getName()] = [
+                'time' => [
+                    'min'     => ['time' => 1200.0, 'agent' => ''],
+                    'max'     => ['time' => 0.0, 'agent' => ''],
+                    'last'    => ['time' => 0.0, 'agent' => ''],
+                    'summary' => 0.0,
+                ],
+                'memory' => [
+                    'min'     => ['size' => 50000000, 'agent' => ''],
+                    'max'     => ['size' => 0, 'agent' => ''],
+                    'last'    => ['size' => 0, 'agent' => ''],
+                ]
             ];
         }
 
         $limit = (int) $input->getOption('limit');
 
+        /*
+        $okfound   = 0;
+        $nokfound  = 0;
+        $sosofound = 0;
+
+        $checklevel  = $input->getOption('check-level');
+        $checkHelper = new Check();
+        $checks      = $checkHelper->getChecks($checklevel);
+        /**/
+
+        /*******************************************************************************
+         * Loop
+         */
         foreach ($source->getUserAgents($logger, $limit) as $agent) {
             $matches = [];
 
@@ -821,20 +584,42 @@ exit;
                     ->detect($agent)
                     ->endTimer();
 
+                $result = $module->getDetectionResult();
+
                 $actualTime = $module->getTime();
 
-                $allTimes[$module->getName()]['summary'] += $actualTime;
+                $benchAll[$module->getName()]['time']['summary'] += $actualTime;
 
-                if ($allTimes[$module->getName()]['min']['time'] > $actualTime) {
-                    $allTimes[$module->getName()]['min']['time']  = $actualTime;
-                    $allTimes[$module->getName()]['min']['agent'] = $agent;
+                $benchAll[$module->getName()]['time']['last']['time']  = $actualTime;
+                $benchAll[$module->getName()]['time']['last']['agent'] = $agent;
+
+                if ($benchAll[$module->getName()]['time']['min']['time'] > $actualTime) {
+                    $benchAll[$module->getName()]['time']['min']['time']  = $actualTime;
+                    $benchAll[$module->getName()]['time']['min']['agent'] = $agent;
                 }
 
-                if ($allTimes[$module->getName()]['max']['time'] < $actualTime) {
-                    $allTimes[$module->getName()]['max']['time']  = $actualTime;
-                    $allTimes[$module->getName()]['max']['agent'] = $agent;
+                if ($benchAll[$module->getName()]['time']['max']['time'] < $actualTime) {
+                    $benchAll[$module->getName()]['time']['max']['time']  = $actualTime;
+                    $benchAll[$module->getName()]['time']['max']['agent'] = $agent;
+                }
+
+                $actualMemory = $module->getMaxMemory();
+
+                $benchAll[$module->getName()]['memory']['last']['size']  = $actualMemory;
+                $benchAll[$module->getName()]['memory']['last']['agent'] = $agent;
+
+                if ($benchAll[$module->getName()]['memory']['min']['size'] > $actualMemory) {
+                    $benchAll[$module->getName()]['memory']['min']['size']  = $actualMemory;
+                    $benchAll[$module->getName()]['memory']['min']['agent'] = $agent;
+                }
+
+                if ($benchAll[$module->getName()]['memory']['max']['size'] < $actualMemory) {
+                    $benchAll[$module->getName()]['memory']['max']['size']  = $actualMemory;
+                    $benchAll[$module->getName()]['memory']['max']['agent'] = $agent;
                 }
             }
+
+            echo '.';
 
             $fullTime = microtime(true) - $timeStart;
 
@@ -845,205 +630,10 @@ exit;
             /*
              * Auswertung
              */
-            $allResults = [];
-
-            foreach ($checks as $propertyTitel => $x) {
-                if (empty($x['key'])) {
-                    $propertyName = $propertyTitel;
-                } else {
-                    $propertyName = $x['key'];
-                }
-
-                $detectionResults = $messageFormatter->formatMessage($propertyTitel, $propertyName);
-
-                foreach ($detectionResults as $result) {
-                    $matches[] = substr($result, 0, 1);
-                }
-
-                $allResults[$propertyTitel] = $detectionResults;
-            }
-
-            if (in_array('-', $matches)) {
-                $content = file_get_contents('src/templates/single-line.txt');
-                $content = str_replace('#ua#', $agent, $content);
-                $content = str_replace(
-                    '#               id#',
-                    str_pad($i, self::FIRST_COL_LENGTH - 1, ' ', STR_PAD_LEFT),
-                    $content
-                );
-
-                foreach ($collection as $module) {
-                    /* @var \UaComparator\Module\ModuleInterface $module */
-                    $content = str_replace(
-                        '#' . $module->getName() . '#',
-                        str_pad(number_format($module->getTime(), 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                        $content
-                    );
-                }
-
-                $content = str_replace(
-                    '#TimeSummary#',
-                    str_pad(number_format($fullTime, 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                    $content
-                );
-
-                $content .= '+--------------------+' . str_repeat('-', $collection->count()) . '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', $collection->count());
-                $content .= "\n";
-
-                $content .= '|                    |' . str_repeat(' ', $collection->count()) . '|                                                  |';
-                foreach ($collection as $module) {
-                    /* @var \UaComparator\Module\ModuleInterface $module */
-                    $content .= str_pad($module->getName(), self::COL_LENGTH, ' ') . '|';
-                }
-                $content .= "\n";
-
-                $content .= '|                    +' . str_repeat('-', $collection->count()) . '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', $collection->count());
-                $content .= "\n";
-
-                foreach ($allResults as $propertyTitel => $detectionResults) {
-                    $lineContent = '|                    |' . str_repeat(' ', $collection->count()) . '|'
-                        . str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT)
-                        . '|';
-
-                    foreach (array_values($detectionResults) as $index => $value) {
-                        $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
-                        $lineContent = substr_replace($lineContent, substr($value, 0, 1), 22 + $index, 1);
-                    }
-
-                    $content .= $lineContent .  "\n";
-                }
-
-                $content .= '+--------------------+';
-                $content .= str_repeat('-', $collection->count());
-                $content .= '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', $collection->count());
-                $content .= "\n";
-
-                $content .= '-';
-                ++$nokfound;
-            } elseif (in_array(':', $matches)) {
-                $content = ':';
-                ++$sosofound;
-            } else {
-                $content = '.';
-                ++$okfound;
-            }
-
-            if (($i % 100) === 0) {
-                $content .= "\n";
-            }
-
-            if (in_array('-', $matches)) {
-                $content = str_replace(
-                    [
-                        '#  plus#',
-                        '# minus#',
-                        '#  soso#',
-                        '#     percent1#',
-                        '#     percent2#',
-                        '#     percent3#',
-                    ],
-                    [
-                        str_pad($okfound, 8, ' ', STR_PAD_LEFT),
-                        str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
-                        str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
-                        str_pad(
-                            number_format((100 * $okfound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                        str_pad(
-                            number_format((100 * $nokfound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                        str_pad(
-                            number_format((100 * $sosofound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                    ],
-                    $content
-                );
-            }
-
-            $content = preg_replace('/\#[^#]*\#/', '               (n/a)', $content);
-
-            $output->write($content, false);
 
             ++$i;
         }
 
-        $output->writeln('');
-
-        $content = file_get_contents('src/templates/end-line.txt');
-
-        --$i;
-
-        if ($i < 1) {
-            $i = 1;
-        }
-
-        $content = str_replace(
-            [
-                '#  plus#',
-                '# minus#',
-                '#  soso#',
-                '#     percent1#',
-                '#     percent2#',
-                '#     percent3#',
-            ],
-            [
-                str_pad($okfound, 8, ' ', STR_PAD_LEFT),
-                str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
-                str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
-                str_pad(
-                    number_format((100 * $okfound / $i), 9, ',', '.'),
-                    15,
-                    ' ',
-                    STR_PAD_LEFT
-                ),
-                str_pad(
-                    number_format((100 * $nokfound / $i), 9, ',', '.'),
-                    15,
-                    ' ',
-                    STR_PAD_LEFT
-                ),
-                str_pad(
-                    number_format((100 * $sosofound / $i), 9, ',', '.'),
-                    15,
-                    ' ',
-                    STR_PAD_LEFT
-                ),
-            ],
-            $content
-        );
-
-        foreach ($allTimes as $moduleName => $timeData) {
-            $content = str_replace(
-                [
-                    '#' . $moduleName . ' - Summary#',
-                    '#' . $moduleName . ' - Max#',
-                    '#' . $moduleName . ' - Average#',
-                    '#' . $moduleName . ' - Min#',
-                ],
-                [
-                    str_pad(number_format($timeData['summary'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                    str_pad(number_format($timeData['max']['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                    str_pad(number_format(($timeData['summary'] / $i), 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                    str_pad(number_format($timeData['min']['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                ],
-                $content
-            );
-        }
-
-        $content = preg_replace('/\#[^#]*\# Sek\./', '                    (n/a)', $content);
-
-        $output->writeln($content);
+        var_dump($benchAll);
     }
 }

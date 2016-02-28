@@ -29,8 +29,6 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-use phpbrowscap\Browscap;
-
 chdir(dirname(__DIR__));
 
 $autoloadPaths = [
@@ -47,17 +45,23 @@ foreach ($autoloadPaths as $path) {
 
 ini_set('memory_limit', '-1');
 
-$buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
-$iniFile     = 'data/browscap-ua-test-' . $buildNumber . '/full_php_browscap.ini';
+// Create WURFL Configuration from an XML config file
+$wurflConfigOrig  = new \WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
+$wurflCacheOrig   = new \WURFL_Storage_Memory();
+$wurflStorageOrig = new \WURFL_Storage_File([\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/']);
 
-$browscap = new Browscap('data/cache/browscap2/');
+// Create a WURFL Manager Factory from the WURFL Configuration
+$wurflManagerFactoryOrig = new \WURFL_WURFLManagerFactory($wurflConfigOrig, $wurflStorageOrig, $wurflCacheOrig);
+ini_set('max_input_time', '6000');
+// Create a WURFL Manager
+$wurflManagerOrig = $wurflManagerFactoryOrig->create();
 
-$browscap->iniFilename   = 'full_browscap.ini';
-$browscap->localFile     = $iniFile;
-$browscap->cacheFilename = 'cache-full.php';
-$browscap->doAutoUpdate  = false;
-$browscap->silent        = false;
-$browscap->updateMethod  = Browscap::UPDATE_LOCAL;
-$browscap->lowercase     = true;
+$wurflManagerOrig->getAllDevicesID();
 
-$browscap->updateCache();
+try {
+    $device = $wurflManagerOrig->getDeviceForUserAgent('abcdef');
+
+    $device->getAllCapabilities();
+} catch (\Exception $e) {
+    //
+}

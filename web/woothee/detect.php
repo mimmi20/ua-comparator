@@ -31,7 +31,7 @@
 
 use Woothee\Classifier;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -51,7 +51,7 @@ header('Content-Type: application/json', true);
 
 $start    = microtime(true);
 $parser   = new Classifier();
-$result   = $parser->parse($_POST['useragent']);
+$result   = $parser->parse($_GET['useragent']);
 $duration = microtime(true) - $start;
 
 echo json_encode(

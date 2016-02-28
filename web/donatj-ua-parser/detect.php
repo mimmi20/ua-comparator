@@ -31,7 +31,7 @@
 
 use DeviceDetector\Parser\Client\Browser;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -51,20 +51,13 @@ header('Content-Type: application/json', true);
 
 $start    = microtime(true);
 
-$parserResult = parse_user_agent($_POST['useragent']);
-
-$result = [
-    'browser' => [
-        'name'    => $parserResult['browser'],
-        'version' => $parserResult['version'],
-    ],
-];
+$parserResult = parse_user_agent($_GET['useragent']);
 
 $duration = microtime(true) - $start;
 
 echo json_encode(
     [
-        'result'   => $result,
+        'result'   => [$parserResult],
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]

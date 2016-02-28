@@ -31,7 +31,7 @@
 
 use UAParser\Parser;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -51,7 +51,7 @@ header('Content-Type: application/json', true);
 
 $start    = microtime(true);
 $parser   = Parser::create();
-$result   = (object) $parser->parse($_POST['useragent']);
+$result   = (object) $parser->parse($_GET['useragent']);
 $duration = microtime(true) - $start;
 
 echo json_encode(

@@ -32,7 +32,7 @@
 use Crossjoin\Browscap\Browscap as CrBrowscap;
 use Crossjoin\Browscap\Cache\File;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -58,7 +58,7 @@ header('Content-Type: application/json', true);
 
 $start    = microtime(true);
 $parser   = new CrBrowscap();
-$result   = (object) $parser->getBrowser($_POST['useragent'])->getData();
+$result   = (object) $parser->getBrowser($_GET['useragent'])->getData();
 $duration = microtime(true) - $start;
 
 echo json_encode(

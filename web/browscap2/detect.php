@@ -31,7 +31,7 @@
 
 use phpbrowscap\Browscap;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -63,7 +63,7 @@ $browscap->lowercase     = true;
 header('Content-Type: application/json', true);
 
 $start    = microtime(true);
-$result   = $browscap->getBrowser($_POST['useragent'], false);
+$result   = $browscap->getBrowser($_GET['useragent'], false);
 $duration = microtime(true) - $start;
 
 echo json_encode(

@@ -29,10 +29,11 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-namespace UaComparator\Module;
+namespace UaComparator\Module\Check;
 
-use Monolog\Logger;
-use WurflCache\Adapter\AdapterInterface;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -43,72 +44,38 @@ use WurflCache\Adapter\AdapterInterface;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-interface ModuleInterface
+class Local implements CheckInterface
 {
     /**
-     * creates the module
+     * @param \GuzzleHttp\Psr7\Response          $response
+     * @param \Psr\Http\Message\RequestInterface $request
+     * @param string                             $agent
      *
-     * @param \Monolog\Logger                      $logger
-     * @param \WurflCache\Adapter\AdapterInterface $cache
+     * @throws \GuzzleHttp\Exception\RequestException
+     * @return array
      */
-    public function __construct(Logger $logger, AdapterInterface $cache);
+    public function getResponse(Response $response, RequestInterface $request, $agent)
+    {
+        /*
+         * no json returned?
+         */
+        $contentType = $response->getHeader('Content-Type');
+        if (! isset($contentType[0]) || $contentType[0] !== 'application/json') {
+            throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
 
-    /**
-     * initializes the module
-     *
-     * @return \UaComparator\Module\ModuleInterface
-     */
-    public function init();
+        $rawContent = $response->getBody()->getContents();
 
-    /**
-     * @param string $agent
-     *
-     * @return \UaComparator\Module\ModuleInterface
-     */
-    public function detect($agent);
+        if (false !== strpos($rawContent, '<')) {
+            throw new RequestException('An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
 
-    /**
-     * starts the detection timer
-     *
-     * @return \UaComparator\Module\ModuleInterface
-     */
-    public function startTimer();
+        $content = json_decode($rawContent);
 
-    /**
-     * stops the detection timer
-     *
-     * @return \UaComparator\Module\ModuleInterface
-     */
-    public function endTimer();
+        if (! $content instanceof \stdClass || ! isset($content->result)) {
+            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
 
-    /**
-     * returns the needed time
-     *
-     * @return float
-     */
-    public function getTime();
-
-    /**
-     * returns the maximum needed memory
-     *
-     * @return int
-     */
-    public function getMaxMemory();
-
-    /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @param string $name
-     *
-     * @return \UaComparator\Module\ModuleInterface
-     */
-    public function setName($name);
-
-    /**
-     * @return \stdClass|array|null
-     */
-    public function getDetectionResult();
+        return $content;
+    }
 }

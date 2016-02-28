@@ -29,33 +29,29 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-use Crossjoin\Browscap\Browscap as CrBrowscap;
-use Crossjoin\Browscap\Cache\File;
-use Crossjoin\Browscap\Updater\Local;
+namespace UaComparator\Module\Check;
 
-chdir(dirname(__DIR__));
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
 
-$autoloadPaths = [
-    'vendor/autoload.php',
-    '../../autoload.php',
-];
-
-foreach ($autoloadPaths as $path) {
-    if (file_exists($path)) {
-        require_once $path;
-        break;
-    }
+/**
+ * UaComparator.ini parsing class with caching and update capabilities
+ *
+ * @category  UaComparator
+ *
+ * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
+ * @copyright 2015 Thomas Mueller
+ * @license   http://www.opensource.org/licenses/MIT MIT License
+ */
+interface CheckInterface
+{
+    /**
+     * @param \GuzzleHttp\Psr7\Response          $response
+     * @param \Psr\Http\Message\RequestInterface $request
+     * @param string                             $agent
+     *
+     * @throws \GuzzleHttp\Exception\RequestException
+     * @return \stdClass|array|null
+     */
+    public function getResponse(Response $response, RequestInterface $request, $agent);
 }
-
-ini_set('memory_limit', '-1');
-
-$buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
-$iniFile     = 'data/browscap-ua-test-' . $buildNumber . '/full_php_browscap.ini';
-
-File::setCacheDirectory('data/cache/crossjoin/');
-CrBrowscap::setDatasetType(CrBrowscap::DATASET_TYPE_LARGE);
-
-$updater = new Local();
-$updater->setOption('LocalFile', $iniFile);
-CrBrowscap::setUpdater($updater);
-CrBrowscap::update(true);

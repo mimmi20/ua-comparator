@@ -31,7 +31,7 @@
 
 use WhichBrowser\Parser;
 
-chdir(dirname(__DIR__));
+chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
     'vendor/autoload.php',
@@ -50,37 +50,37 @@ ini_set('memory_limit', '-1');
 header('Content-Type: application/json', true);
 
 $start       = microtime(true);
-$parser      = new Parser(['User-Agent' => $_POST['useragent']]);
+$parser      = new Parser(['User-Agent' => $_GET['useragent']]);
 $resultArray = [
     'browser'    => [
         'using'   => $parser->browser->using,
         'family'  => null,
-        'channel' => $parser->browser->channel,
+        'channel' => (isset($parser->browser->channel) ? $parser->browser->channel : null),
         'stock'   => $parser->browser->stock,
         'hidden'  => $parser->browser->hidden,
         'mode'    => $parser->browser->mode,
         'type'    => $parser->browser->type,
-        'name'    => $parser->browser->name,
-        'alias'   => $parser->browser->alias,
-        'version' => $parser->browser->version,
+        'name'    => (isset($parser->browser->name) ? $parser->browser->name : null),
+        'alias'   => (isset($parser->browser->alias) ? $parser->browser->alias : null),
+        'version' => (isset($parser->browser->version) ? $parser->browser->version : null),
     ],
     'engine'     => [
-        'name'    => $parser->engine->name,
-        'alias'   => $parser->engine->alias,
-        'version' => $parser->engine->version,
+        'name'    => (isset($parser->engine->name) ? $parser->engine->name : null),
+        'alias'   => (isset($parser->engine->alias) ? $parser->engine->alias : null),
+        'version' => (isset($parser->engine->version) ? $parser->engine->version : null),
     ],
     'os'         => [
-        'family'  => $parser->os->family,
-        'name'    => $parser->os->name,
-        'alias'   => $parser->os->alias,
-        'version' => $parser->os->version,
+        'family'  => (isset($parser->os->family) ? $parser->os->family : null),
+        'name'    => (isset($parser->os->name) ? $parser->os->name : null),
+        'alias'   => (isset($parser->os->alias) ? $parser->os->alias : null),
+        'version' => (isset($parser->os->version) ? $parser->os->version : null),
     ],
     'device'     => [
-        'manufacturer' => $parser->device->manufacturer,
-        'model'        => $parser->device->model,
-        'series'       => $parser->device->series,
-        'carrier'      => $parser->device->carrier,
-        'identifier'   => $parser->device->identifier,
+        'manufacturer' => (isset($parser->device->manufacturer) ? $parser->device->manufacturer : null),
+        'model'        => (isset($parser->device->model) ? $parser->device->model : null),
+        'series'       => (isset($parser->device->series) ? $parser->device->series : null),
+        'carrier'      => (isset($parser->device->carrier) ? $parser->device->carrier : null),
+        'identifier'   => (isset($parser->device->identifier) ? $parser->device->identifier : null),
         'flag'         => $parser->device->flag,
         'type'         => $parser->device->type,
         'subtype'      => $parser->device->subtype,

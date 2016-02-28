@@ -37,9 +37,8 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 use Monolog\Logger;
 use UaComparator\Helper\Request;
-use UaDataMapper\InputMapper;
-use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
+use UaComparator\Module\Check\CheckInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -63,27 +62,12 @@ class Http implements ModuleInterface
     private $cache = null;
 
     /**
-     * @var float
-     */
-    private $timer = 0.0;
-
-    /**
-     * @var float
-     */
-    private $duration = 0.0;
-
-    /**
      * @var string
      */
     private $name = '';
 
     /**
-     * @var int
-     */
-    private $id = 0;
-
-    /**
-     * @var \stdClass|null
+     * @var \GuzzleHttp\Psr7\Response|null
      */
     private $detectionResult = null;
 
@@ -91,6 +75,36 @@ class Http implements ModuleInterface
      * @var string
      */
     private $agent = '';
+
+    /**
+     * @var null|\Ubench
+     */
+    private $bench = null;
+
+    /**
+     * @var null|array
+     */
+    private $config = null;
+
+    /**
+     * @var null|\UaComparator\Module\Check\CheckInterface
+     */
+    private $check = null;
+
+    /**
+     * @var \GuzzleHttp\Psr7\Request
+     */
+    private $request = null;
+
+    /**
+     * @var float
+     */
+    private $duration = 0.0;
+
+    /**
+     * @var int
+     */
+    private $memory = 0;
 
     /**
      * creates the module
@@ -102,6 +116,8 @@ class Http implements ModuleInterface
     {
         $this->logger = $logger;
         $this->cache  = $cache;
+
+        $this->bench = new \Ubench();
     }
 
     /**
@@ -116,34 +132,34 @@ class Http implements ModuleInterface
 
     /**
      * @param string $agent
-     * @param array  $config
      * @param array  $headers
      *
      * @return \UaComparator\Module\Http
      */
-    public function detect($agent, array $config = [], array $headers = [])
+    public function detect($agent, array $headers = [])
     {
         $this->agent = $agent;
         $body        = null;
 
-        $params = [$config['ua-key'] => $agent] + $config['params'];
+        $params  = [$this->config['ua-key'] => $agent] + $this->config['params'];
+        $headers = $headers + $this->config['headers'];
 
-        if ('GET' === $config['method']) {
-            $uri = $config['uri'] . '?' . http_build_query($params, null, '&');
+        if ('GET' === $this->config['method']) {
+            $uri = $this->config['uri'] . '?' . http_build_query($params, null, '&');
         } else {
-            $uri  = $config['uri'];
+            $uri  = $this->config['uri'];
             $body = http_build_query($params, null, '&');
         }
 
-        $request       = new GuzzleHttpRequest($config['method'], $uri, $config['headers'], $body);
+        $this->request = new GuzzleHttpRequest($this->config['method'], $uri, $headers, $body);
         $requestHelper = new Request();
 
+        $this->detectionResult = null;
+
         try {
-            $this->detectionResult = $requestHelper->getResponse($request, new Client());
+            $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
         } catch (RequestException $e) {
             $this->logger->error($e);
-
-            $this->detectionResult = null;
 
             return $this;
         }
@@ -154,12 +170,11 @@ class Http implements ModuleInterface
     /**
      * starts the detection timer
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\Http
      */
     public function startTimer()
     {
-        $this->duration = 0.0;
-        $this->timer    = microtime(true);
+        $this->bench->start();
 
         return $this;
     }
@@ -167,18 +182,20 @@ class Http implements ModuleInterface
     /**
      * stops the detection timer
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\Http
      */
     public function endTimer()
     {
-        $this->duration = microtime(true) - $this->timer;
-        $this->timer    = 0.0;
+        $this->bench->end();
+
+        $this->duration = $this->bench->getTime(true);
+        $this->memory   = $this->bench->getMemoryPeak(true);
 
         return $this;
     }
 
     /**
-     * returns the duration
+     * returns the needed time
      *
      * @return float
      */
@@ -188,33 +205,13 @@ class Http implements ModuleInterface
     }
 
     /**
-     * returns the required memory
+     * returns the maximum needed memory
      *
      * @return int
      */
-    public function getMemory()
+    public function getMaxMemory()
     {
-        return 0;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return \UaComparator\Module\CrossJoin
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
+        return $this->memory;
     }
 
     /**
@@ -228,7 +225,7 @@ class Http implements ModuleInterface
     /**
      * @param string $name
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\Http
      */
     public function setName($name)
     {
@@ -238,67 +235,78 @@ class Http implements ModuleInterface
     }
 
     /**
-     * @return \UaResult\Result
+     * @return array|null
      */
-    public function getDetectionResult()
+    public function getConfig()
     {
-        return $this->map($this->detectionResult);
+        return $this->config;
     }
 
     /**
-     * Gets the information about the browser by User Agent
+     * @param array $config
      *
-     * @param \stdClass|null $parserResult
-     *
-     * @return \UaResult\Result
+     * @return \UaComparator\Module\Http
      */
-    private function map(\stdClass $parserResult = null)
+    public function setConfig(array $config)
     {
-        $result = new Result($this->agent, $this->logger);
-        $mapper = new InputMapper();
+        $this->config = $config;
 
-        if (null === $parserResult) {
-            return $result;
+        return $this;
+    }
+
+    /**
+     * @return null|\UaComparator\Module\Check\CheckInterface
+     */
+    public function getCheck()
+    {
+        return $this->check;
+    }
+
+    /**
+     * @param \UaComparator\Module\Check\CheckInterface $check
+     *
+     * @return \UaComparator\Module\Http
+     */
+    public function setCheck(CheckInterface $check)
+    {
+        $this->check = $check;
+
+        return $this;
+    }
+
+    /**
+     * @return \stdClass|array|null
+     */
+    public function getDetectionResult()
+    {
+        if (null === $this->detectionResult) {
+            return null;
         }
 
-        $browserName    = $mapper->mapBrowserName($parserResult->browserName);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult->browserVersion, $browserName);
+        try {
+            $return = $this->getCheck()->getResponse($this->detectionResult, $this->request, $this->agent);
+        } catch (RequestException $e) {
+            $this->logger->error($e);
 
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
-        /*
-        $result->setCapability('browser_type', $mapper->mapBrowserType('browser', $browserName)->getName());
-
-        if (!empty($parserResult['client']['type'])) {
-            $browserType = $parserResult['client']['type'];
-        } else {
-            $browserType = null;
+            return null;
         }
 
-        $result->setCapability('browser_type', $mapper->mapBrowserType($browserType, $browserName)->getName());
-        /**/
+        if (isset($return->duration)) {
+            $this->duration = $return->duration;
 
-        if (isset($parserResult->browserRenderingEngine)) {
-            $engineName = $parserResult->browserRenderingEngine;
-
-            if ('unknown' === $engineName || '' === $engineName) {
-                $engineName = null;
-            }
-
-            $result->setCapability('renderingengine_name', $engineName);
+            unset($return->duration);
         }
 
-        if (isset($parserResult->osName)) {
-            $osName    = $mapper->mapOsName($parserResult->osName);
-            $osVersion = $mapper->mapOsVersion($parserResult->osVersion, $osName);
+        if (isset($return->memory)) {
+            $this->memory = $return->memory;
 
-            $result->setCapability('device_os', $osName);
-            $result->setCapability('device_os_version', $osVersion);
+            unset($return->memory);
         }
 
-        $deviceType = $parserResult->primaryHardwareType;
-        $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
+        if (isset($return->result)) {
+            return $return->result;
+        }
 
-        return $result;
+        return $return;
     }
 }
