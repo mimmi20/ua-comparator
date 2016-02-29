@@ -35,13 +35,11 @@ use DeviceDetector\Parser\Client\Browser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
-use GuzzleHttp\Psr7\Response;
 use Monolog\Logger;
-use Psr\Http\Message\RequestInterface;
 use UaComparator\Helper\Request;
-use UaDataMapper\InputMapper;
-use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
+use UaComparator\Module\Check\CheckInterface;
+use UaComparator\Module\Mapper\MapperInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -65,27 +63,12 @@ class DeviceAtlasCom implements ModuleInterface
     private $cache = null;
 
     /**
-     * @var float
-     */
-    private $timer = 0.0;
-
-    /**
-     * @var float
-     */
-    private $duration = 0.0;
-
-    /**
      * @var string
      */
     private $name = '';
 
     /**
-     * @var int
-     */
-    private $id = 0;
-
-    /**
-     * @var \stdClass|null
+     * @var \GuzzleHttp\Psr7\Response|null
      */
     private $detectionResult = null;
 
@@ -95,48 +78,58 @@ class DeviceAtlasCom implements ModuleInterface
     private $agent = '';
 
     /**
-     * @var string
+     * @var null|\Ubench
      */
-    private static $uri = 'http://region0.deviceatlascloud.com/v1/detect/properties';
+    private $bench = null;
 
     /**
-     * @var string
+     * @var null|array
      */
-    private $apiKey = '';
+    private $config = null;
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var null|\UaComparator\Module\Check\CheckInterface
      */
-    private $client = null;
+    private $check = null;
+
+    /**
+     * @var null|\UaComparator\Module\Mapper\MapperInterface
+     */
+    private $mapper = null;
+
+    /**
+     * @var \GuzzleHttp\Psr7\Request
+     */
+    private $request = null;
+
+    /**
+     * @var float
+     */
+    private $duration = 0.0;
+
+    /**
+     * @var int
+     */
+    private $memory = 0;
 
     /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
      * @param \WurflCache\Adapter\AdapterInterface $cache
-     * @param string|null                          $apiKey
-     * @param \GuzzleHttp\Client|null              $client
      */
-    public function __construct(Logger $logger, AdapterInterface $cache, $apiKey = null, Client $client = null)
+    public function __construct(Logger $logger, AdapterInterface $cache)
     {
         $this->logger = $logger;
         $this->cache  = $cache;
 
-        if (null !== $apiKey) {
-            $this->apiKey = $apiKey;
-        }
-
-        if (null !== $client) {
-            $this->client = $client;
-        } else {
-            $this->client = new Client();
-        }
+        $this->bench = new \Ubench();
     }
 
     /**
      * initializes the module
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\DeviceAtlasCom
      */
     public function init()
     {
@@ -147,50 +140,36 @@ class DeviceAtlasCom implements ModuleInterface
      * @param string $agent
      * @param array  $headers
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\DeviceAtlasCom
      */
     public function detect($agent, array $headers = [])
     {
         $this->agent = $agent;
+        $body        = null;
 
-        $parameters = '?licencekey=' . urlencode($this->apiKey);
-        $parameters .= '&useragent=' . urlencode($agent);
+        $params  = [$this->config['ua-key'] => $agent] + $this->config['params'];
+        $headers = $headers + $this->config['headers'];
 
-        $uri = self::$uri . $parameters;
-
-        // key to lower
-        $headers = array_change_key_case($headers);
-
-        $newHeaders = [];
-        foreach ($headers as $key => $value) {
-            $newHeaders['X-DA-' . $key] = $value;
+        if ('GET' === $this->config['method']) {
+            $uri = $this->config['uri'] . '?' . http_build_query($params, null, '&');
+        } else {
+            $uri  = $this->config['uri'];
+            $body = http_build_query($params, null, '&');
         }
 
-        $newHeaders['User-Agent'] = 'ThaDafinser/UserAgentParser:v1.4';
-
-        $request       = new GuzzleHttpRequest('GET', $uri, $newHeaders);
+        $this->request = new GuzzleHttpRequest($this->config['method'], $uri, $headers, $body);
         $requestHelper = new Request();
 
-        try {
-            $response = $requestHelper->getResponse($request, $this->client);
-        } catch (RequestException $e) {
-            $this->logger->error($e);
-
-            $this->detectionResult = null;
-
-            return $this;
-        }
+        $this->detectionResult = null;
 
         try {
-            $this->detectionResult = $this->checkResponse($response, $request, $agent);
+            $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
         } catch (RequestException $e) {
-            $this->detectionResult = null;
-
             /* @var $prevEx \GuzzleHttp\Exception\ClientException */
             $prevEx = $e->getPrevious();
 
             if ($prevEx->hasResponse() === true && $prevEx->getResponse()->getStatusCode() === 403) {
-                $this->logger->error(new RequestException('Your API key "' . $this->apiKey . '" is not valid for ' . $this->getName(), $request, null, $e));
+                $this->logger->error(new RequestException('Your API key is not valid', $this->request, $prevEx->getResponse(), null, $prevEx));
 
                 return $this;
             }
@@ -202,48 +181,13 @@ class DeviceAtlasCom implements ModuleInterface
     }
 
     /**
-     * @param \GuzzleHttp\Psr7\Response          $response
-     * @param \Psr\Http\Message\RequestInterface $request
-     * @param string                             $agent
-     *
-     * @throws \GuzzleHttp\Exception\RequestException
-     * @return \stdClass
-     */
-    private function checkResponse(Response $response, RequestInterface $request, $agent)
-    {
-        /*
-         * no json returned?
-         */
-        $contentType = $response->getHeader('Content-Type');
-        if (! isset($contentType[0]) || $contentType[0] !== 'application/json; charset=UTF-8') {
-            throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
-        }
-
-        $content = json_decode($response->getBody()->getContents());
-
-        if (! $content instanceof \stdClass || ! isset($content->properties)) {
-            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
-        }
-
-        /*
-         * No result found?
-         */
-        if (! $content->properties instanceof \stdClass || count((array) $content->properties) === 0) {
-            throw new RequestException('No result found for user agent: ' . $agent, $request);
-        }
-
-        return $content->properties;
-    }
-
-    /**
      * starts the detection timer
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\DeviceAtlasCom
      */
     public function startTimer()
     {
-        $this->duration = 0.0;
-        $this->timer    = microtime(true);
+        $this->bench->start();
 
         return $this;
     }
@@ -251,18 +195,20 @@ class DeviceAtlasCom implements ModuleInterface
     /**
      * stops the detection timer
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\DeviceAtlasCom
      */
     public function endTimer()
     {
-        $this->duration = microtime(true) - $this->timer;
-        $this->timer    = 0.0;
+        $this->bench->end();
+
+        $this->duration = $this->bench->getTime(true);
+        $this->memory   = $this->bench->getMemoryPeak(true);
 
         return $this;
     }
 
     /**
-     * returns the duration
+     * returns the needed time
      *
      * @return float
      */
@@ -272,33 +218,13 @@ class DeviceAtlasCom implements ModuleInterface
     }
 
     /**
-     * returns the required memory
+     * returns the maximum needed memory
      *
      * @return int
      */
-    public function getMemory()
+    public function getMaxMemory()
     {
-        return 0;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return \UaComparator\Module\CrossJoin
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
+        return $this->memory;
     }
 
     /**
@@ -312,7 +238,7 @@ class DeviceAtlasCom implements ModuleInterface
     /**
      * @param string $name
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\DeviceAtlasCom
      */
     public function setName($name)
     {
@@ -322,67 +248,104 @@ class DeviceAtlasCom implements ModuleInterface
     }
 
     /**
-     * @return \UaResult\Result
+     * @return array|null
      */
-    public function getDetectionResult()
+    public function getConfig()
     {
-        return $this->map($this->detectionResult);
+        return $this->config;
     }
 
     /**
-     * Gets the information about the browser by User Agent
+     * @param array $config
      *
-     * @param \stdClass|null $parserResult
-     *
-     * @return \UaResult\Result
+     * @return \UaComparator\Module\DeviceAtlasCom
      */
-    private function map(\stdClass $parserResult = null)
+    public function setConfig(array $config)
     {
-        $result = new Result($this->agent, $this->logger);
-        $mapper = new InputMapper();
+        $this->config = $config;
 
-        if (null === $parserResult) {
-            return $result;
+        return $this;
+    }
+
+    /**
+     * @return null|\UaComparator\Module\Check\CheckInterface
+     */
+    public function getCheck()
+    {
+        return $this->check;
+    }
+
+    /**
+     * @param \UaComparator\Module\Check\CheckInterface $check
+     *
+     * @return \UaComparator\Module\DeviceAtlasCom
+     */
+    public function setCheck(CheckInterface $check)
+    {
+        $this->check = $check;
+
+        return $this;
+    }
+
+    /**
+     * @return null|\UaComparator\Module\Mapper\MapperInterface
+     */
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
+
+    /**
+     * @param \UaComparator\Module\Mapper\MapperInterface $mapper
+     *
+     * @return \UaComparator\Module\DeviceAtlasCom
+     */
+    public function setMapper(MapperInterface $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
+
+    /**
+     * @return \UaResult\Result\Result|null
+     */
+    public function getDetectionResult()
+    {
+        if (null === $this->detectionResult) {
+            return null;
         }
 
-        $browserName    = $mapper->mapBrowserName($parserResult->browserName);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult->browserVersion, $browserName);
+        try {
+            $return = $this->getCheck()->getResponse($this->detectionResult, $this->request, $this->agent);
+        } catch (RequestException $e) {
+            $this->logger->error($e);
 
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
-        /*
-        $result->setCapability('browser_type', $mapper->mapBrowserType('browser', $browserName)->getName());
-
-        if (!empty($parserResult['client']['type'])) {
-            $browserType = $parserResult['client']['type'];
-        } else {
-            $browserType = null;
+            return null;
         }
 
-        $result->setCapability('browser_type', $mapper->mapBrowserType($browserType, $browserName)->getName());
-        /**/
+        if (isset($return->duration)) {
+            $this->duration = $return->duration;
 
-        if (isset($parserResult->browserRenderingEngine)) {
-            $engineName = $parserResult->browserRenderingEngine;
+            unset($return->duration);
+        }
 
-            if ('unknown' === $engineName || '' === $engineName) {
-                $engineName = null;
+        if (isset($return->memory)) {
+            $this->memory = $return->memory;
+
+            unset($return->memory);
+        }
+
+        try {
+            if (isset($return->result)) {
+                return $this->getMapper()->map($return->result);
             }
 
-            $result->setCapability('renderingengine_name', $engineName);
+            return $this->getMapper()->map($return);
+        } catch (\UnexpectedValueException $e) {
+            $this->logger->error($e);
         }
 
-        if (isset($parserResult->osName)) {
-            $osName    = $mapper->mapOsName($parserResult->osName);
-            $osVersion = $mapper->mapOsVersion($parserResult->osVersion, $osName);
-
-            $result->setCapability('device_os', $osName);
-            $result->setCapability('device_os_version', $osVersion);
-        }
-
-        $deviceType = $parserResult->primaryHardwareType;
-        $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
-
-        return $result;
+        return null;
     }
 }

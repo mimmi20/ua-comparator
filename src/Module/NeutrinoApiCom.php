@@ -31,17 +31,16 @@
 
 namespace UaComparator\Module;
 
-use DeviceDetector\Parser\Client\Browser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
-use GuzzleHttp\Psr7\Response;
 use Monolog\Logger;
-use Psr\Http\Message\RequestInterface;
 use UaComparator\Helper\Request;
-use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
+use DeviceDetector\Parser\Client\Browser;
+use UaComparator\Module\Check\CheckInterface;
+use UaComparator\Module\Mapper\MapperInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -65,27 +64,12 @@ class NeutrinoApiCom implements ModuleInterface
     private $cache = null;
 
     /**
-     * @var float
-     */
-    private $timer = 0.0;
-
-    /**
-     * @var float
-     */
-    private $duration = 0.0;
-
-    /**
      * @var string
      */
     private $name = '';
 
     /**
-     * @var int
-     */
-    private $id = 0;
-
-    /**
-     * @var \stdClass|null
+     * @var \GuzzleHttp\Psr7\Response|null
      */
     private $detectionResult = null;
 
@@ -95,58 +79,58 @@ class NeutrinoApiCom implements ModuleInterface
     private $agent = '';
 
     /**
-     * @var string
+     * @var null|\Ubench
      */
-    private static $uri = 'https://neutrinoapi.com/user-agent-info';
+    private $bench = null;
 
     /**
-     * @var string
+     * @var null|array
      */
-    private $apiKey = '';
+    private $config = null;
 
     /**
-     * @var string
+     * @var null|\UaComparator\Module\Check\CheckInterface
      */
-    private $apiUserId = '';
+    private $check = null;
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var null|\UaComparator\Module\Mapper\MapperInterface
      */
-    private $client = null;
+    private $mapper = null;
+
+    /**
+     * @var \GuzzleHttp\Psr7\Request
+     */
+    private $request = null;
+
+    /**
+     * @var float
+     */
+    private $duration = 0.0;
+
+    /**
+     * @var int
+     */
+    private $memory = 0;
 
     /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
      * @param \WurflCache\Adapter\AdapterInterface $cache
-     * @param string|null                          $apiKey
-     * @param string|null                          $apiUserId
-     * @param \GuzzleHttp\Client|null              $client
      */
-    public function __construct(Logger $logger, AdapterInterface $cache, $apiKey = null, $apiUserId = null, Client $client = null)
+    public function __construct(Logger $logger, AdapterInterface $cache)
     {
         $this->logger = $logger;
         $this->cache  = $cache;
 
-        if (null !== $apiKey) {
-            $this->apiKey = $apiKey;
-        }
-
-        if (null !== $apiUserId) {
-            $this->apiUserId = $apiUserId;
-        }
-
-        if (null !== $client) {
-            $this->client = $client;
-        } else {
-            $this->client = new Client();
-        }
+        $this->bench = new \Ubench();
     }
 
     /**
      * initializes the module
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\NeutrinoApiCom
      */
     public function init()
     {
@@ -155,121 +139,56 @@ class NeutrinoApiCom implements ModuleInterface
 
     /**
      * @param string $agent
+     * @param array  $headers
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\NeutrinoApiCom
      */
-    public function detect($agent)
+    public function detect($agent, array $headers = [])
     {
         $this->agent = $agent;
+        $body        = null;
 
-        $params = [
-            'user-id'       => $this->apiUserId,
-            'api-key'       => $this->apiKey,
-            'output-format' => 'json',
-            'output-case'   => 'snake',
-            'user-agent'    => $agent,
-        ];
+        $params  = [$this->config['ua-key'] => $agent] + $this->config['params'];
+        $headers = $headers + $this->config['headers'];
 
-        $body = http_build_query($params, null, '&');
+        if ('GET' === $this->config['method']) {
+            $uri = $this->config['uri'] . '?' . http_build_query($params, null, '&');
+        } else {
+            $uri  = $this->config['uri'];
+            $body = http_build_query($params, null, '&');
+        }
 
-        $request = new GuzzleHttpRequest(
-            'POST',
-            self::$uri,
-            ['Content-Type' => 'application/x-www-form-urlencoded'],
-            $body
-        );
-
+        $this->request = new GuzzleHttpRequest($this->config['method'], $uri, $headers, $body);
         $requestHelper = new Request();
 
-        try {
-            $response = $requestHelper->getResponse($request, $this->client);
-        } catch (RequestException $e) {
-            $this->detectionResult = null;
+        $this->detectionResult = null;
 
+        try {
+            $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
+        } catch (RequestException $e) {
             /* @var $prevEx \GuzzleHttp\Exception\ClientException */
             $prevEx = $e->getPrevious();
 
             if ($prevEx->hasResponse() === true && $prevEx->getResponse()->getStatusCode() === 403) {
-                $this->logger->error(new RequestException('Your API userId "' . $this->apiUserId . '" and key "' . $this->apiKey . '" is not valid for ' . $this->getName(), $request, null, $e));
+                $this->logger->error(new RequestException('Your API userId  and key are not valid', $this->request, null, $e));
 
                 return $this;
             }
 
             $this->logger->error($e);
-
-            return $this;
-        }
-
-        try {
-            $this->detectionResult = $this->checkResponse($response, $request);
-        } catch (RequestException $e) {
-            $this->logger->error($e);
-
-            $this->detectionResult = null;
         }
 
         return $this;
     }
 
     /**
-     * @param \GuzzleHttp\Psr7\Response          $response
-     * @param \Psr\Http\Message\RequestInterface $request
-     *
-     * @throws \GuzzleHttp\Exception\RequestException
-     * @return \stdClass
-     */
-    private function checkResponse(Response $response, RequestInterface $request)
-    {
-        /*
-         * no json returned?
-         */
-        $contentType = $response->getHeader('Content-Type');
-
-        if (! isset($contentType[0]) || $contentType[0] !== 'application/json;charset=UTF-8') {
-            throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
-        }
-
-        $content = json_decode($response->getBody()->getContents());
-
-        /*
-         * errors
-         */
-        if (isset($content->api_error)) {
-            switch ($content->api_error) {
-
-                case 1:
-                    throw new RequestException('"' . $content->api_error_msg . '" response from "' . $request->getUri() . '". Response is "' . print_r($content, true) . '"', $request);
-                    break;
-
-                case 2:
-                    throw new RequestException('Exceeded the maximum number of request with API userId "' . $this->apiUserId . '" and key "' . $this->apiKey . '" for ' . $this->getName(), $request);
-                    break;
-
-                default:
-                    throw new RequestException('"' . $content->api_error_msg . '" response from "' . $request->getUri() . '". Response is "' . print_r($content, true) . '"', $request);
-                    break;
-            }
-        }
-
-        /*
-         * Missing data?
-         */
-        if (! $content instanceof \stdClass) {
-            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
-        }
-
-        return $content;
-    }
-
-    /**
      * starts the detection timer
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\NeutrinoApiCom
      */
     public function startTimer()
     {
-        $this->duration = 0.0;
-        $this->timer    = microtime(true);
+        $this->bench->start();
 
         return $this;
     }
@@ -277,18 +196,20 @@ class NeutrinoApiCom implements ModuleInterface
     /**
      * stops the detection timer
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\NeutrinoApiCom
      */
     public function endTimer()
     {
-        $this->duration = microtime(true) - $this->timer;
-        $this->timer    = 0.0;
+        $this->bench->end();
+
+        $this->duration = $this->bench->getTime(true);
+        $this->memory   = $this->bench->getMemoryPeak(true);
 
         return $this;
     }
 
     /**
-     * returns the duration
+     * returns the needed time
      *
      * @return float
      */
@@ -298,33 +219,13 @@ class NeutrinoApiCom implements ModuleInterface
     }
 
     /**
-     * returns the required memory
+     * returns the maximum needed memory
      *
      * @return int
      */
-    public function getMemory()
+    public function getMaxMemory()
     {
-        return 0;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return \UaComparator\Module\CrossJoin
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
+        return $this->memory;
     }
 
     /**
@@ -338,7 +239,7 @@ class NeutrinoApiCom implements ModuleInterface
     /**
      * @param string $name
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\NeutrinoApiCom
      */
     public function setName($name)
     {
@@ -348,52 +249,104 @@ class NeutrinoApiCom implements ModuleInterface
     }
 
     /**
-     * @return \UaResult\Result
+     * @return array|null
      */
-    public function getDetectionResult()
+    public function getConfig()
     {
-        return $this->map($this->detectionResult);
+        return $this->config;
     }
 
     /**
-     * Gets the information about the browser by User Agent
+     * @param array $config
      *
-     * @param \stdClass|null $parserResult
-     *
-     * @return \UaResult\Result
+     * @return \UaComparator\Module\NeutrinoApiCom
      */
-    private function map(\stdClass $parserResult = null)
+    public function setConfig(array $config)
     {
-        $result = new Result($this->agent, $this->logger);
-        $mapper = new InputMapper();
+        $this->config = $config;
 
-        if (null === $parserResult) {
-            return $result;
+        return $this;
+    }
+
+    /**
+     * @return null|\UaComparator\Module\Check\CheckInterface
+     */
+    public function getCheck()
+    {
+        return $this->check;
+    }
+
+    /**
+     * @param \UaComparator\Module\Check\CheckInterface $check
+     *
+     * @return \UaComparator\Module\NeutrinoApiCom
+     */
+    public function setCheck(CheckInterface $check)
+    {
+        $this->check = $check;
+
+        return $this;
+    }
+
+    /**
+     * @return null|\UaComparator\Module\Mapper\MapperInterface
+     */
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
+
+    /**
+     * @param \UaComparator\Module\Mapper\MapperInterface $mapper
+     *
+     * @return \UaComparator\Module\NeutrinoApiCom
+     */
+    public function setMapper(MapperInterface $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
+
+    /**
+     * @return \UaResult\Result\Result|null
+     */
+    public function getDetectionResult()
+    {
+        if (null === $this->detectionResult) {
+            return null;
         }
 
-        $browserName    = $mapper->mapBrowserName($parserResult->browser_name);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult->version, $browserName);
+        try {
+            $return = $this->getCheck()->getResponse($this->detectionResult, $this->request, $this->agent);
+        } catch (RequestException $e) {
+            $this->logger->error($e);
 
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
-
-        if (isset($parserResult->operating_system_family)) {
-            $osName    = $mapper->mapOsName($parserResult->operating_system_family);
-            $osVersion = $mapper->mapOsVersion($parserResult->operating_system_version, $osName);
-
-            $result->setCapability('device_os', $osName);
-            $result->setCapability('device_os_version', $osVersion);
+            return null;
         }
 
-        $deviceName      = $parserResult->mobile_model;
-        $deviceBrandName = $parserResult->mobile_brand;
+        if (isset($return->duration)) {
+            $this->duration = $return->duration;
 
-        $result->setCapability('marketing_name', $mapper->mapDeviceMarketingName($deviceName));
-        $result->setCapability('brand_name', $mapper->mapDeviceBrandName($deviceBrandName, $deviceName));
+            unset($return->duration);
+        }
 
-        $deviceType = $parserResult->type;
-        $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
+        if (isset($return->memory)) {
+            $this->memory = $return->memory;
 
-        return $result;
+            unset($return->memory);
+        }
+
+        try {
+            if (isset($return->result)) {
+                return $this->getMapper()->map($return->result);
+            }
+
+            return $this->getMapper()->map($return);
+        } catch (\UnexpectedValueException $e) {
+            $this->logger->error($e);
+        }
+
+        return null;
     }
 }

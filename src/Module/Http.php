@@ -31,7 +31,6 @@
 
 namespace UaComparator\Module;
 
-use DeviceDetector\Parser\Client\Browser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
@@ -39,6 +38,7 @@ use Monolog\Logger;
 use UaComparator\Helper\Request;
 use WurflCache\Adapter\AdapterInterface;
 use UaComparator\Module\Check\CheckInterface;
+use UaComparator\Module\Mapper\MapperInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -90,6 +90,11 @@ class Http implements ModuleInterface
      * @var null|\UaComparator\Module\Check\CheckInterface
      */
     private $check = null;
+
+    /**
+     * @var null|\UaComparator\Module\Mapper\MapperInterface
+     */
+    private $mapper = null;
 
     /**
      * @var \GuzzleHttp\Psr7\Request
@@ -160,8 +165,6 @@ class Http implements ModuleInterface
             $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
         } catch (RequestException $e) {
             $this->logger->error($e);
-
-            return $this;
         }
 
         return $this;
@@ -275,7 +278,27 @@ class Http implements ModuleInterface
     }
 
     /**
-     * @return \stdClass|array|null
+     * @return null|\UaComparator\Module\Mapper\MapperInterface
+     */
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
+
+    /**
+     * @param \UaComparator\Module\Mapper\MapperInterface $mapper
+     *
+     * @return \UaComparator\Module\Http
+     */
+    public function setMapper(MapperInterface $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
+
+    /**
+     * @return \UaResult\Result\Result|null
      */
     public function getDetectionResult()
     {
@@ -303,10 +326,16 @@ class Http implements ModuleInterface
             unset($return->memory);
         }
 
-        if (isset($return->result)) {
-            return $return->result;
+        try {
+            if (isset($return->result)) {
+                return $this->getMapper()->map($return->result);
+            }
+
+            return $this->getMapper()->map($return);
+        } catch (\UnexpectedValueException $e) {
+            $this->logger->error($e);
         }
 
-        return $return;
+        return null;
     }
 }

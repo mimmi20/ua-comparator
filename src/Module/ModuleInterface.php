@@ -108,7 +108,7 @@ interface ModuleInterface
     public function setName($name);
 
     /**
-     * @return \stdClass|array|null
+     * @return \UaResult\Result\Result|null
      */
     public function getDetectionResult();
 }

@@ -31,17 +31,16 @@
 
 namespace UaComparator\Module;
 
-use DeviceDetector\Parser\Client\Browser;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
-use GuzzleHttp\Psr7\Response;
 use Monolog\Logger;
-use Psr\Http\Message\RequestInterface;
 use UaComparator\Helper\Request;
-use UaDataMapper\InputMapper;
 use UaResult\Result;
 use WurflCache\Adapter\AdapterInterface;
+use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use UaComparator\Module\Check\CheckInterface;
+use UaComparator\Module\Mapper\MapperInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -65,27 +64,12 @@ class UserAgentApiCom implements ModuleInterface
     private $cache = null;
 
     /**
-     * @var float
-     */
-    private $timer = 0.0;
-
-    /**
-     * @var float
-     */
-    private $duration = 0.0;
-
-    /**
      * @var string
      */
     private $name = '';
 
     /**
-     * @var int
-     */
-    private $id = 0;
-
-    /**
-     * @var \stdClass|null
+     * @var \GuzzleHttp\Psr7\Response|null
      */
     private $detectionResult = null;
 
@@ -95,48 +79,58 @@ class UserAgentApiCom implements ModuleInterface
     private $agent = '';
 
     /**
-     * @var string
+     * @var null|\Ubench
      */
-    private static $uri = 'https://useragentapi.com/api/v3/json';
+    private $bench = null;
 
     /**
-     * @var string
+     * @var null|array
      */
-    private $apiKey = '';
+    private $config = null;
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var null|\UaComparator\Module\Check\CheckInterface
      */
-    private $client = null;
+    private $check = null;
+
+    /**
+     * @var null|\UaComparator\Module\Mapper\MapperInterface
+     */
+    private $mapper = null;
+
+    /**
+     * @var \GuzzleHttp\Psr7\Request
+     */
+    private $request = null;
+
+    /**
+     * @var float
+     */
+    private $duration = 0.0;
+
+    /**
+     * @var int
+     */
+    private $memory = 0;
 
     /**
      * creates the module
      *
      * @param \Monolog\Logger                      $logger
      * @param \WurflCache\Adapter\AdapterInterface $cache
-     * @param string|null                          $apiKey
-     * @param \GuzzleHttp\Client|null              $client
      */
-    public function __construct(Logger $logger, AdapterInterface $cache, $apiKey = null, Client $client = null)
+    public function __construct(Logger $logger, AdapterInterface $cache)
     {
         $this->logger = $logger;
         $this->cache  = $cache;
 
-        if (null !== $apiKey) {
-            $this->apiKey = $apiKey;
-        }
-
-        if (null !== $client) {
-            $this->client = $client;
-        } else {
-            $this->client = new Client();
-        }
+        $this->bench = new \Ubench();
     }
 
     /**
      * initializes the module
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\UserAgentApiCom
      */
     public function init()
     {
@@ -145,26 +139,33 @@ class UserAgentApiCom implements ModuleInterface
 
     /**
      * @param string $agent
+     * @param array  $headers
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\UserAgentApiCom
      */
-    public function detect($agent)
+    public function detect($agent, array $headers = [])
     {
         $this->agent = $agent;
+        $body        = null;
 
-        $parameters = '/' . $this->apiKey;
-        $parameters .= '/' . urlencode($agent);
+        $params  = [$this->config['ua-key'] => $agent] + $this->config['params'];
+        $headers = $headers + $this->config['headers'];
 
-        $uri = self::$uri . $parameters;
+        if ('GET' === $this->config['method']) {
+            $uri = $this->config['uri'] . '?' . http_build_query($params, null, '&');
+        } else {
+            $uri  = $this->config['uri'];
+            $body = http_build_query($params, null, '&');
+        }
 
-        $request       = new GuzzleHttpRequest('GET', $uri);
+        $this->request = new GuzzleHttpRequest($this->config['method'], $uri, $headers, $body);
         $requestHelper = new Request();
 
-        try {
-            $response = $requestHelper->getResponse($request, $this->client);
-        } catch (RequestException $e) {
-            $this->detectionResult = null;
+        $this->detectionResult = null;
 
+        try {
+            $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
+        } catch (RequestException $e) {
             /* @var $prevEx \GuzzleHttp\Exception\ClientException */
             $prevEx = $e->getPrevious();
 
@@ -178,81 +179,32 @@ class UserAgentApiCom implements ModuleInterface
                  * Error
                  */
                 if (isset($content->error->code) && $content->error->code === 'key_invalid') {
-                    $this->logger->error(new RequestException('Your API key "' . $this->apiKey . '" is not valid for ' . $this->getName(), $request, null, $e));
+                    $this->logger->error(new RequestException('Your API key is not valid', $this->request, null, $e));
 
                     return $this;
                 }
 
                 if (isset($content->error->code) && $content->error->code === 'useragent_invalid') {
-                    $this->logger->error(new RequestException('User agent is invalid ' . $agent, $request));
+                    $this->logger->error(new RequestException('User agent is invalid ' . $agent, $this->request));
 
                     return $this;
                 }
             }
 
             $this->logger->error($e);
-
-            return $this;
-        }
-
-        try {
-            $this->detectionResult = $this->checkResponse($response, $request, $agent);
-        } catch (RequestException $e) {
-            $this->logger->error($e);
-
-            $this->detectionResult = null;
         }
 
         return $this;
     }
 
     /**
-     * @param \GuzzleHttp\Psr7\Response          $response
-     * @param \Psr\Http\Message\RequestInterface $request
-     * @param string                             $agent
-     *
-     * @throws \GuzzleHttp\Exception\RequestException
-     * @return \stdClass
-     */
-    private function checkResponse(Response $response, RequestInterface $request, $agent)
-    {
-        /*
-         * no json returned?
-         */
-        $contentType = $response->getHeader('Content-Type');
-
-        if (! isset($contentType[0]) || $contentType[0] !== 'application/json') {
-            throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
-        }
-
-        $content = json_decode($response->getBody()->getContents());
-
-        /*
-         * No result
-         */
-        if (isset($content->error->code) && $content->error->code === 'useragent_not_found') {
-            throw new RequestException('No result found for user agent: ' . $agent, $request);
-        }
-
-        /*
-         * Missing data?
-         */
-        if (! $content instanceof \stdClass || ! isset($content->data)) {
-            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Data is missing "' . $response->getBody()->getContents() . '"', $request);
-        }
-
-        return $content->data;
-    }
-
-    /**
      * starts the detection timer
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\UserAgentApiCom
      */
     public function startTimer()
     {
-        $this->duration = 0.0;
-        $this->timer    = microtime(true);
+        $this->bench->start();
 
         return $this;
     }
@@ -260,18 +212,20 @@ class UserAgentApiCom implements ModuleInterface
     /**
      * stops the detection timer
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\UserAgentApiCom
      */
     public function endTimer()
     {
-        $this->duration = microtime(true) - $this->timer;
-        $this->timer    = 0.0;
+        $this->bench->end();
+
+        $this->duration = $this->bench->getTime(true);
+        $this->memory   = $this->bench->getMemoryPeak(true);
 
         return $this;
     }
 
     /**
-     * returns the duration
+     * returns the needed time
      *
      * @return float
      */
@@ -281,33 +235,13 @@ class UserAgentApiCom implements ModuleInterface
     }
 
     /**
-     * returns the required memory
+     * returns the maximum needed memory
      *
      * @return int
      */
-    public function getMemory()
+    public function getMaxMemory()
     {
-        return 0;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return \UaComparator\Module\CrossJoin
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
+        return $this->memory;
     }
 
     /**
@@ -321,7 +255,7 @@ class UserAgentApiCom implements ModuleInterface
     /**
      * @param string $name
      *
-     * @return \UaComparator\Module\CrossJoin
+     * @return \UaComparator\Module\UserAgentApiCom
      */
     public function setName($name)
     {
@@ -331,53 +265,104 @@ class UserAgentApiCom implements ModuleInterface
     }
 
     /**
-     * @return \UaResult\Result
+     * @return array|null
      */
-    public function getDetectionResult()
+    public function getConfig()
     {
-        return $this->map($this->detectionResult);
+        return $this->config;
     }
 
     /**
-     * Gets the information about the browser by User Agent
+     * @param array $config
      *
-     * @param \stdClass|null $parserResult
-     *
-     * @return \UaResult\Result
+     * @return \UaComparator\Module\UserAgentApiCom
      */
-    private function map(\stdClass $parserResult = null)
+    public function setConfig(array $config)
     {
-        $result = new Result($this->agent, $this->logger);
-        $mapper = new InputMapper();
+        $this->config = $config;
 
-        if (null === $parserResult) {
-            return $result;
+        return $this;
+    }
+
+    /**
+     * @return null|\UaComparator\Module\Check\CheckInterface
+     */
+    public function getCheck()
+    {
+        return $this->check;
+    }
+
+    /**
+     * @param \UaComparator\Module\Check\CheckInterface $check
+     *
+     * @return \UaComparator\Module\UserAgentApiCom
+     */
+    public function setCheck(CheckInterface $check)
+    {
+        $this->check = $check;
+
+        return $this;
+    }
+
+    /**
+     * @return null|\UaComparator\Module\Mapper\MapperInterface
+     */
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
+
+    /**
+     * @param \UaComparator\Module\Mapper\MapperInterface $mapper
+     *
+     * @return \UaComparator\Module\UserAgentApiCom
+     */
+    public function setMapper(MapperInterface $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
+
+    /**
+     * @return \UaResult\Result\Result|null
+     */
+    public function getDetectionResult()
+    {
+        if (null === $this->detectionResult) {
+            return null;
         }
 
-        $browserName    = $mapper->mapBrowserName($parserResult->browser_name);
-        $browserVersion = $mapper->mapBrowserVersion($parserResult->browser_version, $browserName);
+        try {
+            $return = $this->getCheck()->getResponse($this->detectionResult, $this->request, $this->agent);
+        } catch (RequestException $e) {
+            $this->logger->error($e);
 
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
-
-        if (isset($parserResult->engine_name)) {
-            $engineName = $parserResult->engine_name;
-
-            if ('unknown' === $engineName || '' === $engineName) {
-                $engineName = null;
-            }
-
-            $result->setCapability('renderingengine_name', $engineName);
-
-            if (!empty($parserResult->engine_version)) {
-                $engineVersion = $mapper->mapEngineVersion($parserResult->engine_version);
-                $result->setCapability('renderingengine_version', $engineVersion);
-            }
+            return null;
         }
 
-        $deviceType = $parserResult->platform_type;
-        $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
+        if (isset($return->duration)) {
+            $this->duration = $return->duration;
 
-        return $result;
+            unset($return->duration);
+        }
+
+        if (isset($return->memory)) {
+            $this->memory = $return->memory;
+
+            unset($return->memory);
+        }
+
+        try {
+            if (isset($return->result)) {
+                return $this->getMapper()->map($return->result);
+            }
+
+            return $this->getMapper()->map($return);
+        } catch (\UnexpectedValueException $e) {
+            $this->logger->error($e);
+        }
+
+        return null;
     }
 }
