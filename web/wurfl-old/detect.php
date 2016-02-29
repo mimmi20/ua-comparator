@@ -63,9 +63,19 @@ $device = $wurflManagerOrig->getDeviceForUserAgent($_GET['useragent']);
 
 $duration = microtime(true) - $start;
 
+$result = [];
+
+foreach (array_keys($device->getAllCapabilities()) as $capability) {
+    if (false === strpos($capability, 'controlcap_')) {
+        $result[$capability] = $device->getCapability($capability);
+    } else {
+        $result[$capability] = $device->getVirtualCapability(str_replace('controlcap_', '', $capability));
+    }
+}
+
 echo json_encode(
     [
-        'result'   => $device->getAllCapabilities(),
+        'result'   => $result,
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]

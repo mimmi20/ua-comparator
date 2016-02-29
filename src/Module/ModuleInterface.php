@@ -33,6 +33,8 @@ namespace UaComparator\Module;
 
 use Monolog\Logger;
 use WurflCache\Adapter\AdapterInterface;
+use UaComparator\Module\Check\CheckInterface;
+use UaComparator\Module\Mapper\MapperInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -106,6 +108,42 @@ interface ModuleInterface
      * @return \UaComparator\Module\ModuleInterface
      */
     public function setName($name);
+
+    /**
+     * @return array|null
+     */
+    public function getConfig();
+
+    /**
+     * @param array $config
+     *
+     * @return \UaComparator\Module\Http
+     */
+    public function setConfig(array $config);
+
+    /**
+     * @return null|\UaComparator\Module\Check\CheckInterface
+     */
+    public function getCheck();
+
+    /**
+     * @param \UaComparator\Module\Check\CheckInterface $check
+     *
+     * @return \UaComparator\Module\Http
+     */
+    public function setCheck(CheckInterface $check);
+
+    /**
+     * @return null|\UaComparator\Module\Mapper\MapperInterface
+     */
+    public function getMapper();
+
+    /**
+     * @param \UaComparator\Module\Mapper\MapperInterface $mapper
+     *
+     * @return \UaComparator\Module\Http
+     */
+    public function setMapper(MapperInterface $mapper);
 
     /**
      * @return \UaResult\Result\Result|null

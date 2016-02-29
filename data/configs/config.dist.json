@@ -3,7 +3,7 @@
     "browscap2": {
       "name": "Browscap-PHP (2.x)",
       "enabled": false,
-      "class": "Browscap2",
+      "class": "Http",
       "requires-cache": true,
       "cache-dir": "data/cache/browscap2/",
       "request": {
@@ -13,12 +13,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "Browscap"
     },
     "browscap3": {
       "name": "Browscap-PHP (3.x)",
       "enabled": false,
-      "class": "Browscap3",
+      "class": "Http",
       "requires-cache": true,
       "cache-dir": "data/cache/browscap3/",
       "request": {
@@ -28,12 +29,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "Browscap"
     },
     "browser-detector": {
       "name": "BrowserDetector",
       "enabled": false,
-      "class": "BrowserDetectorModule",
+      "class": "Http",
       "requires-cache": true,
       "cache-dir": "data/cache/browser/",
       "request": {
@@ -43,12 +45,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "BrowserDetectorModule"
     },
     "crossjoin": {
       "name": "Crossjoin\\Browscap",
       "enabled": false,
-      "class": "CrossJoin",
+      "class": "Http",
       "requires-cache": true,
       "cache-dir": "data/cache/crossjoin/",
       "request": {
@@ -58,12 +61,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "Browscap"
     },
     "detector": {
       "name": "",
       "enabled": false,
-      "class": "",
+      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
@@ -72,7 +76,8 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": ""
     },
     "device-atlas": {
       "name": "DeviceAtlasCom",
@@ -90,12 +95,13 @@
           "User-Agent": "ThaDafinser/UserAgentParser:v1.4"
         }
       },
-      "check": "DeviceAtlasCom"
+      "check": "DeviceAtlasCom",
+      "mapper": "DeviceAtlasCom"
     },
     "donatij-ua-parser": {
       "name": "DonatjUAParser",
       "enabled": false,
-      "class": "DonatjUAParser",
+      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
@@ -104,7 +110,8 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "DonatjUAParser"
     },
     "neutrino-api":{
       "name": "NeutrinoApiCom",
@@ -125,12 +132,13 @@
           "Content-Type": "application/x-www-form-urlencoded"
         }
       },
-      "check": "NeutrinoApiCom"
+      "check": "NeutrinoApiCom",
+      "mapper": "NeutrinoApiCom"
     },
     "piwik": {
       "name": "Piwik",
       "enabled": false,
-      "class": "PiwikDetector",
+      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
@@ -139,12 +147,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "PiwikDetector"
     },
     "sinergi-browser-detector": {
       "name": "SinergiBrowserDetector",
       "enabled": false,
-      "class": "SinergiBrowserDetector",
+      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
@@ -153,12 +162,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "SinergiBrowserDetector"
     },
     "ua-parser": {
       "name": "UaParser",
       "enabled": false,
-      "class": "UaParser",
+      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
@@ -167,7 +177,8 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "UaParser"
     },
     "udger": {
       "name": "UdgerCom",
@@ -185,7 +196,8 @@
           "Content-Type": "application/x-www-form-urlencoded"
         }
       },
-      "check": "UdgerCom"
+      "check": "UdgerCom",
+      "mapper": "UdgerCom"
     },
     "useragent-api": {
       "name": "UserAgentApiCom",
@@ -199,7 +211,8 @@
         "params": {},
         "headers": {}
       },
-      "check": "UserAgentApiCom"
+      "check": "UserAgentApiCom",
+      "mapper": "UserAgentApiCom"
     },
     "useragent-string": {
       "name": "UserAgentStringCom",
@@ -215,7 +228,8 @@
         },
         "headers": {}
       },
-      "check": "UserAgentStringCom"
+      "check": "UserAgentStringCom",
+      "mapper": "UserAgentStringCom"
     },
     "what-is-my-browser": {
       "name": "WhatIsMyBrowserCom",
@@ -231,12 +245,13 @@
         },
         "headers": {}
       },
-      "check": "WhatIsMyBrowserCom"
+      "check": "WhatIsMyBrowserCom",
+      "mapper": "WhatIsMyBrowserCom"
     },
     "which-browser": {
       "name": "WhichBrowser",
       "enabled": false,
-      "class": "WhichBrowser",
+      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
@@ -245,12 +260,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "WhichBrowser"
     },
     "woothee": {
       "name": "Woothee",
       "enabled": false,
-      "class": "Woothee",
+      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
@@ -259,12 +275,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "Woothee"
     },
     "wurfl": {
       "name": "WURFL API (PHP-API 5.3)",
       "enabled": false,
-      "class": "Wurfl",
+      "class": "Http",
       "requires-cache": true,
       "cache-dir": "data/cache/wurfl/",
       "request": {
@@ -274,12 +291,13 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "Wurfl"
     },
     "wurfl-old": {
       "name": "WURFL API (PHP-API 5.2 original)",
       "enabled": false,
-      "class": "WurflOld",
+      "class": "Http",
       "requires-cache": true,
       "cache-dir": "data/cache/wurfl_old/",
       "request": {
@@ -289,7 +307,8 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local"
+      "check": "Local",
+      "mapper": "Wurfl"
     }
   }
 }

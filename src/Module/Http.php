@@ -328,10 +328,10 @@ class Http implements ModuleInterface
 
         try {
             if (isset($return->result)) {
-                return $this->getMapper()->map($return->result);
+                return $this->getMapper()->map($return->result, $this->agent);
             }
 
-            return $this->getMapper()->map($return);
+            return $this->getMapper()->map($return, $this->agent);
         } catch (\UnexpectedValueException $e) {
             $this->logger->error($e);
         }

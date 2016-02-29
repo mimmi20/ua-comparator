@@ -24,7 +24,7 @@
       }
     },
     "donatij-ua-parser": {
-      "enabled": true
+      "enabled": false
     },
     "neutrino-api":{
       "enabled": false,
@@ -36,13 +36,13 @@
       }
     },
     "piwik": {
-      "enabled": true
+      "enabled": false
     },
     "sinergi-browser-detector": {
-      "enabled": true
+      "enabled": false
     },
     "ua-parser": {
-      "enabled": true
+      "enabled": false
     },
     "udger": {
       "enabled": false,
@@ -75,16 +75,16 @@
       }
     },
     "which-browser": {
-      "enabled": true
+      "enabled": false
     },
     "woothee": {
-      "enabled": true
+      "enabled": false
     },
     "wurfl": {
-      "enabled": true
+      "enabled": false
     },
     "wurfl-old": {
-      "enabled": true
+      "enabled": false
     }
   }
 }

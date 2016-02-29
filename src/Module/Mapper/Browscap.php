@@ -31,10 +31,12 @@
 
 namespace UaComparator\Module\Mapper;
 
-use Monolog\Logger;
 use UaDataMapper\InputMapper;
-use UaResult\Result;
-use UaResult\Version;
+use UaResult\Browser\Browser;
+use UaResult\Device\Device;
+use UaResult\Engine\Engine;
+use UaResult\Os\Os;
+use UaResult\Result\Result;
 
 /**
  * Browscap.ini parsing class with caching and update capabilities
@@ -48,53 +50,24 @@ use UaResult\Version;
 class Browscap implements MapperInterface
 {
     /**
+     * @var null|\UaDataMapper\InputMapper
+     */
+    private $mapper = null;
+
+    /**
      * Gets the information about the browser by User Agent
      *
-     * @param \stdClass       $parserResult
-     * @param string          $agent
-     * @param \Monolog\Logger $logger
+     * @param \stdClass $parserResult
+     * @param string    $agent
      *
-     * @return \UaResult\Result the object containing the browsers details.
+     * @return \UaResult\Result\Result the object containing the browsers details.
      */
-    public function map($parserResult, $agent = '', Logger $logger = null)
+    public function map($parserResult, $agent)
     {
-        $result = new Result($agent, $logger);
-        $mapper = new InputMapper();
-
-        $browserName    = $this->detectProperty($parserResult, 'browser');
-        $browserVersion = $this->detectProperty(
-            $parserResult,
-            'version',
-            true,
+        $browserName    = $this->mapper->mapBrowserName($parserResult->browser);
+        $browserVersion = $this->mapper->mapBrowserVersion(
+            $parserResult->version,
             $browserName
-        );
-
-        $browserName    = $mapper->mapBrowserName(trim($browserName));
-        $browserVersion = $mapper->mapBrowserVersion(
-            trim($browserVersion),
-            $browserName
-        );
-
-        $browserBits = $this->detectProperty(
-            $parserResult,
-            'browser_bits',
-            true,
-            $browserName
-        );
-
-        $browserMaker = $this->detectProperty(
-            $parserResult,
-            'browser_maker',
-            true,
-            $browserName
-        );
-
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
-        $result->setCapability('mobile_browser_bits', $browserBits);
-        $result->setCapability(
-            'mobile_browser_manufacturer',
-            $mapper->mapBrowserMaker($browserMaker, $browserName)
         );
 
         if (!empty($parserResult->browser_type)) {
@@ -103,236 +76,83 @@ class Browscap implements MapperInterface
             $browserType = null;
         }
 
-        $result->setCapability('browser_type', $mapper->mapBrowserType($browserType, $browserName)->getName());
-
         if (!empty($parserResult->browser_modus) && 'unknown' !== $parserResult->browser_modus) {
             $browserModus = $parserResult->browser_modus;
         } else {
             $browserModus = null;
         }
 
-        $result->setCapability('mobile_browser_modus', $browserModus);
-
-        $platform = $this->detectProperty($parserResult, 'platform');
-
-        $platformVersion = $this->detectProperty(
-            $parserResult,
-            'platform_version',
-            true,
-            $platform
+        $browser = new Browser(
+            $agent,
+            [
+                'name'    => $browserName,
+                'modus'   => $browserModus,
+                'version' => $browserVersion,
+                'manufacturer' => $this->mapper->mapBrowserMaker($parserResult->browser_maker, $browserName),
+                'bits'    => $parserResult->browser_bits,
+                'type'    => $this->mapper->mapBrowserType($browserType, $browserName),
+            ]
         );
 
-        $platformVersion = $mapper->mapOsVersion(trim($platformVersion), trim($platform));
-        $platform        = $mapper->mapOsName(trim($platform));
+        $deviceName = $this->mapper->mapDeviceName($parserResult->device_code_name);
 
-        $platformbits  = $this->detectProperty(
-            $parserResult,
-            'platform_bits',
-            true,
-            $platform
-        );
-        $platformMaker = $this->detectProperty(
-            $parserResult,
-            'platform_maker',
-            true,
-            $platform
+        $device = new Device(
+            $agent,
+            [
+                'deviceName'     => $deviceName,
+                'marketingName'  => $this->mapper->mapDeviceMarketingName($parserResult->device_name, $deviceName),
+                'manufacturer'   => $this->mapper->mapDeviceMaker($parserResult->device_maker, $deviceName),
+                'brand'          => $this->mapper->mapDeviceBrandName($parserResult->device_brand_name, $deviceName),
+                'pointingMethod' => $parserResult->device_pointing_method,
+                'type'           => $this->mapper->mapDeviceType($parserResult->device_type),
+            ]
         );
 
-        $result->setCapability('device_os', $platform);
-        $result->setCapability('device_os_version', $platformVersion);
-        $result->setCapability('device_os_bits', $platformbits);
-        $result->setCapability('device_os_manufacturer', $platformMaker);
 
-        $deviceName = $this->detectProperty($parserResult, 'device_code_name');
-        $deviceType = $this->detectProperty($parserResult, 'device_type');
+        $platform        = $this->mapper->mapOsName($parserResult->platform);
+        $platformVersion = $this->mapper->mapOsVersion($parserResult->platform_version, $platform);
 
-        $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
-
-        $deviceName = $mapper->mapDeviceName($deviceName);
-
-        $deviceMaker = $this->detectProperty(
-            $parserResult,
-            'device_maker',
-            true,
-            $deviceName
+        $os = new Os(
+            $agent,
+            [
+                'name' => $platform,
+                'version' => $platformVersion,
+                'manufacturer' => $this->mapper->mapOsMaker($parserResult->platform_maker, $platform),
+                'bits'         => $parserResult->platform_bits,
+            ]
         );
 
-        $deviceMarketingName = $this->detectProperty(
-            $parserResult,
-            'device_name',
-            true,
-            $deviceName
+        $engineName = $this->mapper->mapEngineName($parserResult->renderingengine_name);
+
+        $engine = new Engine(
+            $agent,
+            [
+                'name' => $engineName,
+                'version' => $this->mapper->mapEngineVersion($parserResult->renderingengine_version),
+                'manufacturer' => $parserResult->renderingengine_maker,
+            ]
         );
 
-        $deviceBrandName = $this->detectProperty(
-            $parserResult,
-            'device_brand_name',
-            true,
-            $deviceName
-        );
-
-        $devicePointingMethod = $this->detectProperty(
-            $parserResult,
-            'device_pointing_method',
-            true,
-            $deviceName
-        );
-
-        $result->setCapability('model_name', $deviceName);
-        $result->setCapability('marketing_name', $mapper->mapDeviceMarketingName($deviceMarketingName, $deviceName));
-        $result->setCapability('brand_name', $mapper->mapDeviceBrandName($deviceBrandName, $deviceName));
-        $result->setCapability('manufacturer_name', $mapper->mapDeviceMaker($deviceMaker, $deviceName));
-        $result->setCapability('pointing_method', $devicePointingMethod);
-
-        $engineName = $this->detectProperty($parserResult, 'renderingengine_name');
-
-        if ('unknown' === $engineName || '' === $engineName) {
-            $engineName = null;
-        }
-
-        $engineMaker = $this->detectProperty($parserResult, 'renderingengine_maker', true, $engineName);
-
-        $version = new Version();
-        $version->setMode(
-            Version::COMPLETE | Version::IGNORE_MINOR_IF_EMPTY | Version::IGNORE_MICRO_IF_EMPTY
-        );
-
-        $engineVersion = $mapper->mapEngineVersion(
-            $this->detectProperty($parserResult, 'renderingengine_version', true, $engineName)
-        );
-
-        $result->setCapability('renderingengine_name', $engineName);
-        $result->setCapability('renderingengine_version', $engineVersion);
-        $result->setCapability('renderingengine_manufacturer', $engineMaker);
-
-        $result->setCapability('ux_full_desktop', $deviceType === 'Desktop');
-        $result->setCapability('is_smarttv', $deviceType === 'TV Device');
-        $result->setCapability('is_tablet', $deviceType === 'Tablet');
-
-        if (!empty($parserResult->ismobiledevice)) {
-            $result->setCapability(
-                'is_wireless_device',
-                $parserResult->ismobiledevice
-            );
-        }
-
-        if (!empty($parserResult->istablet)) {
-            $result->setCapability('is_tablet', $parserResult->istablet);
-        } else {
-            $result->setCapability('is_tablet', null);
-        }
-
-        $result->setCapability('is_bot', $parserResult->crawler);
-
-        $result->setCapability(
-            'is_syndication_reader',
-            $parserResult->issyndicationreader
-        );
-
-        if (!empty($parserResult->frames)) {
-            $framesSupport = $parserResult->frames;
-        } else {
-            $framesSupport = null;
-        }
-
-        $result->setCapability('xhtml_supports_frame', $mapper->mapFrameSupport($framesSupport));
-
-        if (!empty($parserResult->iframes)) {
-            $framesSupport = $parserResult->iframes;
-        } else {
-            $framesSupport = null;
-        }
-
-        $result->setCapability('xhtml_supports_iframe', $mapper->mapFrameSupport($framesSupport));
-
-        if (!empty($parserResult->tables)) {
-            $tablesSupport = $parserResult->tables;
-        } else {
-            $tablesSupport = null;
-        }
-
-        $result->setCapability('xhtml_table_support', $tablesSupport);
-
-        if (!empty($parserResult->cookies)) {
-            $cookieSupport = $parserResult->cookies;
-        } else {
-            $cookieSupport = null;
-        }
-
-        $result->setCapability('cookie_support', $cookieSupport);
-
-        if (!empty($parserResult->backgroundsounds)) {
-            $bgsoundSupport = $parserResult->backgroundsounds;
-        } else {
-            $bgsoundSupport = null;
-        }
-
-        $result->setCapability('supports_background_sounds', $bgsoundSupport);
-
-        if (!empty($parserResult->vbscript)) {
-            $vbSupport = $parserResult->vbscript;
-        } else {
-            $vbSupport = null;
-        }
-
-        $result->setCapability('supports_vb_script', $vbSupport);
-
-        if (!empty($parserResult->javascript)) {
-            $jsSupport = $parserResult->javascript;
-        } else {
-            $jsSupport = null;
-        }
-
-        $result->setCapability('ajax_support_javascript', $jsSupport);
-
-        if (!empty($parserResult->javaapplets)) {
-            $appletsSupport = $parserResult->javaapplets;
-        } else {
-            $appletsSupport = null;
-        }
-
-        $result->setCapability('supports_java_applets', $appletsSupport);
-
-        if (!empty($parserResult->activexcontrols)) {
-            $activexSupport = $parserResult->activexcontrols;
-        } else {
-            $activexSupport = null;
-        }
-
-        $result->setCapability('supports_activex_controls', $activexSupport);
-
-        return $result;
+        return new Result($agent, $device, $os, $browser, $engine);
     }
 
     /**
-     * checks the parser result for special keys
-     *
-     * @param \stdClass $allProperties  The parser result array
-     * @param string    $propertyName   The name of the property to detect
-     * @param bool      $depended       If TRUE the parameter $dependingValue has to be set
-     * @param string    $dependingValue An master value
-     *
-     * @return string|int|bool The value of the detected property
+     * @return null|\UaDataMapper\InputMapper
      */
-    private function detectProperty(
-        \stdClass $allProperties,
-        $propertyName,
-        $depended = false,
-        $dependingValue = null
-    ) {
-        $propertyName  = strtolower($propertyName);
-        $propertyValue = (empty($allProperties->$propertyName) ? null : trim($allProperties->$propertyName));
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
 
-        if (empty($propertyValue)
-            || '' === $propertyValue
-        ) {
-            $propertyValue = null;
-        }
+    /**
+     * @param \UaDataMapper\InputMapper $mapper
+     *
+     * @return \UaComparator\Module\Mapper\MapperInterface
+     */
+    public function setMapper(InputMapper $mapper)
+    {
+        $this->mapper = $mapper;
 
-        if ($depended && null !== $propertyValue && !$dependingValue) {
-            $propertyValue = null;
-        }
-
-        return $propertyValue;
+        return $this;
     }
 }

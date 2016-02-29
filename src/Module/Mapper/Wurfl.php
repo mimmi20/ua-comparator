@@ -33,7 +33,7 @@ namespace UaComparator\Module\Mapper;
 
 use Monolog\Logger;
 use UaDataMapper\InputMapper;
-use UaResult\Result;
+use UaResult\Result\Result;
 use UaResult\Version;
 use Wurfl\CustomDevice;
 
@@ -49,24 +49,28 @@ use Wurfl\CustomDevice;
 class Wurfl implements MapperInterface
 {
     /**
+     * @var null|\UaDataMapper\InputMapper
+     */
+    private $mapper = null;
+
+    /**
      * Gets the information about the browser by User Agent
      *
-     * @param \Wurfl\CustomDevice|\WURFL_CustomDevice $device
-     * @param \Monolog\Logger                         $logger
+     * @param mixed  $parserResult
+     * @param string $agent
      *
-     * @return \UaResult\Result the object containing the browsers details.
+     * @return \UaResult\Result\Result the object containing the browsers details.
      */
-    public function map($device, Logger $logger = null)
+    public function map($parserResult, $agent)
     {
         if (!($device instanceof CustomDevice) && !($device instanceof \WURFL_CustomDevice)) {
-            return new Result(null, $logger, null);
+            return new Result($agent);
         }
 
         $apiKey = $device->id;
-        $result = new Result($device->userAgent, $logger, $apiKey);
+        $result = new Result($agent);
 
         $marketingName = null;
-        $mapper        = new InputMapper();
 
         try {
             $allProperties = $device->getAllCapabilities();
@@ -136,10 +140,10 @@ class Wurfl implements MapperInterface
 
             $marketingName = $device->getCapability('marketing_name');
 
-            $apiDev        = $mapper->mapDeviceName($apiDev);
-            $apiMan        = $mapper->mapDeviceMaker($apiMan, $apiDev);
-            $marketingName = $mapper->mapDeviceMarketingName($marketingName, $apiDev);
-            $brandName     = $mapper->mapDeviceBrandName($brandName, $apiDev);
+            $apiDev        = $this->mapper->mapDeviceName($apiDev);
+            $apiMan        = $this->mapper->mapDeviceMaker($apiMan, $apiDev);
+            $marketingName = $this->mapper->mapDeviceMarketingName($marketingName, $apiDev);
+            $brandName     = $this->mapper->mapDeviceBrandName($brandName, $apiDev);
 
             if ('Generic' === $apiMan || 'Opera' === $apiMan) {
                 $apiMan        = null;
@@ -636,20 +640,20 @@ class Wurfl implements MapperInterface
 
         $version = new Version();
 
-        $browserName = $mapper->mapBrowserName($apiBro);
-        $deviceName  = $mapper->mapDeviceName($apiDev);
+        $browserName = $this->mapper->mapBrowserName($apiBro);
+        $deviceName  = $this->mapper->mapDeviceName($apiDev);
 
         $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_manufacturer', $mapper->mapBrowserMaker($browserMaker, $browserName));
+        $result->setCapability('mobile_browser_manufacturer', $this->mapper->mapBrowserMaker($browserMaker, $browserName));
         $result->setCapability(
             'mobile_browser_version',
-            $version->setVersion($mapper->mapBrowserVersion($apiVer, $browserName))
+            $version->setVersion($this->mapper->mapBrowserVersion($apiVer, $browserName))
         );
-        $result->setCapability('device_os', $mapper->mapOsName($apiOs));
+        $result->setCapability('device_os', $this->mapper->mapOsName($apiOs));
         $result->setCapability('model_name', $deviceName);
-        $result->setCapability('manufacturer_name', $mapper->mapDeviceMaker($apiMan, $deviceName));
-        $result->setCapability('marketing_name', $mapper->mapDeviceMarketingName($marketingName, $deviceName));
-        $result->setCapability('brand_name', $mapper->mapDeviceBrandName($brandName, $deviceName));
+        $result->setCapability('manufacturer_name', $this->mapper->mapDeviceMaker($apiMan, $deviceName));
+        $result->setCapability('marketing_name', $this->mapper->mapDeviceMarketingName($marketingName, $deviceName));
+        $result->setCapability('brand_name', $this->mapper->mapDeviceBrandName($brandName, $deviceName));
 
         if ($apiBot) {
             $apiDesktop = false;
@@ -693,7 +697,7 @@ class Wurfl implements MapperInterface
             $result->setCapability('xhtml_support_level', (int) $xhtmlLevel);
         }
 
-        $result->setCapability('device_type', $mapper->mapDeviceType($deviceType));
+        $result->setCapability('device_type', $this->mapper->mapDeviceType($deviceType));
 
         if (in_array($deviceType, ['Mobile Phone', 'Tablet', 'FonePad', 'Feature Phone', 'Mobile Device'])
             && 'true' === $device->getCapability('dual_orientation')
@@ -714,5 +718,25 @@ class Wurfl implements MapperInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @return null|\UaDataMapper\InputMapper
+     */
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
+
+    /**
+     * @param \UaDataMapper\InputMapper $mapper
+     *
+     * @return \UaComparator\Module\Mapper\MapperInterface
+     */
+    public function setMapper(InputMapper $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
     }
 }

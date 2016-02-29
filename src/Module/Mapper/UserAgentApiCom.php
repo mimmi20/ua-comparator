@@ -31,10 +31,20 @@
 
 namespace UaComparator\Module\Mapper;
 
+use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use GuzzleHttp\Psr7\Response;
+use Monolog\Logger;
+use Psr\Http\Message\RequestInterface;
+use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
+use UaResult\Result\Result;
+use WurflCache\Adapter\AdapterInterface;
 
 /**
- * Browscap.ini parsing class with caching and update capabilities
+ * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
  *
@@ -42,8 +52,13 @@ use UaDataMapper\InputMapper;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-interface MapperInterface
+class UserAgentApiCom implements MapperInterface
 {
+    /**
+     * @var null|\UaDataMapper\InputMapper
+     */
+    private $mapper = null;
+
     /**
      * Gets the information about the browser by User Agent
      *
@@ -52,17 +67,58 @@ interface MapperInterface
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
-    public function map($parserResult, $agent);
+    public function map($parserResult, $agent)
+    {
+        $result = new Result($agent);
+
+        if (null === $parserResult) {
+            return $result;
+        }
+
+        $browserName    = $this->mapper->mapBrowserName($parserResult->browser_name);
+        $browserVersion = $this->mapper->mapBrowserVersion($parserResult->browser_version, $browserName);
+
+        $result->setCapability('mobile_browser', $browserName);
+        $result->setCapability('mobile_browser_version', $browserVersion);
+
+        if (isset($parserResult->engine_name)) {
+            $engineName = $parserResult->engine_name;
+
+            if ('unknown' === $engineName || '' === $engineName) {
+                $engineName = null;
+            }
+
+            $result->setCapability('renderingengine_name', $engineName);
+
+            if (!empty($parserResult->engine_version)) {
+                $engineVersion = $this->mapper->mapEngineVersion($parserResult->engine_version);
+                $result->setCapability('renderingengine_version', $engineVersion);
+            }
+        }
+
+        $deviceType = $parserResult->platform_type;
+        $result->setCapability('device_type', $this->mapper->mapDeviceType($deviceType));
+
+        return $result;
+    }
 
     /**
      * @return null|\UaDataMapper\InputMapper
      */
-    public function getMapper();
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
 
     /**
      * @param \UaDataMapper\InputMapper $mapper
      *
      * @return \UaComparator\Module\Mapper\MapperInterface
      */
-    public function setMapper(InputMapper $mapper);
+    public function setMapper(InputMapper $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
 }

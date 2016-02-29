@@ -74,6 +74,7 @@ use UaComparator\Source\DirectorySource;
 use UaComparator\Source\PdoSource;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
+use UaDataMapper\InputMapper;
 
 define('START_TIME', microtime(true));
 
@@ -209,6 +210,8 @@ class CompareCommand extends Command
 
         $config = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
 
+        $inputMapper = new InputMapper();
+
         foreach ($modules as $module) {
             foreach ($config['modules'] as $key => $moduleConfig) {
                 if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
@@ -226,14 +229,21 @@ class CompareCommand extends Command
                         $cache = new Memory();
                     }
 
-                    /** @var \UaComparator\Module\Http $detectorModule */
-                    $detectorModule = new Http($logger, $cache);
+                    $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];
+
+                    /** @var \UaComparator\Module\ModuleInterface $detectorModule */
+                    $detectorModule = new $moduleClassName($logger, $cache);
                     $detectorModule->setName($moduleConfig['name']);
                     $detectorModule->setConfig($moduleConfig['request']);
 
                     $checkName = '\\UaComparator\\Module\\Check\\' . $moduleConfig['check'];
-
                     $detectorModule->setCheck(new $checkName());
+
+                    $mapperName = '\\UaComparator\\Module\\Mapper\\' . $moduleConfig['mapper'];
+                    /** @var \UaComparator\Module\Mapper\MapperInterface $mapper */
+                    $mapper     = new $mapperName();
+                    $mapper->setMapper($inputMapper);
+                    $detectorModule->setMapper($mapper);
 
                     $collection->addModule($detectorModule);
 
@@ -546,7 +556,7 @@ class CompareCommand extends Command
                     'summary' => 0.0,
                 ],
                 'memory' => [
-                    'min'     => ['size' => 50000000, 'agent' => ''],
+                    'min'     => ['size' => 500000000, 'agent' => ''],
                     'max'     => ['size' => 0, 'agent' => ''],
                     'last'    => ['size' => 0, 'agent' => ''],
                 ]
@@ -617,6 +627,8 @@ class CompareCommand extends Command
                     $benchAll[$module->getName()]['memory']['max']['size']  = $actualMemory;
                     $benchAll[$module->getName()]['memory']['max']['agent'] = $agent;
                 }
+
+                var_dump($result);
             }
 
             echo '.';

@@ -31,10 +31,20 @@
 
 namespace UaComparator\Module\Mapper;
 
+use DeviceDetector\Parser\Client\Browser;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use GuzzleHttp\Psr7\Response;
+use Monolog\Logger;
+use Psr\Http\Message\RequestInterface;
+use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
+use UaResult\Result\Result;
+use WurflCache\Adapter\AdapterInterface;
 
 /**
- * Browscap.ini parsing class with caching and update capabilities
+ * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
  *
@@ -42,8 +52,13 @@ use UaDataMapper\InputMapper;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-interface MapperInterface
+class UserAgentStringCom implements MapperInterface
 {
+    /**
+     * @var null|\UaDataMapper\InputMapper
+     */
+    private $mapper = null;
+
     /**
      * Gets the information about the browser by User Agent
      *
@@ -52,17 +67,58 @@ interface MapperInterface
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
-    public function map($parserResult, $agent);
+    public function map($parserResult, $agent)
+    {
+        $result = new Result($agent);
+
+        if (null === $parserResult) {
+            return $result;
+        }
+
+        $browserName    = $this->mapper->mapBrowserName($parserResult->agent_name);
+        $version        = preg_replace('/(\d*)_(\d*)/', '$1.$2', $parserResult->agent_version);
+        $browserVersion = $this->mapper->mapBrowserVersion($version, $browserName);
+
+        $result->setCapability('mobile_browser', $browserName);
+        $result->setCapability('mobile_browser_version', $browserVersion);
+
+        if (!empty($parserResult->agent_type)) {
+            $browserType = $parserResult->agent_type;
+        } else {
+            $browserType = null;
+        }
+
+        $result->setCapability('browser_type', $this->mapper->mapBrowserType($browserType, $browserName)->getName());
+
+        if (isset($parserResult->os_name)) {
+            $osName    = $this->mapper->mapOsName($parserResult->os_name);
+            $version   = preg_replace('/(\d*)_(\d*)/', '$1.$2', $parserResult->os_versionNumber);
+            $osVersion = $this->mapper->mapOsVersion($version, $osName);
+
+            $result->setCapability('device_os', $osName);
+            $result->setCapability('device_os_version', $osVersion);
+        }
+
+        return $result;
+    }
 
     /**
      * @return null|\UaDataMapper\InputMapper
      */
-    public function getMapper();
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
 
     /**
      * @param \UaDataMapper\InputMapper $mapper
      *
      * @return \UaComparator\Module\Mapper\MapperInterface
      */
-    public function setMapper(InputMapper $mapper);
+    public function setMapper(InputMapper $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
 }

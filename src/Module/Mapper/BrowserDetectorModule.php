@@ -31,10 +31,13 @@
 
 namespace UaComparator\Module\Mapper;
 
+use BrowserDetector\BrowserDetector;
+use Monolog\Logger;
+use WurflCache\Adapter\AdapterInterface;
 use UaDataMapper\InputMapper;
 
 /**
- * Browscap.ini parsing class with caching and update capabilities
+ * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
  *
@@ -42,8 +45,13 @@ use UaDataMapper\InputMapper;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-interface MapperInterface
+class BrowserDetectorModule implements MapperInterface
 {
+    /**
+     * @var null|\UaDataMapper\InputMapper
+     */
+    private $mapper = null;
+
     /**
      * Gets the information about the browser by User Agent
      *
@@ -52,17 +60,31 @@ interface MapperInterface
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
-    public function map($parserResult, $agent);
+    public function map($parserResult, $agent)
+    {
+        $this->detectionResult;
+        file_put_contents($this->getName() . '.txt', var_export($this->detectionResult, true), FILE_TEXT);
+
+        return $this->detectionResult;
+    }
 
     /**
      * @return null|\UaDataMapper\InputMapper
      */
-    public function getMapper();
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
 
     /**
      * @param \UaDataMapper\InputMapper $mapper
      *
      * @return \UaComparator\Module\Mapper\MapperInterface
      */
-    public function setMapper(InputMapper $mapper);
+    public function setMapper(InputMapper $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
 }

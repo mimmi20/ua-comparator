@@ -31,10 +31,15 @@
 
 namespace UaComparator\Module\Mapper;
 
+use DeviceDetector\Parser\Client\Browser;
+use Monolog\Logger;
 use UaDataMapper\InputMapper;
+use UaResult\Result\Result;
+use Woothee\Classifier;
+use WurflCache\Adapter\AdapterInterface;
 
 /**
- * Browscap.ini parsing class with caching and update capabilities
+ * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
  *
@@ -42,8 +47,13 @@ use UaDataMapper\InputMapper;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-interface MapperInterface
+class Woothee implements MapperInterface
 {
+    /**
+     * @var null|\UaDataMapper\InputMapper
+     */
+    private $mapper = null;
+
     /**
      * Gets the information about the browser by User Agent
      *
@@ -52,17 +62,55 @@ interface MapperInterface
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
-    public function map($parserResult, $agent);
+    public function map($parserResult, $agent)
+    {
+        $result = new Result($agent);
+
+        $browserName    = $this->mapper->mapBrowserName($parserResult['name']);
+        $browserVersion = $this->mapper->mapBrowserVersion($parserResult['version'], $browserName);
+
+        $result->setCapability('mobile_browser', $browserName);
+        $result->setCapability('mobile_browser_version', $browserVersion);
+        $result->setCapability(
+            'browser_type',
+            $this->mapper->mapBrowserType($parserResult['category'], $browserName)->getName()
+        );
+
+        if (isset($parserResult['os']) && !in_array($parserResult['os'], ['iPad', 'iPhone'])) {
+            $osName    = $this->mapper->mapOsName($parserResult['os']);
+            $osVersion = $this->mapper->mapOsVersion($parserResult['os_version'], $osName);
+
+            $result->setCapability('device_os', $osName);
+            $result->setCapability('device_os_version', $osVersion);
+        }
+
+        if (isset($parserResult['category'])
+            && isset($parserResult['os'])
+            && !in_array($parserResult['os'], ['iPad', 'iPhone'])
+        ) {
+            $result->setCapability('device_type', $this->mapper->mapDeviceType($parserResult['category']));
+        }
+
+        return $result;
+    }
 
     /**
      * @return null|\UaDataMapper\InputMapper
      */
-    public function getMapper();
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
 
     /**
      * @param \UaDataMapper\InputMapper $mapper
      *
      * @return \UaComparator\Module\Mapper\MapperInterface
      */
-    public function setMapper(InputMapper $mapper);
+    public function setMapper(InputMapper $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
 }

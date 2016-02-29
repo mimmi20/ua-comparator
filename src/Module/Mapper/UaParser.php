@@ -31,10 +31,15 @@
 
 namespace UaComparator\Module\Mapper;
 
+use Monolog\Logger;
 use UaDataMapper\InputMapper;
+use UAParser\Parser;
+use UAParser\Result\Client;
+use UaResult\Result\Result;
+use WurflCache\Adapter\AdapterInterface;
 
 /**
- * Browscap.ini parsing class with caching and update capabilities
+ * UaComparator.ini parsing class with caching and update capabilities
  *
  * @category  UaComparator
  *
@@ -42,8 +47,13 @@ use UaDataMapper\InputMapper;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-interface MapperInterface
+class UaParser implements MapperInterface
 {
+    /**
+     * @var null|\UaDataMapper\InputMapper
+     */
+    private $mapper = null;
+
     /**
      * Gets the information about the browser by User Agent
      *
@@ -52,17 +62,42 @@ interface MapperInterface
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
-    public function map($parserResult, $agent);
+    public function map($parserResult, $agent)
+    {
+        $result = new Result($agent);
+
+        $browserName    = $this->mapper->mapBrowserName($parserResult->ua->family);
+        $browserVersion = $this->mapper->mapBrowserVersion($parserResult->ua->toVersion(), $browserName);
+
+        $result->setCapability('mobile_browser', $browserName);
+        $result->setCapability('mobile_browser_version', $browserVersion);
+
+        $osName    = $this->mapper->mapOsName($parserResult->os->family);
+        $osVersion = $this->mapper->mapOsVersion($parserResult->os->toVersion(), $osName);
+
+        $result->setCapability('device_os', $osName);
+        $result->setCapability('device_os_version', $osVersion);
+
+        return $result;
+    }
 
     /**
      * @return null|\UaDataMapper\InputMapper
      */
-    public function getMapper();
+    public function getMapper()
+    {
+        return $this->mapper;
+    }
 
     /**
      * @param \UaDataMapper\InputMapper $mapper
      *
      * @return \UaComparator\Module\Mapper\MapperInterface
      */
-    public function setMapper(InputMapper $mapper);
+    public function setMapper(InputMapper $mapper)
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
 }
