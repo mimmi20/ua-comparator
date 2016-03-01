@@ -36,7 +36,7 @@
       }
     },
     "piwik": {
-      "enabled": false
+      "enabled": true
     },
     "sinergi-browser-detector": {
       "enabled": false
