@@ -31,12 +31,12 @@
 
 namespace UaComparator\Module\Mapper;
 
-use DeviceDetector\Parser\Client\Browser;
-use Monolog\Logger;
 use UaDataMapper\InputMapper;
+use UaResult\Browser\Browser;
+use UaResult\Device\Device;
+use UaResult\Engine\Engine;
+use UaResult\Os\Os;
 use UaResult\Result\Result;
-use Woothee\Classifier;
-use WurflCache\Adapter\AdapterInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -57,41 +57,75 @@ class Woothee implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param mixed  $parserResult
-     * @param string $agent
+     * @param \stdClass $parserResult
+     * @param string    $agent
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
     public function map($parserResult, $agent)
     {
-        $result = new Result($agent);
+        $browserName = $this->mapper->mapBrowserName($parserResult->name);
 
-        $browserName    = $this->mapper->mapBrowserName($parserResult['name']);
-        $browserVersion = $this->mapper->mapBrowserVersion($parserResult['version'], $browserName);
-
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
-        $result->setCapability(
-            'browser_type',
-            $this->mapper->mapBrowserType($parserResult['category'], $browserName)->getName()
+        $browser = new Browser(
+            $agent,
+            [
+                'name'    => $browserName,
+                'modus'   => null,
+                'version' => $this->mapper->mapBrowserVersion($parserResult->version, $browserName),
+                'manufacturer' => null,
+                'bits'    => null,
+                'type'    => $this->mapper->mapBrowserType($parserResult->category, $browserName),
+            ]
         );
 
-        if (isset($parserResult['os']) && !in_array($parserResult['os'], ['iPad', 'iPhone'])) {
-            $osName    = $this->mapper->mapOsName($parserResult['os']);
-            $osVersion = $this->mapper->mapOsVersion($parserResult['os_version'], $osName);
-
-            $result->setCapability('device_os', $osName);
-            $result->setCapability('device_os_version', $osVersion);
-        }
-
-        if (isset($parserResult['category'])
-            && isset($parserResult['os'])
-            && !in_array($parserResult['os'], ['iPad', 'iPhone'])
+        if (!empty($parserResult->category)
+            && !empty($parserResult->os)
+            && !in_array($parserResult->os, ['iPad', 'iPhone'])
         ) {
-            $result->setCapability('device_type', $this->mapper->mapDeviceType($parserResult['category']));
+            $device = new Device(
+                $agent,
+                [
+                    'deviceName'     => null,
+                    'marketingName'  => null,
+                    'manufacturer'   => null,
+                    'brand'          => null,
+                    'pointingMethod' => null,
+                    'type'           => $this->mapper->mapDeviceType($parserResult->category),
+                ]
+            );
+        } else {
+            $device = new Device(
+                $agent,
+                []
+            );
         }
 
-        return $result;
+        if (!empty($parserResult->os) && !in_array($parserResult->os, ['iPad', 'iPhone'])) {
+            $osName    = $this->mapper->mapOsName($parserResult->os);
+            $osVersion = $this->mapper->mapOsVersion($parserResult->os_version, $osName);
+
+            $os = new Os(
+                $agent,
+                [
+                    'name' => $osName,
+                    'version' => $osVersion,
+                    'manufacturer' => null,
+                    'bits'         => null,
+                ]
+            );
+        } else {
+            $os = new Os(
+                $agent,
+                []
+            );
+        }
+
+        $engine = new Engine(
+            $agent,
+            []
+        );
+
+        return new Result($agent, $device, $os, $browser, $engine);
     }
 
     /**
