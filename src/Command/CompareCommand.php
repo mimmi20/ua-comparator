@@ -31,9 +31,6 @@
 
 namespace UaComparator\Command;
 
-use Browscap\Generator\BuildGenerator;
-use Browscap\Helper\CollectionCreator;
-use Browscap\Writer\Factory\PhpWriterFactory;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
@@ -50,31 +47,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
 use UaComparator\Helper\MessageFormatter;
 use UaComparator\Helper\TimeFormatter;
-use UaComparator\Module\Browscap2;
-use UaComparator\Module\Browscap3;
-use UaComparator\Module\BrowserDetectorModule;
-use UaComparator\Module\CrossJoin;
-use UaComparator\Module\DeviceAtlasCom;
-use UaComparator\Module\DonatjUAParser;
-use UaComparator\Module\Http;
 use UaComparator\Module\ModuleCollection;
-use UaComparator\Module\NeutrinoApiCom;
-use UaComparator\Module\PiwikDetector;
-use UaComparator\Module\SinergiBrowserDetector;
-use UaComparator\Module\UaParser;
-use UaComparator\Module\UdgerCom;
-use UaComparator\Module\UserAgentApiCom;
-use UaComparator\Module\UserAgentStringCom;
-use UaComparator\Module\WhatIsMyBrowserCom;
-use UaComparator\Module\WhichBrowser;
-use UaComparator\Module\Woothee;
-use UaComparator\Module\Wurfl;
-use UaComparator\Module\WurflOld;
 use UaComparator\Source\DirectorySource;
 use UaComparator\Source\PdoSource;
+use UaDataMapper\InputMapper;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
-use UaDataMapper\InputMapper;
 
 define('START_TIME', microtime(true));
 
@@ -561,7 +539,7 @@ class CompareCommand extends Command
                     'min'     => ['size' => 500000000, 'agent' => ''],
                     'max'     => ['size' => 0, 'agent' => ''],
                     'last'    => ['size' => 0, 'agent' => ''],
-                ]
+                ],
             ];
         }
 
@@ -589,7 +567,7 @@ class CompareCommand extends Command
 
             $timeStart = microtime(true);
 
-            foreach ($collection as $module) {var_dump($module->getName());
+            foreach ($collection as $module) {
                 /* @var \UaComparator\Module\ModuleInterface $module */
                 $module
                     ->startTimer()

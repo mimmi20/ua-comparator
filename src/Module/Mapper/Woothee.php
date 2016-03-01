@@ -69,12 +69,12 @@ class Woothee implements MapperInterface
         $browser = new Browser(
             $agent,
             [
-                'name'    => $browserName,
-                'modus'   => null,
-                'version' => $this->mapper->mapBrowserVersion($parserResult->version, $browserName),
+                'name'         => $browserName,
+                'modus'        => null,
+                'version'      => $this->mapper->mapBrowserVersion($parserResult->version, $browserName),
                 'manufacturer' => null,
-                'bits'    => null,
-                'type'    => $this->mapper->mapBrowserType($parserResult->category, $browserName),
+                'bits'         => null,
+                'type'         => $this->mapper->mapBrowserType($parserResult->category, $browserName),
             ]
         );
 
@@ -107,8 +107,8 @@ class Woothee implements MapperInterface
             $os = new Os(
                 $agent,
                 [
-                    'name' => $osName,
-                    'version' => $osVersion,
+                    'name'         => $osName,
+                    'version'      => $osVersion,
                     'manufacturer' => null,
                     'bits'         => null,
                 ]

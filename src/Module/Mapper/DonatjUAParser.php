@@ -31,10 +31,12 @@
 
 namespace UaComparator\Module\Mapper;
 
-use Monolog\Logger;
 use UaDataMapper\InputMapper;
+use UaResult\Browser\Browser;
+use UaResult\Device\Device;
+use UaResult\Engine\Engine;
+use UaResult\Os\Os;
 use UaResult\Result\Result;
-use WurflCache\Adapter\AdapterInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -55,22 +57,49 @@ class DonatjUAParser implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param mixed  $parserResult
-     * @param string $agent
+     * @param \stdClass $parserResult
+     * @param string    $agent
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
     public function map($parserResult, $agent)
     {
-        $result = new Result($agent);
+        $browserName    = $this->mapper->mapBrowserName($parserResult->browser);
+        $browserVersion = $this->mapper->mapBrowserVersion($parserResult->version, $browserName);
 
-        $browserName    = $this->mapper->mapBrowserName($parserResult['browser']);
-        $browserVersion = $this->mapper->mapBrowserVersion($parserResult['version'], $browserName);
+        $browser = new Browser(
+            $agent,
+            [
+                'name'         => $browserName,
+                'modus'        => null,
+                'version'      => $browserVersion,
+                'manufacturer' => null,
+                'bits'         => null,
+                'type'         => null,
+            ]
+        );
 
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
+        $device = new Device(
+            $agent,
+            []
+        );
 
-        return $result;
+        $os = new Os(
+            $agent,
+            [
+                'name'         => $this->mapper->mapOsName($parserResult->platform),
+                'version'      => null,
+                'manufacturer' => null,
+                'bits'         => null,
+            ]
+        );
+
+        $engine = new Engine(
+            $agent,
+            []
+        );
+
+        return new Result($agent, $device, $os, $browser, $engine);
     }
 
     /**

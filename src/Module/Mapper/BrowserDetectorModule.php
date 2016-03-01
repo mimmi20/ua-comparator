@@ -31,9 +31,6 @@
 
 namespace UaComparator\Module\Mapper;
 
-use BrowserDetector\BrowserDetector;
-use Monolog\Logger;
-use WurflCache\Adapter\AdapterInterface;
 use UaDataMapper\InputMapper;
 
 /**

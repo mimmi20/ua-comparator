@@ -64,7 +64,7 @@ class WhichBrowser implements MapperInterface
      */
     public function map($parserResult, $agent)
     {
-        $browserName = $this->mapper->mapBrowserName($parserResult->browser->name);
+        $browserName    = $this->mapper->mapBrowserName($parserResult->browser->name);
         $browserVersion = $this->mapper->mapBrowserVersion($parserResult->browser->version, $browserName);
 
         if (!empty($parserResult->browser->type)) {
@@ -76,12 +76,12 @@ class WhichBrowser implements MapperInterface
         $browser = new Browser(
             $agent,
             [
-                'name'    => $browserName,
-                'modus'   => null,
-                'version' => $browserVersion,
+                'name'         => $browserName,
+                'modus'        => null,
+                'version'      => $browserVersion,
                 'manufacturer' => null,
-                'bits'    => null,
-                'type'    => $this->mapper->mapBrowserType($browserType, $browserName),
+                'bits'         => null,
+                'type'         => $this->mapper->mapBrowserType($browserType, $browserName),
             ]
         );
 
@@ -97,15 +97,14 @@ class WhichBrowser implements MapperInterface
             ]
         );
 
-
         $platform        = $this->mapper->mapOsName($parserResult->os->name);
         $platformVersion = $this->mapper->mapOsVersion($parserResult->os->version, $platform);
 
         $os = new Os(
             $agent,
             [
-                'name' => $platform,
-                'version' => $platformVersion,
+                'name'         => $platform,
+                'version'      => $platformVersion,
                 'manufacturer' => null,
                 'bits'         => null,
             ]
@@ -114,8 +113,8 @@ class WhichBrowser implements MapperInterface
         $engine = new Engine(
             $agent,
             [
-                'name' => $this->mapper->mapEngineName($parserResult->engine->name),
-                'version' => $this->mapper->mapEngineVersion($parserResult->engine->version),
+                'name'         => $this->mapper->mapEngineName($parserResult->engine->name),
+                'version'      => $this->mapper->mapEngineVersion($parserResult->engine->version),
                 'manufacturer' => null,
             ]
         );

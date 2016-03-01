@@ -31,11 +31,9 @@
 
 namespace UaComparator\Module\Check;
 
-use DeviceDetector\Parser\Client\Browser;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
-use UaResult\Result;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities

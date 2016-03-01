@@ -73,12 +73,12 @@ class SinergiBrowserDetector implements MapperInterface
         $browser = new Browser(
             $agent,
             [
-                'name'    => $browserName,
-                'modus'   => null,
-                'version' => $browserVersion,
+                'name'         => $browserName,
+                'modus'        => null,
+                'version'      => $browserVersion,
                 'manufacturer' => null,
-                'bits'    => null,
-                'type'    => null,
+                'bits'         => null,
+                'type'         => null,
             ]
         );
 
@@ -96,15 +96,14 @@ class SinergiBrowserDetector implements MapperInterface
             ]
         );
 
-
         $platform        = $this->mapper->mapOsName($parserResult->os->name);
         $platformVersion = $this->mapper->mapOsVersion($parserResult->os->version, $platform);
 
         $os = new Os(
             $agent,
             [
-                'name' => $platform,
-                'version' => $platformVersion,
+                'name'         => $platform,
+                'version'      => $platformVersion,
                 'manufacturer' => null,
                 'bits'         => null,
             ]

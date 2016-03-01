@@ -68,12 +68,12 @@ class UaParser implements MapperInterface
         $browser = new Browser(
             $agent,
             [
-                'name'    => $this->mapper->mapBrowserName($parserResult->ua->family),
-                'modus'   => null,
-                'version' => new Version($parserResult->ua->major, $parserResult->ua->minor, $parserResult->ua->patch),
+                'name'         => $this->mapper->mapBrowserName($parserResult->ua->family),
+                'modus'        => null,
+                'version'      => new Version($parserResult->ua->major, $parserResult->ua->minor, $parserResult->ua->patch),
                 'manufacturer' => null,
-                'bits'    => null,
-                'type'    => null,
+                'bits'         => null,
+                'type'         => null,
             ]
         );
 
@@ -85,8 +85,8 @@ class UaParser implements MapperInterface
         $os = new Os(
             $agent,
             [
-                'name' => $this->mapper->mapOsName($parserResult->os->family),
-                'version' => new Version($parserResult->os->major, $parserResult->os->minor, $parserResult->os->patch),
+                'name'         => $this->mapper->mapOsName($parserResult->os->family),
+                'version'      => new Version($parserResult->os->major, $parserResult->os->minor, $parserResult->os->patch),
                 'manufacturer' => null,
                 'bits'         => null,
             ]

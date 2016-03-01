@@ -94,12 +94,12 @@ class PiwikDetector implements MapperInterface
         $browser = new Browser(
             $agent,
             [
-                'name'    => $browserName,
-                'modus'   => null,
-                'version' => $browserVersion,
+                'name'         => $browserName,
+                'modus'        => null,
+                'version'      => $browserVersion,
                 'manufacturer' => $browserMaker,
-                'bits'    => null,
-                'type'    => $this->mapper->mapBrowserType($browserType, $browserName),
+                'bits'         => null,
+                'type'         => $this->mapper->mapBrowserType($browserType, $browserName),
             ]
         );
 
@@ -117,7 +117,6 @@ class PiwikDetector implements MapperInterface
             ]
         );
 
-
         if (!empty($parserResult->os->name)) {
             $osName    = $this->mapper->mapOsName($parserResult->os->name);
             $osVersion = $this->mapper->mapOsVersion($parserResult->os->version, $osName);
@@ -125,8 +124,8 @@ class PiwikDetector implements MapperInterface
             $os = new Os(
                 $agent,
                 [
-                    'name' => $osName,
-                    'version' => $osVersion,
+                    'name'         => $osName,
+                    'version'      => $osVersion,
                     'manufacturer' => null,
                     'bits'         => null,
                 ]
@@ -138,15 +137,14 @@ class PiwikDetector implements MapperInterface
             );
         }
 
-
         if (!empty($parserResult->client->engine)) {
             $engineName = $this->mapper->mapEngineName($parserResult->client->engine);
 
             $engine = new Engine(
                 $agent,
                 [
-                    'name' => $engineName,
-                    'version' => null,
+                    'name'         => $engineName,
+                    'version'      => null,
                     'manufacturer' => null,
                 ]
             );

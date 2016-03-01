@@ -36,11 +36,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 use Monolog\Logger;
 use UaComparator\Helper\Request;
-use UaResult\Result;
-use WurflCache\Adapter\AdapterInterface;
-use DeviceDetector\Parser\Client\Browser;
 use UaComparator\Module\Check\CheckInterface;
 use UaComparator\Module\Mapper\MapperInterface;
+use UaResult\Result;
+use WurflCache\Adapter\AdapterInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -314,7 +313,7 @@ class NeutrinoApiCom implements ModuleInterface
     public function getDetectionResult()
     {
         if (null === $this->detectionResult) {
-            return null;
+            return;
         }
 
         try {
@@ -322,7 +321,7 @@ class NeutrinoApiCom implements ModuleInterface
         } catch (RequestException $e) {
             $this->logger->error($e);
 
-            return null;
+            return;
         }
 
         if (isset($return->duration)) {
@@ -347,6 +346,6 @@ class NeutrinoApiCom implements ModuleInterface
             $this->logger->error($e);
         }
 
-        return null;
+        return;
     }
 }

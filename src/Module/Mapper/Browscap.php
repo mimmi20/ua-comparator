@@ -85,12 +85,12 @@ class Browscap implements MapperInterface
         $browser = new Browser(
             $agent,
             [
-                'name'    => $browserName,
-                'modus'   => $browserModus,
-                'version' => $browserVersion,
+                'name'         => $browserName,
+                'modus'        => $browserModus,
+                'version'      => $browserVersion,
                 'manufacturer' => $this->mapper->mapBrowserMaker($parserResult->browser_maker, $browserName),
-                'bits'    => $parserResult->browser_bits,
-                'type'    => $this->mapper->mapBrowserType($browserType, $browserName),
+                'bits'         => $parserResult->browser_bits,
+                'type'         => $this->mapper->mapBrowserType($browserType, $browserName),
             ]
         );
 
@@ -108,15 +108,14 @@ class Browscap implements MapperInterface
             ]
         );
 
-
         $platform        = $this->mapper->mapOsName($parserResult->platform);
         $platformVersion = $this->mapper->mapOsVersion($parserResult->platform_version, $platform);
 
         $os = new Os(
             $agent,
             [
-                'name' => $platform,
-                'version' => $platformVersion,
+                'name'         => $platform,
+                'version'      => $platformVersion,
                 'manufacturer' => $this->mapper->mapOsMaker($parserResult->platform_maker, $platform),
                 'bits'         => $parserResult->platform_bits,
             ]
@@ -127,8 +126,8 @@ class Browscap implements MapperInterface
         $engine = new Engine(
             $agent,
             [
-                'name' => $engineName,
-                'version' => $this->mapper->mapEngineVersion($parserResult->renderingengine_version),
+                'name'         => $engineName,
+                'version'      => $this->mapper->mapEngineVersion($parserResult->renderingengine_version),
                 'manufacturer' => $parserResult->renderingengine_maker,
             ]
         );

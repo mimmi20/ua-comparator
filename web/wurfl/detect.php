@@ -55,7 +55,7 @@ header('Content-Type: application/json', true);
 
 $start            = microtime(true);
 
-$cache = new File([File::DIR => 'data/cache/wurfl/']);
+$cache            = new File([File::DIR => 'data/cache/wurfl/']);
 $wurflConfig      = new XmlConfig('data/wurfl-config.xml');
 $wurflCache       = new Storage(new Memory());
 $persistanceCache = new Storage($cache);

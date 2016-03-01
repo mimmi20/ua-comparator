@@ -32,9 +32,9 @@
 namespace UaComparator\Module;
 
 use Monolog\Logger;
-use WurflCache\Adapter\AdapterInterface;
 use UaComparator\Module\Check\CheckInterface;
 use UaComparator\Module\Mapper\MapperInterface;
+use WurflCache\Adapter\AdapterInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities

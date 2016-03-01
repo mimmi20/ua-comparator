@@ -31,17 +31,12 @@
 
 namespace UaComparator\Module\Mapper;
 
-use DeviceDetector\Parser\Client\Browser;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
-use GuzzleHttp\Psr7\Response;
-use Monolog\Logger;
-use Psr\Http\Message\RequestInterface;
-use UaComparator\Helper\Request;
 use UaDataMapper\InputMapper;
+use UaResult\Browser\Browser;
+use UaResult\Device\Device;
+use UaResult\Engine\Engine;
+use UaResult\Os\Os;
 use UaResult\Result\Result;
-use WurflCache\Adapter\AdapterInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -69,6 +64,76 @@ class DeviceAtlasCom implements MapperInterface
      */
     public function map($parserResult, $agent)
     {
+        $browserName    = $this->mapper->mapBrowserName($parserResult->browser);
+        $browserVersion = $this->mapper->mapBrowserVersion(
+            $parserResult->version,
+            $browserName
+        );
+
+        if (!empty($parserResult->browser_type)) {
+            $browserType = $parserResult->browser_type;
+        } else {
+            $browserType = null;
+        }
+
+        if (!empty($parserResult->browser_modus) && 'unknown' !== $parserResult->browser_modus) {
+            $browserModus = $parserResult->browser_modus;
+        } else {
+            $browserModus = null;
+        }
+
+        $browser = new Browser(
+            $agent,
+            [
+                'name'         => $browserName,
+                'modus'        => $browserModus,
+                'version'      => $browserVersion,
+                'manufacturer' => $this->mapper->mapBrowserMaker($parserResult->browser_maker, $browserName),
+                'bits'         => $parserResult->browser_bits,
+                'type'         => $this->mapper->mapBrowserType($browserType, $browserName),
+            ]
+        );
+
+        $deviceName = $this->mapper->mapDeviceName($parserResult->device_code_name);
+
+        $device = new Device(
+            $agent,
+            [
+                'deviceName'     => $deviceName,
+                'marketingName'  => $this->mapper->mapDeviceMarketingName($parserResult->device_name, $deviceName),
+                'manufacturer'   => $this->mapper->mapDeviceMaker($parserResult->device_maker, $deviceName),
+                'brand'          => $this->mapper->mapDeviceBrandName($parserResult->device_brand_name, $deviceName),
+                'pointingMethod' => $parserResult->device_pointing_method,
+                'type'           => $this->mapper->mapDeviceType($parserResult->device_type),
+            ]
+        );
+
+        $platform        = $this->mapper->mapOsName($parserResult->platform);
+        $platformVersion = $this->mapper->mapOsVersion($parserResult->platform_version, $platform);
+
+        $os = new Os(
+            $agent,
+            [
+                'name'         => $platform,
+                'version'      => $platformVersion,
+                'manufacturer' => $this->mapper->mapOsMaker($parserResult->platform_maker, $platform),
+                'bits'         => $parserResult->platform_bits,
+            ]
+        );
+
+        $engineName = $this->mapper->mapEngineName($parserResult->renderingengine_name);
+
+        $engine = new Engine(
+            $agent,
+            [
+                'name'         => $engineName,
+                'version'      => $this->mapper->mapEngineVersion($parserResult->renderingengine_version),
+                'manufacturer' => $parserResult->renderingengine_maker,
+            ]
+        );
+
+        return new Result($agent, $device, $os, $browser, $engine);
+        /*
         $result = new Result($agent);
 
         if (null === $parserResult) {
@@ -80,17 +145,6 @@ class DeviceAtlasCom implements MapperInterface
 
         $result->setCapability('mobile_browser', $browserName);
         $result->setCapability('mobile_browser_version', $browserVersion);
-        /*
-        $result->setCapability('browser_type', $this->mapper->mapBrowserType('browser', $browserName)->getName());
-
-        if (!empty($parserResult['client']['type'])) {
-            $browserType = $parserResult['client']['type'];
-        } else {
-            $browserType = null;
-        }
-
-        $result->setCapability('browser_type', $this->mapper->mapBrowserType($browserType, $browserName)->getName());
-        /**/
 
         if (isset($parserResult->browserRenderingEngine)) {
             $engineName = $parserResult->browserRenderingEngine;
@@ -114,6 +168,7 @@ class DeviceAtlasCom implements MapperInterface
         $result->setCapability('device_type', $this->mapper->mapDeviceType($deviceType));
 
         return $result;
+        /**/
     }
 
     /**

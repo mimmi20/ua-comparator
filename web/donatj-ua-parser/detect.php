@@ -29,8 +29,6 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-use DeviceDetector\Parser\Client\Browser;
-
 chdir(dirname(dirname(__DIR__)));
 
 $autoloadPaths = [
@@ -57,7 +55,7 @@ $duration = microtime(true) - $start;
 
 echo json_encode(
     [
-        'result'   => [$parserResult],
+        'result'   => $parserResult,
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]

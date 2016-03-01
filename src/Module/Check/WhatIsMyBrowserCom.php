@@ -31,7 +31,6 @@
 
 namespace UaComparator\Module\Check;
 
-use DeviceDetector\Parser\Client\Browser;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;

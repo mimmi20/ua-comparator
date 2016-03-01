@@ -516,17 +516,17 @@ class Wurfl implements MapperInterface
         $browser = new Browser(
             $agent,
             [
-                'name'    => $browserName,
-                'modus'   => null,
-                'version' => $this->mapper->mapBrowserVersion($apiVer, $browserName),
+                'name'         => $browserName,
+                'modus'        => null,
+                'version'      => $this->mapper->mapBrowserVersion($apiVer, $browserName),
                 'manufacturer' => $this->mapper->mapBrowserMaker($browserMaker, $browserName),
-                'bits'    => null,
-                'type'    => null,
+                'bits'         => null,
+                'type'         => null,
             ]
         );
 
         $deviceName  = $this->mapper->mapDeviceName($apiDev);
-        $pointing = null;
+        $pointing    = null;
 
         if ($apiBot) {
             $apiPhone   = false;
@@ -565,8 +565,8 @@ class Wurfl implements MapperInterface
         $os = new Os(
             $agent,
             [
-                'name' => $this->mapper->mapOsName($apiOs),
-                'version' => null,
+                'name'         => $this->mapper->mapOsName($apiOs),
+                'version'      => null,
                 'manufacturer' => null,
                 'bits'         => null,
             ]
@@ -574,8 +574,8 @@ class Wurfl implements MapperInterface
 
         $engine = new Engine(
             $agent, [
-                'name' => null,
-                'version' => null,
+                'name'         => null,
+                'version'      => null,
                 'manufacturer' => null,
             ]
         );
