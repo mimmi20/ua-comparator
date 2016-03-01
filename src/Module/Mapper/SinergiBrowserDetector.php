@@ -31,11 +31,12 @@
 
 namespace UaComparator\Module\Mapper;
 
-use Monolog\Logger;
-use Sinergi\BrowserDetector;
 use UaDataMapper\InputMapper;
+use UaResult\Browser\Browser;
+use UaResult\Device\Device;
+use UaResult\Engine\Engine;
+use UaResult\Os\Os;
 use UaResult\Result\Result;
-use WurflCache\Adapter\AdapterInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -56,45 +57,65 @@ class SinergiBrowserDetector implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param mixed  $parserResult
-     * @param string $agent
+     * @param \stdClass $parserResult
+     * @param string    $agent
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
     public function map($parserResult, $agent)
     {
-        $result = new Result($agent);
+        $browserName    = $this->mapper->mapBrowserName($parserResult->browser->name);
+        $browserVersion = $this->mapper->mapBrowserVersion(
+            $parserResult->browser->version,
+            $browserName
+        );
 
-        /** @var BrowserDetector\Browser $browserRaw */
-        $browserRaw = $parserResult['browser'];
+        $browser = new Browser(
+            $agent,
+            [
+                'name'    => $browserName,
+                'modus'   => null,
+                'version' => $browserVersion,
+                'manufacturer' => null,
+                'bits'    => null,
+                'type'    => null,
+            ]
+        );
 
-        /** @var BrowserDetector\Os $osRaw */
-        $osRaw = $parserResult['operatingSystem'];
+        $deviceName = $this->mapper->mapDeviceName($parserResult->device->name);
 
-        /** @var BrowserDetector\Device $deviceRaw */
-        $deviceRaw  = $parserResult['device'];
+        $device = new Device(
+            $agent,
+            [
+                'deviceName'     => $deviceName,
+                'marketingName'  => $this->mapper->mapDeviceMarketingName($deviceName),
+                'manufacturer'   => null,
+                'brand'          => null,
+                'pointingMethod' => null,
+                'type'           => null,
+            ]
+        );
 
-        $browserName    = $this->mapper->mapBrowserName($browserRaw->getName());
-        $browserVersion = $this->mapper->mapBrowserVersion($browserRaw->getVersion(), $browserName);
 
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
+        $platform        = $this->mapper->mapOsName($parserResult->os->name);
+        $platformVersion = $this->mapper->mapOsVersion($parserResult->os->version, $platform);
 
-        if ($browserRaw->isRobot()) {
-            $result->setCapability('browser_type', $this->mapper->mapBrowserType('robot', $browserName)->getName());
-        }
+        $os = new Os(
+            $agent,
+            [
+                'name' => $platform,
+                'version' => $platformVersion,
+                'manufacturer' => null,
+                'bits'         => null,
+            ]
+        );
 
-        if ($osRaw->getName()) {
-            $osName    = $this->mapper->mapOsName($osRaw->getName());
-            $osVersion = $this->mapper->mapOsVersion($osRaw->getVersion(), $osName);
+        $engine = new Engine(
+            $agent,
+            []
+        );
 
-            $result->setCapability('device_os', $osName);
-            $result->setCapability('device_os_version', $osVersion);
-        }
-
-        $result->setCapability('marketing_name', $this->mapper->mapDeviceMarketingName($deviceRaw->getName()));
-
-        return $result;
+        return new Result($agent, $device, $os, $browser, $engine);
     }
 
     /**
