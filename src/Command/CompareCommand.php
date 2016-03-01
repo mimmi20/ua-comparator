@@ -104,8 +104,10 @@ class CompareCommand extends Command
                 continue;
             }
 
-            $this->defaultModules[] = $moduleConfig['class'];
+            $this->defaultModules[] = $key;
         }
+
+        $this->defaultModules = array_unique($this->defaultModules);
 
         $allChecks = [
             Check::MINIMUM,
@@ -218,7 +220,7 @@ class CompareCommand extends Command
                     continue;
                 }
 
-                if ($moduleConfig['class'] === $module) {
+                if ($key === $module) {
                     $output->write('initializing ' . $moduleConfig['name'] . ' ...', false);
 
                     if (!isset($moduleConfig['requires-cache'])) {
@@ -587,7 +589,7 @@ class CompareCommand extends Command
 
             $timeStart = microtime(true);
 
-            foreach ($collection as $module) {
+            foreach ($collection as $module) {var_dump($module->getName());
                 /* @var \UaComparator\Module\ModuleInterface $module */
                 $module
                     ->startTimer()

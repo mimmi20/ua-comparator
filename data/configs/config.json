@@ -81,10 +81,10 @@
       "enabled": false
     },
     "wurfl": {
-      "enabled": false
+      "enabled": true
     },
     "wurfl-old": {
-      "enabled": false
+      "enabled": true
     }
   }
 }
