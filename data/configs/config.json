@@ -75,7 +75,7 @@
       }
     },
     "which-browser": {
-      "enabled": false
+      "enabled": true
     },
     "woothee": {
       "enabled": false
