@@ -31,12 +31,13 @@
 
 namespace UaComparator\Module\Mapper;
 
-use Monolog\Logger;
 use UaDataMapper\InputMapper;
-use UAParser\Parser;
-use UAParser\Result\Client;
+use UaResult\Browser\Browser;
+use UaResult\Device\Device;
+use UaResult\Engine\Engine;
+use UaResult\Os\Os;
 use UaResult\Result\Result;
-use WurflCache\Adapter\AdapterInterface;
+use Version\Version;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -57,28 +58,46 @@ class UaParser implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param mixed  $parserResult
-     * @param string $agent
+     * @param \stdClass $parserResult
+     * @param string    $agent
      *
      * @return \UaResult\Result\Result the object containing the browsers details.
      */
     public function map($parserResult, $agent)
     {
-        $result = new Result($agent);
+        $browser = new Browser(
+            $agent,
+            [
+                'name'    => $this->mapper->mapBrowserName($parserResult->ua->family),
+                'modus'   => null,
+                'version' => new Version($parserResult->ua->major, $parserResult->ua->minor, $parserResult->ua->patch),
+                'manufacturer' => null,
+                'bits'    => null,
+                'type'    => null,
+            ]
+        );
 
-        $browserName    = $this->mapper->mapBrowserName($parserResult->ua->family);
-        $browserVersion = $this->mapper->mapBrowserVersion($parserResult->ua->toVersion(), $browserName);
+        $device = new Device(
+            $agent,
+            []
+        );
 
-        $result->setCapability('mobile_browser', $browserName);
-        $result->setCapability('mobile_browser_version', $browserVersion);
+        $os = new Os(
+            $agent,
+            [
+                'name' => $this->mapper->mapOsName($parserResult->os->family),
+                'version' => new Version($parserResult->os->major, $parserResult->os->minor, $parserResult->os->patch),
+                'manufacturer' => null,
+                'bits'         => null,
+            ]
+        );
 
-        $osName    = $this->mapper->mapOsName($parserResult->os->family);
-        $osVersion = $this->mapper->mapOsVersion($parserResult->os->toVersion(), $osName);
+        $engine = new Engine(
+            $agent,
+            []
+        );
 
-        $result->setCapability('device_os', $osName);
-        $result->setCapability('device_os_version', $osVersion);
-
-        return $result;
+        return new Result($agent, $device, $os, $browser, $engine);
     }
 
     /**

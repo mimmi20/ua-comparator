@@ -42,7 +42,7 @@
       "enabled": false
     },
     "ua-parser": {
-      "enabled": false
+      "enabled": true
     },
     "udger": {
       "enabled": false,
