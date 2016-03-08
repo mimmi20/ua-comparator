@@ -33,6 +33,10 @@
     },
     {
       "type": "git",
+      "url": "https://github.com/mimmi20/wurfl-api.git"
+    },
+    {
+      "type": "git",
       "url": "https://github.com/browscap/browscap-php.git"
     },
     {
@@ -95,13 +99,13 @@
     "mimmi20/file-loader": "^2.0.3",
 
     "donatj/phpuseragentparser": "^0.5.0",
-    "piwik/device-detector": "^3.5",
+    "piwik/device-detector": "^3.6",
     "sinergi/browser-detector": "^5.1",
     "ua-parser/uap-php": ">=3.4.3,<4.0",
     "whichbrowser/parser": ">=2.0.10,<3.0",
     "woothee/woothee": "^1.2",
-    "mimmi20/wurfl": "^1.6",
-    "wurfl/wurfl-api": "^1.6",
+    "mimmi20/wurfl": "dev-master",
+    "wurfl/wurfl-api": "dev-update-to-1.7",
     "mimmi20/browser-detector": "dev-master",
     "browscap/browscap-php/3.x": "dev-master",
     "browscap/browscap-php/2.x": "^2.0",
