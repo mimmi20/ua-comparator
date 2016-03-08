@@ -104,7 +104,7 @@
     "ua-parser/uap-php": ">=3.4.3,<4.0",
     "whichbrowser/parser": ">=2.0.10,<3.0",
     "woothee/woothee": "^1.2",
-    "mimmi20/wurfl": "^1.7@dev",
+    "mimmi20/wurfl": "dev-master",
     "wurfl/wurfl-api": "dev-update-to-1.7",
     "mimmi20/browser-detector": "dev-master",
     "browscap/browscap-php/3.x": "dev-master",
