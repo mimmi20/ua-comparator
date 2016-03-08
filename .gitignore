@@ -12,5 +12,4 @@ data/browser/
 data/cache/
 !data/useragents/
 error.log
-*.txt
 resources/browscap-*/
