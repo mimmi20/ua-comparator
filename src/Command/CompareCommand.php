@@ -608,7 +608,7 @@ class CompareCommand extends Command
                     $benchAll[$module->getName()]['memory']['max']['agent'] = $agent;
                 }
 
-                var_dump($result);
+                //var_dump($result);
             }
 
             echo '.';
