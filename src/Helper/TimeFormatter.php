@@ -49,14 +49,14 @@ class TimeFormatter
      */
     public static function formatTime($time)
     {
-        $wochen      = bcdiv((int) $time, 604800, 0);
-        $restwoche   = bcmod((int) $time, 604800);
-        $tage        = bcdiv($restwoche, 86400, 0);
-        $resttage    = bcmod($restwoche, 86400);
-        $stunden     = bcdiv($resttage, 3600, 0);
-        $reststunden = bcmod($resttage, 3600);
-        $minuten     = bcdiv($reststunden, 60, 0);
-        $sekunden    = bcmod($reststunden, 60);
+        $wochen      = \bcdiv((int) $time, 604800, 0);
+        $restwoche   = \bcmod((int) $time, 604800);
+        $tage        = \bcdiv($restwoche, 86400, 0);
+        $resttage    = \bcmod($restwoche, 86400);
+        $stunden     = \bcdiv($resttage, 3600, 0);
+        $reststunden = \bcmod($resttage, 3600);
+        $minuten     = \bcdiv($reststunden, 60, 0);
+        $sekunden    = \bcmod($reststunden, 60);
 
         return substr('00' . $wochen, -2) . ' Wochen '
         . substr('00' . $tage, -2) . ' Tage '

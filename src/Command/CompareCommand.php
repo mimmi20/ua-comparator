@@ -533,12 +533,14 @@ class CompareCommand extends Command
                     'min'     => ['time' => 1200.0, 'agent' => ''],
                     'max'     => ['time' => 0.0, 'agent' => ''],
                     'last'    => ['time' => 0.0, 'agent' => ''],
+                    'all'     => [],
                     'summary' => 0.0,
                 ],
                 'memory' => [
                     'min'     => ['size' => 500000000, 'agent' => ''],
                     'max'     => ['size' => 0, 'agent' => ''],
                     'last'    => ['size' => 0, 'agent' => ''],
+                    'all'     => [],
                 ],
             ];
         }
@@ -593,6 +595,8 @@ class CompareCommand extends Command
                     $benchAll[$module->getName()]['time']['max']['agent'] = $agent;
                 }
 
+                $benchAll[$module->getName()]['time']['all'][] = $actualTime;
+
                 $actualMemory = $module->getMaxMemory();
 
                 $benchAll[$module->getName()]['memory']['last']['size']  = $actualMemory;
@@ -607,6 +611,8 @@ class CompareCommand extends Command
                     $benchAll[$module->getName()]['memory']['max']['size']  = $actualMemory;
                     $benchAll[$module->getName()]['memory']['max']['agent'] = $agent;
                 }
+
+                $benchAll[$module->getName()]['memory']['all'][] = $actualMemory;
 
                 //var_dump($result);
             }
