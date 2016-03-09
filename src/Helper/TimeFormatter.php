@@ -49,19 +49,19 @@ class TimeFormatter
      */
     public static function formatTime($time)
     {
-        $wochen      = \bcdiv((int) $time, 604800, 0);
-        $restwoche   = \bcmod((int) $time, 604800);
-        $tage        = \bcdiv($restwoche, 86400, 0);
-        $resttage    = \bcmod($restwoche, 86400);
-        $stunden     = \bcdiv($resttage, 3600, 0);
-        $reststunden = \bcmod($resttage, 3600);
-        $minuten     = \bcdiv($reststunden, 60, 0);
-        $sekunden    = \bcmod($reststunden, 60);
+        $wochen      = (int) ((int) $time / 604800);
+        $restwoche   = (int) ((int) $time % 604800);
+        $tage        = (int) ($restwoche / 86400);
+        $resttage    = (int) ($restwoche % 86400);
+        $stunden     = (int) ($resttage / 3600);
+        $reststunden = (int) ($resttage % 3600);
+        $minuten     = (int) ($reststunden / 60);
+        $sekunden    = (int) ($reststunden % 60);
 
         return substr('00' . $wochen, -2) . ' Wochen '
-        . substr('00' . $tage, -2) . ' Tage '
-        . substr('00' . $stunden, -2) . ' Stunden '
-        . substr('00' . $minuten, -2) . ' Minuten '
-        . substr('00' . $sekunden, -2) . ' Sekunden';
+            . substr('00' . $tage, -2) . ' Tage '
+            . substr('00' . $stunden, -2) . ' Stunden '
+            . substr('00' . $minuten, -2) . ' Minuten '
+            . substr('00' . $sekunden, -2) . ' Sekunden';
     }
 }
