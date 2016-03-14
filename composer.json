@@ -36,18 +36,14 @@
       "url": "https://github.com/mimmi20/wurfl-api.git"
     },
     {
-      "type": "git",
-      "url": "https://github.com/browscap/browscap-php.git"
-    },
-    {
       "type": "package",
       "package": {
         "name": "browscap/browscap-php/3.x",
         "version": "dev-master",
         "source": {
-          "url": "https://github.com/browscap/browscap-php.git",
           "type": "git",
-          "reference": "1a0a6cf74474ac7e8ace2acde9d2269bac20dd30"
+          "url": "https://github.com/browscap/browscap-php.git",
+          "reference": "cdb36be5d96c6e0aea203dce8665bdce3007a97c"
         },
         "autoload": {
           "psr-4": {
@@ -62,8 +58,8 @@
         "name": "browscap/browscap-php/2.x",
         "version": "2.0",
         "source": {
-          "url": "https://github.com/browscap/browscap-php.git",
           "type": "git",
+          "url": "https://github.com/browscap/browscap-php.git",
           "reference": "22c03e5d232f15b62db1357ca98838b1417837c4"
         },
         "autoload": {
@@ -83,11 +79,14 @@
     "symfony/console": "^2.6|^3.0",
     "monolog/monolog": "^1.7",
     "hassankhan/config": "^0.10",
-    "mimmi20/wurflcache": "^1.3",
     "guzzlehttp/guzzle": "^6.1",
     "devster/ubench": "^1.2",
+
+    "mimmi20/wurflcache": "^1.3",
     "mimmi20/wurfl-data": "^1.6",
+
     "browscap/browscap": "dev-detection-issues",
+
     "mimmi20/wurfl-generic-request": "^1.7",
     "mimmi20/ua-result": "^2.0@dev",
     "mimmi20/ua-matcher-interface": "^1.1",

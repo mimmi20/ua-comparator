@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * Copyright (c) 2015, Thomas Mueller <t_mueller_stolzenhain@yahoo.de>

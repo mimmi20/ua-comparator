@@ -510,8 +510,8 @@ class CompareCommand extends Command
                 $user,
                 $password,
                 [
-                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
-                    1005                         => 1024 * 1024 * 50, // PDO::MYSQL_ATTR_MAX_BUFFER_SIZE
+                    1002 => 'SET NAMES \'UTF8\'', // PDO::MYSQL_ATTR_INIT_COMMAND
+                    1005 => 1024 * 1024 * 50,     // PDO::MYSQL_ATTR_MAX_BUFFER_SIZE
                 ]
             );
             $adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -561,13 +561,17 @@ class CompareCommand extends Command
          * Loop
          */
         foreach ($source->getUserAgents($logger, $limit) as $agent) {
-            $matches = [];
+            $bench           = [];
+            $bench['agent']  = $agent;
 
             /***************************************************************************
              * handle modules
              */
+            $cacheId = bin2hex($agent);
 
-            $timeStart = microtime(true);
+            if (!file_exists('data/results/' . $cacheId)) {
+                mkdir('data/results/' . $cacheId, 0775, true);
+            }
 
             foreach ($collection as $module) {
                 /* @var \UaComparator\Module\ModuleInterface $module */
@@ -595,6 +599,7 @@ class CompareCommand extends Command
                     $benchAll[$module->getName()]['time']['max']['agent'] = $agent;
                 }
 
+                // over all benchmark
                 $benchAll[$module->getName()]['time']['all'][] = $actualTime;
 
                 $actualMemory = $module->getMaxMemory();
@@ -612,25 +617,23 @@ class CompareCommand extends Command
                     $benchAll[$module->getName()]['memory']['max']['agent'] = $agent;
                 }
 
+                // per useragent benchmark
                 $benchAll[$module->getName()]['memory']['all'][] = $actualMemory;
+                $bench[$module->getName()] = [
+                    'time'   => $actualTime,
+                    'memory' => $actualMemory,
+                ];
 
-                //var_dump($result);
+                file_put_contents('data/results/' . $cacheId . '/' . $module->getName() . '.txt', serialize($result));
             }
 
+            file_put_contents('data/results/' . $cacheId . '/bench.txt', serialize($bench));
+
             echo '.';
-
-            $fullTime = microtime(true) - $timeStart;
-
-            /***************************************************************************
-             * handle modules - end
-             */
-
-            /*
-             * Auswertung
-             */
-
             ++$i;
         }
+
+        file_put_contents('data/results/bench-all.txt', serialize($benchAll));
 
         var_dump($benchAll);
     }

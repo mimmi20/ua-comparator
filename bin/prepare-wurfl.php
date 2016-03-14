@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * Copyright (c) 2015, Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
@@ -29,7 +30,7 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-use Wurfl\Configuration\XmlConfig;
+use Wurfl\Configuration\FileConfig;
 use Wurfl\Manager;
 use Wurfl\Storage\Storage;
 use WurflCache\Adapter\File;
@@ -52,7 +53,7 @@ foreach ($autoloadPaths as $path) {
 ini_set('memory_limit', '-1');
 
 $cache            = new File([File::DIR => 'data/cache/wurfl/']);
-$wurflConfig      = new XmlConfig('data/wurfl-config.xml');
+$wurflConfig      = new FileConfig('data/wurfl-config.xml');
 $wurflCache       = new Storage(new Memory());
 $persistanceCache = new Storage($cache);
 $wurflManager     = new Manager($wurflConfig, $persistanceCache, $wurflCache);

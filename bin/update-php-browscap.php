@@ -21,21 +21,20 @@ foreach ($autoloadPaths as $path) {
 ini_set('memory_limit', '-1');
 
 use Noodlehaus\Config;
-use BrowscapPHP\Browscap as Browscap3;
-use WurflCache\Adapter\File;
+use phpbrowscap\Browscap as Browscap2;
 
 $bench = new Ubench;
 $bench->start();
 
-echo ' updating cache for BrowscapPHP\Browscap', PHP_EOL;
+echo ' updating cache for phpbrowscap\Browscap', PHP_EOL;
 
 $config   = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
-$cacheDir = $config['modules']['browscap3']['cache-dir'];
+$cacheDir = $config['modules']['browscap2']['cache-dir'];
 
-$browscap = new Browscap3();
-$cache = new File([File::DIR => $cacheDir]);
-$browscap->setCache($cache);
-$browscap->update();
+$browscap = new Browscap2($cacheDir);
+$browscap->localFile    = realpath('data/browser/full_php_browscap.ini');
+$browscap->updateMethod = Browscap2::UPDATE_LOCAL;
+$browscap->updateCache();
 
 $bench->end();
 echo ' ', $bench->getTime(true), ' secs ', PHP_EOL;

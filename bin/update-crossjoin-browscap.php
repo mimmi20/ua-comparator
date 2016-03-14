@@ -22,6 +22,7 @@ ini_set('memory_limit', '-1');
 
 use Crossjoin\Browscap\Browscap;
 use Crossjoin\Browscap\Cache\File;
+use Crossjoin\Browscap\Updater\Local;
 use Noodlehaus\Config;
 
 $bench = new Ubench;
@@ -33,6 +34,10 @@ $config   = new Config(['data/configs/config.dist.json', '?data/configs/config.j
 $cacheDir = $config['modules']['crossjoin']['cache-dir'];
 
 File::setCacheDirectory($cacheDir);
+Browscap::setDataSetType(Browscap::DATASET_TYPE_LARGE);
+$updater = new Local();
+$updater->setOption('LocalFile', realpath('data/browser/full_php_browscap.ini'));
+Browscap::setUpdater($updater);
 $browscap = new Browscap();
 $browscap->getBrowser()->getData();
 
