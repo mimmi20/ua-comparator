@@ -67,7 +67,7 @@
     </persistence>
     <cache>
         <provider>NullStorage</provider>
-        <params></params>
+        <params/>
     </cache>
     <logger>
         <type>File</type>

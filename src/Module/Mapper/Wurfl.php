@@ -580,7 +580,7 @@ class Wurfl implements MapperInterface
             ]
         );
 
-        return new Result($agent, $device, $os, $browser, $engine, (array) $parserResult, $parserResult->id);
+        return new Result($agent, $device, $os, $browser, $engine, (array) $parserResult);
     }
 
     /**

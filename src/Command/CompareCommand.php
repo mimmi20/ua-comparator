@@ -567,7 +567,7 @@ class CompareCommand extends Command
             /***************************************************************************
              * handle modules
              */
-            $cacheId = bin2hex($agent);
+            $cacheId = hash('sha512', bin2hex($agent));
 
             if (!file_exists('data/results/' . $cacheId)) {
                 mkdir('data/results/' . $cacheId, 0775, true);
