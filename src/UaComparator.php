@@ -48,6 +48,7 @@ class UaComparator extends Application
 
         $commands = [
             new Command\CompareCommand(),
+            new Command\ParseCommand(),
         ];
 
         foreach ($commands as $command) {
