@@ -38,8 +38,6 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
-use Noodlehaus\Config;
-use PDO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -47,8 +45,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
 use UaComparator\Helper\MessageFormatter;
 use UaComparator\Helper\TimeFormatter;
-
-define('START_TIME', microtime(true));
 
 /**
  * Class CompareCommand
@@ -106,7 +102,8 @@ class CompareCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
-        $logger = new Logger('ua-comparator');
+        $startTime = microtime(true);
+        $logger    = new Logger('ua-comparator');
 
         $stream = new StreamHandler('php://output', Logger::ERROR);
         $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
@@ -137,7 +134,7 @@ class CompareCommand extends Command
         setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
         $output->writeln(
-            ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+            ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
                 memory_get_usage(true),
                 0,
                 ',',
@@ -145,6 +142,241 @@ class CompareCommand extends Command
             ) . ' Bytes'
         );
 
-        $dataDir = 'data/results/';
+        /*******************************************************************************
+         * Loop
+         */
+
+        $dataDir    = 'data/results/';
+        $iterator   = new \DirectoryIterator($dataDir);
+        $collection = [];
+        $i          = 1;
+        $okfound    = 0;
+        $nokfound   = 0;
+        $sosofound  = 0;
+
+        $messageFormatter = new MessageFormatter();
+        $messageFormatter->setColumnsLength(self::COL_LENGTH);
+
+        $checklevel  = $input->getOption('check-level');
+        $checkHelper = new Check();
+        $checks      = $checkHelper->getChecks($checklevel);
+
+        foreach (new \IteratorIterator($iterator) as $file) {
+            /** @var $file \SplFileInfo */
+            if ($file->isFile() || in_array($file->getFilename(), array('.', '..'))) {
+                continue;
+            }
+
+            $path          = $file->getPathname();
+            $innerIterator = new \DirectoryIterator($path);
+            $agent         = null;
+
+            $collection[$file->getBasename()] = [];
+
+            foreach (new \IteratorIterator($innerIterator) as $innerFile) {
+                /** @var $innerFile \SplFileInfo */
+                if (!$innerFile->isFile() || 'bench.txt' === $innerFile->getFilename()) {
+                    continue;
+                }
+
+                $moduleName = $innerFile->getBasename('.txt');
+
+                $collection[$file->getBasename()][$moduleName] = unserialize(file_get_contents($innerFile->getPathname()));
+
+                if (null === $agent) {
+                    $agent = $collection[$file->getBasename()][$moduleName]['ua'];
+                }
+            }
+
+            $messageFormatter->setCollection($collection[$file->getBasename()]);
+
+            $aLength = self::COL_LENGTH + 1 + self::COL_LENGTH + 1 + ((count($collection) - 1) * (self::COL_LENGTH + 1));
+            $output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + count($collection) - 1 + 2), false);
+
+            $output->writeln('');
+
+            /*
+             * Auswertung
+             */
+            $allResults = [];
+            $matches = [];
+
+            foreach ($checks as $propertyTitel => $x) {
+                if (empty($x['key'])) {
+                    $propertyName = $propertyTitel;
+                } else {
+                    $propertyName = $x['key'];
+                }
+
+                $detectionResults = $messageFormatter->formatMessage($propertyName);
+
+                foreach ($detectionResults as $result) {
+                    $matches[] = substr($result, 0, 1);
+                }
+
+                $allResults[$propertyTitel] = $detectionResults;
+            }
+
+            if (in_array('-', $matches)) {
+                $content = file_get_contents('src/templates/single-line.txt');
+                $content = str_replace('#ua#', $agent, $content);
+                $content = str_replace(
+                    '#               id#',
+                    str_pad($i, self::FIRST_COL_LENGTH - 1, ' ', STR_PAD_LEFT),
+                    $content
+                );
+
+                foreach ($collection[$file->getBasename()] as $moduleName => $data) {
+                    $content = str_replace(
+                        '#' . $moduleName . '#',
+                        str_pad(number_format($data['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                        $content
+                    );
+                }
+
+                $content = str_replace(
+                    '#TimeSummary#',
+                    str_pad(number_format('n/a', 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                    $content
+                );
+
+                $content .= '+--------------------+' . str_repeat('-', count($collection)) . '+--------------------------------------------------+';
+                $content .= str_repeat('--------------------------------------------------+', count($collection));
+                $content .= "\n";
+
+                $content .= '|                    |' . str_repeat(' ', count($collection)) . '|                                                  |';
+                foreach (array_keys($collection[$file->getBasename()]) as $moduleName) {
+                    $content .= str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
+                }
+                $content .= "\n";
+
+                $content .= '|                    +' . str_repeat('-', count($collection)) . '+--------------------------------------------------+';
+                $content .= str_repeat('--------------------------------------------------+', count($collection));
+                $content .= "\n";
+
+                foreach ($allResults as $propertyTitel => $detectionResults) {
+                    $lineContent = '|                    |' . str_repeat(' ', count($collection)) . '|'
+                        . str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT)
+                        . '|';
+
+                    foreach (array_values($detectionResults) as $index => $value) {
+                        $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
+                        $lineContent = substr_replace($lineContent, substr($value, 0, 1), 22 + $index, 1);
+                    }
+
+                    $content .= $lineContent .  "\n";
+                }
+
+                $content .= '+--------------------+';
+                $content .= str_repeat('-', count($collection));
+                $content .= '+--------------------------------------------------+';
+                $content .= str_repeat('--------------------------------------------------+', count($collection));
+                $content .= "\n";
+
+                $content .= '-';
+                ++$nokfound;
+            } elseif (in_array(':', $matches)) {
+                $content = ':';
+                ++$sosofound;
+            } else {
+                $content = '.';
+                ++$okfound;
+            }
+
+            if (($i % 100) === 0) {
+                $content .= "\n";
+            }
+
+            if (in_array('-', $matches)) {
+                $content = str_replace(
+                    [
+                        '#  plus#',
+                        '# minus#',
+                        '#  soso#',
+                        '#     percent1#',
+                        '#     percent2#',
+                        '#     percent3#',
+                    ],
+                    [
+                        str_pad($okfound, 8, ' ', STR_PAD_LEFT),
+                        str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
+                        str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
+                        str_pad(
+                            number_format((100 * $okfound / $i), 9, ',', '.'),
+                            15,
+                            ' ',
+                            STR_PAD_LEFT
+                        ),
+                        str_pad(
+                            number_format((100 * $nokfound / $i), 9, ',', '.'),
+                            15,
+                            ' ',
+                            STR_PAD_LEFT
+                        ),
+                        str_pad(
+                            number_format((100 * $sosofound / $i), 9, ',', '.'),
+                            15,
+                            ' ',
+                            STR_PAD_LEFT
+                        ),
+                    ],
+                    $content
+                );
+            }
+
+            $content = preg_replace('/\#[^#]*\#/', '               (n/a)', $content);
+
+            $output->write($content, false);
+
+            $output->writeln('');
+
+            $content = file_get_contents('src/templates/end-line.txt');
+
+            --$i;
+
+            if ($i < 1) {
+                $i = 1;
+            }
+
+            $content = str_replace(
+                [
+                    '#  plus#',
+                    '# minus#',
+                    '#  soso#',
+                    '#     percent1#',
+                    '#     percent2#',
+                    '#     percent3#',
+                ],
+                [
+                    str_pad($okfound, 8, ' ', STR_PAD_LEFT),
+                    str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
+                    str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
+                    str_pad(
+                        number_format((100 * $okfound / $i), 9, ',', '.'),
+                        15,
+                        ' ',
+                        STR_PAD_LEFT
+                    ),
+                    str_pad(
+                        number_format((100 * $nokfound / $i), 9, ',', '.'),
+                        15,
+                        ' ',
+                        STR_PAD_LEFT
+                    ),
+                    str_pad(
+                        number_format((100 * $sosofound / $i), 9, ',', '.'),
+                        15,
+                        ' ',
+                        STR_PAD_LEFT
+                    ),
+                ],
+                $content
+            );
+
+            $output->writeln($content);
+
+//var_dump($collection);
+            exit;
+        }
     }
 }

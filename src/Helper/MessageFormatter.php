@@ -31,8 +31,7 @@
 
 namespace UaComparator\Helper;
 
-use UaComparator\Module\ModuleCollection;
-use UaResult\Version;
+use UaResult\Result\Result;
 
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
@@ -46,7 +45,7 @@ use UaResult\Version;
 class MessageFormatter
 {
     /**
-     * @var \UaComparator\Module\ModuleCollection
+     * @var \UaResult\Result\Result[]
      */
     private $collection = null;
 
@@ -56,11 +55,11 @@ class MessageFormatter
     private $columnsLength = 0;
 
     /**
-     * @param \UaComparator\Module\ModuleCollection $collection
+     * @param \UaResult\Result\Result[] $collection
      *
      * @return \UaComparator\Helper\MessageFormatter
      */
-    public function setCollection(ModuleCollection $collection)
+    public function setCollection(array $collection)
     {
         $this->collection = $collection;
 
@@ -80,110 +79,51 @@ class MessageFormatter
     }
 
     /**
-     * @param string       $propertyTitel
-     * @param string|array $propertyName
+     * @param string $propertyName
      *
      * @return string[]
      */
-    public function formatMessage($propertyTitel, $propertyName)
+    public function formatMessage($propertyName)
     {
-        static $allErrors = [];
+        $modules      = array_keys($this->collection);
+        /** @var \UaResult\Result\Result $firstElement */
+        $firstElement = $this->collection[$modules[0]]['result'];
 
-        $mismatch      = false;
-        $passed        = true;
-        $propertyTitel = trim($propertyTitel);
-
-        if ('wurflKey' === $propertyName) {
-            $reality = $this->collection[0]->getDetectionResult()->id;
-        } elseif (is_string($propertyName)) {
-            $reality = $this->collection[0]->getDetectionResult()->getCapability($propertyName);
-        } elseif (is_array($propertyName) && is_callable([$this->collection[0]->getDetectionResult(), $propertyName[0]])) {
-            $reality = call_user_func_array(
-                [$this->collection[0]->getDetectionResult(), $propertyName[0]],
-                isset($propertyName[1]) ? $propertyName[1] : []
-            );
-        } else {
-            $reality = '(n/a)';
-        }
-
-        if (null === $reality || 'null' === $reality) {
+        if (null === $firstElement) {
             $strReality = '(NULL)';
-        } elseif ('' === $reality) {
-            $strReality = '(empty)';
-        } elseif (false === $reality || 'false' === $reality) {
-            $strReality = '(false)';
-        } elseif (true === $reality || 'true' === $reality) {
-            $strReality = '(true)';
         } else {
-            $strReality = (string) $reality;
+            $strReality   = $this->getValue($firstElement, $propertyName);
         }
 
         $detectionResults = [];
-        $fullname         = $this->collection[0]->getDetectionResult()->getFullBrowser(true, Version::MAJORMINOR);
 
-        foreach (array_keys($this->collection->getModules()) as $id) {
-            if ('wurflKey' === $propertyName) {
-                $target = $this->collection[$id]->getDetectionResult()->id;
-            } elseif (is_string($propertyName)) {
-                $target = $this->collection[$id]->getDetectionResult()->getCapability($propertyName);
-            } elseif (is_array($propertyName) && is_callable([$this->collection[$id]->getDetectionResult(), $propertyName[0]])) {
-                $target = call_user_func_array(
-                    [$this->collection[$id]->getDetectionResult(), $propertyName[0]],
-                    isset($propertyName[1]) ? $propertyName[1] : []
-                );
-            } else {
-                $target = '(n/a)';
-            }
-
-            if ($target instanceof Version) {
-                $target = $target->getVersion(Version::MAJORMINOR);
-            }
-
-            if (null === $target || 'null' === $target) {
+        foreach ($modules as $module => $name) {
+            /** @var \UaResult\Result\Result $element */
+            $element   = $this->collection[$name]['result'];
+            if (null === $element) {
                 $strTarget = '(NULL)';
-            } elseif ('' === $target) {
-                $strTarget = '(empty)';
-            } elseif (false === $target || 'false' === $target) {
-                $strTarget = '(false)';
-            } elseif (true === $target || 'true' === $target) {
-                $strTarget = '(true)';
             } else {
-                $strTarget = (string) $target;
+                $strTarget = $this->getValue($element, $propertyName);
             }
 
             if (strtolower($strTarget) === strtolower($strReality)) {
                 $r1 = ' ';
-            } elseif (((null === $reality) || ('' === $reality) || ('' === $strReality)) && ((null === $target) || ('' === $target))) {
-                $r1 = ' ';
-            } elseif ((null === $target) || ('' === $target) || ('' === $strTarget)) {
+            } elseif (in_array($strReality, ['(NULL)', '', '(empty)']) || in_array($strTarget, ['(NULL)', '', '(empty)'])) {
                 $r1 = ' ';
             } else {
-                $mismatch = true;
-
                 if ((strlen($strTarget) > strlen($strReality))
                     && (0 < strlen($strReality))
                     && (0 === strpos($strTarget, $strReality))
                 ) {
-                    $passed = false;
-                    $r1     = '-';
+                    $r1 = '-';
                 } elseif ((strlen($strTarget) < strlen($strReality))
                     && (0 < strlen($strTarget))
                     && (0 === strpos($strReality, $strTarget))
                 ) {
                     $r1 = ' ';
-                } elseif (isset($allErrors[$fullname][$propertyTitel])) {
-                    $r1     = ':';
                 } else {
-                    $passed = false;
-                    $r1     = '-';
+                    $r1 = '-';
                 }
-            }
-
-            if (!isset($allErrors[$fullname][$propertyTitel])
-                && $mismatch
-                && !$passed
-            ) {
-                $allErrors[$fullname][$propertyTitel] = $reality;
             }
 
             $result = $r1 . $strTarget;
@@ -191,9 +131,113 @@ class MessageFormatter
                 $result = substr($result, 0, $this->columnsLength - 3) . '...';
             }
 
-            $detectionResults[$this->collection[$id]->getName()] = str_pad($result, $this->columnsLength, ' ');
+            $detectionResults[$module] = str_pad($result, $this->columnsLength, ' ');
         }
 
         return $detectionResults;
+    }
+
+    /**
+     * @param \UaResult\Result\Result $element
+     * @param string                  $propertyName
+     *
+     * @return string
+     */
+    private function getValue(Result $element, $propertyName)
+    {
+        switch ($propertyName) {
+            case 'wurflKey':
+                $value = $element->getWurflKey();
+                break;
+            case 'mobile_browser':
+                $value = $element->getBrowser()->getName();
+                break;
+            case 'mobile_browser_version':
+                $value = $element->getBrowser()->getVersion();
+                break;
+            case 'mobile_browser_modus':
+                $value = $element->getBrowser()->getModus();
+                break;
+            case 'mobile_browser_bits':
+                $value = $element->getBrowser()->getBits();
+                break;
+            case 'browser_type':
+                $value = $element->getBrowser()->getType();
+                break;
+            case 'mobile_browser_manufacturer':
+                $value = $element->getBrowser()->getManufacturer();
+                break;
+            case 'renderingengine_name':
+                $value = $element->getEngine()->getName();
+                break;
+            case 'renderingengine_version':
+                $value = $element->getEngine()->getVersion();
+                break;
+            case 'renderingengine_manufacturer':
+                $value = $element->getEngine()->getManufacturer();
+                break;
+            case 'device_os':
+                $value = $element->getOs()->getName();
+                break;
+            case 'device_os_version':
+                $value = $element->getOs()->getVersion();
+                break;
+            case 'device_os_bits':
+                $value = $element->getOs()->getBits();
+                break;
+            case 'device_os_manufacturer':
+                $value = $element->getOs()->getManufacturer();
+                break;
+            case 'brand_name':
+                $value = $element->getDevice()->getBrand();
+                break;
+            case 'marketing_name':
+                $value = $element->getDevice()->getMarketingName();
+                break;
+            case 'model_name':
+                $value = $element->getDevice()->getDeviceName();
+                break;
+            case 'manufacturer_name':
+                $value = $element->getDevice()->getManufacturer();
+                break;
+            case 'device_type':
+                $value = $element->getDevice()->getType();
+                break;
+            case 'pointing_method':
+                $value = $element->getDevice()->getPointingMethod();
+                break;
+            case 'has_qwerty_keyboard':
+                $value = $element->getDevice()->getHasQwertyKeyboard();
+                break;
+            case 'resolution_width':
+                $value = $element->getDevice()->getResolutionWidth();
+                break;
+            case 'resolution_height':
+                $value = $element->getDevice()->getResolutionHeight();
+                break;
+            case 'dual_orientation':
+                $value = $element->getDevice()->getDualOrientation();
+                break;
+            case 'colors':
+                $value = $element->getDevice()->getColors();
+                break;
+            default:
+                $value = '(n/a)';
+                break;
+        }
+
+        if (null === $value || 'null' === $value) {
+            $output = '(NULL)';
+        } elseif ('' === $value) {
+            $output = '(empty)';
+        } elseif (false === $value || 'false' === $value) {
+            $output = '(false)';
+        } elseif (true === $value || 'true' === $value) {
+            $output = '(true)';
+        } else {
+            $output = (string) $value;
+        }
+
+        return $output;
     }
 }

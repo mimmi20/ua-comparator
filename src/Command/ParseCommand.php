@@ -51,8 +51,6 @@ use UaDataMapper\InputMapper;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
 
-define('START_TIME', microtime(true));
-
 /**
  * Class CompareCommand
  *
@@ -121,7 +119,8 @@ class ParseCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
-        $logger = new Logger('ua-comparator');
+        $startTime = microtime(true);
+        $logger    = new Logger('ua-comparator');
 
         $stream = new StreamHandler('log/error.log', Logger::WARNING);
         $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
@@ -150,7 +149,7 @@ class ParseCommand extends Command
         setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
         $output->writeln(
-            ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+            ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
                 memory_get_usage(true),
                 0,
                 ',',
@@ -205,7 +204,7 @@ class ParseCommand extends Command
                     $collection->addModule($detectorModule);
 
                     $output->writeln(
-                        ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+                        ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
                             memory_get_usage(true),
                             0,
                             ',',
@@ -227,7 +226,7 @@ class ParseCommand extends Command
         $collection->init();
 
         $output->writeln(
-            ' - ready ' . TimeFormatter::formatTime(microtime(true) - START_TIME) . ' - ' . number_format(
+            ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
                 memory_get_usage(true),
                 0,
                 ',',
@@ -313,9 +312,9 @@ class ParseCommand extends Command
                     ->detect($agent)
                     ->endTimer();
 
-                $result = $module->getDetectionResult();
-
-                $actualTime = $module->getTime();
+                $detectionResult = $module->getDetectionResult();
+                $actualTime      = $module->getTime();
+                $actualMemory    = $module->getMaxMemory();
 
                 $benchAll[$module->getName()]['time']['summary'] += $actualTime;
 
@@ -334,8 +333,6 @@ class ParseCommand extends Command
 
                 // over all benchmark
                 $benchAll[$module->getName()]['time']['all'][] = $actualTime;
-
-                $actualMemory = $module->getMaxMemory();
 
                 $benchAll[$module->getName()]['memory']['last']['size']  = $actualMemory;
                 $benchAll[$module->getName()]['memory']['last']['agent'] = $agent;
@@ -357,7 +354,17 @@ class ParseCommand extends Command
                     'memory' => $actualMemory,
                 ];
 
-                file_put_contents('data/results/' . $cacheId . '/' . $module->getName() . '.txt', serialize($result));
+                file_put_contents(
+                    'data/results/' . $cacheId . '/' . $module->getName() . '.txt',
+                    serialize(
+                        [
+                            'ua'     => $agent,
+                            'result' => $detectionResult,
+                            'time'   => $actualTime,
+                            'memory' => $actualMemory,
+                        ]
+                    )
+                );
             }
 
             file_put_contents('data/results/' . $cacheId . '/bench.txt', serialize($bench));

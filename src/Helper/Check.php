@@ -110,30 +110,30 @@ class Check
             'Device Typ'            => [
                 'key'         => 'device_type',
             ],
-            'Desktop'               => [
-                'key'         => ['isDesktop'],
-            ],
-            'TV'                    => [
-                'key'         => ['isTvDevice'],
-            ],
-            'Mobile'                => [
-                'key'         => ['isMobileDevice'],
-            ],
-            'Tablet'                => [
-                'key'         => ['isTablet'],
-            ],
-            'Bot'                   => [
-                'key'         => ['isCrawler'],
-            ],
-            'Console'               => [
-                'key'         => ['isConsole'],
-            ],
-            'Transcoder'            => [
-                'key'         => 'is_transcoder',
-            ],
-            'Syndication-Reader'    => [
-                'key'         => 'is_syndication_reader',
-            ],
+//            'Desktop'               => [
+//                'key'         => ['isDesktop'],
+//            ],
+//            'TV'                    => [
+//                'key'         => ['isTvDevice'],
+//            ],
+//            'Mobile'                => [
+//                'key'         => ['isMobileDevice'],
+//            ],
+//            'Tablet'                => [
+//                'key'         => ['isTablet'],
+//            ],
+//            'Bot'                   => [
+//                'key'         => ['isCrawler'],
+//            ],
+//            'Console'               => [
+//                'key'         => ['isConsole'],
+//            ],
+//            'Transcoder'            => [
+//                'key'         => 'is_transcoder',
+//            ],
+//            'Syndication-Reader'    => [
+//                'key'         => 'is_syndication_reader',
+//            ],
             'pointing_method'       => [
                 'key'         => 'pointing_method',
             ],
