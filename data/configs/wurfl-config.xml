@@ -63,7 +63,7 @@
      -->
     <persistence>
         <provider>file</provider>
-        <params>dir=./cache</params>
+        <params>dir=../cache</params>
     </persistence>
     <cache>
         <provider>NullStorage</provider>
