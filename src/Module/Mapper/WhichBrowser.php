@@ -64,8 +64,14 @@ class WhichBrowser implements MapperInterface
      */
     public function map($parserResult, $agent)
     {
-        $browserName    = $this->mapper->mapBrowserName($parserResult->browser->name);
-        $browserVersion = $this->mapper->mapBrowserVersion($parserResult->browser->version, $browserName);
+        $browserName = $this->mapper->mapBrowserName($parserResult->browser->name);
+        if (empty($parserResult->browser->version->value)) {
+            $browserVer = null;
+        } else {
+            $browserVer = $parserResult->browser->version->value;
+        }
+
+        $browserVersion = $this->mapper->mapBrowserVersion($browserVer, $browserName);
 
         if (!empty($parserResult->browser->type)) {
             $browserType = $parserResult->browser->type;
@@ -97,8 +103,15 @@ class WhichBrowser implements MapperInterface
             ]
         );
 
-        $platform        = $this->mapper->mapOsName($parserResult->os->name);
-        $platformVersion = $this->mapper->mapOsVersion($parserResult->os->version, $platform);
+        $platform = $this->mapper->mapOsName($parserResult->os->name);
+
+        if (empty($parserResult->os->version->value)) {
+            $platformVer = null;
+        } else {
+            $platformVer = $parserResult->os->version->value;
+        }
+
+        $platformVersion = $this->mapper->mapOsVersion($platformVer, $platform);
 
         $os = new Os(
             $agent,
@@ -110,11 +123,17 @@ class WhichBrowser implements MapperInterface
             ]
         );
 
+        if (empty($parserResult->engine->version->value)) {
+            $engineVer = null;
+        } else {
+            $engineVer = $parserResult->engine->version->value;
+        }
+
         $engine = new Engine(
             $agent,
             [
                 'name'         => $this->mapper->mapEngineName($parserResult->engine->name),
-                'version'      => $this->mapper->mapEngineVersion($parserResult->engine->version),
+                'version'      => $this->mapper->mapEngineVersion($engineVer),
                 'manufacturer' => null,
             ]
         );

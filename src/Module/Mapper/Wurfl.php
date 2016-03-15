@@ -64,15 +64,15 @@ class Wurfl implements MapperInterface
      */
     public function map($parserResult, $agent)
     {
-        $apiMob = ('true' === $parserResult->is_wireless_device);
+        $apiMob = ('true' === $parserResult->controlcap_is_mobile);
+        $apiBro = $parserResult->controlcap_advertised_browser;
+        $apiVer = $parserResult->controlcap_advertised_browser_version;
 
         if ($apiMob) {
-            $apiOs    = ('iPhone OS' === $parserResult->device_os ? 'iOS' : $parserResult->device_os);
-            $apiBro   = $parserResult->mobile_browser;
-            $apiVer   = $parserResult->mobile_browser_version;
-            $apiDev   = $parserResult->model_name;
+            $apiOs    = ('iPhone OS' === $parserResult->controlcap_advertised_device_os ? 'iOS' : $parserResult->controlcap_advertised_device_os);
+            $apiDev   = $parserResult->controlcap_device_name;
             $apiMan   = $parserResult->manufacturer_name;
-            $apiPhone = ('true' === $parserResult->can_assign_phone_number);
+            $apiPhone = ('true' === $parserResult->controlcap_is_phone);
 
             $brandName = $parserResult->brand_name;
 
@@ -81,8 +81,6 @@ class Wurfl implements MapperInterface
             }
         } else {
             $apiOs    = null;
-            $apiBro   = $parserResult->brand_name;
-            $apiVer   = $parserResult->model_name;
             $apiDev   = null;
             $apiMan   = null;
             $apiPhone = false;
@@ -90,7 +88,7 @@ class Wurfl implements MapperInterface
             $brandName = null;
         }
 
-        $apiBot       = ('true' === $parserResult->is_bot);
+        $apiBot       = ('true' === $parserResult->controlcap_is_robot);
         $browserMaker = '';
 
         $apiOs = trim($apiOs);
@@ -98,24 +96,6 @@ class Wurfl implements MapperInterface
             $apiOs = null;
         } else {
             $apiOs = trim($apiOs);
-        }
-
-        switch (strtolower($apiOs)) {
-            case 'symbian os':
-                switch (strtolower($apiVer)) {
-                    case 's3':
-                    case 'belle':
-                    case 'anna':
-                        $apiVer = 'S3';
-                        break;
-                    default:
-                        // nothing to do here
-                        break;
-                }
-                break;
-            default:
-                // nothing to do here
-                break;
         }
 
         $marketingName = $parserResult->marketing_name;
@@ -143,7 +123,7 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'internet explorer':
                         $apiBro = 'Internet Explorer';
-                        $apiVer = $parserResult->mobile_browser_version;
+                        $apiVer = $parserResult->controlcap_advertised_browser_version;
                         break;
                     case 'internet explorer 10':
                         $apiBro = 'Internet Explorer';
@@ -253,18 +233,18 @@ class Wurfl implements MapperInterface
             case 'opera mobi':
                 $browserMaker = 'Opera Software ASA';
                 $apiBro       = 'Opera Mobile';
-                $apiVer       = '';
+                $apiVer       = null;
                 break;
             case 'opera tablet':
                 $browserMaker = 'Opera Software ASA';
                 $apiBro       = 'Opera Tablet';
-                $apiVer       = '';
+                $apiVer       = null;
                 break;
             case 'google chrome':
             case 'chrome mobile':
             case 'chrome':
                 $apiBro       = 'Chrome';
-                $apiVer       = '';
+                $apiVer       = null;
                 $browserMaker = 'Google';
                 break;
             case 'google':
@@ -273,21 +253,21 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'chrome':
                         $apiBro = 'Chrome';
-                        $apiVer = $parserResult->mobile_browser_version;
+                        $apiVer = $parserResult->controlcap_advertised_browser_version;
                         break;
                     case 'bot':
                         $apiBro     = 'Google Bot';
-                        $apiVer     = '';
+                        $apiVer     = null;
                         $apiBot     = true;
                         break;
                     case 'wireless transcoder':
                         $apiBro        = 'Google Wireless Transcoder';
-                        $apiVer        = '';
+                        $apiVer        = null;
                         $apiBot        = true;
                         break;
                     case 'adsense bot':
                         $apiBro        = 'AdSense Bot';
-                        $apiVer        = '';
+                        $apiVer        = null;
                         $apiBot        = true;
                         break;
                     default:
@@ -309,11 +289,11 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'firefox':
                         $apiBro = 'Firefox';
-                        $apiVer = $parserResult->mobile_browser_version;
+                        $apiVer = $parserResult->controlcap_advertised_browser_version;
                         break;
                     case 'thunderbird':
                         $apiBro = 'Thunderbird';
-                        $apiVer = $parserResult->mobile_browser_version;
+                        $apiVer = $parserResult->controlcap_advertised_browser_version;
                         break;
                     default:
                         // nothing to do
@@ -329,7 +309,7 @@ class Wurfl implements MapperInterface
             case 'safari':
                 $apiBro       = 'Safari';
                 $browserMaker = 'Apple';
-                $apiVer       = '';
+                $apiVer       = null;
                 break;
             case 'apple':
                 $browserMaker = 'Apple';
@@ -337,7 +317,7 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'safari':
                         $apiBro = 'Safari';
-                        $apiVer = $parserResult->mobile_browser_version;
+                        $apiVer = $parserResult->controlcap_advertised_browser_version;
                         break;
                     default:
                         // nothing to do
@@ -348,7 +328,7 @@ class Wurfl implements MapperInterface
             case 'opera':
                 $apiBro       = 'Opera';
                 $browserMaker = 'Opera Software ASA';
-                $apiVer       = '';
+                $apiVer       = null;
                 break;
             case 'opera software':
                 $browserMaker = 'Opera Software ASA';
@@ -356,7 +336,7 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'opera':
                         $apiBro = 'Opera';
-                        $apiVer = $parserResult->mobile_browser_version;
+                        $apiVer = $parserResult->controlcap_advertised_browser_version;
                         break;
                     default:
                         // nothing to do
@@ -378,7 +358,7 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'bot':
                         $apiBro     = 'FaceBook Bot';
-                        $apiVer     = '';
+                        $apiVer     = null;
                         $apiBot     = true;
                         break;
                     default:
@@ -397,7 +377,7 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'bot':
                         $apiBro = 'BingBot';
-                        $apiVer = '';
+                        $apiVer = null;
                         break;
                     default:
                         // nothing to do
@@ -437,7 +417,7 @@ class Wurfl implements MapperInterface
                         $apiBot     = true;
                         $apiDev     = 'general Bot';
                         $apiBro     = 'unknown';
-                        $apiVer     = '';
+                        $apiVer     = null;
                         break;
                     default:
                         // nothing to do
@@ -467,7 +447,7 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'rogerbot':
                         $apiBro = 'Rogerbot';
-                        $apiVer = '';
+                        $apiVer = null;
                         break;
                     default:
                         // nothing to do
@@ -480,7 +460,7 @@ class Wurfl implements MapperInterface
                 switch (strtolower($apiVer)) {
                     case 'updater':
                         $apiBro       = 'Java Standard Library';
-                        $apiVer       = '';
+                        $apiVer       = null;
                         $browserMaker = 'Oracle';
                         $apiBot       = true;
                         $apiPhone     = false;
@@ -539,7 +519,7 @@ class Wurfl implements MapperInterface
             $apiPhone   = null;
             $deviceType = null;
         } else {
-            $deviceType = $parserResult->form_factor;
+            $deviceType = $parserResult->controlcap_form_factor;
         }
 
         if (!$apiPhone && $deviceType === 'Feature Phone') {

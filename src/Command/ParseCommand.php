@@ -33,7 +33,6 @@ namespace UaComparator\Command;
 
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
@@ -380,5 +379,7 @@ class ParseCommand extends Command
         }
 
         file_put_contents('data/results/bench-all.txt', serialize($benchAll));
+
+        echo "\n";
     }
 }

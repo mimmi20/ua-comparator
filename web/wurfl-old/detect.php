@@ -49,7 +49,7 @@ header('Content-Type: application/json', true);
 
 $start    = microtime(true);
 // Create WURFL Configuration from an XML config file
-$wurflConfigOrig  = new \WURFL_Configuration_XmlConfig('data/wurfl-config.xml');
+$wurflConfigOrig  = new \WURFL_Configuration_XmlConfig('data/configs/wurfl-config.xml');
 $wurflCacheOrig   = new \WURFL_Storage_Memory();
 $wurflStorageOrig = new \WURFL_Storage_File([\WURFL_Storage_File::DIR => 'data/cache/wurfl_old/']);
 
