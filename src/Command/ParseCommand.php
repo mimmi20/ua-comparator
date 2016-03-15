@@ -43,7 +43,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use UaComparator\Helper\MessageFormatter;
 use UaComparator\Helper\TimeFormatter;
 use UaComparator\Module\ModuleCollection;
 use UaComparator\Source\DirectorySource;
@@ -63,9 +62,6 @@ define('START_TIME', microtime(true));
  */
 class ParseCommand extends Command
 {
-    const COL_LENGTH       = 50;
-    const FIRST_COL_LENGTH = 20;
-
     private $defaultModules = [];
 
     /**
@@ -243,18 +239,10 @@ class ParseCommand extends Command
          * Loop
          */
 
-        $i       = 1;
-        $aLength = self::COL_LENGTH + 1 + self::COL_LENGTH + 1 + (($collection->count() - 1) * (self::COL_LENGTH + 1));
-
-        $messageFormatter = new MessageFormatter();
-        $messageFormatter->setCollection($collection)->setColumnsLength(self::COL_LENGTH);
-
-        $output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + $collection->count() - 1 + 2), false);
-        $output->writeln('');
-
         /*******************************************************************************
          * initialize Source
          */
+        $i        = 1;
         $dsn      = 'mysql:dbname=browscap;host=localhost';
         $user     = 'root';
         $password = '';
