@@ -109,14 +109,14 @@ class Browscap implements MapperInterface
         );
 
         $platform        = $this->mapper->mapOsName($parserResult->platform);
-        $platformVersion = $this->mapper->mapOsVersion($parserResult->platform_version, $platform);
+        $platformVersion = $this->mapper->mapOsVersion($parserResult->platform_version, $parserResult->platform);
 
         $os = new Os(
             $agent,
             [
                 'name'         => $platform,
                 'version'      => $platformVersion,
-                'manufacturer' => $this->mapper->mapOsMaker($parserResult->platform_maker, $platform),
+                'manufacturer' => $this->mapper->mapOsMaker($parserResult->platform_maker, $parserResult->platform),
                 'bits'         => $parserResult->platform_bits,
             ]
         );

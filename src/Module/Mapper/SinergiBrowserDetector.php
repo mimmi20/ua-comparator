@@ -97,7 +97,7 @@ class SinergiBrowserDetector implements MapperInterface
         );
 
         $platform        = $this->mapper->mapOsName($parserResult->os->name);
-        $platformVersion = $this->mapper->mapOsVersion($parserResult->os->version, $platform);
+        $platformVersion = $this->mapper->mapOsVersion($parserResult->os->version, $parserResult->os->name);
 
         $os = new Os(
             $agent,

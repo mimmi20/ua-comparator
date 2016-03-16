@@ -119,7 +119,7 @@ class PiwikDetector implements MapperInterface
 
         if (!empty($parserResult->os->name)) {
             $osName    = $this->mapper->mapOsName($parserResult->os->name);
-            $osVersion = $this->mapper->mapOsVersion($parserResult->os->version, $osName);
+            $osVersion = $this->mapper->mapOsVersion($parserResult->os->version, $parserResult->os->name);
 
             $os = new Os(
                 $agent,

@@ -190,8 +190,8 @@ class CompareCommand extends Command
 
             $messageFormatter->setCollection($collection[$file->getBasename()]);
 
-            $aLength = self::COL_LENGTH + 1 + self::COL_LENGTH + 1 + ((count($collection) - 1) * (self::COL_LENGTH + 1));
-            $output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + count($collection) - 1 + 2), false);
+            $aLength = self::COL_LENGTH + 1 + self::COL_LENGTH + 1 + ((count($collection[$file->getBasename()]) - 1) * (self::COL_LENGTH + 1));
+            $output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + count($collection[$file->getBasename()]) - 1 + 2), false);
 
             $output->writeln('');
 
@@ -236,26 +236,26 @@ class CompareCommand extends Command
 
                 $content = str_replace(
                     '#TimeSummary#',
-                    str_pad(number_format('n/a', 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
+                    str_pad('n/a', 20, ' ', STR_PAD_LEFT),
                     $content
                 );
 
-                $content .= '+--------------------+' . str_repeat('-', count($collection)) . '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', count($collection));
+                $content .= '+--------------------+' . str_repeat('-', count($collection[$file->getBasename()])) . '+--------------------------------------------------+';
+                $content .= str_repeat('--------------------------------------------------+', count($collection[$file->getBasename()]));
                 $content .= "\n";
 
-                $content .= '|                    |' . str_repeat(' ', count($collection)) . '|                                                  |';
+                $content .= '|                    |' . str_repeat(' ', count($collection[$file->getBasename()])) . '|                                                  |';
                 foreach (array_keys($collection[$file->getBasename()]) as $moduleName) {
                     $content .= str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
                 }
                 $content .= "\n";
 
-                $content .= '|                    +' . str_repeat('-', count($collection)) . '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', count($collection));
+                $content .= '|                    +' . str_repeat('-', count($collection[$file->getBasename()])) . '+--------------------------------------------------+';
+                $content .= str_repeat('--------------------------------------------------+', count($collection[$file->getBasename()]));
                 $content .= "\n";
 
                 foreach ($allResults as $propertyTitel => $detectionResults) {
-                    $lineContent = '|                    |' . str_repeat(' ', count($collection)) . '|'
+                    $lineContent = '|                    |' . str_repeat(' ', count($collection[$file->getBasename()])) . '|'
                         . str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT)
                         . '|';
 
@@ -268,9 +268,9 @@ class CompareCommand extends Command
                 }
 
                 $content .= '+--------------------+';
-                $content .= str_repeat('-', count($collection));
+                $content .= str_repeat('-', count($collection[$file->getBasename()]));
                 $content .= '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', count($collection));
+                $content .= str_repeat('--------------------------------------------------+', count($collection[$file->getBasename()]));
                 $content .= "\n";
 
                 $content .= '-';
@@ -328,55 +328,52 @@ class CompareCommand extends Command
 
             $output->write($content, false);
 
-            $output->writeln('');
-
-            $content = file_get_contents('src/templates/end-line.txt');
-
-            --$i;
-
-            if ($i < 1) {
-                $i = 1;
-            }
-
-            $content = str_replace(
-                [
-                    '#  plus#',
-                    '# minus#',
-                    '#  soso#',
-                    '#     percent1#',
-                    '#     percent2#',
-                    '#     percent3#',
-                ],
-                [
-                    str_pad($okfound, 8, ' ', STR_PAD_LEFT),
-                    str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
-                    str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
-                    str_pad(
-                        number_format((100 * $okfound / $i), 9, ',', '.'),
-                        15,
-                        ' ',
-                        STR_PAD_LEFT
-                    ),
-                    str_pad(
-                        number_format((100 * $nokfound / $i), 9, ',', '.'),
-                        15,
-                        ' ',
-                        STR_PAD_LEFT
-                    ),
-                    str_pad(
-                        number_format((100 * $sosofound / $i), 9, ',', '.'),
-                        15,
-                        ' ',
-                        STR_PAD_LEFT
-                    ),
-                ],
-                $content
-            );
-
-            $output->writeln($content);
-
-//var_dump($collection);
-            exit;
+            $output->writeln('');return;
+//
+//            $content = file_get_contents('src/templates/end-line.txt');
+//
+//            --$i;
+//
+//            if ($i < 1) {
+//                $i = 1;
+//            }
+//
+//            $content = str_replace(
+//                [
+//                    '#  plus#',
+//                    '# minus#',
+//                    '#  soso#',
+//                    '#     percent1#',
+//                    '#     percent2#',
+//                    '#     percent3#',
+//                ],
+//                [
+//                    str_pad($okfound, 8, ' ', STR_PAD_LEFT),
+//                    str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
+//                    str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
+//                    str_pad(
+//                        number_format((100 * $okfound / $i), 9, ',', '.'),
+//                        15,
+//                        ' ',
+//                        STR_PAD_LEFT
+//                    ),
+//                    str_pad(
+//                        number_format((100 * $nokfound / $i), 9, ',', '.'),
+//                        15,
+//                        ' ',
+//                        STR_PAD_LEFT
+//                    ),
+//                    str_pad(
+//                        number_format((100 * $sosofound / $i), 9, ',', '.'),
+//                        15,
+//                        ' ',
+//                        STR_PAD_LEFT
+//                    ),
+//                ],
+//                $content
+//            );
+//
+//            $output->writeln($content);
         }
     }
 }
