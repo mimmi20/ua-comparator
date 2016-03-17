@@ -328,7 +328,7 @@ class CompareCommand extends Command
 
             $output->write($content, false);
 
-            $output->writeln('');return;
+            $output->writeln('');//return;
 //
 //            $content = file_get_contents('src/templates/end-line.txt');
 //
