@@ -37,11 +37,11 @@ class PdoSource implements SourceInterface
         $sql = 'SELECT DISTINCT SQL_BIG_RESULT HIGH_PRIORITY `agent` FROM `agents` ORDER BY `count` DESC, `idAgents` DESC';
 
         if ($limit) {
-            $sql .= ' LIMIT ' . $this->pdo->quote($limit, \PDO::PARAM_INT);
+            $sql .= ' LIMIT ' . (int) $limit;
         }
 
         $driverOptions = [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY];
-
+var_dump($sql);
         /** @var \PDOStatement $stmt */
         $stmt = $this->pdo->prepare($sql, $driverOptions);
         $stmt->execute();
