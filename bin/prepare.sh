@@ -3,10 +3,10 @@
 cd `dirname $0`
 
 echo "Updating ua-parser data..."
-../vendor/bin/uaparser.php ua-parser:update
+php ../vendor/ua-parser/uap-php/bin/uaparser.php ua-parser:update
 
 echo "Creating browscap.ini file..."
-php ../vendor/browscap/browscap/bin/browscap build dev-master --output=../../../data/browser/
+php build-browscap.ini.php
 
 echo "Updating php-browscap (2.x) data..."
 php update-php-browscap.php
