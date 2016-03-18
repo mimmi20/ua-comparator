@@ -2,6 +2,8 @@
 
 cd `dirname $0`
 
+rm -rf ../data/results/
+
 echo "Updating ua-parser data..."
 php ../vendor/bin/uaparser.php ua-parser:update
 
