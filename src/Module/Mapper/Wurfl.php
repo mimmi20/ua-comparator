@@ -70,7 +70,7 @@ class Wurfl implements MapperInterface
 
         if ($apiMob) {
             $apiOs    = ('iPhone OS' === $parserResult->controlcap_advertised_device_os ? 'iOS' : $parserResult->controlcap_advertised_device_os);
-            $apiDev   = $parserResult->controlcap_device_name;
+            $apiDev   = $parserResult->model_name;
             $apiMan   = $parserResult->manufacturer_name;
             $apiPhone = ('true' === $parserResult->controlcap_is_phone);
 

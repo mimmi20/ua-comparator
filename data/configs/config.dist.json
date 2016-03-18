@@ -166,7 +166,7 @@
       "mapper": "SinergiBrowserDetector"
     },
     "ua-parser": {
-      "name": "UaParser",
+      "name": "UAParser",
       "enabled": false,
       "class": "Http",
       "requires-cache": false,

@@ -41,7 +41,7 @@ class PdoSource implements SourceInterface
         }
 
         $driverOptions = [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY];
-var_dump($sql);
+
         /** @var \PDOStatement $stmt */
         $stmt = $this->pdo->prepare($sql, $driverOptions);
         $stmt->execute();

@@ -26,3 +26,5 @@ data/results/*
 !data/useragents/
 error.log
 resources/browscap-*/
+log/*
+!log/.gitkeep
