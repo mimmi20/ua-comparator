@@ -259,11 +259,13 @@ class ParseCommand extends Command
             $adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $source = new PdoSource($adapter);
+            $output->writeln('using SQL Source');
         } catch (\Exception $e) {
             $logger->debug($e);
 
             $uaSourceDirectory = 'data/useragents';
             $source            = new DirectorySource($uaSourceDirectory);
+            $output->writeln('using directory Source');
         }
 
         $benchAll = [];
