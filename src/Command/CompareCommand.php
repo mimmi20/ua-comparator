@@ -191,9 +191,9 @@ class CompareCommand extends Command
             $messageFormatter->setCollection($collection[$file->getBasename()]);
 
             $aLength = self::COL_LENGTH + 1 + self::COL_LENGTH + 1 + ((count($collection[$file->getBasename()]) - 1) * (self::COL_LENGTH + 1));
-            $output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + count($collection[$file->getBasename()]) - 1 + 2), false);
+            //$output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + count($collection[$file->getBasename()]) - 1 + 2), false);
 
-            $output->writeln('');
+            //$output->writeln('');
 
             /*
              * Auswertung
@@ -328,7 +328,7 @@ class CompareCommand extends Command
 
             $output->write($content, false);
 
-            $output->writeln('');//return;
+            //$output->writeln('');//return;
 //
 //            $content = file_get_contents('src/templates/end-line.txt');
 //

@@ -84,7 +84,7 @@
       "enabled": true
     },
     "wurfl-old": {
-      "enabled": false
+      "enabled": true
     }
   }
 }

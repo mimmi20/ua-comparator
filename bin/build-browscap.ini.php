@@ -38,9 +38,9 @@ $cacheDir = $config['modules']['browscap3']['cache-dir'];
 
 $loggerHelper = new LoggerHelper();
 $logger       = $loggerHelper->create(false);
-
+var_dump(realpath('vendor/browscap/browscap/resources/'));//exit;
 $buildGenerator = new BuildGenerator(
-    'vendor/browscap/browscap/ressources/',
+    'vendor/browscap/browscap/resources/',
     $buildFolder
 );
 
