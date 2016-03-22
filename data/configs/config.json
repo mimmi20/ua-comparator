@@ -7,7 +7,7 @@
       "enabled": true
     },
     "browser-detector": {
-      "enabled": false
+      "enabled": true
     },
     "crossjoin": {
       "enabled": true

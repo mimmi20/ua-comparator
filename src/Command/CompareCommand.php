@@ -164,7 +164,7 @@ class CompareCommand extends Command
 
             foreach (new \IteratorIterator($innerIterator) as $innerFile) {
                 /** @var $innerFile \SplFileInfo */
-                if (!$innerFile->isFile() || 'bench.txt' === $innerFile->getFilename()) {
+                if (!$innerFile->isFile() || 'bench.json' === $innerFile->getFilename()) {
                     continue;
                 }
 
@@ -310,6 +310,8 @@ class CompareCommand extends Command
 
             ++$i;
         }
+
+        echo "\n";
     }
 
     /**

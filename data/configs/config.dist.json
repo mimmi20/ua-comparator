@@ -45,7 +45,7 @@
         "params": {},
         "headers": {}
       },
-      "check": "Local",
+      "check": "BrowserDetectorModule",
       "mapper": "BrowserDetectorModule"
     },
     "crossjoin": {

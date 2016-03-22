@@ -55,7 +55,7 @@ foreach ($autoloadPaths as $path) {
 
 ini_set('memory_limit', '-1');
 
-header('Content-Type: application/json', true);
+header('Content-Type: x-application/serialize', true);
 
 $logger = new Logger('ua-comparator');
 
@@ -82,15 +82,16 @@ $start    = microtime(true);
 $parser = new BrowserDetector($cache, $logger);
 
 try {
-    /** @var \UaResult\Result $detectionResult */
-    $detectionResult = $this->input->getBrowser($_GET['useragent'], true);
+    /** @var \UaResult\Result\Result $detectionResult */
+    $detectionResult = $parser->getBrowser($_GET['useragent'], true);
 } catch (\Exception $e) {
-    $detectionResult = [];
+    $logger->critical($e);
+    $detectionResult = null;
 }
 
 $duration = microtime(true) - $start;
 
-echo json_encode(
+echo serialize(
     [
         'result'   => $detectionResult,
         'duration' => $duration,

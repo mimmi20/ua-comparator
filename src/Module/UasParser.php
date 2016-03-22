@@ -34,7 +34,7 @@ namespace UaComparator\Module;
 use Monolog\Logger;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
-use UaResult\Version;
+use BrowserDetector\Detector\Version;
 use UAS\Parser;
 use WurflCache\Adapter\AdapterInterface;
 

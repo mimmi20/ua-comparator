@@ -62,6 +62,10 @@ class ParseCommand extends Command
 {
     private $defaultModules = [];
 
+    const SOURCE_SQL  = 'sql';
+    const SOURCE_DIR  = 'dir';
+    const SOURCE_TEST = 'tests';
+
     /**
      * Configures the current command.
      */
@@ -88,6 +92,13 @@ class ParseCommand extends Command
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'The Modules to compare',
                 $this->defaultModules
+            )
+            ->addOption(
+                'source',
+                '-s',
+                InputOption::VALUE_REQUIRED,
+                'the source for the useragents to parse',
+                self::SOURCE_TEST
             )
             ->addOption(
                 'limit',
@@ -241,34 +252,40 @@ class ParseCommand extends Command
         /*******************************************************************************
          * initialize Source
          */
-        $i        = 1;
-        $dsn      = 'mysql:dbname=browscap;host=localhost';
-        $user     = 'root';
-        $password = '';
+        $sourceOption = $input->getOption('source');
 
-        try {
-            $adapter = new PDO(
-                $dsn,
-                $user,
-                $password,
-                [
-                    1002 => 'SET NAMES \'UTF8\'', // PDO::MYSQL_ATTR_INIT_COMMAND
-                    1005 => 1024 * 1024 * 50,     // PDO::MYSQL_ATTR_MAX_BUFFER_SIZE
-                ]
-            );
-            $adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        switch ($sourceOption) {
+            case self::SOURCE_SQL:
+                $dsn      = 'mysql:dbname=browscap;host=localhost';
+                $user     = 'root';
+                $password = '';
 
-            $source = new PdoSource($adapter);
-            $output->writeln('using SQL Source');
-        } catch (\Exception $e) {
-            $logger->debug($e);
+                $adapter = new PDO(
+                    $dsn,
+                    $user,
+                    $password,
+                    [
+                        1002 => 'SET NAMES \'UTF8\'', // PDO::MYSQL_ATTR_INIT_COMMAND
+                        1005 => 1024 * 1024 * 50,     // PDO::MYSQL_ATTR_MAX_BUFFER_SIZE
+                    ]
+                );
+                $adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $uaSourceDirectory = 'data/useragents';
-            $source            = new DirectorySource($uaSourceDirectory);
-            $output->writeln('using directory Source');
+                $source = new PdoSource($adapter);
+                break;
+            case self::SOURCE_DIR:
+                $uaSourceDirectory = 'data/useragents';
+                $source            = new DirectorySource($uaSourceDirectory);
+                break;
+            case self::SOURCE_TEST:
+            default:
+                $uaSourceDirectory = 'data/useragents';
+                $source            = new DirectorySource($uaSourceDirectory);
+                break;
         }
 
         $limit = (int) $input->getOption('limit');
+        $i     = 1;
 
         /*******************************************************************************
          * Loop

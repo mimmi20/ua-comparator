@@ -29,9 +29,11 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-namespace UaComparator\Module\Mapper;
+namespace UaComparator\Module\Check;
 
-use UaDataMapper\InputMapper;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -42,43 +44,38 @@ use UaDataMapper\InputMapper;
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class BrowserDetectorModule implements MapperInterface
+class BrowserDetectorModule implements CheckInterface
 {
     /**
-     * @var null|\UaDataMapper\InputMapper
-     */
-    private $mapper = null;
-
-    /**
-     * Gets the information about the browser by User Agent
+     * @param \GuzzleHttp\Psr7\Response          $response
+     * @param \Psr\Http\Message\RequestInterface $request
+     * @param string                             $agent
      *
-     * @param \UaResult\Result\Result $parserResult
-     * @param string                  $agent
-     *
-     * @return \UaResult\Result\Result the object containing the browsers details.
+     * @throws \GuzzleHttp\Exception\RequestException
+     * @return array
      */
-    public function map($parserResult, $agent)
+    public function getResponse(Response $response, RequestInterface $request, $agent)
     {
-        return $parserResult;
-    }
+        /*
+         * no json returned?
+         */
+        $contentType = $response->getHeader('Content-Type');
+        if (! isset($contentType[0]) || $contentType[0] !== 'x-application/serialize') {
+            throw new RequestException('Could not get valid "x-application/serialize" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
 
-    /**
-     * @return null|\UaDataMapper\InputMapper
-     */
-    public function getMapper()
-    {
-        return $this->mapper;
-    }
+        $rawContent = $response->getBody()->getContents();
 
-    /**
-     * @param \UaDataMapper\InputMapper $mapper
-     *
-     * @return \UaComparator\Module\Mapper\MapperInterface
-     */
-    public function setMapper(InputMapper $mapper)
-    {
-        $this->mapper = $mapper;
+        if (false !== strpos($rawContent, '<')) {
+            throw new RequestException('An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
 
-        return $this;
+        $content = unserialize($rawContent);
+
+        if (! is_array($content) || ! isset($content['result'])) {
+            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        }
+
+        return (object) $content;
     }
 }
