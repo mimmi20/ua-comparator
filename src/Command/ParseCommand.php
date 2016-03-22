@@ -268,35 +268,15 @@ class ParseCommand extends Command
             $output->writeln('using directory Source');
         }
 
-        $benchAll = [];
-
-        foreach ($collection as $module) {
-            /* @var \UaComparator\Module\ModuleInterface $module */
-            $benchAll[$module->getName()] = [
-                'time' => [
-                    'min'     => ['time' => 1200.0, 'agent' => ''],
-                    'max'     => ['time' => 0.0, 'agent' => ''],
-                    'last'    => ['time' => 0.0, 'agent' => ''],
-                    'all'     => [],
-                    'summary' => 0.0,
-                ],
-                'memory' => [
-                    'min'     => ['size' => 500000000, 'agent' => ''],
-                    'max'     => ['size' => 0, 'agent' => ''],
-                    'last'    => ['size' => 0, 'agent' => ''],
-                    'all'     => [],
-                ],
-            ];
-        }
-
         $limit = (int) $input->getOption('limit');
 
         /*******************************************************************************
          * Loop
          */
         foreach ($source->getUserAgents($logger, $limit) as $agent) {
-            $bench           = [];
-            $bench['agent']  = $agent;
+            $bench = [
+                'agent' => $agent,
+            ];
 
             /***************************************************************************
              * handle modules
@@ -318,39 +298,7 @@ class ParseCommand extends Command
                 $actualTime      = $module->getTime();
                 $actualMemory    = $module->getMaxMemory();
 
-                $benchAll[$module->getName()]['time']['summary'] += $actualTime;
-
-                $benchAll[$module->getName()]['time']['last']['time']  = $actualTime;
-                $benchAll[$module->getName()]['time']['last']['agent'] = $agent;
-
-                if ($benchAll[$module->getName()]['time']['min']['time'] > $actualTime) {
-                    $benchAll[$module->getName()]['time']['min']['time']  = $actualTime;
-                    $benchAll[$module->getName()]['time']['min']['agent'] = $agent;
-                }
-
-                if ($benchAll[$module->getName()]['time']['max']['time'] < $actualTime) {
-                    $benchAll[$module->getName()]['time']['max']['time']  = $actualTime;
-                    $benchAll[$module->getName()]['time']['max']['agent'] = $agent;
-                }
-
-                // over all benchmark
-                $benchAll[$module->getName()]['time']['all'][] = $actualTime;
-
-                $benchAll[$module->getName()]['memory']['last']['size']  = $actualMemory;
-                $benchAll[$module->getName()]['memory']['last']['agent'] = $agent;
-
-                if ($benchAll[$module->getName()]['memory']['min']['size'] > $actualMemory) {
-                    $benchAll[$module->getName()]['memory']['min']['size']  = $actualMemory;
-                    $benchAll[$module->getName()]['memory']['min']['agent'] = $agent;
-                }
-
-                if ($benchAll[$module->getName()]['memory']['max']['size'] < $actualMemory) {
-                    $benchAll[$module->getName()]['memory']['max']['size']  = $actualMemory;
-                    $benchAll[$module->getName()]['memory']['max']['agent'] = $agent;
-                }
-
                 // per useragent benchmark
-                $benchAll[$module->getName()]['memory']['all'][] = $actualMemory;
                 $bench[$module->getName()] = [
                     'time'   => $actualTime,
                     'memory' => $actualMemory,
@@ -369,13 +317,19 @@ class ParseCommand extends Command
                 );
             }
 
-            file_put_contents('data/results/' . $cacheId . '/bench.txt', serialize($bench));
+            file_put_contents(
+                'data/results/' . $cacheId . '/bench.json',
+                json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT)
+            );
 
             echo '.';
+
+            if (($i % 100) === 0) {
+                echo "\n";
+            }
+
             ++$i;
         }
-
-        file_put_contents('data/results/bench-all.txt', serialize($benchAll));
 
         echo "\n";
     }

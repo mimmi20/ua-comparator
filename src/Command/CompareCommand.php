@@ -44,7 +44,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
 use UaComparator\Helper\MessageFormatter;
-use UaComparator\Helper\TimeFormatter;
 
 /**
  * Class CompareCommand
@@ -102,9 +101,7 @@ class CompareCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
-        $startTime = microtime(true);
-        $logger    = new Logger('ua-comparator');
-
+        $logger = new Logger('ua-comparator');
         $stream = new StreamHandler('php://output', Logger::ERROR);
         $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
 
@@ -121,7 +118,7 @@ class CompareCommand extends Command
 
         ErrorHandler::register($logger);
 
-        $output->write('initializing App ...', false);
+        echo 'initializing App ...';
 
         ini_set('memory_limit', '2048M');
         ini_set('max_execution_time', 0);
@@ -133,26 +130,18 @@ class CompareCommand extends Command
         date_default_timezone_set('Europe/Berlin');
         setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
-        $output->writeln(
-            ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
-                memory_get_usage(true),
-                0,
-                ',',
-                '.'
-            ) . ' Bytes'
-        );
+        echo ' - ready', "\n";
 
         /*******************************************************************************
          * Loop
          */
 
-        $dataDir    = 'data/results/';
-        $iterator   = new \DirectoryIterator($dataDir);
-        $collection = [];
-        $i          = 1;
-        $okfound    = 0;
-        $nokfound   = 0;
-        $sosofound  = 0;
+        $dataDir   = 'data/results/';
+        $iterator  = new \DirectoryIterator($dataDir);
+        $i         = 1;
+        $okfound   = 0;
+        $nokfound  = 0;
+        $sosofound = 0;
 
         $messageFormatter = new MessageFormatter();
         $messageFormatter->setColumnsLength(self::COL_LENGTH);
@@ -171,7 +160,7 @@ class CompareCommand extends Command
             $innerIterator = new \DirectoryIterator($path);
             $agent         = null;
 
-            $collection[$file->getBasename()] = [];
+            $collection = [];
 
             foreach (new \IteratorIterator($innerIterator) as $innerFile) {
                 /** @var $innerFile \SplFileInfo */
@@ -181,19 +170,16 @@ class CompareCommand extends Command
 
                 $moduleName = $innerFile->getBasename('.txt');
 
-                $collection[$file->getBasename()][$moduleName] = unserialize(file_get_contents($innerFile->getPathname()));
+                $collection[$moduleName] = unserialize(file_get_contents($innerFile->getPathname()));
 
                 if (null === $agent) {
-                    $agent = $collection[$file->getBasename()][$moduleName]['ua'];
+                    $agent = $collection[$moduleName]['ua'];
                 }
             }
+            
+            unset($innerIterator);
 
-            $messageFormatter->setCollection($collection[$file->getBasename()]);
-
-            $aLength = self::COL_LENGTH + 1 + self::COL_LENGTH + 1 + ((count($collection[$file->getBasename()]) - 1) * (self::COL_LENGTH + 1));
-            //$output->write(str_repeat('+', self::FIRST_COL_LENGTH + $aLength + count($collection[$file->getBasename()]) - 1 + 2), false);
-
-            //$output->writeln('');
+            $messageFormatter->setCollection($collection);
 
             /*
              * Auswertung
@@ -218,6 +204,8 @@ class CompareCommand extends Command
             }
 
             if (in_array('-', $matches)) {
+                ++$nokfound;
+
                 $content = file_get_contents('src/templates/single-line.txt');
                 $content = str_replace('#ua#', $agent, $content);
                 $content = str_replace(
@@ -226,36 +214,36 @@ class CompareCommand extends Command
                     $content
                 );
 
-                foreach ($collection[$file->getBasename()] as $moduleName => $data) {
+                $timeSummary = 0.0;
+
+                foreach ($collection as $moduleName => $data) {
                     $content = str_replace(
                         '#' . $moduleName . '#',
                         str_pad(number_format($data['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
                         $content
                     );
+
+                    $timeSummary += (float) $data['time'];
                 }
 
                 $content = str_replace(
                     '#TimeSummary#',
-                    str_pad('n/a', 20, ' ', STR_PAD_LEFT),
+                    str_pad(number_format($timeSummary, 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
                     $content
                 );
 
-                $content .= '+--------------------+' . str_repeat('-', count($collection[$file->getBasename()])) . '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', count($collection[$file->getBasename()]));
-                $content .= "\n";
+                $content .= $this->getLine($collection);
 
-                $content .= '|                    |' . str_repeat(' ', count($collection[$file->getBasename()])) . '|                                                  |';
-                foreach (array_keys($collection[$file->getBasename()]) as $moduleName) {
+                $content .= '|                    |' . str_repeat(' ', count($collection)) . '|                                                  |';
+                foreach (array_keys($collection) as $moduleName) {
                     $content .= str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
                 }
                 $content .= "\n";
 
-                $content .= '|                    +' . str_repeat('-', count($collection[$file->getBasename()])) . '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', count($collection[$file->getBasename()]));
-                $content .= "\n";
+                $content .= $this->getLine($collection);
 
                 foreach ($allResults as $propertyTitel => $detectionResults) {
-                    $lineContent = '|                    |' . str_repeat(' ', count($collection[$file->getBasename()])) . '|'
+                    $lineContent = '|                    |' . str_repeat(' ', count($collection)) . '|'
                         . str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT)
                         . '|';
 
@@ -267,27 +255,9 @@ class CompareCommand extends Command
                     $content .= $lineContent .  "\n";
                 }
 
-                $content .= '+--------------------+';
-                $content .= str_repeat('-', count($collection[$file->getBasename()]));
-                $content .= '+--------------------------------------------------+';
-                $content .= str_repeat('--------------------------------------------------+', count($collection[$file->getBasename()]));
-                $content .= "\n";
+                $content .= $this->getLine($collection);
 
                 $content .= '-';
-                ++$nokfound;
-            } elseif (in_array(':', $matches)) {
-                $content = ':';
-                ++$sosofound;
-            } else {
-                $content = '.';
-                ++$okfound;
-            }
-
-            if (($i % 100) === 0) {
-                $content .= "\n";
-            }
-
-            if (in_array('-', $matches)) {
                 $content = str_replace(
                     [
                         '#  plus#',
@@ -322,58 +292,39 @@ class CompareCommand extends Command
                     ],
                     $content
                 );
+
+                echo preg_replace('/\#[^#]*\#/', '               (n/a)', $content);
+            } elseif (in_array(':', $matches)) {
+                echo ':';
+                ++$sosofound;
+            } else {
+                echo '.';
+                ++$okfound;
             }
 
-            $content = preg_replace('/\#[^#]*\#/', '               (n/a)', $content);
+            if (($i % 100) === 0) {
+                echo "\n";
+            }
+            
+            unset($collection, $allResults, $matches);
 
-            $output->write($content, false);
-
-            //$output->writeln('');//return;
-//
-//            $content = file_get_contents('src/templates/end-line.txt');
-//
-//            --$i;
-//
-//            if ($i < 1) {
-//                $i = 1;
-//            }
-//
-//            $content = str_replace(
-//                [
-//                    '#  plus#',
-//                    '# minus#',
-//                    '#  soso#',
-//                    '#     percent1#',
-//                    '#     percent2#',
-//                    '#     percent3#',
-//                ],
-//                [
-//                    str_pad($okfound, 8, ' ', STR_PAD_LEFT),
-//                    str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
-//                    str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
-//                    str_pad(
-//                        number_format((100 * $okfound / $i), 9, ',', '.'),
-//                        15,
-//                        ' ',
-//                        STR_PAD_LEFT
-//                    ),
-//                    str_pad(
-//                        number_format((100 * $nokfound / $i), 9, ',', '.'),
-//                        15,
-//                        ' ',
-//                        STR_PAD_LEFT
-//                    ),
-//                    str_pad(
-//                        number_format((100 * $sosofound / $i), 9, ',', '.'),
-//                        15,
-//                        ' ',
-//                        STR_PAD_LEFT
-//                    ),
-//                ],
-//                $content
-//            );
-//
-//            $output->writeln($content);
+            ++$i;
         }
+    }
+
+    /**
+     * @param array $collection
+     *
+     * @return string
+     */
+    private function getLine(array $collection = [])
+    {
+        $content  = '+--------------------+';
+        $content .= str_repeat('-', count($collection));
+        $content .= '+--------------------------------------------------+';
+        $content .= str_repeat('--------------------------------------------------+', count($collection));
+        $content .= "\n";
+
+        return $content;
     }
 }
