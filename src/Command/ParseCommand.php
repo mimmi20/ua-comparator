@@ -47,6 +47,7 @@ use UaComparator\Helper\TimeFormatter;
 use UaComparator\Module\ModuleCollection;
 use UaComparator\Source\DirectorySource;
 use UaComparator\Source\PdoSource;
+use UaComparator\Source\TestsSource;
 use UaDataMapper\InputMapper;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
@@ -147,7 +148,7 @@ class ParseCommand extends Command
         $logger->pushHandler($stream);
         ErrorHandler::register($logger);
 
-        $output->write('initializing App ...', false);
+        $output->write('preparing App ...', false);
 
         ini_set('memory_limit', '2048M');
         ini_set('max_execution_time', 0);
@@ -186,7 +187,7 @@ class ParseCommand extends Command
                 }
 
                 if ($key === $module) {
-                    $output->write('initializing ' . $moduleConfig['name'] . ' ...', false);
+                    $output->write('preparing ' . $moduleConfig['name'] . ' ...', false);
 
                     if (!isset($moduleConfig['requires-cache'])) {
                         $cache = new Memory();
@@ -232,26 +233,27 @@ class ParseCommand extends Command
          * init Modules
          */
 
-        $output->write('initializing all Modules ...', false);
+        foreach ($collection->getModules() as $module) {
+            $output->write('initializing ' . $module->getName() . ' ...', false);
 
-        $collection->init();
+            $module->init();
 
-        $output->writeln(
-            ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
-                memory_get_usage(true),
-                0,
-                ',',
-                '.'
-            ) . ' Bytes'
-        );
-
-        /*******************************************************************************
-         * Loop
-         */
+            $output->writeln(
+                ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
+                    memory_get_usage(true),
+                    0,
+                    ',',
+                    '.'
+                ) . ' Bytes'
+            );
+        }
 
         /*******************************************************************************
          * initialize Source
          */
+
+        $output->write('initializing Source ...', false);
+
         $sourceOption = $input->getOption('source');
 
         switch ($sourceOption) {
@@ -279,10 +281,18 @@ class ParseCommand extends Command
                 break;
             case self::SOURCE_TEST:
             default:
-                $uaSourceDirectory = 'data/useragents';
-                $source            = new DirectorySource($uaSourceDirectory);
+                $source = new TestsSource();
                 break;
         }
+
+        $output->writeln(
+            ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
+                memory_get_usage(true),
+                0,
+                ',',
+                '.'
+            ) . ' Bytes'
+        );
 
         $limit = (int) $input->getOption('limit');
         $i     = 1;
@@ -290,6 +300,9 @@ class ParseCommand extends Command
         /*******************************************************************************
          * Loop
          */
+
+        $output->writeln('start Loop ...');
+
         foreach ($source->getUserAgents($logger, $limit) as $agent) {
             $bench = [
                 'agent' => $agent,

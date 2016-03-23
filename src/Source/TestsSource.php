@@ -48,19 +48,41 @@ class TestsSource implements SourceInterface
                 'suffix' => 'php',
                 'mapper' => 'mapBrowscap',
             ],
+            'uap-core' => [
+                'path'   => 'vendor/thadafinser/uap-core/tests',
+                'suffix' => 'yaml',
+                'mapper' => 'mapUapCore',
+            ],
         ];
 
         $allAgents = [];
 
         foreach ($paths as $sourcePath) {
+            if ($limit && count($allAgents) >= $limit) {
+                continue;
+            }
+
             $path   = $sourcePath['path'];
             $suffix = $sourcePath['suffix'];
 
             foreach ($this->loadFromPath($path, $suffix) as $dataFile) {
-                foreach ($dataFile as $dataRow) {
-                    $allAgents[] = $this->{$sourcePath['mapper']}($dataRow);
+                if ($limit && count($allAgents) >= $limit) {
+                    break;
                 }
+
+                $allAgents = array_merge($allAgents, $this->{$sourcePath['mapper']}($dataFile));
+                $allAgents = array_unique($allAgents);
             }
+        }
+
+        $i = 0;
+        foreach ($allAgents as $agent) {
+            if ($limit && $i >= $limit) {
+                return;
+            }
+
+            ++$i;
+            yield $agent;
         }
     }
 
@@ -72,6 +94,10 @@ class TestsSource implements SourceInterface
      */
     private function loadFromPath($path, $suffix)
     {
+        if (!file_exists($path)) {
+            return;
+        }
+var_dump('reading ' . $path . ' ...');
         $iterator = new \RecursiveDirectoryIterator($path);
 
         foreach (new \RecursiveIteratorIterator($iterator) as $file) {
@@ -84,14 +110,16 @@ class TestsSource implements SourceInterface
                 continue;
             }
 
-            $path = $file->getPathname();
+            $filepath = $file->getPathname();
 
+            var_dump('reading ' . $filepath . ' ...');
             switch ($suffix) {
                 case 'php':
-                    yield include $path;
+                    yield include $filepath;
                     break;
                 case 'yml':
-                    $data = \Spyc::YAMLLoad($path);
+                case 'yaml':
+                    $data = \Spyc::YAMLLoad($filepath);
 
                     if (!is_array($data)) {
                         continue;
@@ -100,7 +128,8 @@ class TestsSource implements SourceInterface
                     yield $data;
                     break;
                 default:
-                    continue;
+                    // do nothing here
+                    break;
             }
         }
     }
@@ -112,7 +141,17 @@ class TestsSource implements SourceInterface
      */
     private function mapWoothee(array $data)
     {
-        return $data['target'];
+        $allData = [];
+
+        foreach ($data as $row) {
+            if (empty($row['target'])) {
+                continue;
+            }
+
+            $allData[] = $row['target'];
+        }
+
+        return $allData;
     }
 
     /**
@@ -122,17 +161,24 @@ class TestsSource implements SourceInterface
      */
     private function mapWhichbrowser(array $data)
     {
-        if (!isset($data['headers']['User-Agent'])) {
-            $headers = http_parse_headers($data['headers']);
+        $allData = [];
 
-            if (! isset($headers['User-Agent'])) {
-                return '';
+        foreach ($data as $row) {
+            if (!isset($row['headers']['User-Agent'])) {
+                $headers = http_parse_headers($row['headers']);
+
+                if (! isset($headers['User-Agent'])) {
+                    continue;
+                }
+
+                $allData[] = $headers['User-Agent'];
+                continue;
             }
 
-            return $headers['User-Agent'];
+            $allData[] = $row['headers']['User-Agent'];
         }
 
-        return $data['headers']['User-Agent'];
+        return $allData;
     }
 
     /**
@@ -142,7 +188,17 @@ class TestsSource implements SourceInterface
      */
     private function mapPiwik(array $data)
     {
-        return $data['user_agent'];
+        $allData = [];
+
+        foreach ($data as $row) {
+            if (empty($row['user_agent'])) {
+                continue;
+            }
+
+            $allData[] = $row['user_agent'];
+        }
+
+        return $allData;
     }
 
     /**
@@ -152,6 +208,40 @@ class TestsSource implements SourceInterface
      */
     private function mapBrowscap(array $data)
     {
-        return $data[0];
+        $allData = [];
+
+        foreach ($data as $row) {
+            if (empty($row[0])) {
+                continue;
+            }
+
+            $allData[] = $row[0];
+        }
+
+        return $allData;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return string
+     */
+    private function mapUapCore(array $data)
+    {
+        if (empty($data['test_cases'])) {
+            return [];
+        }
+
+        $allData = [];
+
+        foreach ($data['test_cases'] as $row) {
+            if (empty($row['user_agent_string'])) {
+                continue;
+            }
+
+            $allData[] = $row['user_agent_string'];
+        }
+
+        return $allData;
     }
 }

@@ -86,13 +86,36 @@ class DonatjUAParser implements MapperInterface
 
         $os = new Os(
             $agent,
-            [
-                'name'         => $this->mapper->mapOsName($parserResult->platform),
-                'version'      => null,
-                'manufacturer' => null,
-                'bits'         => null,
-            ]
+            []
         );
+
+        $osName = $this->mapper->mapOsName($parserResult->platform);
+
+        if (!in_array($osName, ['PlayStation 3'])) {
+            $os = new Os(
+                $agent,
+                [
+                    'name'         => $osName,
+                    'version'      => null,
+                    'manufacturer' => null,
+                    'bits'         => null,
+                ]
+            );
+        }
+
+        if (in_array($osName, ['PlayStation 3'])) {
+            $device = new Device(
+                $agent,
+                [
+                    'deviceName'     => null,
+                    'marketingName'  => $this->mapper->mapDeviceMarketingName($parserResult->platform),
+                    'manufacturer'   => null,
+                    'brand'          => null,
+                    'pointingMethod' => null,
+                    'type'           => null,
+                ]
+            );
+        }
 
         $engine = new Engine(
             $agent,

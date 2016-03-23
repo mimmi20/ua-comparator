@@ -108,7 +108,7 @@ class PiwikDetector implements MapperInterface
         $device = new Device(
             $agent,
             [
-                'deviceName'     => $deviceName,
+                'deviceName'     => null,
                 'marketingName'  => $this->mapper->mapDeviceMarketingName($deviceName),
                 'manufacturer'   => null,
                 'brand'          => $this->mapper->mapDeviceBrandName($parserResult->device->brand, $deviceName),
@@ -117,24 +117,26 @@ class PiwikDetector implements MapperInterface
             ]
         );
 
+        $os = new Os(
+            $agent,
+            []
+        );
+
         if (!empty($parserResult->os->name)) {
             $osName    = $this->mapper->mapOsName($parserResult->os->name);
             $osVersion = $this->mapper->mapOsVersion($parserResult->os->version, $parserResult->os->name);
 
-            $os = new Os(
-                $agent,
-                [
-                    'name'         => $osName,
-                    'version'      => $osVersion,
-                    'manufacturer' => null,
-                    'bits'         => null,
-                ]
-            );
-        } else {
-            $os = new Os(
-                $agent,
-                []
-            );
+            if (!in_array($osName, ['PlayStation'])) {
+                $os = new Os(
+                    $agent,
+                    [
+                        'name'         => $osName,
+                        'version'      => $osVersion,
+                        'manufacturer' => null,
+                        'bits'         => null,
+                    ]
+                );
+            }
         }
 
         if (!empty($parserResult->client->engine)) {
