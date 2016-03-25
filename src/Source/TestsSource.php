@@ -30,7 +30,7 @@ class TestsSource implements SourceInterface
         $paths = [
             'woothee' => [
                 'path'   => 'vendor/woothee/woothee-testset/testsets',
-                'suffix' => 'yml',
+                'suffix' => 'yaml',
                 'mapper' => 'mapWoothee',
             ],
             'whichbrowser' => [
