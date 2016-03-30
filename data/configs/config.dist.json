@@ -92,7 +92,7 @@
           "licencekey": ""
         },
         "headers": {
-          "User-Agent": "ThaDafinser/UserAgentParser:v1.4"
+          "User-Agent": "mimmi20/ua-comparator:v1.4"
         }
       },
       "check": "DeviceAtlasCom",
