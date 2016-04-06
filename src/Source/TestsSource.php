@@ -2,7 +2,6 @@
 
 namespace UaComparator\Source;
 
-use BrowscapPHP\Helper\IniLoader;
 use Monolog\Logger;
 
 /**
@@ -97,7 +96,7 @@ class TestsSource implements SourceInterface
         if (!file_exists($path)) {
             return;
         }
-var_dump('reading ' . $path . ' ...');
+
         $iterator = new \RecursiveDirectoryIterator($path);
 
         foreach (new \RecursiveIteratorIterator($iterator) as $file) {

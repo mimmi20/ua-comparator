@@ -106,8 +106,7 @@ class ParseCommand extends Command
                 '-l',
                 InputOption::VALUE_OPTIONAL,
                 'the amount of useragents to compare'
-            )
-        ;
+            );
     }
 
     /**

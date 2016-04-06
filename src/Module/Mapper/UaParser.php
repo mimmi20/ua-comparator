@@ -31,13 +31,13 @@
 
 namespace UaComparator\Module\Mapper;
 
+use BrowserDetector\Version\Version;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
 use UaResult\Device\Device;
 use UaResult\Engine\Engine;
 use UaResult\Os\Os;
 use UaResult\Result\Result;
-use Version\Version;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities

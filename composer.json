@@ -94,7 +94,7 @@
     "mimmi20/ua-browser-type": "^1.0.2",
     "mimmi20/ua-device-type": "^1.0.2",
     "mimmi20/browscap-json-cache": "1.0.0",
-    "version/version": "^2.2",
+    "mimmi20/browser-detector-version": "^1.0",
     "mimmi20/file-loader": "^2.0.3",
 
     "donatj/phpuseragentparser": "^0.5.0",

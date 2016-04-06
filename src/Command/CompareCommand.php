@@ -76,8 +76,7 @@ class CompareCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'the level for the checks to do. Available Options:' . implode(',', $allChecks),
                 Check::MINIMUM
-            )
-        ;
+            );
     }
 
     /**
@@ -152,7 +151,7 @@ class CompareCommand extends Command
 
         foreach (new \IteratorIterator($iterator) as $file) {
             /** @var $file \SplFileInfo */
-            if ($file->isFile() || in_array($file->getFilename(), array('.', '..'))) {
+            if ($file->isFile() || in_array($file->getFilename(), ['.', '..'])) {
                 continue;
             }
 
@@ -176,7 +175,7 @@ class CompareCommand extends Command
                     $agent = $collection[$moduleName]['ua'];
                 }
             }
-            
+
             unset($innerIterator);
 
             $messageFormatter->setCollection($collection);
@@ -185,7 +184,7 @@ class CompareCommand extends Command
              * Auswertung
              */
             $allResults = [];
-            $matches = [];
+            $matches    = [];
 
             foreach ($checks as $propertyTitel => $x) {
                 if (empty($x['key'])) {
@@ -305,7 +304,7 @@ class CompareCommand extends Command
             if (($i % 100) === 0) {
                 echo "\n";
             }
-            
+
             unset($collection, $allResults, $matches);
 
             ++$i;

@@ -31,10 +31,11 @@
 
 namespace UaComparator\Module;
 
+use BrowserDetector\Version\Version;
+use BrowserDetector\Version\VersionInterface;
 use Monolog\Logger;
 use UaDataMapper\InputMapper;
 use UaResult\Result;
-use BrowserDetector\Detector\Version;
 use UAS\Parser;
 use WurflCache\Adapter\AdapterInterface;
 
@@ -256,9 +257,9 @@ class UasParser implements ModuleInterface
 
         $version = new Version();
         $version->setMode(
-            Version::COMPLETE
-            | Version::IGNORE_MINOR_IF_EMPTY
-            | Version::IGNORE_MICRO_IF_EMPTY
+            VersionInterface::COMPLETE
+            | VersionInterface::IGNORE_MINOR_IF_EMPTY
+            | VersionInterface::IGNORE_MICRO_IF_EMPTY
         );
 
         $result->setCapability(
