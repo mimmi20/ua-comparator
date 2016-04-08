@@ -553,7 +553,8 @@ class Wurfl implements MapperInterface
         );
 
         $engine = new Engine(
-            $agent, [
+            $agent,
+            [
                 'name'         => null,
                 'version'      => null,
                 'manufacturer' => null,

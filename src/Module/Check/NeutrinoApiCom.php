@@ -72,7 +72,6 @@ class NeutrinoApiCom implements CheckInterface
          */
         if (isset($content->api_error)) {
             switch ($content->api_error) {
-
                 case 1:
                     throw new RequestException('"' . $content->api_error_msg . '" response from "' . $request->getUri() . '". Response is "' . print_r($content, true) . '"', $request);
                     break;
