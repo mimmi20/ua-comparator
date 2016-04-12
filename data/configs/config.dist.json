@@ -95,7 +95,7 @@
           "User-Agent": "mimmi20/ua-comparator:v1.4"
         }
       },
-      "check": "DeviceAtlasCom",
+      "check": "",
       "mapper": "DeviceAtlasCom"
     },
     "donatij-ua-parser": {
@@ -132,7 +132,7 @@
           "Content-Type": "application/x-www-form-urlencoded"
         }
       },
-      "check": "NeutrinoApiCom",
+      "check": "",
       "mapper": "NeutrinoApiCom"
     },
     "piwik": {
@@ -196,7 +196,7 @@
           "Content-Type": "application/x-www-form-urlencoded"
         }
       },
-      "check": "UdgerCom",
+      "check": "",
       "mapper": "UdgerCom"
     },
     "useragent-api": {
@@ -211,7 +211,7 @@
         "params": {},
         "headers": {}
       },
-      "check": "UserAgentApiCom",
+      "check": "",
       "mapper": "UserAgentApiCom"
     },
     "useragent-string": {
@@ -228,7 +228,7 @@
         },
         "headers": {}
       },
-      "check": "UserAgentStringCom",
+      "check": "",
       "mapper": "UserAgentStringCom"
     },
     "what-is-my-browser": {
@@ -245,7 +245,7 @@
         },
         "headers": {}
       },
-      "check": "WhatIsMyBrowserCom",
+      "check": "",
       "mapper": "WhatIsMyBrowserCom"
     },
     "which-browser": {

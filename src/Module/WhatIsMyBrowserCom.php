@@ -32,13 +32,11 @@
 namespace UaComparator\Module;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 use Monolog\Logger;
-use UaComparator\Helper\Request;
 use UaComparator\Module\Check\CheckInterface;
 use UaComparator\Module\Mapper\MapperInterface;
-use UaResult\Result;
+use UserAgentParser\Exception\ExceptionInterface;
+use UserAgentParser\Provider\Http;
 use WurflCache\Adapter\AdapterInterface;
 
 /**
@@ -98,11 +96,6 @@ class WhatIsMyBrowserCom implements ModuleInterface
     private $mapper = null;
 
     /**
-     * @var \GuzzleHttp\Psr7\Request
-     */
-    private $request = null;
-
-    /**
      * @var float
      */
     private $duration = 0.0;
@@ -144,27 +137,18 @@ class WhatIsMyBrowserCom implements ModuleInterface
      */
     public function detect($agent, array $headers = [])
     {
-        $this->agent = $agent;
-        $body        = null;
-
-        $params  = [$this->config['ua-key'] => $agent] + $this->config['params'];
-        $headers = $headers + $this->config['headers'];
-
-        if ('GET' === $this->config['method']) {
-            $uri = $this->config['uri'] . '?' . http_build_query($params, null, '&');
-        } else {
-            $uri  = $this->config['uri'];
-            $body = http_build_query($params, null, '&');
-        }
-
-        $this->request = new GuzzleHttpRequest($this->config['method'], $uri, $headers, $body);
-        $requestHelper = new Request();
-
+        $this->agent           = $agent;
         $this->detectionResult = null;
 
+        $parser = new Http\WhatIsMyBrowserCom(
+            new Client(),
+            $this->config['params']['user-id'],
+            $this->config['params']['api-key']
+        );
+
         try {
-            $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
-        } catch (RequestException $e) {
+            $this->detectionResult = $parser->parse($agent)->getProviderResultRaw();
+        } catch (ExceptionInterface $e) {
             $this->logger->error($e);
         }
 
@@ -304,39 +288,15 @@ class WhatIsMyBrowserCom implements ModuleInterface
     public function getDetectionResult()
     {
         if (null === $this->detectionResult) {
-            return;
+            return null;
         }
 
         try {
-            $return = $this->getCheck()->getResponse($this->detectionResult, $this->request, $this->agent);
-        } catch (RequestException $e) {
-            $this->logger->error($e);
-
-            return;
-        }
-
-        if (isset($return->duration)) {
-            $this->duration = $return->duration;
-
-            unset($return->duration);
-        }
-
-        if (isset($return->memory)) {
-            $this->memory = $return->memory;
-
-            unset($return->memory);
-        }
-
-        try {
-            if (isset($return->result)) {
-                return $this->getMapper()->map($return->result, $this->agent);
-            }
-
-            return $this->getMapper()->map($return, $this->agent);
+            return $this->getMapper()->map($this->detectionResult, $this->agent);
         } catch (\UnexpectedValueException $e) {
             $this->logger->error($e);
         }
 
-        return;
+        return null;
     }
 }
