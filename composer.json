@@ -82,7 +82,7 @@
     "guzzlehttp/guzzle": "^6.1",
     "devster/ubench": "^1.2",
 
-    "mimmi20/wurflcache": "^1.3",
+    "mimmi20/wurflcache": "^1.7",
     "mimmi20/wurfl-data": "^1.6",
 
     "browscap/browscap": "dev-detection-issues",
@@ -111,7 +111,7 @@
     "zsxsoft/php-useragent": ">=1.1,<1.2",
 
     "mimmi20/wurfl": "dev-master",
-    "wurfl/wurfl-api": "dev-update-to-1.7",
+    "wurfl/wurfl-api": "dev-master",
     "mimmi20/browser-detector": "dev-master",
     "browscap/browscap-php/3.x": "dev-master",
     "browscap/browscap-php/2.x": "^2.0",
