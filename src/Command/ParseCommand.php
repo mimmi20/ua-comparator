@@ -98,7 +98,8 @@ class ParseCommand extends Command
                 'source',
                 '-s',
                 InputOption::VALUE_REQUIRED,
-                'the source for the useragents to parse',
+                'the source for the useragents to parse, possible values are: "' . self::SOURCE_SQL . '", "'
+                . self::SOURCE_DIR . '" and "' . self::SOURCE_TEST . '"',
                 self::SOURCE_TEST
             )
             ->addOption(
