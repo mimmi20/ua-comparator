@@ -210,11 +210,11 @@ class TestsSource implements SourceInterface
         $allData = [];
 
         foreach ($data as $row) {
-            if (empty($row[0])) {
+            if (empty($row['ua'])) {
                 continue;
             }
 
-            $allData[] = $row[0];
+            $allData[] = $row['ua'];
         }
 
         return $allData;
