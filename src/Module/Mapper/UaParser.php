@@ -70,7 +70,7 @@ class UaParser implements MapperInterface
             [
                 'name'         => $this->mapper->mapBrowserName($parserResult->ua->family),
                 'modus'        => null,
-                'version'      => new Version($parserResult->ua->major, $parserResult->ua->minor, $parserResult->ua->patch),
+                'version'      => new Version((int) $parserResult->ua->major, (int) $parserResult->ua->minor, $parserResult->ua->patch),
                 'manufacturer' => null,
                 'bits'         => null,
                 'type'         => null,
