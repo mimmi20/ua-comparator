@@ -65,12 +65,12 @@ $duration = microtime(true) - $start;
 
 $result = [];
 
-foreach (array_keys($device->getAllCapabilities()) as $capability) {
-    if (false === strpos($capability, 'controlcap_')) {
-        $result[$capability] = $device->getCapability($capability);
-    } else {
-        $result[$capability] = $device->getVirtualCapability(str_replace('controlcap_', '', $capability));
-    }
+foreach ($device->getAllCapabilities() as $capability => $value) {
+    $result[$capability] = $value;
+}
+
+foreach ($device->getAllVirtualCapabilities() as $capability => $value) {
+    $result[WURFL_VirtualCapabilityProvider::PREFIX_CONTROL . $capability] = $value;
 }
 
 echo json_encode(

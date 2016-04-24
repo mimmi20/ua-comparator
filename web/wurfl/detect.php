@@ -32,6 +32,7 @@
 use Wurfl\Configuration\FileConfig;
 use Wurfl\Manager;
 use Wurfl\Storage\Storage;
+use Wurfl\VirtualCapability\VirtualCapabilityProvider;
 use WurflCache\Adapter\File;
 use WurflCache\Adapter\Memory;
 
@@ -67,12 +68,12 @@ $duration = microtime(true) - $start;
 
 $result = [];
 
-foreach (array_keys($device->getAllCapabilities()) as $capability) {
-    if (false === strpos($capability, 'controlcap_')) {
-        $result[$capability] = $device->getCapability($capability);
-    } else {
-        $result[$capability] = $device->getVirtualCapability(str_replace('controlcap_', '', $capability));
-    }
+foreach ($device->getAllCapabilities() as $capability => $value) {
+    $result[$capability] = $value;
+}
+
+foreach ($device->getAllVirtualCapabilities() as $capability => $value) {
+    $result[VirtualCapabilityProvider::PREFIX_CONTROL . $capability] = $value;
 }
 
 echo json_encode(
