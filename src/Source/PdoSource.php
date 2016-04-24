@@ -34,7 +34,7 @@ class PdoSource implements SourceInterface
      */
     public function getUserAgents(Logger $logger, $limit = 0)
     {
-        $sql = 'SELECT DISTINCT SQL_BIG_RESULT HIGH_PRIORITY `agent` FROM `agents` ORDER BY `count` DESC, `idAgents` DESC';
+        $sql = 'SELECT DISTINCT SQL_BIG_RESULT HIGH_PRIORITY `agent` FROM `agents` ORDER BY `lastTimeFound` DESC, `count` DESC, `idAgents` DESC';
 
         if ($limit) {
             $sql .= ' LIMIT ' . (int) $limit;
