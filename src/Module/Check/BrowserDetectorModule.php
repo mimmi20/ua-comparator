@@ -70,7 +70,7 @@ class BrowserDetectorModule implements CheckInterface
             throw new RequestException('An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
-        $content = unserialize($rawContent);
+        $content = @unserialize($rawContent);
 
         if (! is_array($content) || ! isset($content['result'])) {
             throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
