@@ -31,6 +31,8 @@
 
 namespace UaComparator\Helper;
 
+use BrowserDetector\Version\Version;
+use BrowserDetector\Version\VersionInterface;
 use UaResult\Result\Result;
 
 /**
@@ -154,6 +156,14 @@ class MessageFormatter
                 break;
             case 'mobile_browser_version':
                 $value = $element->getBrowser()->getVersion();
+
+                if ($value instanceof Version) {
+                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY |VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                }
+
+                if ('' === $value) {
+                    $value = null;
+                }
                 break;
             case 'mobile_browser_modus':
                 $value = $element->getBrowser()->getModus();
@@ -172,6 +182,14 @@ class MessageFormatter
                 break;
             case 'renderingengine_version':
                 $value = $element->getEngine()->getVersion();
+
+                if ($value instanceof Version) {
+                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY |VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                }
+
+                if ('' === $value) {
+                    $value = null;
+                }
                 break;
             case 'renderingengine_manufacturer':
                 $value = $element->getEngine()->getManufacturer();
@@ -181,6 +199,14 @@ class MessageFormatter
                 break;
             case 'device_os_version':
                 $value = $element->getOs()->getVersion();
+
+                if ($value instanceof Version) {
+                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY |VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                }
+
+                if ('' === $value) {
+                    $value = null;
+                }
                 break;
             case 'device_os_bits':
                 $value = $element->getOs()->getBits();
