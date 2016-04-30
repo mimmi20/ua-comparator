@@ -24,7 +24,7 @@
       }
     },
     "donatij-ua-parser": {
-      "enabled": true
+      "enabled": false
     },
     "neutrino-api":{
       "enabled": false,
@@ -39,7 +39,7 @@
       "enabled": true
     },
     "sinergi-browser-detector": {
-      "enabled": true
+      "enabled": false
     },
     "ua-parser": {
       "enabled": true
