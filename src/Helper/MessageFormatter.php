@@ -158,7 +158,7 @@ class MessageFormatter
                 $value = $element->getBrowser()->getVersion();
 
                 if ($value instanceof Version) {
-                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY |VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY);
                 }
 
                 if ('' === $value) {
@@ -184,7 +184,7 @@ class MessageFormatter
                 $value = $element->getEngine()->getVersion();
 
                 if ($value instanceof Version) {
-                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY |VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY);
                 }
 
                 if ('' === $value) {
@@ -201,7 +201,7 @@ class MessageFormatter
                 $value = $element->getOs()->getVersion();
 
                 if ($value instanceof Version) {
-                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY |VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY);
                 }
 
                 if ('' === $value) {
