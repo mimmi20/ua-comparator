@@ -76,7 +76,7 @@
   ],
   "require": {
     "php": ">= 5.6.0",
-    "symfony/console": "^2.6|^3.0",
+    "symfony/console": "^2.6 || ^3.0",
     "monolog/monolog": "^1.7",
     "hassankhan/config": "^0.10",
     "guzzlehttp/guzzle": "^6.1",
@@ -98,22 +98,22 @@
     "mimmi20/file-loader": "^2.0.3",
 
     "donatj/phpuseragentparser": "^0.5.0",
-    "piwik/device-detector": "^3.6",
+    "piwik/device-detector": "dev-master",
     "sinergi/browser-detector": "^5.1",
     "ua-parser/uap-php": ">=3.4.3,<4.0",
-    "whichbrowser/parser": ">=2.0.10,<3.0",
+    "whichbrowser/parser": "dev-master",
     "woothee/woothee": "^1.2",
     "mimmi20/wurfl": "dev-master",
-    "wurfl/wurfl-api": "dev-update-to-1.7",
+    "wurfl/wurfl-api": "^1.7.1.0",
     "mimmi20/browser-detector": "dev-master",
     "browscap/browscap-php/3.x": "dev-master",
     "browscap/browscap-php/2.x": "^2.0",
     "crossjoin/browscap": "^1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^5.2",
+    "phpunit/phpunit": "^5.4",
     "squizlabs/php_codesniffer": "^2.5",
-    "fabpot/php-cs-fixer": "^1.11",
+    "friendsofphp/php-cs-fixer": "^1.11",
     "thadafinser/uap-core": "^0.5",
     "woothee/woothee-testset": "^1.3"
   },
