@@ -2,7 +2,6 @@
 
 namespace UaComparator\Source;
 
-use BrowscapPHP\Helper\IniLoader;
 use Monolog\Logger;
 
 /**
@@ -35,64 +34,34 @@ class DirectorySource implements SourceInterface
      */
     public function getUserAgents(Logger $logger, $limit = 0)
     {
-        $iterator = new \RecursiveDirectoryIterator($this->dir);
-        $loader   = new IniLoader();
         $allLines = [];
+        $files    = scandir($this->dir, SCANDIR_SORT_ASCENDING);
 
-        foreach (new \RecursiveIteratorIterator($iterator) as $file) {
-            /** @var $file \SplFileInfo */
+        foreach ($files as $filename) {
+            $file = new \SplFileInfo($this->dir . DIRECTORY_SEPARATOR . $filename);
+
             if (!$file->isFile()) {
                 continue;
             }
 
-            $path = $file->getPathname();
+            $lines = file($file->getPathname());
 
-            $loader->setLocalFile($path);
-            $internalLoader = $loader->getLoader();
+            if (empty($lines)) {
+                $logger->info('Skipping empty file "' . $file->getPathname() . '"');
+                continue;
+            }
 
-            if ($internalLoader->isSupportingLoadingLines()) {
-                if (!$internalLoader->init($path)) {
-                    $logger->info('Skipping empty file "' . $file->getPathname() . '"');
+            foreach ($lines as $line) {
+                if (isset($allLines[$line])) {
                     continue;
                 }
 
-                while ($internalLoader->isValid()) {
-                    $line = $internalLoader->getLine();
+                $allLines[$line] = 1;
 
-                    if (isset($allLines[$line])) {
-                        continue;
-                    }
+                yield $line;
 
-                    $allLines[$line] = 1;
-
-                    yield $line;
-
-                    if ($limit && count($allLines) >= $limit) {
-                        return;
-                    }
-                }
-
-                $internalLoader->close();
-            } else {
-                $lines = file($path);
-
-                if (empty($lines)) {
-                    $logger->info('Skipping empty file "' . $file->getPathname() . '"');
-                    continue;
-                }
-
-                foreach ($lines as $line) {
-                    if (isset($allLines[$line])) {
-                        continue;
-                    }
-
-                    $allLines[$line] = 1;
-
-                    yield $line;
-
-                    if ($limit && count($allLines) >= $limit) {
-                        return;
-                    }
+                if ($limit && count($allLines) >= $limit) {
+                    return;
                 }
             }
         }

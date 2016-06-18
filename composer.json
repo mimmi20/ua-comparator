@@ -98,7 +98,6 @@
     "mimmi20/file-loader": "^2.0.3",
 
     "thadafinser/user-agent-parser": "^1.2",
-
     "donatj/phpuseragentparser": "^0.5.0",
     "jenssegers/agent": "^2.3",
     "mobiledetect/mobiledetectlib": ">2.7.5,<3",
@@ -107,7 +106,6 @@
     "ua-parser/uap-php": ">=3.4.3,<4.0",
     "whichbrowser/parser": ">=2.0.10,<3.0",
     "woothee/woothee": "^1.2",
-
     "zsxsoft/php-useragent": ">=1.1,<1.2",
 
     "mimmi20/wurfl": "dev-master",
