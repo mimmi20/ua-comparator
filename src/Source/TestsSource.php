@@ -12,11 +12,6 @@ use Monolog\Logger;
 class TestsSource implements SourceInterface
 {
     /**
-     * @var string
-     */
-    private $dir = null;
-
-    /**
      * @param \Monolog\Logger $logger
      * @param int             $limit
      *
@@ -30,33 +25,28 @@ class TestsSource implements SourceInterface
             'woothee' => [
                 'path'   => 'vendor/woothee/woothee-testset/testsets',
                 'suffix' => 'yaml',
-                'mapper' => 'mapWoothee',
             ],
             'whichbrowser' => [
                 'path'   => 'vendor/whichbrowser/parser/tests/data',
                 'suffix' => 'yml',
-                'mapper' => 'mapWhichbrowser',
             ],
             'piwik' => [
                 'path'   => 'vendor/piwik/device-detector/Tests/fixtures',
                 'suffix' => 'yml',
-                'mapper' => 'mapPiwik',
             ],
             'browscap' => [
                 'path'   => 'vendor/browscap/browscap/tests/fixtures/issues',
                 'suffix' => 'php',
-                'mapper' => 'mapBrowscap',
             ],
             'uap-core' => [
                 'path'   => 'vendor/thadafinser/uap-core/tests',
                 'suffix' => 'yaml',
-                'mapper' => 'mapUapCore',
             ],
         ];
 
         $allAgents = [];
 
-        foreach ($paths as $sourcePath) {
+        foreach ($paths as $library => $sourcePath) {
             if ($limit && count($allAgents) >= $limit) {
                 continue;
             }
@@ -69,7 +59,28 @@ class TestsSource implements SourceInterface
                     break;
                 }
 
-                $allAgents = array_merge($allAgents, $this->{$sourcePath['mapper']}($dataFile));
+                switch ($library) {
+                    case 'uap-core':
+                        $agentsFromFile = $this->mapUapCore($dataFile);
+                        break;
+                    case 'browscap':
+                        $agentsFromFile = $this->mapBrowscap($dataFile);
+                        break;
+                    case 'piwik':
+                        $agentsFromFile = $this->mapPiwik($dataFile);
+                        break;
+                    case 'whichbrowser':
+                        $agentsFromFile = $this->mapWhichbrowser($dataFile);
+                        break;
+                    case 'woothee':
+                        $agentsFromFile = $this->mapWoothee($dataFile);
+                        break;
+                    default:
+                        continue;
+                        break;
+                }
+
+                $allAgents = array_merge($allAgents, $agentsFromFile);
                 $allAgents = array_unique($allAgents);
             }
         }
