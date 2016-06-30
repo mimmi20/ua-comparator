@@ -77,7 +77,6 @@ class TestsSource implements SourceInterface
                         break;
                     default:
                         continue;
-                        break;
                 }
 
                 $allAgents = array_merge($allAgents, $agentsFromFile);
