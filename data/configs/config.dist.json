@@ -1,21 +1,5 @@
 {
   "modules": {
-    "browscap2": {
-      "name": "Browscap-PHP (2.x)",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": true,
-      "cache-dir": "data/cache/browscap2/",
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/browscap2/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "Browscap"
-    },
     "browscap3": {
       "name": "Browscap-PHP (3.x)",
       "enabled": false,
@@ -64,77 +48,6 @@
       "check": "Local",
       "mapper": "Browscap"
     },
-    "detector": {
-      "name": "",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": false,
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": ""
-    },
-    "device-atlas": {
-      "name": "DeviceAtlasCom",
-      "enabled": false,
-      "class": "DeviceAtlasCom",
-      "requires-cache": false,
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://region0.deviceatlascloud.com/v1/detect/properties",
-        "params": {
-          "licencekey": ""
-        },
-        "headers": {
-          "User-Agent": "mimmi20/ua-comparator:v1.4"
-        }
-      },
-      "check": "",
-      "mapper": "DeviceAtlasCom"
-    },
-    "donatij-ua-parser": {
-      "name": "DonatjUAParser",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": false,
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/donatj-ua-parser/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "DonatjUAParser"
-    },
-    "neutrino-api":{
-      "name": "NeutrinoApiCom",
-      "enabled": false,
-      "class": "NeutrinoApiCom",
-      "requires-cache": false,
-      "request": {
-        "method": "POST",
-        "ua-key": "user-agent",
-        "uri": "https://neutrinoapi.com/user-agent-info",
-        "params": {
-          "user-id": "",
-          "api-key": "",
-          "output-format": "json",
-          "output-case": "snake"
-        },
-        "headers": {
-          "Content-Type": "application/x-www-form-urlencoded"
-        }
-      },
-      "check": "",
-      "mapper": "NeutrinoApiCom"
-    },
     "piwik": {
       "name": "Piwik",
       "enabled": false,
@@ -150,21 +63,6 @@
       "check": "Local",
       "mapper": "PiwikDetector"
     },
-    "sinergi-browser-detector": {
-      "name": "SinergiBrowserDetector",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": false,
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/sinergi-browser-detector/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "SinergiBrowserDetector"
-    },
     "ua-parser": {
       "name": "UAParser",
       "enabled": false,
@@ -179,74 +77,6 @@
       },
       "check": "Local",
       "mapper": "UaParser"
-    },
-    "udger": {
-      "name": "UdgerCom",
-      "enabled": false,
-      "class": "UdgerCom",
-      "requires-cache": false,
-      "request": {
-        "method": "POST",
-        "ua-key": "uastrig",
-        "uri": "http://api.udger.com/parse",
-        "params": {
-          "accesskey": ""
-        },
-        "headers": {
-          "Content-Type": "application/x-www-form-urlencoded"
-        }
-      },
-      "check": "",
-      "mapper": "UdgerCom"
-    },
-    "useragent-api": {
-      "name": "UserAgentApiCom",
-      "enabled": false,
-      "class": "UserAgentApiCom",
-      "requires-cache": false,
-      "request": {
-        "method": "GET",
-        "ua-key": "",
-        "uri": "https://useragentapi.com/api/v3/json",
-        "params": {},
-        "headers": {}
-      },
-      "check": "",
-      "mapper": "UserAgentApiCom"
-    },
-    "useragent-string": {
-      "name": "UserAgentStringCom",
-      "enabled": false,
-      "class": "UserAgentStringCom",
-      "requires-cache": false,
-      "request": {
-        "method": "GET",
-        "ua-key": "uas",
-        "uri": "http://www.useragentstring.com/",
-        "params": {
-          "getJSON": "all"
-        },
-        "headers": {}
-      },
-      "check": "",
-      "mapper": "UserAgentStringCom"
-    },
-    "what-is-my-browser": {
-      "name": "WhatIsMyBrowserCom",
-      "enabled": false,
-      "class": "WhatIsMyBrowserCom",
-      "requires-cache": false,
-      "request": {
-        "method": "POST",
-        "ua-key": "user_agent",
-        "uri": "http://api.whatismybrowser.com/api/v1/user_agent_parse",
-        "params": {
-          "user_key": ""
-        },
-        "headers": {}
-      },
-      "check": "",
-      "mapper": "WhatIsMyBrowserCom"
     },
     "which-browser": {
       "name": "WhichBrowser",
@@ -288,22 +118,6 @@
         "method": "GET",
         "ua-key": "useragent",
         "uri": "http://localhost:8000/web/wurfl/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "Wurfl"
-    },
-    "wurfl-old": {
-      "name": "WURFL API (PHP-API 5.2 original)",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": true,
-      "cache-dir": "data/cache/wurfl_old/",
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/wurfl-old/detect.php",
         "params": {},
         "headers": {}
       },
