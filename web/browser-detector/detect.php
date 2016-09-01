@@ -77,7 +77,7 @@ ErrorHandler::register($logger);
 
 $cache = new File([File::DIR => 'data/cache/browser/']);
 
-$start    = microtime(true);
+$start = microtime(true);
 
 $parser = new BrowserDetector($cache, $logger);
 

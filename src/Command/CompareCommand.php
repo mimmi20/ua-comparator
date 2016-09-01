@@ -251,7 +251,7 @@ class CompareCommand extends Command
                         $lineContent = substr_replace($lineContent, substr($value, 0, 1), 22 + $index, 1);
                     }
 
-                    $content .= $lineContent .  "\n";
+                    $content .= $lineContent . "\n";
                 }
 
                 $content .= $this->getLine($collection);
@@ -320,7 +320,7 @@ class CompareCommand extends Command
      */
     private function getLine(array $collection = [])
     {
-        $content  = '+--------------------+';
+        $content = '+--------------------+';
         $content .= str_repeat('-', count($collection));
         $content .= '+--------------------------------------------------+';
         $content .= str_repeat('--------------------------------------------------+', count($collection));

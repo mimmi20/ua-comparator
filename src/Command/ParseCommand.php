@@ -209,7 +209,7 @@ class ParseCommand extends Command
 
                     $mapperName = '\\UaComparator\\Module\\Mapper\\' . $moduleConfig['mapper'];
                     /** @var \UaComparator\Module\Mapper\MapperInterface $mapper */
-                    $mapper     = new $mapperName();
+                    $mapper = new $mapperName();
                     $mapper->setMapper($inputMapper);
                     $detectorModule->setMapper($mapper);
 

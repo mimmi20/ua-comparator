@@ -256,19 +256,19 @@ class Wurfl implements MapperInterface
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
                         break;
                     case 'bot':
-                        $apiBro     = 'Google Bot';
-                        $apiVer     = null;
-                        $apiBot     = true;
+                        $apiBro = 'Google Bot';
+                        $apiVer = null;
+                        $apiBot = true;
                         break;
                     case 'wireless transcoder':
-                        $apiBro        = 'Google Wireless Transcoder';
-                        $apiVer        = null;
-                        $apiBot        = true;
+                        $apiBro = 'Google Wireless Transcoder';
+                        $apiVer = null;
+                        $apiBot = true;
                         break;
                     case 'adsense bot':
-                        $apiBro        = 'AdSense Bot';
-                        $apiVer        = null;
-                        $apiBot        = true;
+                        $apiBro = 'AdSense Bot';
+                        $apiVer = null;
+                        $apiBot = true;
                         break;
                     default:
                         // nothing to do
@@ -357,9 +357,9 @@ class Wurfl implements MapperInterface
             case 'facebook':
                 switch (strtolower($apiVer)) {
                     case 'bot':
-                        $apiBro     = 'FaceBook Bot';
-                        $apiVer     = null;
-                        $apiBot     = true;
+                        $apiBro = 'FaceBook Bot';
+                        $apiVer = null;
+                        $apiBot = true;
                         break;
                     default:
                         // nothing to do here
@@ -386,27 +386,27 @@ class Wurfl implements MapperInterface
                 break;
             case 'google bot':
             case 'facebook bot':
-                $apiBot     = true;
+                $apiBot = true;
                 break;
             case 'generic web browser':
-                $apiBro     = null;
-                $apiOs      = null;
-                $apiMob     = null;
-                $apiTab     = null;
-                $apiDev     = null;
-                $apiMan     = null;
-                $apiBot     = null;
+                $apiBro = null;
+                $apiOs  = null;
+                $apiMob = null;
+                $apiTab = null;
+                $apiDev = null;
+                $apiMan = null;
+                $apiBot = null;
                 break;
             case 'robot bot or crawler':
             case 'robot':
-                $apiBot     = true;
-                $apiDev     = 'general Bot';
-                $apiBro     = 'unknown';
+                $apiBot = true;
+                $apiDev = 'general Bot';
+                $apiBro = 'unknown';
                 break;
             case 'generic smarttv':
-                $apiBot     = false;
-                $apiDev     = 'general TV Device';
-                $apiBro     = 'unknown';
+                $apiBot = false;
+                $apiDev = 'general TV Device';
+                $apiBro = 'unknown';
                 break;
             case 'unknown':
                 $browserMaker = 'unknown';
@@ -414,10 +414,10 @@ class Wurfl implements MapperInterface
 
                 switch (strtolower($apiVer)) {
                     case 'bot or crawler':
-                        $apiBot     = true;
-                        $apiDev     = 'general Bot';
-                        $apiBro     = 'unknown';
-                        $apiVer     = null;
+                        $apiBot = true;
+                        $apiDev = 'general Bot';
+                        $apiBro = 'unknown';
+                        $apiVer = null;
                         break;
                     default:
                         // nothing to do
@@ -425,10 +425,10 @@ class Wurfl implements MapperInterface
                 }
                 break;
             case 'wii':
-                $apiBot     = false;
-                $apiDev     = 'Wii';
-                $apiBro     = 'Wii Browser';
-                $apiMan     = 'Nintendo';
+                $apiBot = false;
+                $apiDev = 'Wii';
+                $apiBro = 'Wii Browser';
+                $apiMan = 'Nintendo';
                 break;
             case 'android webkit':
             case 'android':
@@ -505,11 +505,11 @@ class Wurfl implements MapperInterface
             ]
         );
 
-        $deviceName  = $this->mapper->mapDeviceName($apiDev);
-        $pointing    = null;
+        $deviceName = $this->mapper->mapDeviceName($apiDev);
+        $pointing   = null;
 
         if ($apiBot) {
-            $apiPhone   = false;
+            $apiPhone = false;
         } else {
             $pointing = $parserResult->pointing_method;
         }

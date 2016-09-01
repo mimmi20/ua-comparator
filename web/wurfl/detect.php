@@ -54,7 +54,7 @@ ini_set('memory_limit', '-1');
 
 header('Content-Type: application/json', true);
 
-$start            = microtime(true);
+$start = microtime(true);
 
 $cache            = new File([File::DIR => 'data/cache/wurfl/']);
 $wurflConfig      = new FileConfig('data/configs/wurfl-config.xml');

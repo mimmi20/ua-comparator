@@ -68,7 +68,7 @@ class PiwikDetector implements MapperInterface
         $browserVersion = null;
 
         if (!empty($parserResult->bot)) {
-            $browserName  = $this->mapper->mapBrowserName($parserResult->bot->name);
+            $browserName = $this->mapper->mapBrowserName($parserResult->bot->name);
 
             if (!empty($parserResult->bot->producer->name)) {
                 $browserMaker = $parserResult->bot->producer->name;
@@ -88,7 +88,7 @@ class PiwikDetector implements MapperInterface
                 $browserType = null;
             }
 
-            $browserType  = $this->mapper->mapBrowserType($browserType, $browserName)->getName();
+            $browserType = $this->mapper->mapBrowserType($browserType, $browserName)->getName();
         }
 
         $browser = new Browser(

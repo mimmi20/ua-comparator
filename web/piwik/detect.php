@@ -65,21 +65,21 @@ $client        = $deviceDetector->getClient();
 $browserFamily = Browser::getBrowserFamily($deviceDetector->getClient('short_name'));
 
 $processed = [
-    'user_agent'     => $deviceDetector->getUserAgent(),
-    'bot'            => ($deviceDetector->isBot() ? $deviceDetector->getBot() : false),
-    'os'             => [
+    'user_agent' => $deviceDetector->getUserAgent(),
+    'bot'        => ($deviceDetector->isBot() ? $deviceDetector->getBot() : false),
+    'os'         => [
         'name'    => (isset($os['name']) ? $os['name'] : ''),
         'version' => (isset($os['version']) ? $os['version'] : null),
     ],
-    'client'         => [
+    'client' => [
         'name'    => (isset($client['name']) ? $client['name'] : ''),
         'version' => (isset($client['version']) ? $client['version'] : null),
         'engine'  => (isset($client['engine']) ? $client['engine'] : null),
     ],
-    'device'         => [
-        'type'       => $deviceDetector->getDeviceName(),
-        'brand'      => $deviceDetector->getBrand(),
-        'model'      => $deviceDetector->getModel(),
+    'device' => [
+        'type'  => $deviceDetector->getDeviceName(),
+        'brand' => $deviceDetector->getBrand(),
+        'model' => $deviceDetector->getModel(),
     ],
     'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
     'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',

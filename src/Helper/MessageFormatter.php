@@ -87,21 +87,21 @@ class MessageFormatter
      */
     public function formatMessage($propertyName)
     {
-        $modules      = array_keys($this->collection);
+        $modules = array_keys($this->collection);
         /** @var \UaResult\Result\Result $firstElement */
         $firstElement = $this->collection[$modules[0]]['result'];
 
         if (null === $firstElement) {
             $strReality = '(NULL)';
         } else {
-            $strReality   = $this->getValue($firstElement, $propertyName);
+            $strReality = $this->getValue($firstElement, $propertyName);
         }
 
         $detectionResults = [];
 
         foreach ($modules as $module => $name) {
             /** @var \UaResult\Result\Result $element */
-            $element   = $this->collection[$name]['result'];
+            $element = $this->collection[$name]['result'];
             if (null === $element) {
                 $strTarget = '(NULL)';
             } else {

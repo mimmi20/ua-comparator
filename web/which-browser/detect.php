@@ -52,7 +52,7 @@ header('Content-Type: application/json', true);
 $start       = microtime(true);
 $parser      = new Parser(['User-Agent' => $_GET['useragent']]);
 $resultArray = [
-    'browser'    => [
+    'browser' => [
         'using'   => $parser->browser->using,
         'family'  => null,
         'channel' => (isset($parser->browser->channel) ? $parser->browser->channel : null),
@@ -64,18 +64,18 @@ $resultArray = [
         'alias'   => (isset($parser->browser->alias) ? $parser->browser->alias : null),
         'version' => (isset($parser->browser->version) ? $parser->browser->version : null),
     ],
-    'engine'     => [
+    'engine' => [
         'name'    => (isset($parser->engine->name) ? $parser->engine->name : null),
         'alias'   => (isset($parser->engine->alias) ? $parser->engine->alias : null),
         'version' => (isset($parser->engine->version) ? $parser->engine->version : null),
     ],
-    'os'         => [
+    'os' => [
         'family'  => (isset($parser->os->family) ? $parser->os->family : null),
         'name'    => (isset($parser->os->name) ? $parser->os->name : null),
         'alias'   => (isset($parser->os->alias) ? $parser->os->alias : null),
         'version' => (isset($parser->os->version) ? $parser->os->version : null),
     ],
-    'device'     => [
+    'device' => [
         'manufacturer' => (isset($parser->device->manufacturer) ? $parser->device->manufacturer : null),
         'model'        => (isset($parser->device->model) ? $parser->device->model : null),
         'series'       => (isset($parser->device->series) ? $parser->device->series : null),
