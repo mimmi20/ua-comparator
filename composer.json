@@ -52,7 +52,11 @@
     "piwik/device-detector": "dev-master",
     "ua-parser/uap-php": ">=3.4.3,<4.0",
     "whichbrowser/parser": "dev-master",
-    "woothee/woothee": "^1.2"
+    "woothee/woothee": "^1.2",
+
+    "mimmi20/wurfl-generic-request": "dev-update-1.8",
+    "mimmi20/wurfl-constants": "dev-update-1.8",
+    "mimmi20/ua-normalizer": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.4",
