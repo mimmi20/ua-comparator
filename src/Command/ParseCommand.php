@@ -72,7 +72,7 @@ class ParseCommand extends Command
      */
     protected function configure()
     {
-        $config = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
+        $config = new Config(['data/configs/config.json']);
 
         foreach ($config['modules'] as $key => $moduleConfig) {
             if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
@@ -176,7 +176,7 @@ class ParseCommand extends Command
          * BrowserDetector
          */
 
-        $config = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
+        $config = new Config(['data/configs/config.json']);
 
         $inputMapper = new InputMapper();
 

@@ -37,7 +37,9 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
-use WurflCache\Adapter\File;
+use Cache\Adapter\Filesystem\FilesystemCachePool;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
 
 chdir(dirname(dirname(__DIR__)));
 
@@ -75,7 +77,8 @@ $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logg
 
 ErrorHandler::register($logger);
 
-$cache = new File([File::DIR => 'data/cache/browser/']);
+$adapter      = new Local('data/cache/browser/');
+$cache        = new FilesystemCachePool(new Filesystem($adapter));
 
 $start = microtime(true);
 

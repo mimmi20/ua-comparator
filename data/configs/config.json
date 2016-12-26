@@ -1,28 +1,128 @@
 {
   "modules": {
     "browscap3": {
-      "enabled": true
+      "name": "Browscap-PHP (3.x)",
+      "enabled": true,
+      "class": "Http",
+      "requires-cache": true,
+      "cache-dir": "data/cache/browscap3/",
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/browscap3/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "Local",
+      "mapper": "Browscap"
     },
     "browser-detector": {
-      "enabled": true
+      "name": "BrowserDetector",
+      "enabled": true,
+      "class": "Http",
+      "requires-cache": true,
+      "cache-dir": "data/cache/browser/",
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/browser-detector/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "BrowserDetectorModule",
+      "mapper": "BrowserDetectorModule"
     },
     "crossjoin": {
-      "enabled": true
+      "name": "Crossjoin-Browscap",
+      "enabled": true,
+      "class": "Http",
+      "requires-cache": true,
+      "cache-dir": "data/cache/crossjoin/",
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/crossjoin/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "Local",
+      "mapper": "Browscap"
     },
     "piwik": {
-      "enabled": true
+      "name": "Piwik",
+      "enabled": true,
+      "class": "Http",
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/piwik/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "Local",
+      "mapper": "PiwikDetector"
     },
     "ua-parser": {
-      "enabled": true
+      "name": "UAParser",
+      "enabled": true,
+      "class": "Http",
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/ua-parser/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "Local",
+      "mapper": "UaParser"
     },
     "which-browser": {
-      "enabled": true
+      "name": "WhichBrowser",
+      "enabled": true,
+      "class": "Http",
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/which-browser/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "Local",
+      "mapper": "WhichBrowser"
     },
     "woothee": {
-      "enabled": true
+      "name": "Woothee",
+      "enabled": true,
+      "class": "Http",
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/woothee/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "Local",
+      "mapper": "Woothee"
     },
     "wurfl": {
-      "enabled": true
+      "name": "WURFL API (PHP-API 5.3)",
+      "enabled": false,
+      "class": "Http",
+      "requires-cache": true,
+      "cache-dir": "data/cache/wurfl/",
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/wurfl/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "Local",
+      "mapper": "Wurfl"
     }
   }
 }
