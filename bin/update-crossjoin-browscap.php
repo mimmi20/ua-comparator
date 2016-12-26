@@ -30,14 +30,22 @@ $bench->start();
 
 echo ' updating cache for Crossjoin\Browscap\Browscap', PHP_EOL;
 
-$config   = new Config(['data/configs/config.json']);
+$config = new Config(['data/configs/config.json']);
+
+if (!$config['modules']['crossjoin']['enabled']) {
+    exit;
+}
+
 $cacheDir = $config['modules']['crossjoin']['cache-dir'];
 
 File::setCacheDirectory($cacheDir);
 Browscap::setDataSetType(Browscap::DATASET_TYPE_LARGE);
+
 $updater = new Local();
 $updater->setOption('LocalFile', realpath('data/browser/full_php_browscap.ini'));
+
 Browscap::setUpdater($updater);
+
 $browscap = new Browscap();
 $browscap->getBrowser()->getData();
 

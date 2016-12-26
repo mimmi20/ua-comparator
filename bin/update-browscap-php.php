@@ -21,7 +21,7 @@ foreach ($autoloadPaths as $path) {
 ini_set('memory_limit', '-1');
 
 use Noodlehaus\Config;
-use BrowscapPHP\Browscap as Browscap3;
+use BrowscapPHP\BrowscapUpdater;
 use WurflCache\Adapter\File;
 
 $bench = new Ubench;
@@ -29,10 +29,14 @@ $bench->start();
 
 echo ' updating cache for BrowscapPHP\Browscap', PHP_EOL;
 
-$config   = new Config(['data/configs/config.json']);
-$cacheDir = $config['modules']['browscap3']['cache-dir'];
+$config = new Config(['data/configs/config.json']);
 
-$browscap = new Browscap3();
+if (!$config['modules']['browscap3']['enabled']) {
+    exit;
+}
+
+$cacheDir = $config['modules']['browscap3']['cache-dir'];
+$browscap = new BrowscapUpdater();
 $cache = new File([File::DIR => $cacheDir]);
 $browscap->setCache($cache);
 $browscap->update();

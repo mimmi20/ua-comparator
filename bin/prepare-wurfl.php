@@ -37,6 +37,7 @@ use Wurfl\Storage\Storage;
 use Cache\Adapter\Filesystem\FilesystemCachePool;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Adapter\Local;
+use Noodlehaus\Config;
 
 chdir(dirname(__DIR__));
 
@@ -54,15 +55,20 @@ foreach ($autoloadPaths as $path) {
 
 ini_set('memory_limit', '-1');
 
-$adapter   = new Local('data/cache/wurfl/');
-$fileCache = new FilesystemCachePool(new Filesystem($adapter));
+$config = new Config(['data/configs/config.json']);
 
+if (!$config['modules']['wurfl']['enabled']) {
+    exit;
+}
+
+$adapter     = new Local('data/cache/wurfl/');
+$fileCache   = new FilesystemCachePool(new Filesystem($adapter));
 $memoryCache = new ArrayCachePool();
 
 $wurflConfig        = new FileConfig('data/configs/wurfl-config.xml');
 $cacheStorage       = new Storage($memoryCache);
 $persistenceStorage = new Storage($fileCache);
-$wurflManager     = new Manager($wurflConfig, $persistenceStorage, $cacheStorage);
+$wurflManager       = new Manager($wurflConfig, $persistenceStorage, $cacheStorage);
 
 $wurflManager->getAllDevicesID();
 
