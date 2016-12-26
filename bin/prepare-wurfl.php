@@ -30,11 +30,13 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
+use Cache\Adapter\PHPArray\ArrayCachePool;
 use Wurfl\Configuration\FileConfig;
 use Wurfl\Manager;
 use Wurfl\Storage\Storage;
-use WurflCache\Adapter\File;
-use WurflCache\Adapter\Memory;
+use Cache\Adapter\Filesystem\FilesystemCachePool;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
 
 chdir(dirname(__DIR__));
 
@@ -52,11 +54,15 @@ foreach ($autoloadPaths as $path) {
 
 ini_set('memory_limit', '-1');
 
-$cache            = new File([File::DIR => 'data/cache/wurfl/']);
-$wurflConfig      = new FileConfig('data/configs/wurfl-config.xml');
-$wurflCache       = new Storage(new Memory());
-$persistanceCache = new Storage($cache);
-$wurflManager     = new Manager($wurflConfig, $persistanceCache, $wurflCache);
+$adapter   = new Local('data/cache/wurfl/');
+$fileCache = new FilesystemCachePool(new Filesystem($adapter));
+
+$memoryCache = new ArrayCachePool();
+
+$wurflConfig        = new FileConfig('data/configs/wurfl-config.xml');
+$cacheStorage       = new Storage($memoryCache);
+$persistenceStorage = new Storage($fileCache);
+$wurflManager     = new Manager($wurflConfig, $persistenceStorage, $cacheStorage);
 
 $wurflManager->getAllDevicesID();
 

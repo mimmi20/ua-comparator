@@ -87,7 +87,7 @@ class TestsSource implements SourceInterface
         $i = 0;
         foreach ($allAgents as $agent) {
             if ($limit && $i >= $limit) {
-                return;
+                return null;
             }
 
             ++$i;
@@ -104,7 +104,7 @@ class TestsSource implements SourceInterface
     private function loadFromPath($path, $suffix)
     {
         if (!file_exists($path)) {
-            return;
+            return null;
         }
 
         $iterator = new \RecursiveDirectoryIterator($path);

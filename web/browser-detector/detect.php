@@ -30,6 +30,9 @@
  */
 
 use BrowserDetector\BrowserDetector;
+use Cache\Adapter\Filesystem\FilesystemCachePool;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
@@ -37,9 +40,6 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
-use Cache\Adapter\Filesystem\FilesystemCachePool;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Local;
 
 chdir(dirname(dirname(__DIR__)));
 

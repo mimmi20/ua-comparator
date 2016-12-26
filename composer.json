@@ -79,6 +79,6 @@
     "csfixer": "php -n -d memory_limit=768M vendor/bin/php-cs-fixer fix --dry-run -vv",
     "prepare": "./bin/prepare.sh",
     "init-server": "./bin/server.sh",
-    "parse": "composer prepare && composer init-server && php bin/comparator parse --limit 10"
+    "parse": "php bin/comparator parse --limit 10"
   }
 }

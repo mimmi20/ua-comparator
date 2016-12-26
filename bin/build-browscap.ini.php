@@ -33,7 +33,7 @@ echo ' creating browscap.ini', PHP_EOL;
 
 $buildFolder = 'data/browser/';
 
-$config   = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
+$config   = new Config(['data/configs/config.json']);
 $cacheDir = $config['modules']['browscap3']['cache-dir'];
 
 $loggerHelper = new LoggerHelper();

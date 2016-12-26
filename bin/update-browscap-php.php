@@ -29,7 +29,7 @@ $bench->start();
 
 echo ' updating cache for BrowscapPHP\Browscap', PHP_EOL;
 
-$config   = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
+$config   = new Config(['data/configs/config.json']);
 $cacheDir = $config['modules']['browscap3']['cache-dir'];
 
 $browscap = new Browscap3();

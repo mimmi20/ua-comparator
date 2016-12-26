@@ -61,7 +61,7 @@ class DirectorySource implements SourceInterface
                 yield $line;
 
                 if ($limit && count($allLines) >= $limit) {
-                    return;
+                    return null;
                 }
             }
         }

@@ -30,7 +30,7 @@ $bench->start();
 
 echo ' updating cache for Crossjoin\Browscap\Browscap', PHP_EOL;
 
-$config   = new Config(['data/configs/config.dist.json', '?data/configs/config.json']);
+$config   = new Config(['data/configs/config.json']);
 $cacheDir = $config['modules']['crossjoin']['cache-dir'];
 
 File::setCacheDirectory($cacheDir);

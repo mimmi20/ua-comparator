@@ -29,12 +29,14 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
+use Cache\Adapter\Filesystem\FilesystemCachePool;
+use Cache\Adapter\PHPArray\ArrayCachePool;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
 use Wurfl\Configuration\FileConfig;
 use Wurfl\Manager;
 use Wurfl\Storage\Storage;
 use Wurfl\VirtualCapability\VirtualCapabilityProvider;
-use WurflCache\Adapter\File;
-use WurflCache\Adapter\Memory;
 
 chdir(dirname(dirname(__DIR__)));
 
@@ -56,11 +58,14 @@ header('Content-Type: application/json', true);
 
 $start = microtime(true);
 
-$cache            = new File([File::DIR => 'data/cache/wurfl/']);
-$wurflConfig      = new FileConfig('data/configs/wurfl-config.xml');
-$wurflCache       = new Storage(new Memory());
-$persistanceCache = new Storage($cache);
-$wurflManager     = new Manager($wurflConfig, $persistanceCache, $wurflCache);
+$adapter     = new Local('data/cache/wurfl/');
+$fileCache   = new FilesystemCachePool(new Filesystem($adapter));
+$memoryCache = new ArrayCachePool();
+
+$wurflConfig        = new FileConfig('data/configs/wurfl-config.xml');
+$cacheStorage       = new Storage($memoryCache);
+$persistenceStorage = new Storage($fileCache);
+$wurflManager       = new Manager($wurflConfig, $persistenceStorage, $cacheStorage);
 
 $device = $wurflManager->getDeviceForUserAgent($_GET['useragent']);
 

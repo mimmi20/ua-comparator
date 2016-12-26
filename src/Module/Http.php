@@ -303,7 +303,7 @@ class Http implements ModuleInterface
     public function getDetectionResult()
     {
         if (null === $this->detectionResult) {
-            return;
+            return null;
         }
 
         try {
@@ -311,7 +311,7 @@ class Http implements ModuleInterface
         } catch (RequestException $e) {
             $this->logger->error($e);
 
-            return;
+            return null;
         }
 
         if (isset($return->duration)) {
@@ -336,6 +336,6 @@ class Http implements ModuleInterface
             $this->logger->error($e);
         }
 
-        return;
+        return null;
     }
 }
