@@ -24,14 +24,14 @@ class TestsSource implements SourceInterface
     public function getUserAgents(Logger $logger, $limit, OutputInterface $output)
     {
         $paths = [
-            'woothee' => [
-                'path'   => 'vendor/woothee/woothee-testset/testsets',
-                'suffix' => 'yaml',
-            ],
-            'whichbrowser' => [
-                'path'   => 'vendor/whichbrowser/parser/tests/data',
-                'suffix' => 'yml',
-            ],
+            //'woothee' => [
+            //    'path'   => 'vendor/woothee/woothee-testset/testsets',
+            //    'suffix' => 'yaml',
+            //],
+            //'whichbrowser' => [
+            //    'path'   => 'vendor/whichbrowser/parser/tests/data',
+            //    'suffix' => 'yaml',
+            //],
             'piwik' => [
                 'path'   => 'vendor/piwik/device-detector/Tests/fixtures',
                 'suffix' => 'yml',
@@ -90,8 +90,11 @@ class TestsSource implements SourceInterface
                         continue;
                 }
 
-                $allAgents = array_merge($allAgents, $agentsFromFile);
-                $allAgents = array_unique($allAgents);
+                $output->writeln(' [added ' . str_pad(number_format(count($allAgents)), 12, ' ', STR_PAD_LEFT) . ' agent' . (count($allAgents) <> 1 ? 's' : '') . ' so far]');
+
+                $newAgents = array_diff($agentsFromFile, $allAgents);
+                $allAgents = array_merge($allAgents, $newAgents);
+                //$allAgents = array_unique($allAgents);
             }
         }
 
@@ -121,6 +124,8 @@ class TestsSource implements SourceInterface
             return null;
         }
 
+        $output->writeln('    reading path ' . $path);
+
         $iterator = new \RecursiveDirectoryIterator($path);
 
         foreach (new \RecursiveIteratorIterator($iterator) as $file) {
@@ -135,7 +140,7 @@ class TestsSource implements SourceInterface
 
             $filepath = $file->getPathname();
 
-            $output->writeln('    reading ' . $filepath . ' ...');
+            $output->write('    reading file ' . str_pad($filepath, 100, ' ', STR_PAD_RIGHT), false);
             switch ($suffix) {
                 case 'php':
                     yield include $filepath;
@@ -151,7 +156,7 @@ class TestsSource implements SourceInterface
                     yield $data;
                     break;
                 case 'json':
-                    yield json_decode($filepath);
+                    yield (array) json_decode(file_get_contents($filepath));
                     break;
                 default:
                     // do nothing here
