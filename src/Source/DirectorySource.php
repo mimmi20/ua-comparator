@@ -3,6 +3,7 @@
 namespace UaComparator\Source;
 
 use Monolog\Logger;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class DirectorySource
@@ -25,14 +26,15 @@ class DirectorySource implements SourceInterface
     }
 
     /**
-     * @param \Monolog\Logger $logger
-     * @param int             $limit
+     * @param \Monolog\Logger                                   $logger
+     * @param int                                               $limit
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
      * @throws \BrowscapPHP\Helper\Exception
      *
      * @return \Generator
      */
-    public function getUserAgents(Logger $logger, $limit = 0)
+    public function getUserAgents(Logger $logger, $limit, OutputInterface $output)
     {
         $allLines = [];
         $files    = scandir($this->dir, SCANDIR_SORT_ASCENDING);

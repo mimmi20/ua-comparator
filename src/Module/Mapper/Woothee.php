@@ -37,6 +37,7 @@ use UaResult\Device\Device;
 use UaResult\Engine\Engine;
 use UaResult\Os\Os;
 use UaResult\Result\Result;
+use Wurfl\Request\GenericRequestFactory;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -67,15 +68,12 @@ class Woothee implements MapperInterface
         $browserName = $this->mapper->mapBrowserName($parserResult->name);
 
         $browser = new Browser(
-            $agent,
-            [
-                'name'         => $browserName,
-                'modus'        => null,
-                'version'      => $this->mapper->mapBrowserVersion($parserResult->version, $browserName),
-                'manufacturer' => null,
-                'bits'         => null,
-                'type'         => $this->mapper->mapBrowserType($parserResult->category, $browserName),
-            ]
+            $browserName,
+            null,
+            null,
+            $this->mapper->mapBrowserVersion($parserResult->version, $browserName),
+            null,
+            $this->mapper->mapBrowserType($parserResult->category, $browserName)
         );
 
         if (!empty($parserResult->category)
@@ -83,49 +81,36 @@ class Woothee implements MapperInterface
             && !in_array($parserResult->os, ['iPad', 'iPhone'])
         ) {
             $device = new Device(
-                $agent,
-                [
-                    'deviceName'     => null,
-                    'marketingName'  => null,
-                    'manufacturer'   => null,
-                    'brand'          => null,
-                    'pointingMethod' => null,
-                    'type'           => $this->mapper->mapDeviceType($parserResult->category),
-                ]
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                $this->mapper->mapDeviceType($parserResult->category)
             );
         } else {
-            $device = new Device(
-                $agent,
-                []
-            );
+            $device = new Device(null, null, null, null);
         }
 
         if (!empty($parserResult->os) && !in_array($parserResult->os, ['iPad', 'iPhone'])) {
             $osName    = $this->mapper->mapOsName($parserResult->os);
             $osVersion = $this->mapper->mapOsVersion($parserResult->os_version, $osName);
 
-            $os = new Os(
-                $agent,
-                [
-                    'name'         => $osName,
-                    'version'      => $osVersion,
-                    'manufacturer' => null,
-                    'bits'         => null,
-                ]
-            );
+            if (!($osVersion instanceof \BrowserDetector\Version\Version)) {
+                var_dump($parserResult->os_version, $osName, $osVersion);
+            }
+
+            $os = new Os($osName, null, null, null, $osVersion);
         } else {
-            $os = new Os(
-                $agent,
-                []
-            );
+            $os = new Os(null, null, null, null);
         }
 
-        $engine = new Engine(
-            $agent,
-            []
-        );
+        $engine = new Engine(null, null, null);
 
-        return new Result($agent, $device, $os, $browser, $engine);
+        $requestFactory = new GenericRequestFactory();
+
+        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
     /**

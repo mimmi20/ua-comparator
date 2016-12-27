@@ -53,7 +53,7 @@ $start       = microtime(true);
 $parser      = new Parser(['User-Agent' => $_GET['useragent']]);
 $resultArray = [
     'browser' => [
-        'using'   => $parser->browser->using,
+        'using'   => (isset($parser->browser->using) ? $parser->browser->using : null),
         'family'  => null,
         'channel' => (isset($parser->browser->channel) ? $parser->browser->channel : null),
         'stock'   => $parser->browser->stock,

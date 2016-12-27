@@ -37,6 +37,7 @@ use UaResult\Device\Device;
 use UaResult\Engine\Engine;
 use UaResult\Os\Os;
 use UaResult\Result\Result;
+use Wurfl\Request\GenericRequestFactory;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -80,27 +81,22 @@ class WhichBrowser implements MapperInterface
         }
 
         $browser = new Browser(
-            $agent,
-            [
-                'name'         => $browserName,
-                'modus'        => null,
-                'version'      => $browserVersion,
-                'manufacturer' => null,
-                'bits'         => null,
-                'type'         => $this->mapper->mapBrowserType($browserType, $browserName),
-            ]
+            $browserName,
+            null,
+            null,
+            $browserVersion,
+            null,
+            $this->mapper->mapBrowserType($browserType, $browserName)
         );
 
         $device = new Device(
-            $agent,
-            [
-                'deviceName'     => null,
-                'marketingName'  => $this->mapper->mapDeviceMarketingName($parserResult->device->model),
-                'manufacturer'   => null,
-                'brand'          => null,
-                'pointingMethod' => null,
-                'type'           => $this->mapper->mapDeviceType($parserResult->device->type),
-            ]
+            $parserResult->device->model,
+            $this->mapper->mapDeviceMarketingName($parserResult->device->model),
+            null,
+            null,
+            null,
+            null,
+            $this->mapper->mapDeviceType($parserResult->device->type)
         );
 
         $platform = $this->mapper->mapOsName($parserResult->os->name);
@@ -113,15 +109,7 @@ class WhichBrowser implements MapperInterface
 
         $platformVersion = $this->mapper->mapOsVersion($platformVer, $platform);
 
-        $os = new Os(
-            $agent,
-            [
-                'name'         => $platform,
-                'version'      => $platformVersion,
-                'manufacturer' => null,
-                'bits'         => null,
-            ]
-        );
+        $os = new Os($platform, null, null, null, $platformVersion);
 
         if (empty($parserResult->engine->version->value)) {
             $engineVer = null;
@@ -130,15 +118,15 @@ class WhichBrowser implements MapperInterface
         }
 
         $engine = new Engine(
-            $agent,
-            [
-                'name'         => $this->mapper->mapEngineName($parserResult->engine->name),
-                'version'      => $this->mapper->mapEngineVersion($engineVer),
-                'manufacturer' => null,
-            ]
+            $this->mapper->mapEngineName($parserResult->engine->name),
+            null,
+            null,
+            $this->mapper->mapEngineVersion($engineVer)
         );
 
-        return new Result($agent, $device, $os, $browser, $engine);
+        $requestFactory = new GenericRequestFactory();
+
+        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
     /**

@@ -38,6 +38,7 @@ use UaResult\Device\Device;
 use UaResult\Engine\Engine;
 use UaResult\Os\Os;
 use UaResult\Result\Result;
+use Wurfl\Request\GenericRequestFactory;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -66,38 +67,27 @@ class UaParser implements MapperInterface
     public function map($parserResult, $agent)
     {
         $browser = new Browser(
-            $agent,
-            [
-                'name'         => $this->mapper->mapBrowserName($parserResult->ua->family),
-                'modus'        => null,
-                'version'      => new Version((int) $parserResult->ua->major, (int) $parserResult->ua->minor, (string) $parserResult->ua->patch),
-                'manufacturer' => null,
-                'bits'         => null,
-                'type'         => null,
-            ]
+            $this->mapper->mapBrowserName($parserResult->ua->family),
+            null,
+            null,
+            new Version((int) $parserResult->ua->major, (int) $parserResult->ua->minor, (string) $parserResult->ua->patch)
         );
 
-        $device = new Device(
-            $agent,
-            []
-        );
+        $device = new Device(null, null, null, null);
 
         $os = new Os(
-            $agent,
-            [
-                'name'         => $this->mapper->mapOsName($parserResult->os->family),
-                'version'      => new Version((int) $parserResult->os->major, (int) $parserResult->os->minor, (string) $parserResult->os->patch),
-                'manufacturer' => null,
-                'bits'         => null,
-            ]
+            $this->mapper->mapOsName($parserResult->os->family),
+            null,
+            null,
+            null,
+            new Version((int) $parserResult->os->major, (int) $parserResult->os->minor, (string) $parserResult->os->patch)
         );
 
-        $engine = new Engine(
-            $agent,
-            []
-        );
+        $engine = new Engine(null, null, null);
 
-        return new Result($agent, $device, $os, $browser, $engine);
+        $requestFactory = new GenericRequestFactory();
+
+        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
     /**

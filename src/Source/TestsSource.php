@@ -3,6 +3,7 @@
 namespace UaComparator\Source;
 
 use Monolog\Logger;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class DirectorySource
@@ -12,14 +13,15 @@ use Monolog\Logger;
 class TestsSource implements SourceInterface
 {
     /**
-     * @param \Monolog\Logger $logger
-     * @param int             $limit
+     * @param \Monolog\Logger                                   $logger
+     * @param int                                               $limit
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
      * @throws \BrowscapPHP\Helper\Exception
      *
      * @return \Generator
      */
-    public function getUserAgents(Logger $logger, $limit = 0)
+    public function getUserAgents(Logger $logger, $limit, OutputInterface $output)
     {
         $paths = [
             'woothee' => [
@@ -42,6 +44,10 @@ class TestsSource implements SourceInterface
                 'path'   => 'vendor/thadafinser/uap-core/tests',
                 'suffix' => 'yaml',
             ],
+            'browser-detector' => [
+                'path'   => 'vendor/mimmi20/browser-detector/tests/issues',
+                'suffix' => 'json',
+            ],
         ];
 
         $allAgents = [];
@@ -54,10 +60,12 @@ class TestsSource implements SourceInterface
             $path   = $sourcePath['path'];
             $suffix = $sourcePath['suffix'];
 
-            foreach ($this->loadFromPath($path, $suffix) as $dataFile) {
+            foreach ($this->loadFromPath($path, $suffix, $output) as $dataFile) {
                 if ($limit && count($allAgents) >= $limit) {
                     break;
                 }
+
+                $agentsFromFile = [];
 
                 switch ($library) {
                     case 'uap-core':
@@ -74,6 +82,9 @@ class TestsSource implements SourceInterface
                         break;
                     case 'woothee':
                         $agentsFromFile = $this->mapWoothee($dataFile);
+                        break;
+                    case 'browser-detector':
+                        $agentsFromFile = $this->mapBrowserDetector($dataFile);
                         break;
                     default:
                         continue;
@@ -96,12 +107,15 @@ class TestsSource implements SourceInterface
     }
 
     /**
-     * @param string $path
-     * @param string $suffix
+     * @param string                                            $path
+     * @param string                                            $suffix
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @throws \BrowscapPHP\Helper\Exception
      *
      * @return \Generator
      */
-    private function loadFromPath($path, $suffix)
+    private function loadFromPath($path, $suffix, OutputInterface $output = null)
     {
         if (!file_exists($path)) {
             return null;
@@ -121,7 +135,7 @@ class TestsSource implements SourceInterface
 
             $filepath = $file->getPathname();
 
-            var_dump('reading ' . $filepath . ' ...');
+            $output->writeln('    reading ' . $filepath . ' ...');
             switch ($suffix) {
                 case 'php':
                     yield include $filepath;
@@ -135,6 +149,9 @@ class TestsSource implements SourceInterface
                     }
 
                     yield $data;
+                    break;
+                case 'json':
+                    yield json_decode($filepath);
                     break;
                 default:
                     // do nothing here
@@ -249,6 +266,26 @@ class TestsSource implements SourceInterface
             }
 
             $allData[] = $row['user_agent_string'];
+        }
+
+        return $allData;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return string
+     */
+    private function mapBrowserDetector(array $data)
+    {
+        $allData = [];
+
+        foreach ($data as $row) {
+            if (empty($row->ua)) {
+                continue;
+            }
+
+            $allData[] = $row->ua;
         }
 
         return $allData;

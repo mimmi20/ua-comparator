@@ -37,6 +37,7 @@ use UaResult\Device\Device;
 use UaResult\Engine\Engine;
 use UaResult\Os\Os;
 use UaResult\Result\Result;
+use Wurfl\Request\GenericRequestFactory;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -92,72 +93,48 @@ class PiwikDetector implements MapperInterface
         }
 
         $browser = new Browser(
-            $agent,
-            [
-                'name'         => $browserName,
-                'modus'        => null,
-                'version'      => $browserVersion,
-                'manufacturer' => $browserMaker,
-                'bits'         => null,
-                'type'         => $this->mapper->mapBrowserType($browserType, $browserName),
-            ]
+            $browserName,
+            $browserMaker,
+            null,
+            $browserVersion,
+            null,
+            $this->mapper->mapBrowserType($browserType, $browserName)
         );
 
         $deviceName = $this->mapper->mapDeviceName($parserResult->device->model);
 
         $device = new Device(
-            $agent,
-            [
-                'deviceName'     => null,
-                'marketingName'  => $this->mapper->mapDeviceMarketingName($deviceName),
-                'manufacturer'   => null,
-                'brand'          => $this->mapper->mapDeviceBrandName($parserResult->device->brand, $deviceName),
-                'pointingMethod' => null,
-                'type'           => $this->mapper->mapDeviceType($parserResult->device->type),
-            ]
+            $deviceName,
+            $this->mapper->mapDeviceMarketingName($deviceName),
+            null,
+            $this->mapper->mapDeviceBrandName($parserResult->device->brand, $deviceName),
+            null,
+            null,
+            $this->mapper->mapDeviceType($parserResult->device->type)
         );
 
-        $os = new Os(
-            $agent,
-            []
-        );
+        $os = new Os(null, null, null, null);
 
         if (!empty($parserResult->os->name)) {
             $osName    = $this->mapper->mapOsName($parserResult->os->name);
             $osVersion = $this->mapper->mapOsVersion($parserResult->os->version, $parserResult->os->name);
 
             if (!in_array($osName, ['PlayStation'])) {
-                $os = new Os(
-                    $agent,
-                    [
-                        'name'         => $osName,
-                        'version'      => $osVersion,
-                        'manufacturer' => null,
-                        'bits'         => null,
-                    ]
-                );
+                $os = new Os($osName, null, null, null, $osVersion);
             }
         }
 
         if (!empty($parserResult->client->engine)) {
             $engineName = $this->mapper->mapEngineName($parserResult->client->engine);
 
-            $engine = new Engine(
-                $agent,
-                [
-                    'name'         => $engineName,
-                    'version'      => null,
-                    'manufacturer' => null,
-                ]
-            );
+            $engine = new Engine($engineName, null, null);
         } else {
-            $engine = new Engine(
-                $agent,
-                []
-            );
+            $engine = new Engine(null, null, null);
         }
 
-        return new Result($agent, $device, $os, $browser, $engine);
+        $requestFactory = new GenericRequestFactory();
+
+        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
     /**

@@ -37,6 +37,7 @@ use UaResult\Device\Device;
 use UaResult\Engine\Engine;
 use UaResult\Os\Os;
 use UaResult\Result\Result;
+use Wurfl\Request\GenericRequestFactory;
 
 /**
  * Browscap.ini parsing class with caching and update capabilities
@@ -494,15 +495,10 @@ class Wurfl implements MapperInterface
         $browserName = $this->mapper->mapBrowserName($apiBro);
 
         $browser = new Browser(
-            $agent,
-            [
-                'name'         => $browserName,
-                'modus'        => null,
-                'version'      => $this->mapper->mapBrowserVersion($apiVer, $browserName),
-                'manufacturer' => $this->mapper->mapBrowserMaker($browserMaker, $browserName),
-                'bits'         => null,
-                'type'         => null,
-            ]
+            $browserName,
+            $this->mapper->mapBrowserMaker($browserMaker, $browserName),
+            null,
+            $this->mapper->mapBrowserVersion($apiVer, $browserName)
         );
 
         $deviceName = $this->mapper->mapDeviceName($apiDev);
@@ -531,37 +527,23 @@ class Wurfl implements MapperInterface
         }
 
         $device = new Device(
-            $agent,
-            [
-                'deviceName'     => $deviceName,
-                'marketingName'  => $this->mapper->mapDeviceMarketingName($marketingName, $deviceName),
-                'manufacturer'   => $this->mapper->mapDeviceMaker($apiMan, $deviceName),
-                'brand'          => $this->mapper->mapDeviceBrandName($brandName, $deviceName),
-                'pointingMethod' => $pointing,
-                'type'           => $this->mapper->mapDeviceType($deviceType),
-            ]
+            $deviceName,
+            $this->mapper->mapDeviceMarketingName($marketingName, $deviceName),
+            $this->mapper->mapDeviceMaker($apiMan, $deviceName),
+            $this->mapper->mapDeviceBrandName($brandName, $deviceName),
+            null,
+            null,
+            $this->mapper->mapDeviceType($deviceType),
+            $pointing
         );
 
-        $os = new Os(
-            $agent,
-            [
-                'name'         => $this->mapper->mapOsName($apiOs),
-                'version'      => null,
-                'manufacturer' => null,
-                'bits'         => null,
-            ]
-        );
+        $os = new Os($this->mapper->mapOsName($apiOs), null, null, null);
 
-        $engine = new Engine(
-            $agent,
-            [
-                'name'         => null,
-                'version'      => null,
-                'manufacturer' => null,
-            ]
-        );
+        $engine = new Engine(null, null, null);
 
-        return new Result($agent, $device, $os, $browser, $engine, (array) $parserResult);
+        $requestFactory = new GenericRequestFactory();
+
+        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine, (array) $parserResult);
     }
 
     /**

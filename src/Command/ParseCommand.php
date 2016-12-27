@@ -186,46 +186,46 @@ class ParseCommand extends Command
                     continue;
                 }
 
-                if ($key === $module) {
-                    $output->write('preparing ' . $moduleConfig['name'] . ' ...', false);
-
-                    if (!isset($moduleConfig['requires-cache'])) {
-                        $cache = new Memory();
-                    } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
-                        $cache = new File([File::DIR => $moduleConfig['cache-dir']]);
-                    } else {
-                        $cache = new Memory();
-                    }
-
-                    $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];
-
-                    /** @var \UaComparator\Module\ModuleInterface $detectorModule */
-                    $detectorModule = new $moduleClassName($logger, $cache);
-                    $detectorModule->setName($moduleConfig['name']);
-                    $detectorModule->setConfig($moduleConfig['request']);
-
-                    $checkName = '\\UaComparator\\Module\\Check\\' . $moduleConfig['check'];
-                    $detectorModule->setCheck(new $checkName());
-
-                    $mapperName = '\\UaComparator\\Module\\Mapper\\' . $moduleConfig['mapper'];
-                    /** @var \UaComparator\Module\Mapper\MapperInterface $mapper */
-                    $mapper = new $mapperName();
-                    $mapper->setMapper($inputMapper);
-                    $detectorModule->setMapper($mapper);
-
-                    $collection->addModule($detectorModule);
-
-                    $output->writeln(
-                        ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
-                            memory_get_usage(true),
-                            0,
-                            ',',
-                            '.'
-                        ) . ' Bytes'
-                    );
-
-                    break;
+                if ($key !== $module) {
+                    continue;
                 }
+
+                $output->write('preparing ' . $moduleConfig['name'] . ' ...', false);
+
+                if (!isset($moduleConfig['requires-cache'])) {
+                    $cache = new Memory();
+                } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
+                    $cache = new File([File::DIR => $moduleConfig['cache-dir']]);
+                } else {
+                    $cache = new Memory();
+                }
+
+                $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];
+
+                /** @var \UaComparator\Module\ModuleInterface $detectorModule */
+                $detectorModule = new $moduleClassName($logger, $cache);
+                $detectorModule->setName($moduleConfig['name']);
+                $detectorModule->setConfig($moduleConfig['request']);
+
+                $checkName = '\\UaComparator\\Module\\Check\\' . $moduleConfig['check'];
+                $detectorModule->setCheck(new $checkName());
+
+                $mapperName = '\\UaComparator\\Module\\Mapper\\' . $moduleConfig['mapper'];
+                /** @var \UaComparator\Module\Mapper\MapperInterface $mapper */
+                $mapper = new $mapperName();
+                $mapper->setMapper($inputMapper);
+                $detectorModule->setMapper($mapper);
+
+                $collection->addModule($detectorModule);
+
+                $output->writeln(
+                    ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
+                        memory_get_usage(true),
+                        0,
+                        ',',
+                        '.'
+                    ) . ' Bytes'
+                );
             }
         }
 
@@ -252,7 +252,7 @@ class ParseCommand extends Command
          * initialize Source
          */
 
-        $output->write('initializing Source ...', false);
+        $output->writeln('initializing Source ...');
 
         $sourceOption = $input->getOption('source');
 
@@ -286,7 +286,7 @@ class ParseCommand extends Command
         }
 
         $output->writeln(
-            ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
+            '    ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
                 memory_get_usage(true),
                 0,
                 ',',
@@ -303,7 +303,7 @@ class ParseCommand extends Command
 
         $output->writeln('start Loop ...');
 
-        foreach ($source->getUserAgents($logger, $limit) as $agent) {
+        foreach ($source->getUserAgents($logger, $limit, $output) as $agent) {
             $bench = [
                 'agent' => $agent,
             ];
