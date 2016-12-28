@@ -33,7 +33,7 @@
     }
   ],
   "require": {
-    "php": "^7.0 | ^7.1",
+    "php": "^7.0 || ^7.1",
     "symfony/console": "^3.0",
     "monolog/monolog": "^1.20",
     "devster/ubench": "^1.2",
