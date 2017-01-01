@@ -90,7 +90,7 @@ class TestsSource implements SourceInterface
                         continue;
                 }
 
-                $output->writeln(' [added ' . str_pad(number_format(count($allAgents)), 12, ' ', STR_PAD_LEFT) . ' agent' . (count($allAgents) <> 1 ? 's' : '') . ' so far]');
+                $output->writeln(' [added ' . str_pad(number_format(count($allAgents)), 12, ' ', STR_PAD_LEFT) . ' agent' . (count($allAgents) !== 1 ? 's' : '') . ' so far]');
 
                 $newAgents = array_diff($agentsFromFile, $allAgents);
                 $allAgents = array_merge($allAgents, $newAgents);

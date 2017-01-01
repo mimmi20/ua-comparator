@@ -68,7 +68,7 @@ class Browscap implements MapperInterface
         if (!isset($parserResult->browser)) {
             $browser = new Browser(null, null, null);
         } else {
-            $browserName = $this->mapper->mapBrowserName($parserResult->browser);
+            $browserName    = $this->mapper->mapBrowserName($parserResult->browser);
             $browserVersion = $this->mapper->mapBrowserVersion(
                 $parserResult->version,
                 $browserName
