@@ -38,12 +38,15 @@ use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use Noodlehaus\Config;
+use PDO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\TimeFormatter;
 use UaComparator\Module\ModuleCollection;
+use UaComparator\Source\DirectorySource;
+use UaComparator\Source\PdoSource;
 use UaComparator\Source\TestsSource;
 use UaDataMapper\InputMapper;
 use WurflCache\Adapter\File;
@@ -90,6 +93,14 @@ class ParseCommand extends Command
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'The Modules to compare',
                 $this->defaultModules
+            )
+            ->addOption(
+                'source',
+                '-s',
+                InputOption::VALUE_REQUIRED,
+                'the source for the useragents to parse, possible values are: "' . self::SOURCE_SQL . '", "'
+                . self::SOURCE_DIR . '" and "' . self::SOURCE_TEST . '"',
+                self::SOURCE_TEST
             )
             ->addOption(
                 'limit',
@@ -243,6 +254,37 @@ class ParseCommand extends Command
 
         $output->writeln('initializing Source ...');
 
+        $sourceOption = $input->getOption('source');
+
+        switch ($sourceOption) {
+            case self::SOURCE_SQL:
+                $dsn      = 'mysql:dbname=browscap;host=localhost';
+                $user     = 'root';
+                $password = '';
+
+                $adapter = new PDO(
+                    $dsn,
+                    $user,
+                    $password,
+                    [
+                        1002 => 'SET NAMES \'UTF8\'', // PDO::MYSQL_ATTR_INIT_COMMAND
+                        1005 => 1024 * 1024 * 50,     // PDO::MYSQL_ATTR_MAX_BUFFER_SIZE
+                    ]
+                );
+                $adapter->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                $source = new PdoSource($adapter);
+                break;
+            case self::SOURCE_DIR:
+                $uaSourceDirectory = 'data/useragents';
+                $source            = new DirectorySource($uaSourceDirectory);
+                break;
+            case self::SOURCE_TEST:
+            default:
+                $source = new TestsSource();
+                break;
+        }
+
         $output->writeln(
             '    ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
                 memory_get_usage(true),
@@ -261,7 +303,7 @@ class ParseCommand extends Command
 
         $output->writeln('start Loop ...');
 
-        foreach ((new TestsSource())->getUserAgents($logger, $limit, $output) as $agent) {
+        foreach ($source->getUserAgents($logger, $limit, $output) as $agent) {
             $bench = [
                 'agent' => $agent,
             ];
