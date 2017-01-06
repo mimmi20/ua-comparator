@@ -45,6 +45,7 @@
 
     "mimmi20/wurfl": "dev-update-to-version-1.8",
     "mimmi20/browser-detector": "dev-master",
+    "mimmi20/browser-detector-tests": "dev-master",
     "mimmi20/browser-detector-version": "dev-master",
     "browscap/browscap-php": "dev-master",
     "crossjoin/browscap": "^1.0",
@@ -52,6 +53,7 @@
     "ua-parser/uap-php": ">=3.4.3,<4.0",
     "whichbrowser/parser": "dev-master",
     "woothee/woothee": "^1.2",
+    "cache/cache": "dev-master",
 
     "mimmi20/wurfl-generic-request": "dev-update-1.8",
     "mimmi20/wurfl-constants": "dev-update-1.8",
@@ -60,8 +62,7 @@
   "require-dev": {
     "phpunit/phpunit": "^5.4",
     "squizlabs/php_codesniffer": "^2.5",
-    "friendsofphp/php-cs-fixer": "^1.11",
-    "cache/cache": "dev-master"
+    "friendsofphp/php-cs-fixer": "^1.11"
   },
   "autoload": {
     "psr-4": {
