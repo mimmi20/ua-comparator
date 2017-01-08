@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Class DirectorySource
  *
- * @author  Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
+ * @author  Thomas Mueller <mimmi20@live.de>
  */
 class TestsSource implements SourceInterface
 {
@@ -28,26 +28,6 @@ class TestsSource implements SourceInterface
             //    'path'   => 'vendor/woothee/woothee-testset/testsets',
             //    'suffix' => 'yaml',
             //],
-            //'whichbrowser' => [
-            //    'path'   => 'vendor/whichbrowser/parser/tests/data',
-            //    'suffix' => 'yaml',
-            //],
-            'piwik' => [
-                'path'   => 'vendor/piwik/device-detector/Tests/fixtures',
-                'suffix' => 'yml',
-            ],
-            'browscap' => [
-                'path'   => 'vendor/browscap/browscap/tests/fixtures/issues',
-                'suffix' => 'php',
-            ],
-            'uap-core' => [
-                'path'   => 'vendor/thadafinser/uap-core/tests',
-                'suffix' => 'yaml',
-            ],
-            'browser-detector' => [
-                'path'   => 'vendor/mimmi20/browser-detector/tests/issues',
-                'suffix' => 'json',
-            ],
         ];
 
         $allAgents = [];
@@ -68,23 +48,8 @@ class TestsSource implements SourceInterface
                 $agentsFromFile = [];
 
                 switch ($library) {
-                    case 'uap-core':
-                        $agentsFromFile = $this->mapUapCore($dataFile);
-                        break;
-                    case 'browscap':
-                        $agentsFromFile = $this->mapBrowscap($dataFile);
-                        break;
-                    case 'piwik':
-                        $agentsFromFile = $this->mapPiwik($dataFile);
-                        break;
-                    case 'whichbrowser':
-                        $agentsFromFile = $this->mapWhichbrowser($dataFile);
-                        break;
                     case 'woothee':
                         $agentsFromFile = $this->mapWoothee($dataFile);
-                        break;
-                    case 'browser-detector':
-                        $agentsFromFile = $this->mapBrowserDetector($dataFile);
                         break;
                     default:
                         continue;
@@ -142,9 +107,6 @@ class TestsSource implements SourceInterface
 
             $output->write('    reading file ' . str_pad($filepath, 100, ' ', STR_PAD_RIGHT), false);
             switch ($suffix) {
-                case 'php':
-                    yield include $filepath;
-                    break;
                 case 'yml':
                 case 'yaml':
                     $data = \Spyc::YAMLLoad($filepath);
@@ -154,9 +116,6 @@ class TestsSource implements SourceInterface
                     }
 
                     yield $data;
-                    break;
-                case 'json':
-                    yield (array) json_decode(file_get_contents($filepath));
                     break;
                 default:
                     // do nothing here
@@ -180,117 +139,6 @@ class TestsSource implements SourceInterface
             }
 
             $allData[] = $row['target'];
-        }
-
-        return $allData;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
-    private function mapWhichbrowser(array $data)
-    {
-        $allData = [];
-
-        foreach ($data as $row) {
-            if (!isset($row['headers']['User-Agent'])) {
-                $headers = http_parse_headers($row['headers']);
-
-                if (! isset($headers['User-Agent'])) {
-                    continue;
-                }
-
-                $allData[] = $headers['User-Agent'];
-                continue;
-            }
-
-            $allData[] = $row['headers']['User-Agent'];
-        }
-
-        return $allData;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
-    private function mapPiwik(array $data)
-    {
-        $allData = [];
-
-        foreach ($data as $row) {
-            if (empty($row['user_agent'])) {
-                continue;
-            }
-
-            $allData[] = $row['user_agent'];
-        }
-
-        return $allData;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
-    private function mapBrowscap(array $data)
-    {
-        $allData = [];
-
-        foreach ($data as $row) {
-            if (empty($row['ua'])) {
-                continue;
-            }
-
-            $allData[] = $row['ua'];
-        }
-
-        return $allData;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
-    private function mapUapCore(array $data)
-    {
-        if (empty($data['test_cases'])) {
-            return [];
-        }
-
-        $allData = [];
-
-        foreach ($data['test_cases'] as $row) {
-            if (empty($row['user_agent_string'])) {
-                continue;
-            }
-
-            $allData[] = $row['user_agent_string'];
-        }
-
-        return $allData;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
-    private function mapBrowserDetector(array $data)
-    {
-        $allData = [];
-
-        foreach ($data as $row) {
-            if (empty($row->ua)) {
-                continue;
-            }
-
-            $allData[] = $row->ua;
         }
 
         return $allData;

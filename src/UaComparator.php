@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2015, Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
+ * Copyright (c) 2015, Thomas Mueller <mimmi20@live.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,7 +22,7 @@
  *
  * @category  UaComparator
  *
- * @author    Thomas Mueller <t_mueller_stolzenhain@yahoo.de>
+ * @author    Thomas Mueller <mimmi20@live.de>
  * @copyright 2015 Thomas Mueller
  * @license   http://www.opensource.org/licenses/MIT MIT License
  *
@@ -38,7 +38,7 @@ use Symfony\Component\Console\Application;
  *
  * @category   UaComparator
  *
- * @author     Thomas Müller <t_mueller_stolzenhain@yahoo.de>
+ * @author     Thomas Müller <mimmi20@live.de>
  */
 class UaComparator extends Application
 {
