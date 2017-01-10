@@ -38,24 +38,25 @@
     "monolog/monolog": "^1.20",
     "devster/ubench": "^1.2",
 
-    "browscap/browscap": "dev-master",
-
     "mimmi20/ua-result": "^2.0",
     "mimmi20/ua-data-mapper": "^2.0",
 
     "mimmi20/wurfl": "dev-update-to-version-1.8",
-    "mimmi20/browser-detector": "dev-master",
-    "mimmi20/browser-detector-tests": "dev-master",
-    "mimmi20/browser-detector-version": "^1.0",
     "browscap/browscap-php": "dev-master",
     "crossjoin/browscap": "^1.0",
     "cache/cache": "dev-master",
 
     "mimmi20/wurfl-generic-request": "^1.8",
 
+    "browscap/browscap": "dev-master",
     "mimmi20/browscap-helper-source-browscap": "^1.0",
+
+    "mimmi20/browser-detector": "dev-master",
+    "mimmi20/browser-detector-tests": "dev-master",
     "mimmi20/browscap-helper-source-detector": "^1.0",
+
     "mimmi20/browscap-helper-source-textfile": "^1.0",
+    "mimmi20/browscap-helper-source-pdo": "^1.0",
 
     "piwik/device-detector": "dev-master",
     "mimmi20/browscap-helper-source-piwik": "^1.0",
