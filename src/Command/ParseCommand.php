@@ -31,6 +31,7 @@
 
 namespace UaComparator\Command;
 
+use BrowscapHelper\Source\DirectorySource;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
@@ -39,14 +40,18 @@ use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use Noodlehaus\Config;
 use PDO;
+use BrowscapHelper\Source\BrowscapSource;
+use BrowscapHelper\Source\DetectorSource;
+use BrowscapHelper\Source\PiwikSource;
+use BrowscapHelper\Source\UapCoreSource;
+use BrowscapHelper\Source\WhichBrowserSource;
+use BrowscapHelper\Source\WootheeSource;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\TimeFormatter;
 use UaComparator\Module\ModuleCollection;
-use UaComparator\Source\DirectorySource;
-use UaComparator\Source\PdoSource;
 use UaComparator\Source\TestsSource;
 use UaDataMapper\InputMapper;
 use WurflCache\Adapter\File;
@@ -294,8 +299,9 @@ class ParseCommand extends Command
             ) . ' Bytes'
         );
 
-        $limit = (int) $input->getOption('limit');
-        $i     = 1;
+        $limit         = (int) $input->getOption('limit');
+        $i             = 1;
+        $existingTests = [];
 
         /*******************************************************************************
          * Loop
@@ -303,62 +309,83 @@ class ParseCommand extends Command
 
         $output->writeln('start Loop ...');
 
-        foreach ($source->getUserAgents($logger, $limit, $output) as $agent) {
-            $bench = [
-                'agent' => $agent,
-            ];
+        $sources = [
+            new BrowscapSource(),
+            new PiwikSource(),
+            new UapCoreSource(),
+            new WhichBrowserSource(),
+            new WootheeSource(),
+            new DetectorSource(),
+            new DirectorySource('data/useragents'),
+        ];
 
-            /***************************************************************************
-             * handle modules
-             */
-            $cacheId = hash('sha512', bin2hex($agent));
+        foreach ($sources as $source) {
+            /** @var \BrowscapHelper\Source\SourceInterface $source */
+            foreach ($source->getUserAgents($logger, $output, $limit) as $agent) {
+                $agent = trim($agent);
 
-            if (!file_exists('data/results/' . $cacheId)) {
-                mkdir('data/results/' . $cacheId, 0775, true);
-            }
-
-            foreach ($collection as $module) {
-                /* @var \UaComparator\Module\ModuleInterface $module */
-                $module
-                    ->startTimer()
-                    ->detect($agent)
-                    ->endTimer();
-
-                $detectionResult = $module->getDetectionResult();
-                $actualTime      = $module->getTime();
-                $actualMemory    = $module->getMaxMemory();
-
-                // per useragent benchmark
-                $bench[$module->getName()] = [
-                    'time'   => $actualTime,
-                    'memory' => $actualMemory,
+                if (isset($existingTests[$agent])) {
+                    continue;
+                }
+                $bench = [
+                    'agent' => $agent,
                 ];
 
+                /***************************************************************************
+                 * handle modules
+                 */
+                $cacheId = hash('sha512', bin2hex($agent));
+
+                if (!file_exists('data/results/' . $cacheId)) {
+                    mkdir('data/results/' . $cacheId, 0775, true);
+                }
+
+                foreach ($collection as $module) {
+                    /* @var \UaComparator\Module\ModuleInterface $module */
+                    $module
+                        ->startTimer()
+                        ->detect($agent)
+                        ->endTimer();
+
+                    $detectionResult = $module->getDetectionResult();
+                    $actualTime      = $module->getTime();
+                    $actualMemory    = $module->getMaxMemory();
+
+                    // per useragent benchmark
+                    $bench[$module->getName()] = [
+                        'time'   => $actualTime,
+                        'memory' => $actualMemory,
+                    ];
+
+                    file_put_contents(
+                        'data/results/' . $cacheId . '/' . $module->getName() . '.json',
+                        json_encode(
+                            [
+                                'ua'     => $agent,
+                                'result' => $detectionResult,
+                                'time'   => $actualTime,
+                                'memory' => $actualMemory,
+                            ],
+                            JSON_PRETTY_PRINT | JSON_FORCE_OBJECT
+                        )
+                    );
+                }
+
                 file_put_contents(
-                    'data/results/' . $cacheId . '/' . $module->getName() . '.txt',
-                    serialize(
-                        [
-                            'ua'     => $agent,
-                            'result' => $detectionResult,
-                            'time'   => $actualTime,
-                            'memory' => $actualMemory,
-                        ]
-                    )
+                    'data/results/' . $cacheId . '/bench.json',
+                    json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT)
                 );
+
+                echo '.';
+
+                if (($i % 100) === 0) {
+                    echo "\n";
+                }
+
+                ++$i;
+
+                $existingTests[$agent] = 1;
             }
-
-            file_put_contents(
-                'data/results/' . $cacheId . '/bench.json',
-                json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT)
-            );
-
-            echo '.';
-
-            if (($i % 100) === 0) {
-                echo "\n";
-            }
-
-            ++$i;
         }
 
         echo "\n";
