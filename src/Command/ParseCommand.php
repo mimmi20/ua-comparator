@@ -31,7 +31,13 @@
 
 namespace UaComparator\Command;
 
+use BrowscapHelper\Source\BrowscapSource;
+use BrowscapHelper\Source\DetectorSource;
 use BrowscapHelper\Source\DirectorySource;
+use BrowscapHelper\Source\PiwikSource;
+use BrowscapHelper\Source\UapCoreSource;
+use BrowscapHelper\Source\WhichBrowserSource;
+use BrowscapHelper\Source\WootheeSource;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
@@ -40,12 +46,6 @@ use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
 use Noodlehaus\Config;
 use PDO;
-use BrowscapHelper\Source\BrowscapSource;
-use BrowscapHelper\Source\DetectorSource;
-use BrowscapHelper\Source\PiwikSource;
-use BrowscapHelper\Source\UapCoreSource;
-use BrowscapHelper\Source\WhichBrowserSource;
-use BrowscapHelper\Source\WootheeSource;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
