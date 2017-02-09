@@ -28,7 +28,7 @@ use Noodlehaus\Config;
 $bench = new Ubench;
 $bench->start();
 
-echo ' updating cache for Crossjoin\Browscap\Browscap', PHP_EOL;
+echo ' updating cache for Crossjoin\Browscap\Browscap (1.x)', PHP_EOL;
 
 $config = new Config(['data/configs/config.json']);
 

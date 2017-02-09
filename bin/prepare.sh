@@ -25,7 +25,7 @@ mkdir ../data/cache/uasparser/
 mkdir ../data/cache/wurfl/
 
 echo "Updating ua-parser data..."
-php ../vendor/ua-parser/uap-php/bin/uaparser.php ua-parser:update
+php ../vendor/ua-parser/uap-php/bin/uaparser ua-parser:update
 
 echo "Creating browscap.ini file..."
 php build-browscap.ini.php
@@ -36,5 +36,5 @@ php update-browscap-php.php
 echo "Updating crossjoin-browscap data..."
 php update-crossjoin-browscap.php
 
-echo "Preparing Wurfl data..."
-php prepare-wurfl.php
+#echo "Preparing Wurfl data..."
+#php prepare-wurfl.php
