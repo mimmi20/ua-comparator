@@ -31,6 +31,7 @@
 
 namespace UaComparator\Module\Mapper;
 
+use Psr\Cache\CacheItemPoolInterface;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
 use UaResult\Device\Device;
@@ -51,9 +52,24 @@ use Wurfl\Request\GenericRequestFactory;
 class Woothee implements MapperInterface
 {
     /**
-     * @var null|\UaDataMapper\InputMapper
+     * @var \UaDataMapper\InputMapper|null
      */
     private $mapper = null;
+
+    /**
+     * @var \Psr\Cache\CacheItemPoolInterface|null
+     */
+    private $cache = null;
+
+    /**
+     * @param \UaDataMapper\InputMapper         $mapper
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
+     */
+    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
+    {
+        $this->mapper = $mapper;
+        $this->cache  = $cache;
+    }
 
     /**
      * Gets the information about the browser by User Agent
@@ -70,10 +86,8 @@ class Woothee implements MapperInterface
         $browser = new Browser(
             $browserName,
             null,
-            null,
             $this->mapper->mapBrowserVersion($parserResult->version, $browserName),
-            null,
-            $this->mapper->mapBrowserType($parserResult->category, $browserName)
+            $this->mapper->mapBrowserType($this->cache, $parserResult->category)
         );
 
         if (!empty($parserResult->category)
@@ -87,7 +101,7 @@ class Woothee implements MapperInterface
                 null,
                 null,
                 null,
-                $this->mapper->mapDeviceType($parserResult->category)
+                $this->mapper->mapDeviceType($this->cache, $parserResult->category)
             );
         } else {
             $device = new Device(null, null, null, null);
@@ -101,12 +115,12 @@ class Woothee implements MapperInterface
                 var_dump($parserResult->os_version, $osName, $osVersion);
             }
 
-            $os = new Os($osName, null, null, null, $osVersion);
+            $os = new Os($osName, null, null, $osVersion);
         } else {
-            $os = new Os(null, null, null, null);
+            $os = new Os(null, null);
         }
 
-        $engine = new Engine(null, null, null);
+        $engine = new Engine(null);
 
         $requestFactory = new GenericRequestFactory();
 
@@ -119,17 +133,5 @@ class Woothee implements MapperInterface
     public function getMapper()
     {
         return $this->mapper;
-    }
-
-    /**
-     * @param \UaDataMapper\InputMapper $mapper
-     *
-     * @return \UaComparator\Module\Mapper\MapperInterface
-     */
-    public function setMapper(InputMapper $mapper)
-    {
-        $this->mapper = $mapper;
-
-        return $this;
     }
 }

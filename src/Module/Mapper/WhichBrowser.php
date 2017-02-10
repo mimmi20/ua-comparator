@@ -31,6 +31,7 @@
 
 namespace UaComparator\Module\Mapper;
 
+use Psr\Cache\CacheItemPoolInterface;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
 use UaResult\Device\Device;
@@ -51,9 +52,24 @@ use Wurfl\Request\GenericRequestFactory;
 class WhichBrowser implements MapperInterface
 {
     /**
-     * @var null|\UaDataMapper\InputMapper
+     * @var \UaDataMapper\InputMapper|null
      */
     private $mapper = null;
+
+    /**
+     * @var \Psr\Cache\CacheItemPoolInterface|null
+     */
+    private $cache = null;
+
+    /**
+     * @param \UaDataMapper\InputMapper         $mapper
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
+     */
+    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
+    {
+        $this->mapper = $mapper;
+        $this->cache  = $cache;
+    }
 
     /**
      * Gets the information about the browser by User Agent
@@ -83,10 +99,8 @@ class WhichBrowser implements MapperInterface
         $browser = new Browser(
             $browserName,
             null,
-            null,
             $browserVersion,
-            null,
-            $this->mapper->mapBrowserType($browserType, $browserName)
+            $this->mapper->mapBrowserType($this->cache, $browserType)
         );
 
         $device = new Device(
@@ -96,7 +110,7 @@ class WhichBrowser implements MapperInterface
             null,
             null,
             null,
-            $this->mapper->mapDeviceType($parserResult->device->type)
+            $this->mapper->mapDeviceType($this->cache, $parserResult->device->type)
         );
 
         $platform = $this->mapper->mapOsName($parserResult->os->name);
@@ -109,7 +123,7 @@ class WhichBrowser implements MapperInterface
 
         $platformVersion = $this->mapper->mapOsVersion($platformVer, $platform);
 
-        $os = new Os($platform, null, null, null, $platformVersion);
+        $os = new Os($platform, null, null, $platformVersion);
 
         if (empty($parserResult->engine->version->value)) {
             $engineVer = null;
@@ -119,7 +133,6 @@ class WhichBrowser implements MapperInterface
 
         $engine = new Engine(
             $this->mapper->mapEngineName($parserResult->engine->name),
-            null,
             null,
             $this->mapper->mapEngineVersion($engineVer)
         );
@@ -135,17 +148,5 @@ class WhichBrowser implements MapperInterface
     public function getMapper()
     {
         return $this->mapper;
-    }
-
-    /**
-     * @param \UaDataMapper\InputMapper $mapper
-     *
-     * @return \UaComparator\Module\Mapper\MapperInterface
-     */
-    public function setMapper(InputMapper $mapper)
-    {
-        $this->mapper = $mapper;
-
-        return $this;
     }
 }

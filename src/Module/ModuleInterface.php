@@ -31,10 +31,10 @@
 
 namespace UaComparator\Module;
 
-use Monolog\Logger;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerInterface;
 use UaComparator\Module\Check\CheckInterface;
 use UaComparator\Module\Mapper\MapperInterface;
-use WurflCache\Adapter\AdapterInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -50,10 +50,10 @@ interface ModuleInterface
     /**
      * creates the module
      *
-     * @param \Monolog\Logger                      $logger
-     * @param \WurflCache\Adapter\AdapterInterface $cache
+     * @param \Psr\Log\LoggerInterface          $logger
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
      */
-    public function __construct(Logger $logger, AdapterInterface $cache);
+    public function __construct(LoggerInterface $logger, CacheItemPoolInterface $cache);
 
     /**
      * initializes the module
