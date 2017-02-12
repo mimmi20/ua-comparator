@@ -32,6 +32,7 @@
 namespace UaComparator\Command;
 
 use BrowscapHelper\Source\BrowscapSource;
+use BrowscapHelper\Source\CollectionSource;
 use BrowscapHelper\Source\DetectorSource;
 use BrowscapHelper\Source\DirectorySource;
 use BrowscapHelper\Source\PiwikSource;
@@ -53,7 +54,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use UaComparator\Helper\TimeFormatter;
 use UaComparator\Module\ModuleCollection;
 use UaDataMapper\InputMapper;
 
@@ -128,9 +128,9 @@ class ParseCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
-        $startTime = microtime(true);
-        $logger    = new Logger('ua-comparator');
+        $output->writeln('preparing logger ...');
 
+        $logger = new Logger('ua-comparator');
         $stream = new StreamHandler('log/error.log', Logger::WARNING);
         $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
 
@@ -145,7 +145,12 @@ class ParseCommand extends Command
         $logger->pushHandler($stream);
         ErrorHandler::register($logger);
 
-        $output->write('preparing App ...', false);
+        $output->writeln('preparing cache ...');
+
+        $adapter      = new Local('data/cache/general/');
+        $generalCache = new FilesystemCachePool(new Filesystem($adapter));
+
+        $output->writeln('preparing App ...');
 
         ini_set('memory_limit', '2048M');
         ini_set('max_execution_time', 0);
@@ -157,14 +162,7 @@ class ParseCommand extends Command
         date_default_timezone_set('Europe/Berlin');
         setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
-        $output->writeln(
-            ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
-                memory_get_usage(true),
-                0,
-                ',',
-                '.'
-            ) . ' Bytes'
-        );
+        $output->writeln('preparing modules ...');
 
         $modules    = $input->getOption('modules');
         $collection = new ModuleCollection();
@@ -179,29 +177,29 @@ class ParseCommand extends Command
 
         foreach ($modules as $module) {
             foreach ($config['modules'] as $key => $moduleConfig) {
-                if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
-                    continue;
-                }
-
                 if ($key !== $module) {
                     continue;
                 }
 
-                $output->write('preparing ' . $moduleConfig['name'] . ' ...', false);
+                if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
+                    continue;
+                }
+
+                $output->writeln('    preparing module ' . $moduleConfig['name'] . ' ...');
 
                 if (!isset($moduleConfig['requires-cache'])) {
-                    $cache = new ArrayCachePool();
+                    $moduleCache = new ArrayCachePool();
                 } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
-                    $adapter = new Local($moduleConfig['cache-dir']);
-                    $cache   = new FilesystemCachePool(new Filesystem($adapter));
+                    $adapter     = new Local($moduleConfig['cache-dir']);
+                    $moduleCache = new FilesystemCachePool(new Filesystem($adapter));
                 } else {
-                    $cache = new ArrayCachePool();
+                    $moduleCache = new ArrayCachePool();
                 }
 
                 $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];
 
                 /** @var \UaComparator\Module\ModuleInterface $detectorModule */
-                $detectorModule = new $moduleClassName($logger, $cache);
+                $detectorModule = new $moduleClassName($logger, $moduleCache);
                 $detectorModule->setName($moduleConfig['name']);
                 $detectorModule->setConfig($moduleConfig['request']);
 
@@ -210,19 +208,10 @@ class ParseCommand extends Command
 
                 $mapperName = '\\UaComparator\\Module\\Mapper\\' . $moduleConfig['mapper'];
                 /** @var \UaComparator\Module\Mapper\MapperInterface $mapper */
-                $mapper = new $mapperName($inputMapper, $cache);
+                $mapper = new $mapperName($inputMapper, $moduleCache);
                 $detectorModule->setMapper($mapper);
 
                 $collection->addModule($detectorModule);
-
-                $output->writeln(
-                    ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
-                        memory_get_usage(true),
-                        0,
-                        ',',
-                        '.'
-                    ) . ' Bytes'
-                );
             }
         }
 
@@ -230,39 +219,35 @@ class ParseCommand extends Command
          * init Modules
          */
 
+        $output->writeln('initializing modules ...');
+
         foreach ($collection->getModules() as $module) {
-            $output->write('initializing ' . $module->getName() . ' ...', false);
+            $output->writeln('    initializing module ' . $module->getName() . ' ...');
 
             $module->init();
-
-            $output->writeln(
-                ' - ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
-                    memory_get_usage(true),
-                    0,
-                    ',',
-                    '.'
-                ) . ' Bytes'
-            );
         }
 
         /*******************************************************************************
          * initialize Source
          */
 
-        $output->writeln('initializing Source ...');
-
-        $output->writeln(
-            '    ready ' . TimeFormatter::formatTime(microtime(true) - $startTime) . ' - ' . number_format(
-                memory_get_usage(true),
-                0,
-                ',',
-                '.'
-            ) . ' Bytes'
-        );
+        $output->writeln('initializing sources ...');
 
         $limit         = (int) $input->getOption('limit');
         $i             = 1;
         $existingTests = [];
+
+        $source  = new CollectionSource(
+            [
+                new BrowscapSource($logger, $output, $generalCache),
+                new PiwikSource($logger, $output),
+                new UapCoreSource($logger, $output),
+                new WhichBrowserSource($logger, $output),
+                new WootheeSource($logger, $output),
+                new DetectorSource($logger, $output, $generalCache),
+                new DirectorySource($logger, $output, 'data/useragents'),
+            ]
+        );
 
         /*******************************************************************************
          * Loop
@@ -270,85 +255,65 @@ class ParseCommand extends Command
 
         $output->writeln('start Loop ...');
 
-        $sources = [
-            new BrowscapSource(),
-            new PiwikSource(),
-            new UapCoreSource(),
-            new WhichBrowserSource(),
-            new WootheeSource(),
-            new DetectorSource(),
-            new DirectorySource('data/useragents'),
-        ];
+        foreach ($source->getUserAgents($limit) as $agent) {
+            $agent = trim($agent);
 
-        foreach ($sources as $source) {
-            /** @var \BrowscapHelper\Source\SourceInterface $source */
-            foreach ($source->getUserAgents($logger, $output, $limit) as $agent) {
-                $agent = trim($agent);
+            if (isset($existingTests[$agent])) {
+                continue;
+            }
 
-                if (isset($existingTests[$agent])) {
-                    continue;
-                }
-                $bench = [
-                    'agent' => $agent,
+            $bench = [
+                'agent' => $agent,
+            ];
+
+            /***************************************************************************
+             * handle modules
+             */
+            $cacheId = hash('sha512', bin2hex($agent));
+
+            if (!file_exists('data/results/' . $cacheId)) {
+                mkdir('data/results/' . $cacheId, 0775, true);
+            }
+
+            foreach ($collection as $module) {
+                /* @var \UaComparator\Module\ModuleInterface $module */
+                $module
+                    ->startTimer()
+                    ->detect($agent)
+                    ->endTimer();
+
+                $detectionResult = $module->getDetectionResult();
+                $actualTime      = $module->getTime();
+                $actualMemory    = $module->getMaxMemory();
+
+                // per useragent benchmark
+                $bench[$module->getName()] = [
+                    'time'   => $actualTime,
+                    'memory' => $actualMemory,
                 ];
 
-                /***************************************************************************
-                 * handle modules
-                 */
-                $cacheId = hash('sha512', bin2hex($agent));
-
-                if (!file_exists('data/results/' . $cacheId)) {
-                    mkdir('data/results/' . $cacheId, 0775, true);
-                }
-
-                foreach ($collection as $module) {
-                    /* @var \UaComparator\Module\ModuleInterface $module */
-                    $module
-                        ->startTimer()
-                        ->detect($agent)
-                        ->endTimer();
-
-                    $detectionResult = $module->getDetectionResult();
-                    $actualTime      = $module->getTime();
-                    $actualMemory    = $module->getMaxMemory();
-
-                    // per useragent benchmark
-                    $bench[$module->getName()] = [
-                        'time'   => $actualTime,
-                        'memory' => $actualMemory,
-                    ];
-
-                    file_put_contents(
-                        'data/results/' . $cacheId . '/' . $module->getName() . '.json',
-                        json_encode(
-                            [
-                                'ua'     => $agent,
-                                'result' => $detectionResult,
-                                'time'   => $actualTime,
-                                'memory' => $actualMemory,
-                            ],
-                            JSON_PRETTY_PRINT | JSON_FORCE_OBJECT
-                        )
-                    );
-                }
-
                 file_put_contents(
-                    'data/results/' . $cacheId . '/bench.json',
-                    json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT)
+                    'data/results/' . $cacheId . '/' . $module->getName() . '.json',
+                    json_encode(
+                        [
+                            'ua'     => $agent,
+                            'result' => $detectionResult,
+                            'time'   => $actualTime,
+                            'memory' => $actualMemory,
+                        ],
+                        JSON_PRETTY_PRINT | JSON_FORCE_OBJECT
+                    )
                 );
-
-                echo '.';
-
-                if (($i % 100) === 0) {
-                    echo "\n";
-                }
-
-                ++$i;
-
-                $existingTests[$agent] = 1;
             }
-        }
 
-        echo "\n";
+            file_put_contents(
+                'data/results/' . $cacheId . '/bench.json',
+                json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT)
+            );
+
+            ++$i;
+
+            $existingTests[$agent] = 1;
+        }
     }
 }

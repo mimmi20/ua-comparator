@@ -45,6 +45,8 @@
     "browscap/browscap-php": "dev-master",
     "crossjoin/browscap": "^1.0",
 
+    "mimmi20/browscap-helper-source-collection": "^2.0",
+
     "browscap/browscap": "dev-master",
     "mimmi20/browscap-helper-source-browscap": "^2.0",
 

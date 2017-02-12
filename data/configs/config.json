@@ -33,7 +33,7 @@
       "mapper": "BrowserDetectorModule"
     },
     "crossjoin": {
-      "name": "Crossjoin-Browscap",
+      "name": "Crossjoin-Browscap (1.x)",
       "enabled": true,
       "class": "Http",
       "requires-cache": true,

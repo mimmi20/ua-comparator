@@ -23,6 +23,7 @@ mkdir ../data/cache/piwik/
 mkdir ../data/cache/uaparser/
 mkdir ../data/cache/uasparser/
 mkdir ../data/cache/wurfl/
+mkdir ../data/cache/general/
 
 echo "Updating ua-parser data..."
 php ../vendor/ua-parser/uap-php/bin/uaparser ua-parser:update

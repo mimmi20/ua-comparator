@@ -42,5 +42,5 @@ $browscap->setCache($cache);
 $browscap->convertFile(realpath('data/browser/full_php_browscap.ini'));
 
 $bench->end();
-echo ' ', $bench->getTime(true), ' secs ', PHP_EOL;
+echo ' ', $bench->getTime(true), ' seconds', PHP_EOL;
 echo ' ', number_format($bench->getMemoryPeak(true)), ' bytes', PHP_EOL;
