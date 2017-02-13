@@ -233,10 +233,6 @@ class ParseCommand extends Command
 
         $output->writeln('initializing sources ...');
 
-        $limit         = (int) $input->getOption('limit');
-        $i             = 1;
-        $existingTests = [];
-
         $source  = new CollectionSource(
             [
                 new BrowscapSource($logger, $output, $generalCache),
@@ -255,11 +251,19 @@ class ParseCommand extends Command
 
         $output->writeln('start Loop ...');
 
+        $limit         = (int) $input->getOption('limit');
+        $counter       = 1;
+        $existingTests = [];
+
         foreach ($source->getUserAgents($limit) as $agent) {
             $agent = trim($agent);
 
             if (isset($existingTests[$agent])) {
                 continue;
+            }
+
+            if (0 < $limit) {
+                $output->writeln('    parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...');
             }
 
             $bench = [
@@ -311,7 +315,7 @@ class ParseCommand extends Command
                 json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT)
             );
 
-            ++$i;
+            ++$counter;
 
             $existingTests[$agent] = 1;
         }

@@ -55,12 +55,14 @@ foreach ($autoloadPaths as $path) {
 
 ini_set('memory_limit', '-1');
 
+header('Content-Type: application/json', true);
+
 $buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
 $iniFile     = 'data/browscap-ua-test-' . $buildNumber . '/full_php_browscap.ini';
 
 $logger = new Logger('ua-comparator');
 
-$stream = new StreamHandler('php://output', Logger::ERROR);
+$stream = new StreamHandler('log/error-browscap3.log', Logger::ERROR);
 $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
 
 /** @var callable $memoryProcessor */
@@ -82,8 +84,6 @@ $browscap = new Browscap();
 $browscap
     ->setLogger($logger)
     ->setCache($cache);
-
-header('Content-Type: application/json', true);
 
 $start    = microtime(true);
 $result   = $browscap->getBrowser($_GET['useragent']);

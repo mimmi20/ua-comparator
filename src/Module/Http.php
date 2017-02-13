@@ -52,12 +52,12 @@ use UaComparator\Module\Mapper\MapperInterface;
 class Http implements ModuleInterface
 {
     /**
-     * @var \Monolog\Logger
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger = null;
 
     /**
-     * @var \WurflCache\Adapter\AdapterInterface
+     * @var \Psr\Cache\CacheItemPoolInterface
      */
     private $cache = null;
 
@@ -307,7 +307,13 @@ class Http implements ModuleInterface
         }
 
         try {
-            $return = $this->getCheck()->getResponse($this->detectionResult, $this->request, $this->agent);
+            $return = $this->getCheck()->getResponse(
+                $this->detectionResult,
+                $this->request,
+                $this->cache,
+                $this->logger,
+                $this->agent
+            );
         } catch (RequestException $e) {
             $this->logger->error($e);
 

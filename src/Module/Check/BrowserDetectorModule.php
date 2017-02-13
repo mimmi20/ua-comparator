@@ -33,7 +33,10 @@ namespace UaComparator\Module\Check;
 
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
+use UaResult\Result\ResultFactory;
+use Psr\Log\LoggerInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -49,33 +52,52 @@ class BrowserDetectorModule implements CheckInterface
     /**
      * @param \GuzzleHttp\Psr7\Response          $response
      * @param \Psr\Http\Message\RequestInterface $request
+     * @param \Psr\Cache\CacheItemPoolInterface  $cache
+     * @param \Psr\Log\LoggerInterface           $logger
      * @param string                             $agent
      *
-     * @throws \GuzzleHttp\Exception\RequestException
      * @return array
      */
-    public function getResponse(Response $response, RequestInterface $request, $agent)
+    public function getResponse(
+        Response $response,
+        RequestInterface $request,
+        CacheItemPoolInterface $cache,
+        LoggerInterface $logger,
+        $agent
+    )
     {
         /*
          * no json returned?
          */
         $contentType = $response->getHeader('Content-Type');
         if (! isset($contentType[0]) || $contentType[0] !== 'x-application/serialize') {
-            throw new RequestException('Could not get valid "x-application/serialize" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+            throw new RequestException(
+                'Could not get valid "x-application/serialize" response from "' . $request->getUri()
+                . '". Response is "' . $response->getBody()->getContents() . '"',
+                $request
+            );
         }
 
         $rawContent = $response->getBody()->getContents();
 
         if (false !== strpos($rawContent, '<')) {
-            throw new RequestException('An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+            throw new RequestException(
+                'An Error occured while calling "' . $request->getUri() . '". Response is "'
+                . $rawContent . '"',
+                $request
+            );
         }
 
         $content = @unserialize($rawContent);
 
         if (! is_array($content) || ! isset($content['result'])) {
-            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+            throw new RequestException(
+                'Could not get valid response from "' . $request->getUri() . '". Response is "'
+                . $rawContent . '"',
+                $request
+            );
         }
 
-        return (object) $content;
+        return (new ResultFactory())->fromArray($cache, $logger, $content['result']);
     }
 }

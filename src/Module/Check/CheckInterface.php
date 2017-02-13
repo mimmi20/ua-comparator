@@ -33,6 +33,8 @@ namespace UaComparator\Module\Check;
 
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -48,10 +50,17 @@ interface CheckInterface
     /**
      * @param \GuzzleHttp\Psr7\Response          $response
      * @param \Psr\Http\Message\RequestInterface $request
+     * @param \Psr\Cache\CacheItemPoolInterface  $cache
+     * @param \Psr\Log\LoggerInterface           $logger
      * @param string                             $agent
      *
-     * @throws \GuzzleHttp\Exception\RequestException
      * @return \stdClass|array|null
      */
-    public function getResponse(Response $response, RequestInterface $request, $agent);
+    public function getResponse(
+        Response $response,
+        RequestInterface $request,
+        CacheItemPoolInterface $cache,
+        LoggerInterface $logger,
+        $agent
+    );
 }
