@@ -88,8 +88,6 @@ class UaParser implements MapperInterface
             new Version((int) $parserResult->ua->major, (int) $parserResult->ua->minor, (string) $parserResult->ua->patch)
         );
 
-        $device = new Device(null, null, null, null);
-
         $os = new Os(
             $this->mapper->mapOsName($parserResult->os->family),
             null,
@@ -97,6 +95,7 @@ class UaParser implements MapperInterface
             new Version((int) $parserResult->os->major, (int) $parserResult->os->minor, (string) $parserResult->os->patch)
         );
 
+        $device = new Device(null, null);
         $engine = new Engine(null);
 
         $requestFactory = new GenericRequestFactory();

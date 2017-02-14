@@ -147,8 +147,6 @@ class Browscap implements MapperInterface
                 $this->mapper->mapDeviceMarketingName($parserResult->device_name, $deviceName),
                 $deviceManufacturer,
                 $deviceBrand,
-                null,
-                null,
                 $this->mapper->mapDeviceType($this->cache, $parserResult->device_type),
                 $parserResult->device_pointing_method
             );

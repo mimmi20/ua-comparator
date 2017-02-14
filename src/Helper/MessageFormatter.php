@@ -34,6 +34,9 @@ namespace UaComparator\Helper;
 use BrowserDetector\Version\Version;
 use BrowserDetector\Version\VersionInterface;
 use UaResult\Result\Result;
+use UaResult\Result\ResultFactory;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
@@ -55,6 +58,19 @@ class MessageFormatter
      * @var int
      */
     private $columnsLength = 0;
+
+    /**
+     * @var \UaResult\Result\ResultFactory
+     */
+    private $resultFactory = null;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->resultFactory = new ResultFactory();
+    }
 
     /**
      * @param \UaResult\Result\Result[] $collection
@@ -85,7 +101,7 @@ class MessageFormatter
      *
      * @return string[]
      */
-    public function formatMessage($propertyName)
+    public function formatMessage($propertyName, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $modules = array_keys($this->collection);
         /** @var \UaResult\Result\Result $firstElement */
@@ -94,7 +110,7 @@ class MessageFormatter
         if (null === $firstElement) {
             $strReality = '(NULL)';
         } else {
-            $strReality = $this->getValue($firstElement, $propertyName);
+            $strReality = $this->getValue($this->resultFactory->fromArray($cache, $logger, (array) $firstElement), $propertyName);
         }
 
         $detectionResults = [];
@@ -105,7 +121,7 @@ class MessageFormatter
             if (null === $element) {
                 $strTarget = '(NULL)';
             } else {
-                $strTarget = $this->getValue($element, $propertyName);
+                $strTarget = $this->getValue($this->resultFactory->fromArray($cache, $logger, (array) $element), $propertyName);
             }
 
             if (strtolower($strTarget) === strtolower($strReality)) {
@@ -148,9 +164,6 @@ class MessageFormatter
     private function getValue(Result $element, $propertyName)
     {
         switch ($propertyName) {
-            case 'wurflKey':
-                $value = $element->getWurflKey();
-                break;
             case 'mobile_browser':
                 $value = $element->getBrowser()->getName();
                 break;
@@ -172,10 +185,10 @@ class MessageFormatter
                 $value = $element->getBrowser()->getBits();
                 break;
             case 'browser_type':
-                $value = $element->getBrowser()->getType();
+                $value = $element->getBrowser()->getType()->getName();
                 break;
             case 'mobile_browser_manufacturer':
-                $value = $element->getBrowser()->getManufacturer();
+                $value = $element->getBrowser()->getManufacturer()->getName();
                 break;
             case 'renderingengine_name':
                 $value = $element->getEngine()->getName();
@@ -192,7 +205,7 @@ class MessageFormatter
                 }
                 break;
             case 'renderingengine_manufacturer':
-                $value = $element->getEngine()->getManufacturer();
+                $value = $element->getEngine()->getManufacturer()->getName();
                 break;
             case 'device_os':
                 $value = $element->getOs()->getName();
@@ -212,10 +225,10 @@ class MessageFormatter
                 $value = $element->getOs()->getBits();
                 break;
             case 'device_os_manufacturer':
-                $value = $element->getOs()->getManufacturer();
+                $value = $element->getOs()->getManufacturer()->getName();
                 break;
             case 'brand_name':
-                $value = $element->getDevice()->getBrand();
+                $value = $element->getDevice()->getBrand()->getBrandName();
                 break;
             case 'marketing_name':
                 $value = $element->getDevice()->getMarketingName();
@@ -224,10 +237,10 @@ class MessageFormatter
                 $value = $element->getDevice()->getDeviceName();
                 break;
             case 'manufacturer_name':
-                $value = $element->getDevice()->getManufacturer();
+                $value = $element->getDevice()->getManufacturer()->getName();
                 break;
             case 'device_type':
-                $value = $element->getDevice()->getType();
+                $value = $element->getDevice()->getType()->getName();
                 break;
             case 'pointing_method':
                 $value = $element->getDevice()->getPointingMethod();

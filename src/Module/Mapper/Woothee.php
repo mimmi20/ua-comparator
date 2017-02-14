@@ -90,29 +90,12 @@ class Woothee implements MapperInterface
             $this->mapper->mapBrowserType($this->cache, $parserResult->category)
         );
 
-        if (!empty($parserResult->category)
-            && !empty($parserResult->os)
-            && !in_array($parserResult->os, ['iPad', 'iPhone'])
-        ) {
-            $device = new Device(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                $this->mapper->mapDeviceType($this->cache, $parserResult->category)
-            );
-        } else {
-            $device = new Device(null, null, null, null);
-        }
-
         if (!empty($parserResult->os) && !in_array($parserResult->os, ['iPad', 'iPhone'])) {
             $osName    = $this->mapper->mapOsName($parserResult->os);
             $osVersion = $this->mapper->mapOsVersion($parserResult->os_version, $osName);
 
             if (!($osVersion instanceof \BrowserDetector\Version\Version)) {
-                var_dump($parserResult->os_version, $osName, $osVersion);
+                $osVersion = null;
             }
 
             $os = new Os($osName, null, null, $osVersion);
@@ -120,6 +103,7 @@ class Woothee implements MapperInterface
             $os = new Os(null, null);
         }
 
+        $device = new Device(null, null);
         $engine = new Engine(null);
 
         $requestFactory = new GenericRequestFactory();

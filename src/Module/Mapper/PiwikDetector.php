@@ -83,17 +83,22 @@ class PiwikDetector implements MapperInterface
      */
     public function map($parserResult, $agent)
     {
-        $browserMaker   = null;
-        $browserVersion = null;
+        $browserVersion      = null;
+        $browserManufacturer = null;
 
         if (!empty($parserResult->bot)) {
             $browserName = $this->mapper->mapBrowserName($parserResult->bot->name);
 
             if (!empty($parserResult->bot->producer->name)) {
-                $browserMaker = $parserResult->bot->producer->name;
+                $browserMakerKey = $this->mapper->mapBrowserMaker($parserResult->bot->producer->name, $browserName);
+                try {
+                    $browserManufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
+                } catch (NotFoundException $e) {
+                    //$this->logger->info($e);
+                }
             }
 
-            $browserType = $this->mapper->mapBrowserType($this->cache, 'robot')->getName();
+            $browserType = $this->mapper->mapBrowserType($this->cache, 'robot');
         } else {
             $browserName    = $this->mapper->mapBrowserName($parserResult->client->name);
             $browserVersion = $this->mapper->mapBrowserVersion(
@@ -102,27 +107,17 @@ class PiwikDetector implements MapperInterface
             );
 
             if (!empty($parserResult->client->type)) {
-                $browserType = $parserResult->client->type;
+                $browserType = $this->mapper->mapBrowserType($this->cache, $parserResult->client->type);
             } else {
                 $browserType = null;
             }
-
-            $browserType = $this->mapper->mapBrowserType($this->cache, $browserType)->getName();
-        }
-
-        $browserManufacturer    = null;
-        $browserMakerKey = $this->mapper->mapBrowserMaker($browserMaker, $browserName);
-        try {
-            $browserManufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
-        } catch (NotFoundException $e) {
-            //$this->logger->info($e);
         }
 
         $browser = new Browser(
             $browserName,
             $browserManufacturer,
             $browserVersion,
-            $this->mapper->mapBrowserType($this->cache, $browserType)
+            $browserType
         );
 
         $deviceName = $this->mapper->mapDeviceName($parserResult->device->model);
@@ -140,8 +135,6 @@ class PiwikDetector implements MapperInterface
             $this->mapper->mapDeviceMarketingName($deviceName),
             null,
             $deviceBrand,
-            null,
-            null,
             $this->mapper->mapDeviceType($this->cache, $parserResult->device->type)
         );
 

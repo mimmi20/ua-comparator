@@ -263,7 +263,7 @@ class ParseCommand extends Command
             }
 
             if (0 < $limit) {
-                $output->writeln('    parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...');
+                $output->writeln('        parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...');
             }
 
             $bench = [
@@ -301,7 +301,7 @@ class ParseCommand extends Command
                     json_encode(
                         [
                             'ua'     => $agent,
-                            'result' => $detectionResult,
+                            'result' => (null === $detectionResult ? null : $detectionResult->toArray()),
                             'time'   => $actualTime,
                             'memory' => $actualMemory,
                         ],

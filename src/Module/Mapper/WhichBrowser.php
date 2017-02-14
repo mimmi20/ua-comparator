@@ -82,16 +82,15 @@ class WhichBrowser implements MapperInterface
     public function map($parserResult, $agent)
     {
         $browserName = $this->mapper->mapBrowserName($parserResult->browser->name);
+
         if (empty($parserResult->browser->version->value)) {
-            $browserVer = null;
+            $browserVersion = null;
         } else {
-            $browserVer = $parserResult->browser->version->value;
+            $browserVersion = $this->mapper->mapBrowserVersion($parserResult->browser->version->value, $browserName);
         }
 
-        $browserVersion = $this->mapper->mapBrowserVersion($browserVer, $browserName);
-
         if (!empty($parserResult->browser->type)) {
-            $browserType = $parserResult->browser->type;
+            $browserType = $this->mapper->mapBrowserType($this->cache, $parserResult->browser->type);
         } else {
             $browserType = null;
         }
@@ -100,14 +99,12 @@ class WhichBrowser implements MapperInterface
             $browserName,
             null,
             $browserVersion,
-            $this->mapper->mapBrowserType($this->cache, $browserType)
+            $browserType
         );
 
         $device = new Device(
             $parserResult->device->model,
             $this->mapper->mapDeviceMarketingName($parserResult->device->model),
-            null,
-            null,
             null,
             null,
             $this->mapper->mapDeviceType($this->cache, $parserResult->device->type)
@@ -116,25 +113,23 @@ class WhichBrowser implements MapperInterface
         $platform = $this->mapper->mapOsName($parserResult->os->name);
 
         if (empty($parserResult->os->version->value)) {
-            $platformVer = null;
+            $platformVersion = null;
         } else {
-            $platformVer = $parserResult->os->version->value;
+            $platformVersion = $this->mapper->mapOsVersion($parserResult->os->version->value, $platform);
         }
-
-        $platformVersion = $this->mapper->mapOsVersion($platformVer, $platform);
 
         $os = new Os($platform, null, null, $platformVersion);
 
         if (empty($parserResult->engine->version->value)) {
-            $engineVer = null;
+            $engineVersion = null;
         } else {
-            $engineVer = $parserResult->engine->version->value;
+            $engineVersion = $this->mapper->mapEngineVersion($parserResult->engine->version->value);
         }
 
         $engine = new Engine(
             $this->mapper->mapEngineName($parserResult->engine->name),
             null,
-            $this->mapper->mapEngineVersion($engineVer)
+            $engineVersion
         );
 
         $requestFactory = new GenericRequestFactory();
