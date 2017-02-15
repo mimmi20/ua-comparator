@@ -250,72 +250,7 @@ class CompareCommand extends Command
                 }
 
                 $content .= $this->getLine($collection);
-                /*
-                $content = str_replace(
-                    '#               id#',
-                    str_pad($i, self::FIRST_COL_LENGTH - 1, ' ', STR_PAD_LEFT),
-                    $content
-                );
-
-                $timeSummary = 0.0;
-
-                foreach ($collection as $moduleName => $data) {
-                    $content = str_replace(
-                        '#' . $moduleName . '#',
-                        str_pad(number_format($data['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                        $content
-                    );
-
-                    $timeSummary += (float) $data['time'];
-                }
-
-                $content = str_replace(
-                    '#TimeSummary#',
-                    str_pad(number_format($timeSummary, 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                    $content
-                );
-
-                $content .= $this->getLine($collection);
-
-                $content .= '-';
-                $content = str_replace(
-                    [
-                        '#  plus#',
-                        '# minus#',
-                        '#  soso#',
-                        '#     percent1#',
-                        '#     percent2#',
-                        '#     percent3#',
-                    ],
-                    [
-                        str_pad($okfound, 8, ' ', STR_PAD_LEFT),
-                        str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
-                        str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
-                        str_pad(
-                            number_format((100 * $okfound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                        str_pad(
-                            number_format((100 * $nokfound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                        str_pad(
-                            number_format((100 * $sosofound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                    ],
-                    $content
-                );
-
-                echo preg_replace('/\#[^#]*\#/', '               (n/a)', $content);
-                /**/
-                echo $content;exit;
+                echo '-', "\n", $content;
             } elseif (in_array(':', $matches)) {
                 echo ':';
                 ++$sosofound;

@@ -28,3 +28,4 @@ error.log
 resources/browscap-*/
 log/*
 !log/.gitkeep
+result.txt
