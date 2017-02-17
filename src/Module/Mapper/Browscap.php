@@ -31,8 +31,11 @@
 
 namespace UaComparator\Module\Mapper;
 
+use BrowserDetector\Loader\NotFoundException;
+use Psr\Cache\CacheItemPoolInterface;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
+use UaResult\Company\CompanyLoader;
 use UaResult\Device\Device;
 use UaResult\Engine\Engine;
 use UaResult\Os\Os;
@@ -51,9 +54,24 @@ use Wurfl\Request\GenericRequestFactory;
 class Browscap implements MapperInterface
 {
     /**
-     * @var null|\UaDataMapper\InputMapper
+     * @var \UaDataMapper\InputMapper|null
      */
     private $mapper = null;
+
+    /**
+     * @var \Psr\Cache\CacheItemPoolInterface|null
+     */
+    private $cache = null;
+
+    /**
+     * @param \UaDataMapper\InputMapper         $mapper
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
+     */
+    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
+    {
+        $this->mapper = $mapper;
+        $this->cache  = $cache;
+    }
 
     /**
      * Gets the information about the browser by User Agent
@@ -86,13 +104,19 @@ class Browscap implements MapperInterface
             //    $browserModus = null;
             //}
 
+            $browserManufacturer    = null;
+            $browserMakerKey        = $this->mapper->mapBrowserMaker($parserResult->browser_maker, $browserName);
+            try {
+                $browserManufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
+            } catch (NotFoundException $e) {
+                //$this->logger->info($e);
+            }
+
             $browser = new Browser(
                 $browserName,
-                $this->mapper->mapBrowserMaker($parserResult->browser_maker, $browserName),
-                null,
+                $browserManufacturer,
                 $browserVersion,
-                null,
-                $this->mapper->mapBrowserType($browserType, $browserName),
+                $this->mapper->mapBrowserType($this->cache, $browserType),
                 $parserResult->browser_bits
             );
         }
@@ -102,43 +126,70 @@ class Browscap implements MapperInterface
         } else {
             $deviceName = $this->mapper->mapDeviceName($parserResult->device_code_name);
 
+            $deviceManufacturer   = null;
+            $deviceMakerKey       = $this->mapper->mapDeviceMaker($parserResult->device_maker, $deviceName);
+            try {
+                $deviceManufacturer = (new CompanyLoader($this->cache))->load($deviceMakerKey);
+            } catch (NotFoundException $e) {
+                //$this->logger->info($e);
+            }
+
+            $deviceBrand    = null;
+            $deviceBrandKey = $this->mapper->mapDeviceBrandName($parserResult->device_brand_name, $deviceName);
+            try {
+                $deviceBrand = (new CompanyLoader($this->cache))->load($deviceBrandKey);
+            } catch (NotFoundException $e) {
+                //$this->logger->info($e);
+            }
+
             $device = new Device(
                 $deviceName,
                 $this->mapper->mapDeviceMarketingName($parserResult->device_name, $deviceName),
-                $this->mapper->mapDeviceMaker($parserResult->device_maker, $deviceName),
-                $this->mapper->mapDeviceBrandName($parserResult->device_brand_name, $deviceName),
-                null,
-                null,
-                $this->mapper->mapDeviceType($parserResult->device_type),
+                $deviceManufacturer,
+                $deviceBrand,
+                $this->mapper->mapDeviceType($this->cache, $parserResult->device_type),
                 $parserResult->device_pointing_method
             );
         }
 
         if (!isset($parserResult->platform)) {
-            $os = new Os(null, null, null, null);
+            $os = new Os(null, null);
         } else {
             $platform        = $this->mapper->mapOsName($parserResult->platform);
             $platformVersion = $this->mapper->mapOsVersion($parserResult->platform_version, $parserResult->platform);
 
+            $osManufacturer = null;
+            $osMakerKey     = $this->mapper->mapOsMaker($parserResult->platform_maker, $parserResult->platform);
+            try {
+                $osManufacturer = (new CompanyLoader($this->cache))->load($osMakerKey);
+            } catch (NotFoundException $e) {
+                //$this->logger->info($e);
+            }
+
             $os = new Os(
                 $platform,
                 null,
-                $this->mapper->mapOsMaker($parserResult->platform_maker, $parserResult->platform),
-                null,
+                $osManufacturer,
                 $platformVersion,
                 $parserResult->platform_bits
             );
         }
 
         if (!isset($parserResult->renderingengine_name)) {
-            $engine = new Engine(null, null, null);
+            $engine = new Engine(null);
         } else {
             $engineName = $this->mapper->mapEngineName($parserResult->renderingengine_name);
 
+            $engineManufacturer = null;
+            try {
+                $engineManufacturer = (new CompanyLoader($this->cache))->load($parserResult->renderingengine_maker);
+            } catch (NotFoundException $e) {
+                //$this->logger->info($e);
+            }
+
             $engine = new Engine(
                 $engineName,
-                $parserResult->renderingengine_maker,
-                '',
+                $engineManufacturer,
                 $this->mapper->mapEngineVersion($parserResult->renderingengine_version)
             );
         }
@@ -154,17 +205,5 @@ class Browscap implements MapperInterface
     public function getMapper()
     {
         return $this->mapper;
-    }
-
-    /**
-     * @param \UaDataMapper\InputMapper $mapper
-     *
-     * @return \UaComparator\Module\Mapper\MapperInterface
-     */
-    public function setMapper(InputMapper $mapper)
-    {
-        $this->mapper = $mapper;
-
-        return $this;
     }
 }

@@ -29,6 +29,13 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
+use Monolog\ErrorHandler;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Monolog\Processor\MemoryPeakUsageProcessor;
+use Monolog\Processor\MemoryUsageProcessor;
 use UAParser\Parser;
 
 chdir(dirname(dirname(__DIR__)));
@@ -48,6 +55,24 @@ foreach ($autoloadPaths as $path) {
 ini_set('memory_limit', '-1');
 
 header('Content-Type: application/json', true);
+
+$logger = new Logger('ua-comparator');
+
+$stream = new StreamHandler('log/error-ua-parser.log', Logger::ERROR);
+$stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
+
+/** @var callable $memoryProcessor */
+$memoryProcessor = new MemoryUsageProcessor(true);
+$logger->pushProcessor($memoryProcessor);
+
+/** @var callable $peakMemoryProcessor */
+$peakMemoryProcessor = new MemoryPeakUsageProcessor(true);
+$logger->pushProcessor($peakMemoryProcessor);
+
+$logger->pushHandler($stream);
+$logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::ERROR));
+
+ErrorHandler::register($logger);
 
 $start    = microtime(true);
 $parser   = Parser::create();

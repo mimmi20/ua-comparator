@@ -34,11 +34,11 @@ namespace UaComparator\Module;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
-use Monolog\Logger;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerInterface;
 use UaComparator\Helper\Request;
 use UaComparator\Module\Check\CheckInterface;
 use UaComparator\Module\Mapper\MapperInterface;
-use WurflCache\Adapter\AdapterInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -52,12 +52,12 @@ use WurflCache\Adapter\AdapterInterface;
 class Http implements ModuleInterface
 {
     /**
-     * @var \Monolog\Logger
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger = null;
 
     /**
-     * @var \WurflCache\Adapter\AdapterInterface
+     * @var \Psr\Cache\CacheItemPoolInterface
      */
     private $cache = null;
 
@@ -114,10 +114,10 @@ class Http implements ModuleInterface
     /**
      * creates the module
      *
-     * @param \Monolog\Logger                      $logger
-     * @param \WurflCache\Adapter\AdapterInterface $cache
+     * @param \Psr\Log\LoggerInterface          $logger
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
      */
-    public function __construct(Logger $logger, AdapterInterface $cache)
+    public function __construct(LoggerInterface $logger, CacheItemPoolInterface $cache)
     {
         $this->logger = $logger;
         $this->cache  = $cache;
@@ -307,7 +307,13 @@ class Http implements ModuleInterface
         }
 
         try {
-            $return = $this->getCheck()->getResponse($this->detectionResult, $this->request, $this->agent);
+            $return = $this->getCheck()->getResponse(
+                $this->detectionResult,
+                $this->request,
+                $this->cache,
+                $this->logger,
+                $this->agent
+            );
         } catch (RequestException $e) {
             $this->logger->error($e);
 

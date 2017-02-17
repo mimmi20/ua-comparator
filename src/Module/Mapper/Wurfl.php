@@ -31,8 +31,11 @@
 
 namespace UaComparator\Module\Mapper;
 
+use BrowserDetector\Loader\NotFoundException;
+use Psr\Cache\CacheItemPoolInterface;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
+use UaResult\Company\CompanyLoader;
 use UaResult\Device\Device;
 use UaResult\Engine\Engine;
 use UaResult\Os\Os;
@@ -51,9 +54,24 @@ use Wurfl\Request\GenericRequestFactory;
 class Wurfl implements MapperInterface
 {
     /**
-     * @var null|\UaDataMapper\InputMapper
+     * @var \UaDataMapper\InputMapper|null
      */
     private $mapper = null;
+
+    /**
+     * @var \Psr\Cache\CacheItemPoolInterface|null
+     */
+    private $cache = null;
+
+    /**
+     * @param \UaDataMapper\InputMapper         $mapper
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
+     */
+    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
+    {
+        $this->mapper = $mapper;
+        $this->cache  = $cache;
+    }
 
     /**
      * Gets the information about the browser by User Agent
@@ -494,10 +512,17 @@ class Wurfl implements MapperInterface
 
         $browserName = $this->mapper->mapBrowserName($apiBro);
 
+        $manufacturer    = null;
+        $browserMakerKey = $this->mapper->mapBrowserMaker($browserMaker, $browserName);
+        try {
+            $manufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
+        } catch (NotFoundException $e) {
+            //$this->logger->info($e);
+        }
+
         $browser = new Browser(
             $browserName,
-            $this->mapper->mapBrowserMaker($browserMaker, $browserName),
-            null,
+            $manufacturer,
             $this->mapper->mapBrowserVersion($apiVer, $browserName)
         );
 
@@ -526,20 +551,36 @@ class Wurfl implements MapperInterface
             $deviceType = 'FonePad';
         }
 
+        $deviceManufacturer = null;
+        $deviceMakerKey     = $this->mapper->mapDeviceMaker($apiMan, $deviceName);
+        try {
+            $deviceManufacturer = (new CompanyLoader($this->cache))->load($deviceMakerKey);
+        } catch (NotFoundException $e) {
+            //$this->logger->info($e);
+        }
+
+        $deviceBrand    = null;
+        $deviceBrandKey = $this->mapper->mapDeviceBrandName($brandName, $deviceName);
+        try {
+            $deviceBrand = (new CompanyLoader($this->cache))->load($deviceBrandKey);
+        } catch (NotFoundException $e) {
+            //$this->logger->info($e);
+        }
+
         $device = new Device(
             $deviceName,
             $this->mapper->mapDeviceMarketingName($marketingName, $deviceName),
-            $this->mapper->mapDeviceMaker($apiMan, $deviceName),
-            $this->mapper->mapDeviceBrandName($brandName, $deviceName),
+            $deviceManufacturer,
+            $deviceBrand,
             null,
             null,
-            $this->mapper->mapDeviceType($deviceType),
+            $this->mapper->mapDeviceType($this->cache, $deviceType),
             $pointing
         );
 
-        $os = new Os($this->mapper->mapOsName($apiOs), null, null, null);
+        $os = new Os($this->mapper->mapOsName($apiOs), null);
 
-        $engine = new Engine(null, null, null);
+        $engine = new Engine(null);
 
         $requestFactory = new GenericRequestFactory();
 
@@ -552,17 +593,5 @@ class Wurfl implements MapperInterface
     public function getMapper()
     {
         return $this->mapper;
-    }
-
-    /**
-     * @param \UaDataMapper\InputMapper $mapper
-     *
-     * @return \UaComparator\Module\Mapper\MapperInterface
-     */
-    public function setMapper(InputMapper $mapper)
-    {
-        $this->mapper = $mapper;
-
-        return $this;
     }
 }

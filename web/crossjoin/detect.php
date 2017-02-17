@@ -31,6 +31,13 @@
 
 use Crossjoin\Browscap\Browscap as CrBrowscap;
 use Crossjoin\Browscap\Cache\File;
+use Monolog\ErrorHandler;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Monolog\Processor\MemoryPeakUsageProcessor;
+use Monolog\Processor\MemoryUsageProcessor;
 
 chdir(dirname(dirname(__DIR__)));
 
@@ -48,13 +55,31 @@ foreach ($autoloadPaths as $path) {
 
 ini_set('memory_limit', '-1');
 
+header('Content-Type: application/json', true);
+
+$logger = new Logger('ua-comparator');
+
+$stream = new StreamHandler('log/error-crossjoin1.log', Logger::ERROR);
+$stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
+
+/** @var callable $memoryProcessor */
+$memoryProcessor = new MemoryUsageProcessor(true);
+$logger->pushProcessor($memoryProcessor);
+
+/** @var callable $peakMemoryProcessor */
+$peakMemoryProcessor = new MemoryPeakUsageProcessor(true);
+$logger->pushProcessor($peakMemoryProcessor);
+
+$logger->pushHandler($stream);
+$logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::ERROR));
+
+ErrorHandler::register($logger);
+
 $buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
 $iniFile     = 'data/browscap-ua-test-' . $buildNumber . '/full_php_browscap.ini';
 
 File::setCacheDirectory('data/cache/crossjoin/');
 CrBrowscap::setDatasetType(CrBrowscap::DATASET_TYPE_LARGE);
-
-header('Content-Type: application/json', true);
 
 $start    = microtime(true);
 $parser   = new CrBrowscap();

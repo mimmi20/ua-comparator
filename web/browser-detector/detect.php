@@ -61,7 +61,7 @@ header('Content-Type: x-application/serialize', true);
 
 $logger = new Logger('ua-comparator');
 
-$stream = new StreamHandler('php://output', Logger::ERROR);
+$stream = new StreamHandler('log/error-browser-detector.log', Logger::ERROR);
 $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
 
 /** @var callable $memoryProcessor */
@@ -96,7 +96,7 @@ $duration = microtime(true) - $start;
 
 echo serialize(
     [
-        'result'   => $detectionResult,
+        'result'   => $detectionResult->toArray(),
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]

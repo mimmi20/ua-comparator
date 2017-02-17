@@ -31,6 +31,9 @@
 
 namespace UaComparator\Command;
 
+use Cache\Adapter\Filesystem\FilesystemCachePool;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
@@ -38,6 +41,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
+use Noodlehaus\Config;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -100,6 +104,8 @@ class CompareCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
+        $output->writeln('preparing logger ...');
+
         $logger = new Logger('ua-comparator');
         $stream = new StreamHandler('php://output', Logger::ERROR);
         $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
@@ -117,7 +123,12 @@ class CompareCommand extends Command
 
         ErrorHandler::register($logger);
 
-        echo 'initializing App ...';
+        $output->writeln('preparing cache ...');
+
+        $adapter      = new Local('data/cache/general/');
+        $generalCache = new FilesystemCachePool(new Filesystem($adapter));
+
+        $output->writeln('preparing App ...');
 
         ini_set('memory_limit', '2048M');
         ini_set('max_execution_time', 0);
@@ -128,8 +139,6 @@ class CompareCommand extends Command
 
         date_default_timezone_set('Europe/Berlin');
         setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
-
-        echo ' - ready', "\n";
 
         /*******************************************************************************
          * Loop
@@ -145,9 +154,24 @@ class CompareCommand extends Command
         $messageFormatter = new MessageFormatter();
         $messageFormatter->setColumnsLength(self::COL_LENGTH);
 
+        $output->writeln('init checks ...');
+
         $checklevel  = $input->getOption('check-level');
         $checkHelper = new Check();
         $checks      = $checkHelper->getChecks($checklevel);
+
+        $output->writeln('init modules ...');
+
+        $config  = new Config(['data/configs/config.json']);
+        $modules = [];
+
+        foreach ($config['modules'] as $moduleConfig) {
+            if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
+                continue;
+            }
+
+            $modules[] = $moduleConfig['name'];
+        }
 
         foreach (new \IteratorIterator($iterator) as $file) {
             /** @var $file \SplFileInfo */
@@ -155,28 +179,22 @@ class CompareCommand extends Command
                 continue;
             }
 
-            $path          = $file->getPathname();
-            $innerIterator = new \DirectoryIterator($path);
-            $agent         = null;
+            $path  = $file->getPathname();
+            $agent = null;
 
             $collection = [];
 
-            foreach (new \IteratorIterator($innerIterator) as $innerFile) {
-                /** @var $innerFile \SplFileInfo */
-                if (!$innerFile->isFile() || 'bench.json' === $innerFile->getFilename()) {
-                    continue;
-                }
+            foreach ($modules as $module) {
+                if (file_exists($path . '/' . $module . '.json')) {
+                    $collection[$module] = (array) json_decode(file_get_contents($path . '/' . $module . '.json'));
 
-                $moduleName = $innerFile->getBasename('.txt');
-
-                $collection[$moduleName] = unserialize(file_get_contents($innerFile->getPathname()));
-
-                if (null === $agent) {
-                    $agent = $collection[$moduleName]['ua'];
+                    if (null === $agent) {
+                        $agent = $collection[$module]['ua'];
+                    }
+                } else {
+                    $collection[$module] = ['result' => []];
                 }
             }
-
-            unset($innerIterator);
 
             $messageFormatter->setCollection($collection);
 
@@ -193,7 +211,7 @@ class CompareCommand extends Command
                     $propertyName = $x['key'];
                 }
 
-                $detectionResults = $messageFormatter->formatMessage($propertyName);
+                $detectionResults = $messageFormatter->formatMessage($propertyName, $generalCache, $logger);
 
                 foreach ($detectionResults as $result) {
                     $matches[] = substr($result, 0, 1);
@@ -205,31 +223,8 @@ class CompareCommand extends Command
             if (in_array('-', $matches)) {
                 ++$nokfound;
 
-                $content = file_get_contents('src/templates/single-line.txt');
-                $content = str_replace('#ua#', $agent, $content);
-                $content = str_replace(
-                    '#               id#',
-                    str_pad($i, self::FIRST_COL_LENGTH - 1, ' ', STR_PAD_LEFT),
-                    $content
-                );
-
-                $timeSummary = 0.0;
-
-                foreach ($collection as $moduleName => $data) {
-                    $content = str_replace(
-                        '#' . $moduleName . '#',
-                        str_pad(number_format($data['time'], 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                        $content
-                    );
-
-                    $timeSummary += (float) $data['time'];
-                }
-
-                $content = str_replace(
-                    '#TimeSummary#',
-                    str_pad(number_format($timeSummary, 10, ',', '.'), 20, ' ', STR_PAD_LEFT),
-                    $content
-                );
+                $content = $this->getLine($collection);
+                $content .= '|                    |' . substr($agent, 0, self::COL_LENGTH * count($collection)) . "\n";
 
                 $content .= $this->getLine($collection);
 
@@ -255,44 +250,7 @@ class CompareCommand extends Command
                 }
 
                 $content .= $this->getLine($collection);
-
-                $content .= '-';
-                $content = str_replace(
-                    [
-                        '#  plus#',
-                        '# minus#',
-                        '#  soso#',
-                        '#     percent1#',
-                        '#     percent2#',
-                        '#     percent3#',
-                    ],
-                    [
-                        str_pad($okfound, 8, ' ', STR_PAD_LEFT),
-                        str_pad($nokfound, 8, ' ', STR_PAD_LEFT),
-                        str_pad($sosofound, 8, ' ', STR_PAD_LEFT),
-                        str_pad(
-                            number_format((100 * $okfound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                        str_pad(
-                            number_format((100 * $nokfound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                        str_pad(
-                            number_format((100 * $sosofound / $i), 9, ',', '.'),
-                            15,
-                            ' ',
-                            STR_PAD_LEFT
-                        ),
-                    ],
-                    $content
-                );
-
-                echo preg_replace('/\#[^#]*\#/', '               (n/a)', $content);
+                echo '-', "\n", $content;
             } elseif (in_array(':', $matches)) {
                 echo ':';
                 ++$sosofound;

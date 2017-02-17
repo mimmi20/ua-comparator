@@ -55,8 +55,8 @@ $buildGenerator
 
 $version = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
 
-$buildGenerator->run($version);
+$buildGenerator->run($version, false);
 
 $bench->end();
-echo ' ', $bench->getTime(true), ' secs ', PHP_EOL;
+echo ' ', $bench->getTime(true), ' seconds ', PHP_EOL;
 echo ' ', number_format($bench->getMemoryPeak(true)), ' bytes', PHP_EOL;

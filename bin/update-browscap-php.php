@@ -39,8 +39,8 @@ $cacheDir = $config['modules']['browscap3']['cache-dir'];
 $browscap = new BrowscapUpdater();
 $cache = new File([File::DIR => $cacheDir]);
 $browscap->setCache($cache);
-$browscap->update();
+$browscap->convertFile(realpath('data/browser/full_php_browscap.ini'));
 
 $bench->end();
-echo ' ', $bench->getTime(true), ' secs ', PHP_EOL;
+echo ' ', $bench->getTime(true), ' seconds', PHP_EOL;
 echo ' ', number_format($bench->getMemoryPeak(true)), ' bytes', PHP_EOL;

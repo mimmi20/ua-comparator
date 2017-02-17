@@ -31,8 +31,6 @@
 
 namespace UaComparator\Module\Mapper;
 
-use UaDataMapper\InputMapper;
-
 /**
  * Browscap.ini parsing class with caching and update capabilities
  *
@@ -58,11 +56,4 @@ interface MapperInterface
      * @return null|\UaDataMapper\InputMapper
      */
     public function getMapper();
-
-    /**
-     * @param \UaDataMapper\InputMapper $mapper
-     *
-     * @return \UaComparator\Module\Mapper\MapperInterface
-     */
-    public function setMapper(InputMapper $mapper);
 }

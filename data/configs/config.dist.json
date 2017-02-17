@@ -1,21 +1,5 @@
 {
   "modules": {
-    "browscap3": {
-      "name": "Browscap-PHP (3.x)",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": true,
-      "cache-dir": "data/cache/browscap3/",
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/browscap3/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "Browscap"
-    },
     "browser-detector": {
       "name": "BrowserDetector",
       "enabled": false,
@@ -31,6 +15,22 @@
       },
       "check": "BrowserDetectorModule",
       "mapper": "BrowserDetectorModule"
+    },
+    "browscap3": {
+      "name": "Browscap-PHP (3.x)",
+      "enabled": false,
+      "class": "Http",
+      "requires-cache": true,
+      "cache-dir": "data/cache/browscap3/",
+      "request": {
+        "method": "GET",
+        "ua-key": "useragent",
+        "uri": "http://localhost:8000/web/browscap3/detect.php",
+        "params": {},
+        "headers": {}
+      },
+      "check": "Local",
+      "mapper": "Browscap"
     },
     "crossjoin": {
       "name": "Crossjoin-Browscap",

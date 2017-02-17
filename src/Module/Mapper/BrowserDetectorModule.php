@@ -31,6 +31,7 @@
 
 namespace UaComparator\Module\Mapper;
 
+use Psr\Cache\CacheItemPoolInterface;
 use UaDataMapper\InputMapper;
 
 /**
@@ -45,9 +46,24 @@ use UaDataMapper\InputMapper;
 class BrowserDetectorModule implements MapperInterface
 {
     /**
-     * @var null|\UaDataMapper\InputMapper
+     * @var \UaDataMapper\InputMapper|null
      */
     private $mapper = null;
+
+    /**
+     * @var \Psr\Cache\CacheItemPoolInterface|null
+     */
+    private $cache = null;
+
+    /**
+     * @param \UaDataMapper\InputMapper         $mapper
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
+     */
+    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
+    {
+        $this->mapper = $mapper;
+        $this->cache  = $cache;
+    }
 
     /**
      * Gets the information about the browser by User Agent
@@ -68,17 +84,5 @@ class BrowserDetectorModule implements MapperInterface
     public function getMapper()
     {
         return $this->mapper;
-    }
-
-    /**
-     * @param \UaDataMapper\InputMapper $mapper
-     *
-     * @return \UaComparator\Module\Mapper\MapperInterface
-     */
-    public function setMapper(InputMapper $mapper)
-    {
-        $this->mapper = $mapper;
-
-        return $this;
     }
 }

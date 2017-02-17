@@ -33,7 +33,9 @@ namespace UaComparator\Module\Check;
 
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -49,13 +51,20 @@ class Local implements CheckInterface
     /**
      * @param \GuzzleHttp\Psr7\Response          $response
      * @param \Psr\Http\Message\RequestInterface $request
+     * @param \Psr\Cache\CacheItemPoolInterface  $cache
+     * @param \Psr\Log\LoggerInterface           $logger
      * @param string                             $agent
      *
-     * @throws \GuzzleHttp\Exception\RequestException
      * @return array
      */
-    public function getResponse(Response $response, RequestInterface $request, $agent)
-    {
+    public function getResponse(
+        Response $response,
+        RequestInterface $request,
+        CacheItemPoolInterface $cache,
+        LoggerInterface $logger,
+        $agent
+    ) {
+
         /*
          * no json returned?
          */

@@ -28,7 +28,7 @@ use Noodlehaus\Config;
 $bench = new Ubench;
 $bench->start();
 
-echo ' updating cache for Crossjoin\Browscap\Browscap', PHP_EOL;
+echo ' updating cache for Crossjoin\Browscap\Browscap (1.x)', PHP_EOL;
 
 $config = new Config(['data/configs/config.json']);
 
@@ -50,5 +50,5 @@ $browscap = new Browscap();
 $browscap->getBrowser()->getData();
 
 $bench->end();
-echo ' ', $bench->getTime(true), ' secs ', PHP_EOL;
+echo ' ', $bench->getTime(true), ' seconds', PHP_EOL;
 echo ' ', number_format($bench->getMemoryPeak(true)), ' bytes', PHP_EOL;
