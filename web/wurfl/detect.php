@@ -33,10 +33,6 @@ use Cache\Adapter\Filesystem\FilesystemCachePool;
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
-use Wurfl\Configuration\FileConfig;
-use Wurfl\Manager;
-use Wurfl\Storage\Storage;
-use Wurfl\VirtualCapability\VirtualCapabilityProvider;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
@@ -44,6 +40,10 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
+use Wurfl\Configuration\FileConfig;
+use Wurfl\Manager;
+use Wurfl\Storage\Storage;
+use Wurfl\VirtualCapability\VirtualCapabilityProvider;
 
 chdir(dirname(dirname(__DIR__)));
 

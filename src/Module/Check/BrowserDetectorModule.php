@@ -35,8 +35,8 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
-use UaResult\Result\ResultFactory;
 use Psr\Log\LoggerInterface;
+use UaResult\Result\ResultFactory;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -64,8 +64,8 @@ class BrowserDetectorModule implements CheckInterface
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         $agent
-    )
-    {
+    ) {
+
         /*
          * no json returned?
          */

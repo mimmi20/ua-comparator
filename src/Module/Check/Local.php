@@ -63,8 +63,8 @@ class Local implements CheckInterface
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         $agent
-    )
-    {
+    ) {
+
         /*
          * no json returned?
          */

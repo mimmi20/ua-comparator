@@ -33,10 +33,10 @@ namespace UaComparator\Helper;
 
 use BrowserDetector\Version\Version;
 use BrowserDetector\Version\VersionInterface;
-use UaResult\Result\Result;
-use UaResult\Result\ResultFactory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
+use UaResult\Result\Result;
+use UaResult\Result\ResultFactory;
 
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities

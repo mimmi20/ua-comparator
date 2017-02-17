@@ -29,7 +29,6 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-use WhichBrowser\Parser;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
@@ -37,6 +36,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
+use WhichBrowser\Parser;
 
 chdir(dirname(dirname(__DIR__)));
 

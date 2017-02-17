@@ -31,8 +31,8 @@
 
 namespace UaComparator\Module\Mapper;
 
-use Psr\Cache\CacheItemPoolInterface;
 use BrowserDetector\Version\Version;
+use Psr\Cache\CacheItemPoolInterface;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
 use UaResult\Device\Device;
