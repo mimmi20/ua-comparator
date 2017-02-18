@@ -29,7 +29,7 @@
  * @link      https://github.com/mimmi20/ua-comparator
  */
 
-use BrowserDetector\BrowserDetector;
+use BrowserDetector\Detector;
 use Cache\Adapter\Filesystem\FilesystemCachePool;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -82,7 +82,7 @@ $cache        = new FilesystemCachePool(new Filesystem($adapter));
 
 $start = microtime(true);
 
-$parser = new BrowserDetector($cache, $logger);
+$parser = new Detector($cache, $logger);
 
 try {
     /** @var \UaResult\Result\Result $detectionResult */
