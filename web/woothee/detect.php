@@ -79,10 +79,10 @@ $parser   = new Classifier();
 $result   = $parser->parse($_GET['useragent']);
 $duration = microtime(true) - $start;
 
-echo json_encode(
+echo htmlentities(json_encode(
     [
         'result'   => $result,
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]
-);
+));

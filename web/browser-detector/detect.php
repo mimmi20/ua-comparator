@@ -94,10 +94,10 @@ try {
 
 $duration = microtime(true) - $start;
 
-echo serialize(
+echo htmlentities(serialize(
     [
         'result'   => $detectionResult->toArray(),
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]
-);
+));

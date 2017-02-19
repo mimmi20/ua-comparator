@@ -106,10 +106,10 @@ foreach ($device->getAllVirtualCapabilities() as $capability => $value) {
     $result[VirtualCapabilityProvider::PREFIX_CONTROL . $capability] = $value;
 }
 
-echo json_encode(
+echo htmlentities(json_encode(
     [
         'result'   => $result,
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]
-);
+));

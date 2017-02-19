@@ -111,10 +111,10 @@ $processed = [
 ];
 $duration = microtime(true) - $start;
 
-echo json_encode(
+echo htmlentities(json_encode(
     [
         'result'   => $processed,
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]
-);
+));

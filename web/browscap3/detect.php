@@ -89,10 +89,10 @@ $start    = microtime(true);
 $result   = $browscap->getBrowser($_GET['useragent']);
 $duration = microtime(true) - $start;
 
-echo json_encode(
+echo htmlentities(json_encode(
     [
         'result'   => $result,
         'duration' => $duration,
         'memory'   => memory_get_usage(true),
     ]
-);
+));
