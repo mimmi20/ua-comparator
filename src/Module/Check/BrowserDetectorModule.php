@@ -88,7 +88,7 @@ class BrowserDetectorModule implements CheckInterface
             );
         }
 
-        $content = @unserialize($rawContent);
+        $content = @unserialize(html_entity_decode($rawContent));
 
         if (! is_array($content) || ! isset($content['result'])) {
             throw new RequestException(

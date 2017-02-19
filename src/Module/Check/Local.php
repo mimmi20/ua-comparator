@@ -79,7 +79,7 @@ class Local implements CheckInterface
             throw new RequestException('An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
-        $content = json_decode($rawContent);
+        $content = json_decode(html_entity_decode($rawContent));
 
         if (! $content instanceof \stdClass || ! isset($content->result)) {
             throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
