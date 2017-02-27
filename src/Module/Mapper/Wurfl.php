@@ -1,6 +1,14 @@
 <?php
+/**
+ * This file is part of the ua-comparator package.
+ *
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
+declare(strict_types = 1);
 namespace UaComparator\Module\Mapper;
 
 use BrowserDetector\Loader\NotFoundException;
@@ -51,7 +59,7 @@ class Wurfl implements MapperInterface
      * @param \stdClass $parserResult
      * @param string    $agent
      *
-     * @return \UaResult\Result\Result the object containing the browsers details.
+     * @return \UaResult\Result\Result the object containing the browsers details
      */
     public function map($parserResult, $agent)
     {
@@ -107,11 +115,11 @@ class Wurfl implements MapperInterface
             $apiDev = null;
         }
 
-        switch (strtolower($apiBro)) {
+        switch (mb_strtolower($apiBro)) {
             case 'microsoft':
                 $browserMaker = 'Microsoft';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'internet explorer':
                         $apiBro = 'Internet Explorer';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -241,7 +249,7 @@ class Wurfl implements MapperInterface
             case 'google':
                 $browserMaker = 'Google';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'chrome':
                         $apiBro = 'Chrome';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -277,7 +285,7 @@ class Wurfl implements MapperInterface
             case 'mozilla':
                 $browserMaker = 'Mozilla';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'firefox':
                         $apiBro = 'Firefox';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -305,7 +313,7 @@ class Wurfl implements MapperInterface
             case 'apple':
                 $browserMaker = 'Apple';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'safari':
                         $apiBro = 'Safari';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -324,7 +332,7 @@ class Wurfl implements MapperInterface
             case 'opera software':
                 $browserMaker = 'Opera Software ASA';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'opera':
                         $apiBro = 'Opera';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -346,7 +354,7 @@ class Wurfl implements MapperInterface
                 $apiBro = 'Nokia Browser';
                 break;
             case 'facebook':
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'bot':
                         $apiBro = 'FaceBook Bot';
                         $apiVer = null;
@@ -365,7 +373,7 @@ class Wurfl implements MapperInterface
             case 'bing':
                 $browserMaker = 'Microsoft';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'bot':
                         $apiBro = 'BingBot';
                         $apiVer = null;
@@ -403,7 +411,7 @@ class Wurfl implements MapperInterface
                 $browserMaker = 'unknown';
                 $apiBro       = 'unknown';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'bot or crawler':
                         $apiBot = true;
                         $apiDev = 'general Bot';
@@ -435,7 +443,7 @@ class Wurfl implements MapperInterface
             case 'seomoz':
                 $browserMaker = 'SEOmoz';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'rogerbot':
                         $apiBro = 'Rogerbot';
                         $apiVer = null;
@@ -448,7 +456,7 @@ class Wurfl implements MapperInterface
             case 'java':
                 $browserMaker = 'unknown';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'updater':
                         $apiBro       = 'Java Standard Library';
                         $apiVer       = null;

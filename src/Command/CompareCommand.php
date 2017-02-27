@@ -1,6 +1,14 @@
 <?php
+/**
+ * This file is part of the ua-comparator package.
+ *
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
+declare(strict_types = 1);
 namespace UaComparator\Command;
 
 use Monolog\Handler\PsrHandler;
@@ -187,7 +195,7 @@ class CompareCommand extends Command
                 $detectionResults = $messageFormatter->formatMessage($propertyName, $this->cache, $this->logger);
 
                 foreach ($detectionResults as $result) {
-                    $matches[] = substr($result, 0, 1);
+                    $matches[] = mb_substr($result, 0, 1);
                 }
 
                 $allResults[$propertyTitel] = $detectionResults;
@@ -197,7 +205,7 @@ class CompareCommand extends Command
                 ++$nokfound;
 
                 $content = $this->getLine($collection);
-                $content .= '|                    |' . substr($agent, 0, self::COL_LENGTH * count($collection)) . "\n";
+                $content .= '|                    |' . mb_substr($agent, 0, self::COL_LENGTH * count($collection)) . "\n";
 
                 $content .= $this->getLine($collection);
 
@@ -216,7 +224,7 @@ class CompareCommand extends Command
 
                     foreach (array_values($detectionResults) as $index => $value) {
                         $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
-                        $lineContent = substr_replace($lineContent, substr($value, 0, 1), 22 + $index, 1);
+                        $lineContent = substr_replace($lineContent, mb_substr($value, 0, 1), 22 + $index, 1);
                     }
 
                     $content .= $lineContent . "\n";

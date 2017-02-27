@@ -1,6 +1,14 @@
 <?php
+/**
+ * This file is part of the ua-comparator package.
+ *
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
+declare(strict_types = 1);
 namespace UaComparator\Module;
 
 use GuzzleHttp\Client;
@@ -275,7 +283,7 @@ class Http implements ModuleInterface
     public function getDetectionResult()
     {
         if (null === $this->detectionResult) {
-            return null;
+            return;
         }
 
         try {
@@ -289,7 +297,7 @@ class Http implements ModuleInterface
         } catch (RequestException $e) {
             $this->logger->error($e);
 
-            return null;
+            return;
         }
 
         if (isset($return->duration)) {
@@ -313,7 +321,5 @@ class Http implements ModuleInterface
         } catch (\UnexpectedValueException $e) {
             $this->logger->error($e);
         }
-
-        return null;
     }
 }

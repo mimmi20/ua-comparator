@@ -1,6 +1,14 @@
 <?php
+/**
+ * This file is part of the ua-comparator package.
+ *
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
+declare(strict_types = 1);
 namespace UaComparator\Module\Check;
 
 use GuzzleHttp\Exception\RequestException;
@@ -36,24 +44,23 @@ class Local implements CheckInterface
         LoggerInterface $logger,
         $agent
     ) {
-
         /*
          * no json returned?
          */
         $contentType = $response->getHeader('Content-Type');
-        if (! isset($contentType[0]) || $contentType[0] !== 'application/json') {
+        if (!isset($contentType[0]) || $contentType[0] !== 'application/json') {
             throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
         $rawContent = $response->getBody()->getContents();
 
-        if (false !== strpos($rawContent, '<')) {
+        if (false !== mb_strpos($rawContent, '<')) {
             throw new RequestException('An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
         $content = json_decode(html_entity_decode($rawContent));
 
-        if (! $content instanceof \stdClass || ! isset($content->result)) {
+        if (!$content instanceof \stdClass || !isset($content->result)) {
             throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 

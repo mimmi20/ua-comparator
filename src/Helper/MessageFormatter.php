@@ -1,6 +1,14 @@
 <?php
+/**
+ * This file is part of the ua-comparator package.
+ *
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
+declare(strict_types = 1);
 namespace UaComparator\Helper;
 
 use BrowserDetector\Version\Version;
@@ -36,9 +44,6 @@ class MessageFormatter
      */
     private $resultFactory = null;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->resultFactory = new ResultFactory();
@@ -96,19 +101,19 @@ class MessageFormatter
                 $strTarget = $this->getValue($this->resultFactory->fromArray($cache, $logger, (array) $element), $propertyName);
             }
 
-            if (strtolower($strTarget) === strtolower($strReality)) {
+            if (mb_strtolower($strTarget) === mb_strtolower($strReality)) {
                 $r1 = ' ';
             } elseif (in_array($strReality, ['(NULL)', '', '(empty)']) || in_array($strTarget, ['(NULL)', '', '(empty)'])) {
                 $r1 = ' ';
             } else {
-                if ((strlen($strTarget) > strlen($strReality))
-                    && (0 < strlen($strReality))
-                    && (0 === strpos($strTarget, $strReality))
+                if ((mb_strlen($strTarget) > mb_strlen($strReality))
+                    && (0 < mb_strlen($strReality))
+                    && (0 === mb_strpos($strTarget, $strReality))
                 ) {
                     $r1 = '-';
-                } elseif ((strlen($strTarget) < strlen($strReality))
-                    && (0 < strlen($strTarget))
-                    && (0 === strpos($strReality, $strTarget))
+                } elseif ((mb_strlen($strTarget) < mb_strlen($strReality))
+                    && (0 < mb_strlen($strTarget))
+                    && (0 === mb_strpos($strReality, $strTarget))
                 ) {
                     $r1 = ' ';
                 } else {
@@ -117,8 +122,8 @@ class MessageFormatter
             }
 
             $result = $r1 . $strTarget;
-            if (strlen($result) > $this->columnsLength) {
-                $result = substr($result, 0, $this->columnsLength - 3) . '...';
+            if (mb_strlen($result) > $this->columnsLength) {
+                $result = mb_substr($result, 0, $this->columnsLength - 3) . '...';
             }
 
             $detectionResults[$module] = str_pad($result, $this->columnsLength, ' ');

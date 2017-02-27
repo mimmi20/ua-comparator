@@ -1,6 +1,14 @@
 <?php
+/**
+ * This file is part of the ua-comparator package.
+ *
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-
+declare(strict_types = 1);
 namespace UaComparator\Helper;
 
 use GuzzleHttp\Client;
@@ -25,6 +33,7 @@ class Request
      * @param \GuzzleHttp\Client                 $client
      *
      * @throws \GuzzleHttp\Exception\RequestException
+     *
      * @return \GuzzleHttp\Psr7\Response
      */
     public function getResponse(RequestInterface $request, Client $client)
