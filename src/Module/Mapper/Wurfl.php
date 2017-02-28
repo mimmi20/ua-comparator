@@ -1,34 +1,14 @@
 <?php
 /**
- * Copyright (c) 2015, Thomas Mueller <mimmi20@live.de>
+ * This file is part of the ua-comparator package.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
  *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @category  UaComparator
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2015 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
- *
- * @link      https://github.com/mimmi20/ua-comparator
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
+declare(strict_types = 1);
 namespace UaComparator\Module\Mapper;
 
 use BrowserDetector\Loader\NotFoundException;
@@ -79,7 +59,7 @@ class Wurfl implements MapperInterface
      * @param \stdClass $parserResult
      * @param string    $agent
      *
-     * @return \UaResult\Result\Result the object containing the browsers details.
+     * @return \UaResult\Result\Result the object containing the browsers details
      */
     public function map($parserResult, $agent)
     {
@@ -135,11 +115,11 @@ class Wurfl implements MapperInterface
             $apiDev = null;
         }
 
-        switch (strtolower($apiBro)) {
+        switch (mb_strtolower($apiBro)) {
             case 'microsoft':
                 $browserMaker = 'Microsoft';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'internet explorer':
                         $apiBro = 'Internet Explorer';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -269,7 +249,7 @@ class Wurfl implements MapperInterface
             case 'google':
                 $browserMaker = 'Google';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'chrome':
                         $apiBro = 'Chrome';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -305,7 +285,7 @@ class Wurfl implements MapperInterface
             case 'mozilla':
                 $browserMaker = 'Mozilla';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'firefox':
                         $apiBro = 'Firefox';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -333,7 +313,7 @@ class Wurfl implements MapperInterface
             case 'apple':
                 $browserMaker = 'Apple';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'safari':
                         $apiBro = 'Safari';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -352,7 +332,7 @@ class Wurfl implements MapperInterface
             case 'opera software':
                 $browserMaker = 'Opera Software ASA';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'opera':
                         $apiBro = 'Opera';
                         $apiVer = $parserResult->controlcap_advertised_browser_version;
@@ -374,7 +354,7 @@ class Wurfl implements MapperInterface
                 $apiBro = 'Nokia Browser';
                 break;
             case 'facebook':
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'bot':
                         $apiBro = 'FaceBook Bot';
                         $apiVer = null;
@@ -393,7 +373,7 @@ class Wurfl implements MapperInterface
             case 'bing':
                 $browserMaker = 'Microsoft';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'bot':
                         $apiBro = 'BingBot';
                         $apiVer = null;
@@ -431,7 +411,7 @@ class Wurfl implements MapperInterface
                 $browserMaker = 'unknown';
                 $apiBro       = 'unknown';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'bot or crawler':
                         $apiBot = true;
                         $apiDev = 'general Bot';
@@ -463,7 +443,7 @@ class Wurfl implements MapperInterface
             case 'seomoz':
                 $browserMaker = 'SEOmoz';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'rogerbot':
                         $apiBro = 'Rogerbot';
                         $apiVer = null;
@@ -476,7 +456,7 @@ class Wurfl implements MapperInterface
             case 'java':
                 $browserMaker = 'unknown';
 
-                switch (strtolower($apiVer)) {
+                switch (mb_strtolower($apiVer)) {
                     case 'updater':
                         $apiBro       = 'Java Standard Library';
                         $apiVer       = null;

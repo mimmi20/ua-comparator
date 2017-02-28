@@ -1,34 +1,14 @@
 <?php
 /**
- * Copyright (c) 2012-2014, Thomas Mueller <mimmi20@live.de>
+ * This file is part of the ua-comparator package.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
  *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @category  BrowserDetectorModule
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2012-2014 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
- *
- * @link      https://github.com/mimmi20/BrowserDetectorModule
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
+declare(strict_types = 1);
 namespace UaComparator\Helper;
 
 use BrowserDetector\Version\Version;
@@ -64,9 +44,6 @@ class MessageFormatter
      */
     private $resultFactory = null;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->resultFactory = new ResultFactory();
@@ -124,19 +101,19 @@ class MessageFormatter
                 $strTarget = $this->getValue($this->resultFactory->fromArray($cache, $logger, (array) $element), $propertyName);
             }
 
-            if (strtolower($strTarget) === strtolower($strReality)) {
+            if (mb_strtolower($strTarget) === mb_strtolower($strReality)) {
                 $r1 = ' ';
             } elseif (in_array($strReality, ['(NULL)', '', '(empty)']) || in_array($strTarget, ['(NULL)', '', '(empty)'])) {
                 $r1 = ' ';
             } else {
-                if ((strlen($strTarget) > strlen($strReality))
-                    && (0 < strlen($strReality))
-                    && (0 === strpos($strTarget, $strReality))
+                if ((mb_strlen($strTarget) > mb_strlen($strReality))
+                    && (0 < mb_strlen($strReality))
+                    && (0 === mb_strpos($strTarget, $strReality))
                 ) {
                     $r1 = '-';
-                } elseif ((strlen($strTarget) < strlen($strReality))
-                    && (0 < strlen($strTarget))
-                    && (0 === strpos($strReality, $strTarget))
+                } elseif ((mb_strlen($strTarget) < mb_strlen($strReality))
+                    && (0 < mb_strlen($strTarget))
+                    && (0 === mb_strpos($strReality, $strTarget))
                 ) {
                     $r1 = ' ';
                 } else {
@@ -145,8 +122,8 @@ class MessageFormatter
             }
 
             $result = $r1 . $strTarget;
-            if (strlen($result) > $this->columnsLength) {
-                $result = substr($result, 0, $this->columnsLength - 3) . '...';
+            if (mb_strlen($result) > $this->columnsLength) {
+                $result = mb_substr($result, 0, $this->columnsLength - 3) . '...';
             }
 
             $detectionResults[$module] = str_pad($result, $this->columnsLength, ' ');

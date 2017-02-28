@@ -1,50 +1,24 @@
 <?php
 /**
- * Copyright (c) 2015, Thomas Mueller <mimmi20@live.de>
+ * This file is part of the ua-comparator package.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
  *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @category  UaComparator
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2015 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
- *
- * @link      https://github.com/mimmi20/ua-comparator
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
+declare(strict_types = 1);
 namespace UaComparator\Command;
 
-use Cache\Adapter\Filesystem\FilesystemCachePool;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
-use Monolog\ErrorHandler;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Handler\StreamHandler;
+use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
-use Monolog\Processor\MemoryPeakUsageProcessor;
-use Monolog\Processor\MemoryUsageProcessor;
 use Noodlehaus\Config;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
 use UaComparator\Helper\MessageFormatter;
@@ -60,6 +34,35 @@ class CompareCommand extends Command
 {
     const COL_LENGTH       = 50;
     const FIRST_COL_LENGTH = 20;
+
+    /**
+     * @var \Monolog\Logger
+     */
+    private $logger = null;
+
+    /**
+     * @var \Psr\Cache\CacheItemPoolInterface
+     */
+    private $cache = null;
+
+    /**
+     * @var \Noodlehaus\Config;
+     */
+    private $config = null;
+
+    /**
+     * @param \Monolog\Logger                   $logger
+     * @param \Psr\Cache\CacheItemPoolInterface $cache
+     * @param \Noodlehaus\Config                $config
+     */
+    public function __construct(Logger $logger, CacheItemPoolInterface $cache, Config $config)
+    {
+        $this->logger = $logger;
+        $this->cache  = $cache;
+        $this->config = $config;
+
+        parent::__construct();
+    }
 
     /**
      * Configures the current command.
@@ -104,29 +107,8 @@ class CompareCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
-        $output->writeln('preparing logger ...');
-
-        $logger = new Logger('ua-comparator');
-        $stream = new StreamHandler('php://output', Logger::ERROR);
-        $stream->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"));
-
-        /** @var callable $memoryProcessor */
-        $memoryProcessor = new MemoryUsageProcessor(true);
-        $logger->pushProcessor($memoryProcessor);
-
-        /** @var callable $peakMemoryProcessor */
-        $peakMemoryProcessor = new MemoryPeakUsageProcessor(true);
-        $logger->pushProcessor($peakMemoryProcessor);
-
-        $logger->pushHandler($stream);
-        $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::ERROR));
-
-        ErrorHandler::register($logger);
-
-        $output->writeln('preparing cache ...');
-
-        $adapter      = new Local('data/cache/general/');
-        $generalCache = new FilesystemCachePool(new Filesystem($adapter));
+        $consoleLogger = new ConsoleLogger($output);
+        $this->logger->pushHandler(new PsrHandler($consoleLogger));
 
         $output->writeln('preparing App ...');
 
@@ -162,10 +144,9 @@ class CompareCommand extends Command
 
         $output->writeln('init modules ...');
 
-        $config  = new Config(['data/configs/config.json']);
         $modules = [];
 
-        foreach ($config['modules'] as $moduleConfig) {
+        foreach ($this->config['modules'] as $moduleConfig) {
             if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
                 continue;
             }
@@ -211,10 +192,10 @@ class CompareCommand extends Command
                     $propertyName = $x['key'];
                 }
 
-                $detectionResults = $messageFormatter->formatMessage($propertyName, $generalCache, $logger);
+                $detectionResults = $messageFormatter->formatMessage($propertyName, $this->cache, $this->logger);
 
                 foreach ($detectionResults as $result) {
-                    $matches[] = substr($result, 0, 1);
+                    $matches[] = mb_substr($result, 0, 1);
                 }
 
                 $allResults[$propertyTitel] = $detectionResults;
@@ -224,7 +205,7 @@ class CompareCommand extends Command
                 ++$nokfound;
 
                 $content = $this->getLine($collection);
-                $content .= '|                    |' . substr($agent, 0, self::COL_LENGTH * count($collection)) . "\n";
+                $content .= '|                    |' . mb_substr($agent, 0, self::COL_LENGTH * count($collection)) . "\n";
 
                 $content .= $this->getLine($collection);
 
@@ -243,7 +224,7 @@ class CompareCommand extends Command
 
                     foreach (array_values($detectionResults) as $index => $value) {
                         $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
-                        $lineContent = substr_replace($lineContent, substr($value, 0, 1), 22 + $index, 1);
+                        $lineContent = substr_replace($lineContent, mb_substr($value, 0, 1), 22 + $index, 1);
                     }
 
                     $content .= $lineContent . "\n";

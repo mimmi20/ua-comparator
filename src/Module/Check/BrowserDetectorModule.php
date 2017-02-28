@@ -1,34 +1,14 @@
 <?php
 /**
- * Copyright (c) 2015, Thomas Mueller <mimmi20@live.de>
+ * This file is part of the ua-comparator package.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
  *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @category  UaComparator
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2015 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
- *
- * @link      https://github.com/mimmi20/ua-comparator
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
+declare(strict_types = 1);
 namespace UaComparator\Module\Check;
 
 use GuzzleHttp\Exception\RequestException;
@@ -65,12 +45,11 @@ class BrowserDetectorModule implements CheckInterface
         LoggerInterface $logger,
         $agent
     ) {
-
         /*
          * no json returned?
          */
         $contentType = $response->getHeader('Content-Type');
-        if (! isset($contentType[0]) || $contentType[0] !== 'x-application/serialize') {
+        if (!isset($contentType[0]) || $contentType[0] !== 'x-application/serialize') {
             throw new RequestException(
                 'Could not get valid "x-application/serialize" response from "' . $request->getUri()
                 . '". Response is "' . $response->getBody()->getContents() . '"',
@@ -80,7 +59,7 @@ class BrowserDetectorModule implements CheckInterface
 
         $rawContent = $response->getBody()->getContents();
 
-        if (false !== strpos($rawContent, '<')) {
+        if (false !== mb_strpos($rawContent, '<')) {
             throw new RequestException(
                 'An Error occured while calling "' . $request->getUri() . '". Response is "'
                 . $rawContent . '"',
@@ -90,7 +69,7 @@ class BrowserDetectorModule implements CheckInterface
 
         $content = @unserialize(html_entity_decode($rawContent));
 
-        if (! is_array($content) || ! isset($content['result'])) {
+        if (!is_array($content) || !isset($content['result'])) {
             throw new RequestException(
                 'Could not get valid response from "' . $request->getUri() . '". Response is "'
                 . $rawContent . '"',
