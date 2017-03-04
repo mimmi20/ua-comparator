@@ -12,6 +12,7 @@ declare(strict_types = 1);
 namespace UaComparator\Module;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 use Psr\Cache\CacheItemPoolInterface;
@@ -130,10 +131,10 @@ class Http implements ModuleInterface
         $headers = $headers + $this->config['headers'];
 
         if ('GET' === $this->config['method']) {
-            $uri = $this->config['uri'] . '?' . http_build_query($params, null, '&');
+            $uri = $this->config['uri'] . '?' . http_build_query($params, '', '&');
         } else {
             $uri  = $this->config['uri'];
-            $body = http_build_query($params, null, '&');
+            $body = http_build_query($params, '', '&');
         }
 
         $this->request = new GuzzleHttpRequest($this->config['method'], $uri, $headers, $body);
@@ -143,6 +144,8 @@ class Http implements ModuleInterface
 
         try {
             $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
+        } catch (ConnectException $e) {
+            $this->logger->error(new ConnectException('could not connect to uri "' . $uri . '"', $this->request, $e));
         } catch (RequestException $e) {
             $this->logger->error($e);
         }
