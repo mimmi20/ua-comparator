@@ -27,7 +27,7 @@
     "source": "https://github.com/mimmi20/ua-comparator"
   },
   "require": {
-    "php": "^7.0",
+    "php": "^7.1",
     "symfony/console": "^3.2",
     "monolog/monolog": "^1.20",
     "cache/cache": "dev-master",
@@ -48,24 +48,24 @@
     "mimmi20/browser-detector-tests": "dev-master",
     "mimmi20/browscap-helper-source-detector": "~2.0.1",
 
-    "mimmi20/browscap-helper-source-textfile": "~2.0.2",
+    "mimmi20/browscap-helper-source-textfile": "~2.0.3",
     "mimmi20/browscap-helper-source-pdo": "~2.0.2",
 
     "piwik/device-detector": "dev-master",
-    "mimmi20/browscap-helper-source-piwik": "~2.0.2",
+    "mimmi20/browscap-helper-source-piwik": "~2.0.4",
 
     "ua-parser/uap-php": "dev-master",
     "mimmi20/browscap-helper-source-uapcore": "~2.0.2",
 
     "whichbrowser/parser": "dev-master",
-    "mimmi20/browscap-helper-source-whichbrowser": "~2.0.3",
+    "mimmi20/browscap-helper-source-whichbrowser": "~2.0.4",
 
     "woothee/woothee": "dev-master",
     "woothee/woothee-testset": "dev-master",
-    "mimmi20/browscap-helper-source-woothee": "~2.0.2"
+    "mimmi20/browscap-helper-source-woothee": "~2.0.3"
   },
   "require-dev": {
-    "phpunit/phpunit": "^5.7",
+    "phpunit/phpunit": "^5.7 || ^6.0",
     "squizlabs/php_codesniffer": "^2.8",
     "friendsofphp/php-cs-fixer": "^2.1"
   },
