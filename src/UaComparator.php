@@ -15,7 +15,6 @@ use Cache\Adapter\Filesystem\FilesystemCachePool;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use Monolog\ErrorHandler;
-use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
@@ -35,9 +34,7 @@ class UaComparator extends Application
         parent::__construct('Useragent Parser Comparator Project', 'dev-master');
 
         $logger = new Logger('ua-comparator');
-        $logger->pushHandler(new StreamHandler('log/error.log', Logger::ERROR));
-        $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logger::ERROR));
-
+        $logger->pushHandler(new StreamHandler('log/error.log', Logger::NOTICE));
         ErrorHandler::register($logger);
 
         $adapter  = new Local('data/cache/general/');

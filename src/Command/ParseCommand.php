@@ -136,20 +136,10 @@ class ParseCommand extends Command
         InputInterface $input,
         OutputInterface $output
     ) {
-        $consoleLogger = new ConsoleLogger($output);
-        $this->logger->pushHandler(new PsrHandler($consoleLogger));
-
         $output->writeln('preparing App ...');
 
-        ini_set('memory_limit', '2048M');
-        ini_set('max_execution_time', 0);
-        ini_set('max_input_time', 0);
-        ini_set('display_errors', 1);
-        ini_set('error_log', './error.log');
-        error_reporting(E_ALL | E_DEPRECATED);
-
-        date_default_timezone_set('Europe/Berlin');
-        setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
+        $consoleLogger = new ConsoleLogger($output);
+        $this->logger->pushHandler(new PsrHandler($consoleLogger));
 
         $output->writeln('preparing modules ...');
 
@@ -220,15 +210,15 @@ class ParseCommand extends Command
 
         $output->writeln('initializing sources ...');
 
-        $source  = new CollectionSource(
+        $source = new CollectionSource(
             [
-                new BrowscapSource($this->logger, $output, $this->cache),
-                new PiwikSource($this->logger, $output),
-                new UapCoreSource($this->logger, $output),
-                new WhichBrowserSource($this->logger, $output),
-                new WootheeSource($this->logger, $output),
-                new DetectorSource($this->logger, $output, $this->cache),
-                new DirectorySource($this->logger, $output, 'data/useragents'),
+                new BrowscapSource($this->logger, $this->cache),
+                new PiwikSource($this->logger, $this->cache),
+                new UapCoreSource($this->logger),
+                new WhichBrowserSource($this->logger, $this->cache),
+                new WootheeSource($this->logger, $this->cache),
+                new DetectorSource($this->logger, $this->cache),
+                new DirectorySource($this->logger, 'data/useragents'),
             ]
         );
 

@@ -19,6 +19,14 @@ foreach ($autoloadPaths as $path) {
 }
 
 ini_set('memory_limit', '-1');
+ini_set('max_execution_time', '0');
+ini_set('max_input_time', '0');
+ini_set('display_errors', '1');
+ini_set('error_log', 'log/error.log');
+error_reporting(E_ALL | E_DEPRECATED);
+
+date_default_timezone_set('Europe/Berlin');
+setlocale(LC_CTYPE, 'de_DE@euro', 'de_DE', 'de', 'ge');
 
 $comparator = new \UaComparator\UaComparator();
 $comparator->run();

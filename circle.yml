@@ -1,6 +1,6 @@
 machine:
   php:
-    version: 7.0.4
+    version: 7.1.0
   timezone:
     Europe/Berlin
 
@@ -11,4 +11,4 @@ dependencies:
 test:
   override:
     - mkdir -p $CIRCLE_TEST_REPORTS/phpunit
-    - phpunit --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml tests
+    - vendor/bin/phpunit --log-junit $CIRCLE_TEST_REPORTS/phpunit/junit.xml

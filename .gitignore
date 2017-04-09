@@ -28,4 +28,6 @@ error.log
 resources/browscap-*/
 log/*
 !log/.gitkeep
+ergebnis.txt
 result.txt
+phpunit.txt
