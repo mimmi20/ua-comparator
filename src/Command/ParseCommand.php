@@ -19,14 +19,12 @@ use BrowscapHelper\Source\PiwikSource;
 use BrowscapHelper\Source\UapCoreSource;
 use BrowscapHelper\Source\WhichBrowserSource;
 use BrowscapHelper\Source\WootheeSource;
-use Cache\Adapter\Filesystem\FilesystemCachePool;
-use Cache\Adapter\PHPArray\ArrayCachePool;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -165,12 +163,11 @@ class ParseCommand extends Command
                 $output->writeln('    preparing module ' . $moduleConfig['name'] . ' ...');
 
                 if (!isset($moduleConfig['requires-cache'])) {
-                    $moduleCache = new ArrayCachePool();
+                    $moduleCache = new ArrayAdapter();
                 } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
-                    $adapter     = new Local($moduleConfig['cache-dir']);
-                    $moduleCache = new FilesystemCachePool(new Filesystem($adapter));
+                    $moduleCache = new FilesystemAdapter('', 0, $moduleConfig['cache-dir']);
                 } else {
-                    $moduleCache = new ArrayCachePool();
+                    $moduleCache = new ArrayAdapter();
                 }
 
                 $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];

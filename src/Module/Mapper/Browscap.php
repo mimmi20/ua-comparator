@@ -84,8 +84,8 @@ class Browscap implements MapperInterface
             //    $browserModus = null;
             //}
 
-            $browserManufacturer    = null;
-            $browserMakerKey        = $this->mapper->mapBrowserMaker($parserResult->browser_maker, $browserName);
+            $browserManufacturer = null;
+            $browserMakerKey     = $this->mapper->mapBrowserMaker($parserResult->browser_maker, $browserName);
             try {
                 $browserManufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
             } catch (NotFoundException $e) {
@@ -106,8 +106,8 @@ class Browscap implements MapperInterface
         } else {
             $deviceName = $this->mapper->mapDeviceName($parserResult->device_code_name);
 
-            $deviceManufacturer   = null;
-            $deviceMakerKey       = $this->mapper->mapDeviceMaker($parserResult->device_maker, $deviceName);
+            $deviceManufacturer = null;
+            $deviceMakerKey     = $this->mapper->mapDeviceMaker($parserResult->device_maker, $deviceName);
             try {
                 $deviceManufacturer = (new CompanyLoader($this->cache))->load($deviceMakerKey);
             } catch (NotFoundException $e) {
