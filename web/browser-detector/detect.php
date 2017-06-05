@@ -11,9 +11,6 @@
 declare(strict_types = 1);
 
 use BrowserDetector\Detector;
-use Cache\Adapter\Filesystem\FilesystemCachePool;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
@@ -21,6 +18,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 chdir(dirname(dirname(__DIR__)));
 
@@ -58,8 +56,7 @@ $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logg
 
 ErrorHandler::register($logger);
 
-$adapter      = new Local('data/cache/browser/');
-$cache        = new FilesystemCachePool(new Filesystem($adapter));
+$cache = new FilesystemAdapter('', 0, 'data/cache/browser/');
 
 $start = microtime(true);
 

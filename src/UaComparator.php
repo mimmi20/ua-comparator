@@ -11,13 +11,11 @@
 declare(strict_types = 1);
 namespace UaComparator;
 
-use Cache\Adapter\Filesystem\FilesystemCachePool;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
 use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Application;
 
 /**
@@ -37,10 +35,7 @@ class UaComparator extends Application
         $logger->pushHandler(new StreamHandler('log/error.log', Logger::NOTICE));
         ErrorHandler::register($logger);
 
-        $adapter  = new Local('data/cache/general/');
-        $cache    = new FilesystemCachePool(new Filesystem($adapter));
-        $cache->setLogger($logger);
-
+        $cache  = new FilesystemAdapter('', 0, 'data/cache/general/');
         $config = new Config(['data/configs/config.json']);
 
         $commands = [

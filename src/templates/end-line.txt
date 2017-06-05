@@ -13,8 +13,6 @@
 | Detection (Browscap-PHP (2.x))               | #Browscap-PHP (2.x) - Summary# Sek. | #Browscap-PHP (2.x) - Max# Sek. | #Browscap-PHP (2.x) - Average# Sek. | #Browscap-PHP (2.x) - Min# Sek. |
 | Detection (Crossjoin\Browscap)               | #Crossjoin-Browscap - Summary# Sek. | #Crossjoin-Browscap - Max# Sek. | #Crossjoin-Browscap - Average# Sek. | #Crossjoin-Browscap - Min# Sek. |
 | Detection (UAParser)                         | #UAParser - Summary# Sek. | #UAParser - Max# Sek. | #UAParser - Average# Sek. | #UAParser - Min# Sek. |
-| Detection (WURFL API (PHP-API 5.3))          | #WURFL API (PHP-API 5.3) - Summary# Sek. | #WURFL API (PHP-API 5.3) - Max# Sek. | #WURFL API (PHP-API 5.3) - Average# Sek. | #WURFL API (PHP-API 5.3) - Min# Sek. |
-| Detection (WURFL API (PHP-API 5.2 original)) | #WURFL API (PHP-API 5.2 original) - Summary# Sek. | #WURFL API (PHP-API 5.2 original) - Max# Sek. | #WURFL API (PHP-API 5.2 original) - Average# Sek. | #WURFL API (PHP-API 5.2 original) - Min# Sek. |
 | Detection (Piwik)                            | #Piwik - Summary# Sek. | #Piwik - Max# Sek. | #Piwik - Average# Sek. | #Piwik - Min# Sek. |
 | Detection (WhichBrowser)                     | #WhichBrowser - Summary# Sek. | #WhichBrowser - Max# Sek. | #WhichBrowser - Average# Sek. | #WhichBrowser - Min# Sek. |
 | Detection (Woothee)                          | #Woothee - Summary# Sek. | #Woothee - Max# Sek. | #Woothee - Average# Sek. | #Woothee - Min# Sek. |

@@ -18,8 +18,6 @@ data/cache/*/*
 !data/cache/piwik/.gitkeep
 !data/cache/uaparser/.gitkeep
 !data/cache/uasparser/.gitkeep
-!data/cache/wurfl/.gitkeep
-!data/cache/wurfl_old/.gitkeep
 !data/cache/.gitkeep
 data/results/*
 !data/results/.gitkeep

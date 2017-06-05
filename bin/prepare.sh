@@ -22,7 +22,6 @@ mkdir ../data/cache/crossjoin/
 mkdir ../data/cache/piwik/
 mkdir ../data/cache/uaparser/
 mkdir ../data/cache/uasparser/
-mkdir ../data/cache/wurfl/
 mkdir ../data/cache/general/
 
 echo "Updating ua-parser data..."
@@ -36,6 +35,3 @@ php update-browscap-php.php
 
 echo "Updating crossjoin-browscap data..."
 php update-crossjoin-browscap.php
-
-#echo "Preparing Wurfl data..."
-#php prepare-wurfl.php

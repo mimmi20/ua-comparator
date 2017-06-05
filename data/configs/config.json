@@ -107,22 +107,6 @@
       },
       "check": "Local",
       "mapper": "Woothee"
-    },
-    "wurfl": {
-      "name": "WURFL API (PHP-API 5.3)",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": true,
-      "cache-dir": "data/cache/wurfl/",
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/wurfl/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "Wurfl"
     }
   }
 }
