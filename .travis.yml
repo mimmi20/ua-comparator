@@ -1,5 +1,6 @@
 language: php
 sudo: false
+dist: trusty
 
 php:
   - 7.1
@@ -9,13 +10,11 @@ os:
   - linux
 
 env:
-  - COMPOSER_FLAGS="--prefer-lowest"
+#  - COMPOSER_FLAGS="--prefer-lowest"
   - COMPOSER_FLAGS=""
 
 matrix:
   include:
-    - php: 7.1
-      env: EXECUTE_CS_CHECK=yes
     - php: nightly
       env: COMPOSER_FLAGS="--ignore-platform-reqs"
   allow_failures:
@@ -36,8 +35,15 @@ install:
 
 script:
   - composer validate
-  - if [[ $EXECUTE_CS_CHECK == yes ]]; then php -n -d memory_limit=768M vendor/bin/phpcs; fi
-  - if [[ $EXECUTE_CS_CHECK == yes ]]; then php -n -d memory_limit=768M vendor/bin/php-cs-fixer fix --dry-run -vv; fi
+
+jobs:
+  include:
+    - stage: check coding style
+      php: 7.1
+      script: php -n -d memory_limit=768M vendor/bin/phpcs
+    - stage: check coding style
+      php: 7.1
+      script: php -n -d memory_limit=768M vendor/bin/php-cs-fixer fix --dry-run -vv
 
 notifications:
   email: false
