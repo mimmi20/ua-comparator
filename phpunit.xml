@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -17,11 +18,9 @@
         <ini name="date.timezone" value="UTC"/>
     </php>
 
-    <testsuites>
-        <testsuite name="UA-Comparator Test Suite">
-            <directory>tests/</directory>
-        </testsuite>
-    </testsuites>
+    <testsuite name="UA-Comparator Test Suite">
+        <directory>tests/</directory>
+    </testsuite>
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="true">
