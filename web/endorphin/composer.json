@@ -3,7 +3,7 @@
     "php": "^8.1.0",
     "composer-runtime-api": "*",
     "endorphin-studio/browser-detector": "^6.0.1",
-    "symfony/finder": "^v5.4.0",
+    "symfony/finder": "^v6.0.0",
     "symfony/http-foundation": "^v5.4.0",
     "symfony/yaml": "^v5.4.0"
   },
