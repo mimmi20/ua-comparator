@@ -4,7 +4,7 @@
     "composer-runtime-api": "*",
     "ua-parser/uap-php": "^v3.9.14",
     "symfony/yaml": "^v6.0.1",
-    "symfony/filesystem": "^v5.3.4",
+    "symfony/filesystem": "^v6.0.0",
     "symfony/finder": "^v5.3.7",
     "symfony/console": "^v5.3.11"
   },
