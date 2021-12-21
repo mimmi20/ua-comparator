@@ -35,20 +35,11 @@ class CompareCommand extends Command
     const COL_LENGTH       = 50;
     const FIRST_COL_LENGTH = 20;
 
-    /**
-     * @var \Monolog\Logger
-     */
-    private $logger = null;
+    private Logger $logger;
 
-    /**
-     * @var \Psr\Cache\CacheItemPoolInterface
-     */
-    private $cache = null;
+    private CacheItemPoolInterface $cache;
 
-    /**
-     * @var \Noodlehaus\Config;
-     */
-    private $config = null;
+    private Config $config;
 
     /**
      * @param \Monolog\Logger                   $logger
@@ -67,23 +58,11 @@ class CompareCommand extends Command
     /**
      * Configures the current command.
      */
-    protected function configure()
+    protected function configure(): void
     {
-        $allChecks = [
-            Check::MINIMUM,
-            Check::MEDIUM,
-        ];
-
         $this
             ->setName('compare')
-            ->setDescription('compares the results of different useragent parsers')
-            ->addOption(
-                'check-level',
-                '-c',
-                InputOption::VALUE_REQUIRED,
-                'the level for the checks to do. Available Options:' . implode(',', $allChecks),
-                Check::MINIMUM
-            );
+            ->setDescription('compares the results of different useragent parsers');
     }
 
     /**
@@ -106,7 +85,7 @@ class CompareCommand extends Command
     protected function execute(
         InputInterface $input,
         OutputInterface $output
-    ) {
+    ): int {
         $output->writeln('preparing App ...');
 
         $consoleLogger = new ConsoleLogger($output);
@@ -128,9 +107,8 @@ class CompareCommand extends Command
 
         $output->writeln('init checks ...');
 
-        $checklevel  = $input->getOption('check-level');
         $checkHelper = new Check();
-        $checks      = $checkHelper->getChecks($checklevel);
+        $checks      = $checkHelper->getChecks();
 
         $output->writeln('init modules ...');
 
@@ -157,7 +135,7 @@ class CompareCommand extends Command
 
             foreach ($modules as $module) {
                 if (file_exists($path . '/' . $module . '.json')) {
-                    $collection[$module] = (array) json_decode(file_get_contents($path . '/' . $module . '.json'));
+                    $collection[$module] = json_decode(file_get_contents($path . '/' . $module . '.json'), true, 512, JSON_THROW_ON_ERROR);
 
                     if (null === $agent) {
                         $agent = $collection[$module]['ua'];
@@ -239,7 +217,7 @@ class CompareCommand extends Command
             ++$i;
         }
 
-        echo "\n";
+        return self::SUCCESS;
     }
 
     /**
@@ -247,7 +225,7 @@ class CompareCommand extends Command
      *
      * @return string
      */
-    private function getLine(array $collection = [])
+    private function getLine(array $collection = []): string
     {
         $content = '+--------------------+';
         $content .= str_repeat('-', count($collection));

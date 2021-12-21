@@ -1,24 +1,22 @@
 <?xml version="1.0"?>
-<ruleset name="PHP_CodeSniffer">
-    <description>ua-comparator</description>
+<ruleset name="browser-detector"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd"
+>
+    <description>browser-detector</description>
 
-    <arg name="report" value="full" />
-    <arg value="np" />
+    <arg name="report" value="full"/>
+    <arg value="wps"/>
+    <arg name="encoding" value="utf-8"/>
 
     <!-- inherit rules from: -->
-    <rule ref="PSR2" />
-
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
-        <properties>
-            <property name="ignoreBlankLines" value="false"/>
-        </properties>
+    <rule ref="mimmi20-cs">
+        <exclude name="PSR12.Classes.AnonClassDeclaration.SpaceAfterKeyword"/>
+        <exclude name="SlevomatCodingStandard.Classes.ModernClassNameReference.ClassNameReferencedViaFunctionCall"/>
     </rule>
 
     <!-- Paths to check -->
     <file>src</file>
     <file>tests</file>
-    <file>web</file>
-
-    <exclude-pattern>*/temp/*</exclude-pattern>
+    <file>.php-cs-fixer.php</file>
 </ruleset>

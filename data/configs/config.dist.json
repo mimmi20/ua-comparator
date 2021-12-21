@@ -16,47 +16,31 @@
       "check": "BrowserDetectorModule",
       "mapper": "BrowserDetectorModule"
     },
-    "browscap3": {
-      "name": "Browscap-PHP (3.x)",
+    "browscap": {
+      "name": "Browscap-PHP",
       "enabled": false,
       "class": "Http",
       "requires-cache": true,
-      "cache-dir": "data/cache/browscap3/",
+      "cache-dir": "data/cache/browscap/",
       "request": {
         "method": "GET",
         "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/browscap3/detect.php",
+        "uri": "http://localhost:8000/web/browscap/detect.php",
         "params": {},
         "headers": {}
       },
       "check": "Local",
       "mapper": "Browscap"
     },
-    "crossjoin": {
-      "name": "Crossjoin-Browscap",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": true,
-      "cache-dir": "data/cache/crossjoin/",
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/crossjoin/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "Browscap"
-    },
-    "piwik": {
-      "name": "Piwik",
+    "matomo": {
+      "name": "Matomo",
       "enabled": false,
       "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
         "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/piwik/detect.php",
+        "uri": "http://localhost:8000/web/matomo/detect.php",
         "params": {},
         "headers": {}
       },

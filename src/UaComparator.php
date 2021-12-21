@@ -38,13 +38,7 @@ class UaComparator extends Application
         $cache  = new FilesystemAdapter('', 0, 'data/cache/general/');
         $config = new Config(['data/configs/config.json']);
 
-        $commands = [
-            new Command\CompareCommand($logger, $cache, $config),
-            new Command\ParseCommand($logger, $cache, $config),
-        ];
-
-        foreach ($commands as $command) {
-            $this->add($command);
-        }
+        $this->add(new Command\CompareCommand($logger, $cache, $config));
+        $this->add(new Command\ParseCommand($logger, $cache, $config));
     }
 }

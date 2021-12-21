@@ -1,0 +1,17 @@
+{
+  "require": {
+    "php": "^8.1.0",
+    "composer-runtime-api": "*",
+    "league/flysystem": "^2.3.2",
+    "matthiasmullie/scrapbook": "^1.4.8",
+    "mimmi20/browser-detector": "^7.0.0",
+    "psr/log": "^1.1.4",
+    "monolog/monolog": "^2.3.5"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

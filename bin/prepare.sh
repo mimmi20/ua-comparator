@@ -16,10 +16,9 @@ echo "clearing cache directory ..."
 rm -rf ../data/cache/
 
 mkdir ../data/cache/
-mkdir ../data/cache/browscap3/
+mkdir ../data/cache/browscap/
 mkdir ../data/cache/browser/
-mkdir ../data/cache/crossjoin/
-mkdir ../data/cache/piwik/
+mkdir ../data/cache/matomo/
 mkdir ../data/cache/uaparser/
 mkdir ../data/cache/uasparser/
 mkdir ../data/cache/general/
@@ -32,6 +31,3 @@ php build-browscap.ini.php
 
 echo "Updating browscap-php (3.x) data..."
 php update-browscap-php.php
-
-echo "Updating crossjoin-browscap data..."
-php update-crossjoin-browscap.php

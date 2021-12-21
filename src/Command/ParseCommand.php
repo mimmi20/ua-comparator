@@ -46,25 +46,11 @@ class ParseCommand extends Command
     const SOURCE_DIR  = 'dir';
     const SOURCE_TEST = 'tests';
 
-    /**
-     * @var array
-     */
-    private $defaultModules = [];
+    private Logger $logger;
 
-    /**
-     * @var \Monolog\Logger
-     */
-    private $logger = null;
+    private CacheItemPoolInterface $cache;
 
-    /**
-     * @var \Psr\Cache\CacheItemPoolInterface
-     */
-    private $cache = null;
-
-    /**
-     * @var \Noodlehaus\Config;
-     */
-    private $config = null;
+    private Config $config;
 
     /**
      * @param \Monolog\Logger                   $logger
@@ -83,28 +69,11 @@ class ParseCommand extends Command
     /**
      * Configures the current command.
      */
-    protected function configure()
+    protected function configure(): void
     {
-        foreach ($this->config['modules'] as $key => $moduleConfig) {
-            if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
-                continue;
-            }
-
-            $this->defaultModules[] = $key;
-        }
-
-        $this->defaultModules = array_unique($this->defaultModules);
-
         $this
             ->setName('parse')
             ->setDescription('parses uaseragents with different useragent parsers')
-            ->addOption(
-                'modules',
-                '-m',
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'The Modules to compare',
-                $this->defaultModules
-            )
             ->addOption(
                 'limit',
                 '-l',
@@ -133,7 +102,7 @@ class ParseCommand extends Command
     protected function execute(
         InputInterface $input,
         OutputInterface $output
-    ) {
+    ): int {
         $output->writeln('preparing App ...');
 
         $consoleLogger = new ConsoleLogger($output);
@@ -279,19 +248,21 @@ class ParseCommand extends Command
                             'time'   => $actualTime,
                             'memory' => $actualMemory,
                         ],
-                        JSON_PRETTY_PRINT | JSON_FORCE_OBJECT
+                        JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR
                     )
                 );
             }
 
             file_put_contents(
                 'data/results/' . $cacheId . '/bench.json',
-                json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT)
+                json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR)
             );
 
             ++$counter;
 
             $existingTests[$agent] = 1;
         }
+
+        return self::SUCCESS;
     }
 }

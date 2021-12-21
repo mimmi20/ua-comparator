@@ -16,7 +16,7 @@
       "check": "BrowserDetectorModule",
       "mapper": "BrowserDetectorModule"
     },
-    "browscap3": {
+    "browscap": {
       "name": "Browscap-PHP (3.x)",
       "enabled": true,
       "class": "Http",

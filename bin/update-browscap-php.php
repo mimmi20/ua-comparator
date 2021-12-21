@@ -33,15 +33,24 @@ echo ' updating cache for BrowscapPHP\Browscap', PHP_EOL;
 
 $config = new Config(['data/configs/config.json']);
 
-if (!$config['modules']['browscap3']['enabled']) {
+if (!$config['modules']['browscap']['enabled']) {
     exit;
 }
 
-$cacheDir = $config['modules']['browscap3']['cache-dir'];
-$browscap = new BrowscapUpdater();
-$cache = new File([File::DIR => $cacheDir]);
-$browscap->setCache($cache);
-$browscap->convertFile(realpath('data/browser/full_php_browscap.ini'));
+$cacheDir = $config['modules']['browscap']['cache-dir'];
+
+$adapter = new \League\Flysystem\Local\LocalFilesystemAdapter($cacheDir);
+$filesystem = new \League\Flysystem\Filesystem($adapter);
+$cache = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
+    new \MatthiasMullie\Scrapbook\Adapters\Flysystem($filesystem)
+);
+
+$cache->clear();
+
+$logger = new \Psr\Log\NullLogger();
+
+$bc = new \BrowscapPHP\BrowscapUpdater($cache, $logger);
+$bc->convertFile(realpath('data/browser/full_php_browscap.ini'));
 
 $bench->end();
 echo ' ', $bench->getTime(true), ' seconds', PHP_EOL;
