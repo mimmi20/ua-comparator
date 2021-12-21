@@ -1,8 +1,8 @@
 {
-  "name": "useragent-parser-comparison",
+  "name": "mimmi20/ua-comparator",
   "version": "1.0.0",
-  "repository": "https://github.com/diablomedia/useragent-parser-comparison.git",
-  "author": "Jay Klehr <jay@diablomedia.com>",
+  "repository": "https://github.com/mimmi20/ua-comparator.git",
+  "author": "Thomas Müller <mimmi20@live.de>",
   "license": "MIT",
   "devDependencies": {
     "prettier": "2.5.1"

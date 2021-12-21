@@ -3,8 +3,8 @@
 .buildpath
 .project
 .idea/
+node_modules/
 vendor/
-composer.phar
 composer.lock
 build/build*/
 data/browscap-ua-test-*/
@@ -25,8 +25,7 @@ resources/browscap-*/
 log/*
 !log/.gitkeep
 ergebnis.txt
-result.txt
-phpunit.txt
+package-lock.json
 .php-cs-fixer.cache
 .phplint-cache
 .phpunit.result.cache
