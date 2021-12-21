@@ -1,6 +1,7 @@
 {
-    "name": "Browscap PHP",
-    "language": "PHP",
-    "local": true,
-    "api": false
+  "name": "Browscap PHP",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "active": true
 }

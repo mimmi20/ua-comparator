@@ -34,6 +34,23 @@ updates:
 #          - ">= 0"
 
   - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: increase
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+
+  - package-ecosystem: "npm"
     directory: "web/3rd-eden/"
     schedule:
       interval: "daily"

@@ -1,6 +1,7 @@
 {
-    "name": "Woothee PHP Parser",
-    "language": "PHP",
-    "local": true,
-    "api": false
+  "name": "Woothee PHP Parser",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "active": true
 }

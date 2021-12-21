@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
@@ -55,43 +55,43 @@ $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logg
 
 ErrorHandler::register($logger);
 
-$start       = microtime(true);
-$parser      = new Parser(['User-Agent' => $_GET['useragent']]);
+$start = microtime(true);
+$parser = new Parser(['User-Agent' => $_GET['useragent']]);
 $resultArray = [
     'browser' => [
-        'using'   => (isset($parser->browser->using) ? $parser->browser->using : null),
-        'family'  => null,
+        'using' => (isset($parser->browser->using) ? $parser->browser->using : null),
+        'family' => null,
         'channel' => (isset($parser->browser->channel) ? $parser->browser->channel : null),
-        'stock'   => $parser->browser->stock,
-        'hidden'  => $parser->browser->hidden,
-        'mode'    => $parser->browser->mode,
-        'type'    => $parser->browser->type,
-        'name'    => (isset($parser->browser->name) ? $parser->browser->name : null),
-        'alias'   => (isset($parser->browser->alias) ? $parser->browser->alias : null),
+        'stock' => $parser->browser->stock,
+        'hidden' => $parser->browser->hidden,
+        'mode' => $parser->browser->mode,
+        'type' => $parser->browser->type,
+        'name' => (isset($parser->browser->name) ? $parser->browser->name : null),
+        'alias' => (isset($parser->browser->alias) ? $parser->browser->alias : null),
         'version' => (isset($parser->browser->version) ? $parser->browser->version : null),
     ],
     'engine' => [
-        'name'    => (isset($parser->engine->name) ? $parser->engine->name : null),
-        'alias'   => (isset($parser->engine->alias) ? $parser->engine->alias : null),
+        'name' => (isset($parser->engine->name) ? $parser->engine->name : null),
+        'alias' => (isset($parser->engine->alias) ? $parser->engine->alias : null),
         'version' => (isset($parser->engine->version) ? $parser->engine->version : null),
     ],
     'os' => [
-        'family'  => (isset($parser->os->family) ? $parser->os->family : null),
-        'name'    => (isset($parser->os->name) ? $parser->os->name : null),
-        'alias'   => (isset($parser->os->alias) ? $parser->os->alias : null),
+        'family' => (isset($parser->os->family) ? $parser->os->family : null),
+        'name' => (isset($parser->os->name) ? $parser->os->name : null),
+        'alias' => (isset($parser->os->alias) ? $parser->os->alias : null),
         'version' => (isset($parser->os->version) ? $parser->os->version : null),
     ],
     'device' => [
         'manufacturer' => (isset($parser->device->manufacturer) ? $parser->device->manufacturer : null),
-        'model'        => (isset($parser->device->model) ? $parser->device->model : null),
-        'series'       => (isset($parser->device->series) ? $parser->device->series : null),
-        'carrier'      => (isset($parser->device->carrier) ? $parser->device->carrier : null),
-        'identifier'   => (isset($parser->device->identifier) ? $parser->device->identifier : null),
-        'flag'         => (isset($parser->device->flag) ? $parser->device->flag : null),
-        'type'         => $parser->device->type,
-        'subtype'      => $parser->device->subtype,
-        'identified'   => $parser->device->identified,
-        'generic'      => $parser->device->generic,
+        'model' => (isset($parser->device->model) ? $parser->device->model : null),
+        'series' => (isset($parser->device->series) ? $parser->device->series : null),
+        'carrier' => (isset($parser->device->carrier) ? $parser->device->carrier : null),
+        'identifier' => (isset($parser->device->identifier) ? $parser->device->identifier : null),
+        'flag' => (isset($parser->device->flag) ? $parser->device->flag : null),
+        'type' => $parser->device->type,
+        'subtype' => $parser->device->subtype,
+        'identified' => $parser->device->identified,
+        'generic' => $parser->device->generic,
     ],
     'camouflage' => $parser->camouflage,
 ];
@@ -99,8 +99,8 @@ $duration = microtime(true) - $start;
 
 echo htmlentities(json_encode(
     [
-        'result'   => $resultArray,
+        'result' => $resultArray,
         'duration' => $duration,
-        'memory'   => memory_get_usage(true),
+        'memory' => memory_get_usage(true),
     ]
 ));

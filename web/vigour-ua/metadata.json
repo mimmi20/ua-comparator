@@ -1,6 +1,7 @@
 {
-    "name": "vigour-ua JS",
-    "language": "JavaScript",
-    "local": true,
-    "api": false
+  "name": "vigour-ua JS",
+  "language": "JavaScript",
+  "local": true,
+  "api": false,
+  "active": true
 }

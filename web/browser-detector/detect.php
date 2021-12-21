@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use BrowserDetector\Detector;
 use Monolog\ErrorHandler;
@@ -74,8 +74,8 @@ $duration = microtime(true) - $start;
 
 echo htmlentities(serialize(
     [
-        'result'   => $detectionResult->toArray(),
+        'result' => $detectionResult->toArray(),
         'duration' => $duration,
-        'memory'   => memory_get_usage(true),
+        'memory' => memory_get_usage(true),
     ]
 ));

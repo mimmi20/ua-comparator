@@ -1,6 +1,7 @@
 {
-    "name": "PHP Native get_browser",
-    "language": "PHP",
-    "local": true,
-    "api": false
+  "name": "PHP Native get_browser",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "active": true
 }

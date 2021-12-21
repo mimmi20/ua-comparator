@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use BrowscapPHP\Browscap;
 use Monolog\ErrorHandler;
@@ -38,8 +38,8 @@ ini_set('memory_limit', '-1');
 
 header('Content-Type: application/json', true);
 
-$buildNumber = (int) file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
-$iniFile     = 'data/browscap-ua-test-' . $buildNumber . '/full_php_browscap.ini';
+$buildNumber = (int)file_get_contents('vendor/browscap/browscap/BUILD_NUMBER');
+$iniFile = 'data/browscap-ua-test-' . $buildNumber . '/full_php_browscap.ini';
 
 $logger = new Logger('ua-comparator');
 
@@ -66,14 +66,14 @@ $browscap
     ->setLogger($logger)
     ->setCache($cache);
 
-$start    = microtime(true);
-$result   = $browscap->getBrowser($_GET['useragent']);
+$start = microtime(true);
+$result = $browscap->getBrowser($_GET['useragent']);
 $duration = microtime(true) - $start;
 
 echo htmlentities(json_encode(
     [
-        'result'   => $result,
+        'result' => $result,
         'duration' => $duration,
-        'memory'   => memory_get_usage(true),
+        'memory' => memory_get_usage(true),
     ]
 ));

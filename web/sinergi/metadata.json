@@ -1,6 +1,7 @@
 {
-    "name": "Sinergi Browser Detector",
-    "language": "PHP",
-    "local": true,
-    "api": false
+  "name": "Sinergi Browser Detector",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "active": true
 }

@@ -1,6 +1,7 @@
 {
-    "name": "Fex ua-device JS",
-    "language": "JavaScript",
-    "local": true,
-    "api": false
+  "name": "Fex ua-device JS",
+  "language": "JavaScript",
+  "local": true,
+  "api": false,
+  "active": true
 }

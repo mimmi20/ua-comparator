@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Client\Browser;
@@ -60,42 +60,42 @@ DeviceParserAbstract::setVersionTruncation(DeviceParserAbstract::VERSION_TRUNCAT
 
 header('Content-Type: application/json', true);
 
-$start          = microtime(true);
+$start = microtime(true);
 $deviceDetector = new DeviceDetector($_GET['useragent']);
 $deviceDetector->parse();
 
-$os       = $deviceDetector->getOs();
+$os = $deviceDetector->getOs();
 $osFamily = OperatingSystem::getOsFamily($deviceDetector->getOs('short_name'));
 
-$client        = $deviceDetector->getClient();
+$client = $deviceDetector->getClient();
 $browserFamily = Browser::getBrowserFamily($deviceDetector->getClient('short_name'));
 
 $processed = [
     'user_agent' => $deviceDetector->getUserAgent(),
-    'bot'        => ($deviceDetector->isBot() ? $deviceDetector->getBot() : false),
-    'os'         => [
-        'name'    => (isset($os['name']) ? $os['name'] : ''),
+    'bot' => ($deviceDetector->isBot() ? $deviceDetector->getBot() : false),
+    'os' => [
+        'name' => (isset($os['name']) ? $os['name'] : ''),
         'version' => (isset($os['version']) ? $os['version'] : null),
     ],
     'client' => [
-        'name'    => (isset($client['name']) ? $client['name'] : ''),
+        'name' => (isset($client['name']) ? $client['name'] : ''),
         'version' => (isset($client['version']) ? $client['version'] : null),
-        'engine'  => (isset($client['engine']) ? $client['engine'] : null),
+        'engine' => (isset($client['engine']) ? $client['engine'] : null),
     ],
     'device' => [
-        'type'  => $deviceDetector->getDeviceName(),
+        'type' => $deviceDetector->getDeviceName(),
         'brand' => $deviceDetector->getBrand(),
         'model' => $deviceDetector->getModel(),
     ],
-    'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
+    'os_family' => $osFamily !== false ? $osFamily : 'Unknown',
     'browser_family' => $browserFamily !== false ? $browserFamily : 'Unknown',
 ];
 $duration = microtime(true) - $start;
 
 echo htmlentities(json_encode(
     [
-        'result'   => $processed,
+        'result' => $processed,
         'duration' => $duration,
-        'memory'   => memory_get_usage(true),
+        'memory' => memory_get_usage(true),
     ]
 ));

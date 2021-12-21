@@ -1,6 +1,7 @@
 {
-    "name": "UA Parser PHP",
-    "language": "PHP",
-    "local": true,
-    "api": false
+  "name": "UA Parser PHP",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "active": true
 }

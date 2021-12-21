@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use Monolog\ErrorHandler;
 use Monolog\Formatter\LineFormatter;
@@ -55,15 +55,15 @@ $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logg
 
 ErrorHandler::register($logger);
 
-$start    = microtime(true);
-$parser   = Parser::create();
-$result   = (object) $parser->parse($_GET['useragent']);
+$start = microtime(true);
+$parser = Parser::create();
+$result = (object)$parser->parse($_GET['useragent']);
 $duration = microtime(true) - $start;
 
 echo htmlentities(json_encode(
     [
-        'result'   => $result,
+        'result' => $result,
         'duration' => $duration,
-        'memory'   => memory_get_usage(true),
+        'memory' => memory_get_usage(true),
     ]
 ));

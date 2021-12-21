@@ -1,6 +1,7 @@
 {
-    "name": "ZsxSoft PHP UserAgent",
-    "language": "PHP",
-    "local": true,
-    "api": false
+  "name": "ZsxSoft PHP UserAgent",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "active": true
 }

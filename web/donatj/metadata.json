@@ -1,6 +1,7 @@
 {
-    "name": "DonatJ PhpUserAgent",
-    "language": "PHP",
-    "local": true,
-    "api": false
+  "name": "DonatJ PhpUserAgent",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "active": true
 }

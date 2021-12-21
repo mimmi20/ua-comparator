@@ -1,6 +1,7 @@
 {
-    "name": "WhichBrowser JS",
-    "language": "JavaScript",
-    "local": true,
-    "api": false
+  "name": "WhichBrowser JS",
+  "language": "JavaScript",
+  "local": true,
+  "api": false,
+  "active": true
 }

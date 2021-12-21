@@ -1,6 +1,7 @@
 {
-    "name": "Wolfcast BrowserDetection",
-    "language": "PHP",
-    "local": true,
-    "api": false
+  "name": "Wolfcast BrowserDetection",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "active": true
 }

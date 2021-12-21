@@ -1,6 +1,7 @@
 {
-    "name": "Device Detector JS",
-    "language": "JavaScript",
-    "local": true,
-    "api": false
+  "name": "Device Detector JS",
+  "language": "JavaScript",
+  "local": true,
+  "api": false,
+  "active": true
 }

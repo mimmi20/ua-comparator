@@ -1,6 +1,7 @@
 {
-    "name": "express-useragent-exposer JS",
-    "language": "JavaScript",
-    "local": true,
-    "api": false
+  "name": "express-useragent-exposer JS",
+  "language": "JavaScript",
+  "local": true,
+  "api": false,
+  "active": true
 }

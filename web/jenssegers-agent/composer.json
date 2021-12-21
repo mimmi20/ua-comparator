@@ -1,13 +1,13 @@
 {
-    "require": {
-        "php": "^8.1.0",
-        "composer-runtime-api": "*",
-        "jenssegers/agent": "^v2.6.4"
-    },
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+  "require": {
+    "php": "^8.1.0",
+    "composer-runtime-api": "*",
+    "jenssegers/agent": "^v2.6.4"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
