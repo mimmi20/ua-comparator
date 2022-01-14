@@ -1,7 +1,32 @@
 {
   "name": "hotoo detector JS",
+  "homepage": "https://github.com/hotoo/detector",
+  "packageName": "detector",
   "language": "JavaScript",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": false,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": true,
+      "version": true
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": true,
+      "brand": false,
+      "type": false,
+      "isMobile": false,
+      "isTouch": false
+    }
+  }
 }

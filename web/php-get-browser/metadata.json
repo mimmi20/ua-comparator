@@ -1,7 +1,32 @@
 {
   "name": "PHP Native get_browser",
+  "homepage": null,
+  "packageName": null,
   "language": "PHP",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": true,
+      "type": true
+    },
+    "renderingEngine": {
+      "name": true,
+      "version": true
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": true,
+      "brand": true,
+      "type": true,
+      "isMobile": true,
+      "isTouch": true
+    }
+  }
 }

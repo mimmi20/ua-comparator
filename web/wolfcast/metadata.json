@@ -1,7 +1,32 @@
 {
   "name": "Wolfcast BrowserDetection",
+  "homepage": "https://github.com/wolfcast/browser-detection",
+  "packageName": "wolfcast/browser-detection",
   "language": "PHP",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": false,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": false,
+      "brand": false,
+      "type": false,
+      "isMobile": true,
+      "isTouch": false
+    }
+  }
 }

@@ -1,7 +1,32 @@
 {
   "name": "UA Parser PHP",
+  "homepage": "https://github.com/ua-parser/uap-php",
+  "packageName": "ua-parser/uap-php",
   "language": "PHP",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": true,
+      "type": true
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": true,
+      "brand": true,
+      "type": false,
+      "isMobile": false,
+      "isTouch": false
+    }
+  }
 }

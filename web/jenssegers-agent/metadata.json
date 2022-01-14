@@ -1,7 +1,32 @@
 {
   "name": "Jenssegers Agent",
+  "homepage": "https://github.com/jenssegers/agent",
+  "packageName": "jenssegers/agent",
   "language": "PHP",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": true,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": false,
+      "brand": false,
+      "type": false,
+      "isMobile": true,
+      "isTouch": false
+    }
+  }
 }

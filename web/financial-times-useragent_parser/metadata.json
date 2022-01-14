@@ -1,0 +1,32 @@
+{
+  "name": "financial-times-useragent_parser",
+  "homepage": "https://github.com/Financial-Times/useragent_parser",
+  "packageName": "@financial-times/useragent_parser",
+  "language": "JavaScript",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": false,
+      "isBot": false,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": false,
+      "version": false
+    },
+    "device": {
+      "model": false,
+      "brand": false,
+      "type": false,
+      "isMobile": false,
+      "isTouch": false
+    }
+  }
+}

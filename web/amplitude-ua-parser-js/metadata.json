@@ -1,0 +1,32 @@
+{
+  "name": "amplitude-ua-parser-js",
+  "homepage": "https://github.com/amplitude/ua-parser-js",
+  "packageName": "@amplitude/ua-parser-js",
+  "language": "JavaScript",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": false,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": true,
+      "brand": true,
+      "type": true,
+      "isMobile": true,
+      "isTouch": false
+    }
+  }
+}

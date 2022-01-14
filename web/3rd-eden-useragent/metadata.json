@@ -1,0 +1,32 @@
+{
+  "name": "3rd-Eden useragent",
+  "homepage": "https://github.com/3rd-Eden/useragent",
+  "packageName": "useragent",
+  "language": "JavaScript",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": false,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": true,
+      "brand": true,
+      "type": false,
+      "isMobile": false,
+      "isTouch": false
+    }
+  }
+}

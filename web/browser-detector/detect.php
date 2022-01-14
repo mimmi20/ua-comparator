@@ -18,7 +18,6 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 chdir(dirname(dirname(__DIR__)));
 
@@ -56,11 +55,17 @@ $logger->pushHandler(new ErrorLogHandler(ErrorLogHandler::OPERATING_SYSTEM, Logg
 
 ErrorHandler::register($logger);
 
-$cache = new FilesystemAdapter('', 0, 'data/cache/browser/');
+$browscapAdapter = new \League\Flysystem\Local\LocalFilesystemAdapter('data/cache/browser/');
+$cache   = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
+    new \MatthiasMullie\Scrapbook\Adapters\Flysystem(
+        new \League\Flysystem\Filesystem($browscapAdapter)
+    )
+);
 
 $start = microtime(true);
 
-$parser = new Detector($cache, $logger);
+$factory = new \BrowserDetector\DetectorFactory($cache, $logger);
+$parser  = $factory();
 
 try {
     /** @var \UaResult\Result\Result $detectionResult */

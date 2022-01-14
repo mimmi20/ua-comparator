@@ -1,7 +1,32 @@
 {
   "name": "Woothee JS Parser",
+  "homepage": "https://github.com/woothee/woothee-js",
+  "packageName": "woothee",
   "language": "JavaScript",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": false,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": false,
+      "brand": true,
+      "type": true,
+      "isMobile": false,
+      "isTouch": false
+    }
+  }
 }

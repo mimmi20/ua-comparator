@@ -1,7 +1,7 @@
 {
   "require": {
     "php": "^8.1.0",
-    "composer-runtime-api": "*",
+    "composer-runtime-api": "^2.0",
     "wolfcast/browser-detection": "^2.9.5"
   },
   "config": {

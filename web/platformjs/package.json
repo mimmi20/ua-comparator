@@ -1,0 +1,15 @@
+{
+  "name": "platformjs-1",
+  "version": "1.0.0",
+  "description": "platformjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "platform": "^1.3.6"
+  }
+}
