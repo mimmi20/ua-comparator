@@ -1,0 +1,13 @@
+{
+  "require": {
+    "php": "^8.1.0",
+    "composer-runtime-api": "^2.0",
+    "mobiledetect/mobiledetectlib": "^2.8.37"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

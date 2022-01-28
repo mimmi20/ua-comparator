@@ -1,7 +1,32 @@
 {
   "name": "Endorphin Browser Detector",
+  "homepage": "https://github.com/endorphin-studio/browser-detector",
+  "packageName": "endorphin-studio/browser-detector",
   "language": "PHP",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": true,
+      "type": true
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": false,
+      "brand": false,
+      "type": true,
+      "isMobile": false,
+      "isTouch": false
+    }
+  }
 }

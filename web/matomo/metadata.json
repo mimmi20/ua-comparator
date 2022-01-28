@@ -1,7 +1,0 @@
-{
-  "name": "Matomo Device Detector",
-  "language": "PHP",
-  "local": true,
-  "api": false,
-  "active": true
-}

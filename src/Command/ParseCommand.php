@@ -23,8 +23,6 @@ use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -125,6 +123,8 @@ class ParseCommand extends Command
                     continue;
                 }
 
+                assert(is_array($moduleConfig));
+
                 if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
                     continue;
                 }
@@ -132,11 +132,19 @@ class ParseCommand extends Command
                 $output->writeln('    preparing module ' . $moduleConfig['name'] . ' ...');
 
                 if (!isset($moduleConfig['requires-cache'])) {
-                    $moduleCache = new ArrayAdapter();
+                    $moduleCache   = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
+                        new \MatthiasMullie\Scrapbook\Adapters\MemoryStore()
+                    );
                 } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
-                    $moduleCache = new FilesystemAdapter('', 0, $moduleConfig['cache-dir']);
+                    $moduleCache   = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
+                        new \MatthiasMullie\Scrapbook\Adapters\Flysystem(
+                            new \League\Flysystem\Filesystem($moduleConfig['cache-dir'])
+                        )
+                    );
                 } else {
-                    $moduleCache = new ArrayAdapter();
+                    $moduleCache   = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
+                        new \MatthiasMullie\Scrapbook\Adapters\MemoryStore()
+                    );
                 }
 
                 $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];

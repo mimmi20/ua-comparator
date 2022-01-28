@@ -1,0 +1,15 @@
+{
+  "name": "financial-times-useragent_parser-1",
+  "version": "1.0.0",
+  "description": "ua-parser-js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@financial-times/useragent_parser": "^1.6.0"
+  }
+}

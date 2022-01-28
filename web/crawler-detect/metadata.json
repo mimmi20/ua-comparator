@@ -1,0 +1,32 @@
+{
+  "name": "crawler-detect",
+  "homepage": "https://github.com/jaybizzle/crawler-detect",
+  "packageName": "jaybizzle/crawler-detect",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": false,
+      "version": false,
+      "isBot": true,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": false,
+      "version": false
+    },
+    "device": {
+      "model": false,
+      "brand": false,
+      "type": false,
+      "isMobile": false,
+      "isTouch": false
+    }
+  }
+}

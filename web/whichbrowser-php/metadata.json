@@ -1,0 +1,32 @@
+{
+  "name": "WhichBrowser PHP",
+  "homepage": "https://github.com/WhichBrowser/Parser",
+  "packageName": "whichbrowser/parser",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": true,
+      "type": true
+    },
+    "renderingEngine": {
+      "name": true,
+      "version": true
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": true,
+      "brand": true,
+      "type": true,
+      "isMobile": true,
+      "isTouch": false
+    }
+  }
+}

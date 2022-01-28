@@ -23,11 +23,19 @@ mkdir ../data/cache/uaparser/
 mkdir ../data/cache/uasparser/
 mkdir ../data/cache/general/
 
-echo "Updating ua-parser data..."
-php ../vendor/ua-parser/uap-php/bin/uaparser ua-parser:update
+parent_path=$( cd "$(dirname "${BASH_SOURCE}")" ; pwd -P )
+cd "$parent_path"
 
-echo "Creating browscap.ini file..."
-php build-browscap.ini.php
+cd ../web
 
-echo "Updating browscap-php (3.x) data..."
-php update-browscap-php.php
+for f in *; do
+    if [ -d ${f} ]; then
+        echo -e "\033[0;35mRunning update script for the \033[4;31m$f\033[0;35m parser\033[0m"
+        cd $f
+        sh ./update.sh
+        cd ..
+    fi
+done
+
+echo "Done updating the parsers"
+

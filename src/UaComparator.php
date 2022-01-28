@@ -15,7 +15,6 @@ use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Application;
 
 /**
@@ -35,7 +34,13 @@ class UaComparator extends Application
         $logger->pushHandler(new StreamHandler('log/error.log', Logger::NOTICE));
         ErrorHandler::register($logger);
 
-        $cache  = new FilesystemAdapter('', 0, 'data/cache/general/');
+        $browscapAdapter = new \League\Flysystem\Local\LocalFilesystemAdapter('data/cache/general/');
+        $cache   = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
+            new \MatthiasMullie\Scrapbook\Adapters\Flysystem(
+                new \League\Flysystem\Filesystem($browscapAdapter)
+            )
+        );
+
         $config = new Config(['data/configs/config.json']);
 
         $this->add(new Command\CompareCommand($logger, $cache, $config));

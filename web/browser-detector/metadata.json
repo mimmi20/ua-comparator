@@ -1,7 +1,32 @@
 {
-  "name": "Browser Detector",
+  "name": "BrowserDetector",
+  "homepage": "https://github.com/mimmi20/browser-detector",
+  "packageName": "mimmi20/browser-detector",
   "language": "PHP",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": true,
+      "type": true
+    },
+    "renderingEngine": {
+      "name": true,
+      "version": true
+    },
+    "operatingSystem": {
+      "name": true,
+      "version": true
+    },
+    "device": {
+      "model": true,
+      "brand": true,
+      "type": true,
+      "isMobile": true,
+      "isTouch": true
+    }
+  }
 }

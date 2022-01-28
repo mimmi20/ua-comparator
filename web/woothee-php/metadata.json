@@ -1,7 +1,32 @@
 {
   "name": "Woothee PHP Parser",
+  "homepage": "https://github.com/woothee/woothee-php",
+  "packageName": "woothee/woothee",
   "language": "PHP",
   "local": true,
   "api": false,
-  "active": true
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "version": true,
+      "isBot": true,
+      "type": true
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false
+    },
+    "operatingSystem": {
+      "name": false,
+      "version": false
+    },
+    "device": {
+      "model": false,
+      "brand": true,
+      "type": true,
+      "isMobile": false,
+      "isTouch": false
+    }
+  }
 }

@@ -1,0 +1,13 @@
+{
+  "require": {
+    "php": "^8.1.0",
+    "composer-runtime-api": "^2.0",
+    "jaybizzle/crawler-detect": "^v1.2.110"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
