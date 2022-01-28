@@ -31,25 +31,18 @@
     "ext-json": "*",
     "devster/ubench": "^2.1.0",
     "hassankhan/config": "^3.0.0",
-    "league/flysystem": "^2.4.0",
-    "matomo/device-detector": "dev-master",
+    "league/flysystem": "^2.4.0 || ^3.0.1",
     "matthiasmullie/scrapbook": "^1.4.8",
-    "mimmi20/browser-detector": "^7.0.1",
     "monolog/monolog": "^2.3.5",
-    "symfony/cache": "^v5.4.2",
-    "symfony/console": "^v5.4.2",
-    "ua-parser/uap-php": "dev-master",
-    "whichbrowser/parser": "dev-master",
-    "woothee/woothee": "dev-master",
-    "woothee/woothee-testset": "dev-master"
+    "symfony/console": "^v5.4.2 || ^v6.0.3"
   },
   "require-dev": {
     "mimmi20/coding-standard": "^2.6.2",
     "phpstan/extension-installer": "^1.1.0",
-    "phpstan/phpstan": "^1.4.1",
+    "phpstan/phpstan": "^1.4.3",
     "phpstan/phpstan-deprecation-rules": "^1.0.0",
     "phpstan/phpstan-phpunit": "^1.0.0",
-    "phpunit/phpunit": "^9.5.11"
+    "phpunit/phpunit": "^9.5.13"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
