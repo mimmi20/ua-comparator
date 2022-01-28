@@ -3,10 +3,10 @@
     "php": "^8.1.0",
     "composer-runtime-api": "*",
     "ua-parser/uap-php": "^v3.9.14",
-    "symfony/yaml": "^v6.0.1",
+    "symfony/yaml": "^v6.0.3",
     "symfony/filesystem": "^v6.0.0",
-    "symfony/finder": "^v6.0.0",
-    "symfony/console": "^v6.0.1"
+    "symfony/finder": "^v6.0.3",
+    "symfony/console": "^v6.0.3"
   },
   "config": {
     "preferred-install": "dist",
