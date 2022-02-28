@@ -34,7 +34,7 @@
     "league/flysystem": "^3.0.10",
     "matthiasmullie/scrapbook": "^1.4.8",
     "monolog/monolog": "^2.3.5",
-    "symfony/console": "^v5.4.2 || ^v6.0.3"
+    "symfony/console": "^6.0.5"
   },
   "require-dev": {
     "mimmi20/coding-standard": "^2.6.3",
