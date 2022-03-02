@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2.4.0"
+        uses: "actions/checkout@v3"
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
@@ -70,7 +70,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2.4.0"
+        uses: "actions/checkout@v3"
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
@@ -126,7 +126,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2.4.0"
+        uses: "actions/checkout@v3"
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
@@ -173,7 +173,7 @@ jobs:
 #
 #    steps:
 #      - name: "Checkout"
-#        uses: "actions/checkout@v2.4.0"
+#        uses: "actions/checkout@v3"
 #        with:
 #          # Disabling shallow clone is recommended for improving relevancy of reporting
 #          fetch-depth: 0
@@ -220,7 +220,7 @@ jobs:
 #
 #    steps:
 #      - name: "Checkout"
-#        uses: "actions/checkout@v2.4.0"
+#        uses: "actions/checkout@v3"
 #        with:
 #          # Disabling shallow clone is recommended for improving relevancy of reporting
 #          fetch-depth: 0
@@ -265,7 +265,7 @@ jobs:
 #
 #    steps:
 #      - name: "Checkout"
-#        uses: "actions/checkout@v2.4.0"
+#        uses: "actions/checkout@v3"
 #        with:
 #          # Disabling shallow clone is recommended for improving relevancy of reporting
 #          fetch-depth: 0
@@ -312,7 +312,7 @@ jobs:
 #
 #    steps:
 #      - name: "Checkout"
-#        uses: "actions/checkout@v2.4.0"
+#        uses: "actions/checkout@v3"
 #        with:
 #          # Disabling shallow clone is recommended for improving relevancy of reporting
 #          fetch-depth: 0
@@ -361,7 +361,7 @@ jobs:
 #
 #    steps:
 #      - name: "Checkout"
-#        uses: "actions/checkout@v2.4.0"
+#        uses: "actions/checkout@v3"
 #        with:
 #          # Disabling shallow clone is recommended for improving relevancy of reporting
 #          fetch-depth: 0
@@ -411,7 +411,7 @@ jobs:
 #
 #    steps:
 #      - name: "Checkout"
-#        uses: "actions/checkout@v2.4.0"
+#        uses: "actions/checkout@v3"
 #        with:
 #          # Disabling shallow clone is recommended for improving relevancy of reporting
 #          fetch-depth: 0
@@ -471,7 +471,7 @@ jobs:
 #
 #    steps:
 #      - name: "Checkout"
-#        uses: "actions/checkout@v2.4.0"
+#        uses: "actions/checkout@v3"
 #        with:
 #          # Disabling shallow clone is recommended for improving relevancy of reporting
 #          fetch-depth: 0
