@@ -31,7 +31,7 @@
     "ext-json": "*",
     "devster/ubench": "^2.1.0",
     "hassankhan/config": "^3.0.0",
-    "league/flysystem": "^3.0.10",
+    "league/flysystem": "^3.0.11",
     "matthiasmullie/scrapbook": "^1.4.8",
     "monolog/monolog": "^2.3.5",
     "symfony/console": "^v5.4.2 || ^v6.0.3"
