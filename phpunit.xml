@@ -11,6 +11,7 @@
     beStrictAboutTestsThatDoNotTestAnything="true"
     beStrictAboutTodoAnnotatedTests="true"
     beStrictAboutResourceUsageDuringSmallTests="true"
+    convertDeprecationsToExceptions="true"
     failOnEmptyTestSuite="true"
     failOnIncomplete="true"
     failOnRisky="true"
@@ -21,26 +22,32 @@
     enforceTimeLimit="false"
     executionOrder="default"
     resolveDependencies="true"
+    colors="true"
     >
     <php>
         <ini name="error_reporting" value="-1"/>
         <ini name="memory_limit" value="-1"/>
         <ini name="date.timezone" value="UTC"/>
-        <ini name="zend.assertions" value="1"/>
         <ini name="assert.exception" value="On"/>
         <ini name="intl.default_locale" value="de"/>
         <ini name="intl.use_exceptions" value="1"/>
     </php>
 
-    <testsuites>
-        <testsuite name="UnitTests">
-            <directory>tests/DetectorTest/</directory>
-        </testsuite>
-    </testsuites>
+    <testsuite name="Test Suite">
+        <directory>tests/DetectorTest/</directory>
+    </testsuite>
 
     <coverage includeUncoveredFiles="true" processUncoveredFiles="true">
         <include>
             <directory suffix=".php">src/</directory>
         </include>
+        <report>
+            <clover outputFile=".reports/clover.xml"/>
+            <html outputDirectory=".reports/report/" lowUpperBound="50" highLowerBound="80"/>
+            <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="false"/>
+        </report>
     </coverage>
+    <logging>
+        <junit outputFile=".reports/junit.xml"/>
+    </logging>
 </phpunit>

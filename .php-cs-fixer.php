@@ -1,8 +1,8 @@
 <?php
 /**
- * This file is part of the browser-detector package.
+ * This file is part of the mimmi20/monolog-factory package.
  *
- * Copyright (c) 2012-2021, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2022, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,7 +13,7 @@ declare(strict_types = 1);
 $header = <<<'EOF'
     This file is part of the mimmi20/ua-comparator package.
 
-    Copyright (c) 2015-2021, Thomas Mueller <mimmi20@live.de>
+    Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
 
     For the full copyright and license information, please view the LICENSE
     file that was distributed with this source code.
@@ -42,7 +42,6 @@ return $config
                     'location' => 'after_open',
                     'separate' => 'bottom',
                 ],
-                'php_unit_strict' => ['assertions' => ['assertAttributeEquals', 'assertAttributeNotEquals', 'assertNotEquals']],
             ]
         )
     )
