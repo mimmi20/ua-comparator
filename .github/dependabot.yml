@@ -7,7 +7,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -15,7 +14,8 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    versioning-strategy: "increase"
+    target-branch: "master"
     commit-message:
       include: "scope"
       prefix: "composer"
@@ -33,11 +33,10 @@ updates:
 #        versions:
 #          - ">= 0"
 
-  - package-ecosystem: "npm"
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -45,16 +44,15 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
     commit-message:
       include: "scope"
-      prefix: "npm"
+      prefix: "github-actions"
 
   - package-ecosystem: "npm"
     directory: "web/3rd-eden/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -62,13 +60,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "npm"
     directory: "web/bowser-js/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -76,13 +73,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "composer"
     directory: "web/browscap/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -90,13 +86,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
     directory: "web/browser-detect-js/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -104,13 +100,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "composer"
     directory: "web/browser-detector/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -118,13 +113,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "composer"
     directory: "web/cbschuld/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -132,13 +127,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
     directory: "web/detect-browser-js/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -146,13 +141,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "npm"
     directory: "web/device-detector-js/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -160,13 +154,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "npm"
     directory: "web/device-detector-node-js/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -174,13 +167,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "composer"
     directory: "web/donatj/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -188,13 +180,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "composer"
     directory: "web/endorphin/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -202,13 +194,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
     directory: "web/express-useragent-exposer/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -216,13 +208,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "npm"
     directory: "web/express-useragent/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -230,13 +221,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "npm"
     directory: "web/fex-uadevice/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -244,13 +234,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "npm"
     directory: "web/hotoo-detector/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -258,13 +247,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "composer"
     directory: "web/jenssegers-agent/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -272,13 +260,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "composer"
     directory: "web/matomo/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -286,13 +274,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "composer"
     directory: "web/sinergi/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -300,13 +288,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
     directory: "web/ua-parser-js/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -314,13 +302,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "composer"
     directory: "web/ua-parser-php/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -328,13 +315,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
     directory: "web/vigour-ua/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -342,13 +329,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "npm"
     directory: "web/which-browser-js/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -356,13 +342,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "composer"
     directory: "web/which-browser-php/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -370,13 +355,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "composer"
     directory: "web/wolfcast/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -384,13 +369,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
     directory: "web/woothee-js/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -398,13 +383,12 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
 
   - package-ecosystem: "composer"
     directory: "web/woothee-php/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -412,13 +396,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "composer"
     directory: "web/zsxsoft/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -426,13 +410,13 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: increase
+    target-branch: "master"
+    versioning-strategy: "increase"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-      timezone: "Europe/Berlin"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -440,5 +424,4 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    commit-message:
-      prefix: "github-actions"
+    target-branch: "master"

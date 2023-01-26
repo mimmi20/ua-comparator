@@ -6,6 +6,7 @@
   },
   "config": {
     "preferred-install": "dist",
+    "lock": false,
     "sort-packages": true
   },
   "minimum-stability": "stable",

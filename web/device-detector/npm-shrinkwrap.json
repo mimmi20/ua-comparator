@@ -9,13 +9,13 @@
       "version": "1.0.0",
       "license": "ISC",
       "dependencies": {
-        "device-detector-js": "^3.0.0"
+        "device-detector-js": "^3.0.1"
       }
     },
     "node_modules/device-detector-js": {
-      "version": "3.0.1",
-      "resolved": "https://registry.npmjs.org/device-detector-js/-/device-detector-js-3.0.1.tgz",
-      "integrity": "sha512-sfH78Mzy9BZn/DW1fCyInaZfQYlW7s8KbylsxIMHjnOi0ybI2+9Za97uB3EijXLAWoe6ud0agnprGY2nYk654w==",
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/device-detector-js/-/device-detector-js-3.0.3.tgz",
+      "integrity": "sha512-jM89LJAvP6uOd84at8OlD9dWP8KeYCCHUde0RT0HQo/stdoRH4b54Xl/fntx2nEXCmqiFhmo+/cJetS2VGUHPw==",
       "engines": {
         "node": ">= 8.11.4"
       }
@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "device-detector-js": {
-      "version": "3.0.1",
-      "resolved": "https://registry.npmjs.org/device-detector-js/-/device-detector-js-3.0.1.tgz",
-      "integrity": "sha512-sfH78Mzy9BZn/DW1fCyInaZfQYlW7s8KbylsxIMHjnOi0ybI2+9Za97uB3EijXLAWoe6ud0agnprGY2nYk654w=="
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/device-detector-js/-/device-detector-js-3.0.3.tgz",
+      "integrity": "sha512-jM89LJAvP6uOd84at8OlD9dWP8KeYCCHUde0RT0HQo/stdoRH4b54Xl/fntx2nEXCmqiFhmo+/cJetS2VGUHPw=="
     }
   }
 }

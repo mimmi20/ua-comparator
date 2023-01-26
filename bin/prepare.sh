@@ -16,15 +16,13 @@ echo "clearing cache directory ..."
 rm -rf ../data/cache/
 
 mkdir ../data/cache/
+mkdir ../data/cache/browscap-php/
 mkdir ../data/cache/browscap/
 mkdir ../data/cache/browser/
 mkdir ../data/cache/matomo/
 mkdir ../data/cache/uaparser/
 mkdir ../data/cache/uasparser/
 mkdir ../data/cache/general/
-
-parent_path=$( cd "$(dirname "${BASH_SOURCE}")" ; pwd -P )
-cd "$parent_path"
 
 cd ../web
 
