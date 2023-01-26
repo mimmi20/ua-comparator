@@ -1,18 +1,20 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Module\Mapper;
 
 use BrowserDetector\Loader\NotFoundException;
 use Psr\Cache\CacheItemPoolInterface;
+use stdClass;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
 use UaResult\Company\CompanyLoader;
@@ -22,31 +24,17 @@ use UaResult\Os\Os;
 use UaResult\Result\Result;
 use Wurfl\Request\GenericRequestFactory;
 
+use function in_array;
+
 /**
  * UaComparator.ini parsing class with caching and update capabilities
- *
- * @category  UaComparator
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2015 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class PiwikDetector implements MapperInterface
+final class PiwikDetector implements MapperInterface
 {
-    /**
-     * @var \UaDataMapper\InputMapper|null
-     */
-    private $mapper = null;
+    private InputMapper | null $mapper = null;
 
-    /**
-     * @var \Psr\Cache\CacheItemPoolInterface|null
-     */
-    private $cache = null;
+    private CacheItemPoolInterface | null $cache = null;
 
-    /**
-     * @param \UaDataMapper\InputMapper         $mapper
-     * @param \Psr\Cache\CacheItemPoolInterface $cache
-     */
     public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
     {
         $this->mapper = $mapper;
@@ -56,12 +44,9 @@ class PiwikDetector implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param \stdClass $parserResult
-     * @param string    $agent
-     *
-     * @return \UaResult\Result\Result the object containing the browsers details
+     * @return Result the object containing the browsers details
      */
-    public function map($parserResult, $agent)
+    public function map(stdClass $parserResult, string $agent): Result
     {
         $browserVersion      = null;
         $browserManufacturer = null;
@@ -73,8 +58,8 @@ class PiwikDetector implements MapperInterface
                 $browserMakerKey = $this->mapper->mapBrowserMaker($parserResult->bot->producer->name, $browserName);
                 try {
                     $browserManufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
-                } catch (NotFoundException $e) {
-                    //$this->logger->info($e);
+                } catch (NotFoundException) {
+                    // $this->logger->info($e);
                 }
             }
 
@@ -83,7 +68,7 @@ class PiwikDetector implements MapperInterface
             $browserName    = $this->mapper->mapBrowserName($parserResult->client->name);
             $browserVersion = $this->mapper->mapBrowserVersion(
                 $parserResult->client->version,
-                $browserName
+                $browserName,
             );
 
             if (!empty($parserResult->client->type)) {
@@ -97,7 +82,7 @@ class PiwikDetector implements MapperInterface
             $browserName,
             $browserManufacturer,
             $browserVersion,
-            $browserType
+            $browserType,
         );
 
         $deviceName = $this->mapper->mapDeviceName($parserResult->device->model);
@@ -106,8 +91,8 @@ class PiwikDetector implements MapperInterface
         $deviceBrandKey = $this->mapper->mapDeviceBrandName($parserResult->device->brand, $deviceName);
         try {
             $deviceBrand = (new CompanyLoader($this->cache))->load($deviceBrandKey);
-        } catch (NotFoundException $e) {
-            //$this->logger->info($e);
+        } catch (NotFoundException) {
+            // $this->logger->info($e);
         }
 
         $device = new Device(
@@ -115,7 +100,7 @@ class PiwikDetector implements MapperInterface
             $this->mapper->mapDeviceMarketingName($deviceName),
             null,
             $deviceBrand,
-            $this->mapper->mapDeviceType($this->cache, $parserResult->device->type)
+            $this->mapper->mapDeviceType($this->cache, $parserResult->device->type),
         );
 
         $os = new Os(null, null);
@@ -124,7 +109,7 @@ class PiwikDetector implements MapperInterface
             $osName    = $this->mapper->mapOsName($parserResult->os->name);
             $osVersion = $this->mapper->mapOsVersion($parserResult->os->version, $parserResult->os->name);
 
-            if (!in_array($osName, ['PlayStation'])) {
+            if (!in_array($osName, ['PlayStation'], true)) {
                 $os = new Os($osName, null, null, $osVersion);
             }
         }
@@ -142,10 +127,7 @@ class PiwikDetector implements MapperInterface
         return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
-    /**
-     * @return null|\UaDataMapper\InputMapper
-     */
-    public function getMapper()
+    public function getMapper(): InputMapper | null
     {
         return $this->mapper;
     }

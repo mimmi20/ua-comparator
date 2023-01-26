@@ -1,14 +1,15 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Command;
 
 use BrowscapHelper\Source\BrowscapSource;
@@ -19,6 +20,11 @@ use BrowscapHelper\Source\PiwikSource;
 use BrowscapHelper\Source\UapCoreSource;
 use BrowscapHelper\Source\WhichBrowserSource;
 use BrowscapHelper\Source\WootheeSource;
+use League\Flysystem\Filesystem;
+use LogicException;
+use MatthiasMullie\Scrapbook\Adapters\Flysystem;
+use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
+use MatthiasMullie\Scrapbook\Psr16\SimpleCache;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
@@ -28,39 +34,34 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
+use UaComparator\Module\Mapper\MapperInterface;
 use UaComparator\Module\ModuleCollection;
+use UaComparator\Module\ModuleInterface;
 use UaDataMapper\InputMapper;
 
-/**
- * Class CompareCommand
- *
- * @category   UaComparator
- *
- * @author     Thomas Müller <mimmi20@live.de>
- */
-class ParseCommand extends Command
+use function assert;
+use function bin2hex;
+use function file_exists;
+use function file_put_contents;
+use function hash;
+use function is_array;
+use function json_encode;
+use function mkdir;
+use function sprintf;
+use function trim;
+
+use const JSON_FORCE_OBJECT;
+use const JSON_PRETTY_PRINT;
+use const JSON_THROW_ON_ERROR;
+
+final class ParseCommand extends Command
 {
-    const SOURCE_SQL  = 'sql';
-    const SOURCE_DIR  = 'dir';
-    const SOURCE_TEST = 'tests';
+    public const SOURCE_SQL  = 'sql';
+    public const SOURCE_DIR  = 'dir';
+    public const SOURCE_TEST = 'tests';
 
-    private Logger $logger;
-
-    private CacheItemPoolInterface $cache;
-
-    private Config $config;
-
-    /**
-     * @param \Monolog\Logger                   $logger
-     * @param \Psr\Cache\CacheItemPoolInterface $cache
-     * @param \Noodlehaus\Config                $config
-     */
-    public function __construct(Logger $logger, CacheItemPoolInterface $cache, Config $config)
+    public function __construct(private Logger $logger, private CacheItemPoolInterface $cache, private Config $config)
     {
-        $this->logger = $logger;
-        $this->cache  = $cache;
-        $this->config = $config;
-
         parent::__construct();
     }
 
@@ -76,7 +77,7 @@ class ParseCommand extends Command
                 'limit',
                 '-l',
                 InputOption::VALUE_OPTIONAL,
-                'the amount of useragents to compare'
+                'the amount of useragents to compare',
             );
     }
 
@@ -88,18 +89,18 @@ class ParseCommand extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input  An InputInterface instance
-     * @param \Symfony\Component\Console\Output\OutputInterface $output An OutputInterface instance
-     *
-     * @throws \LogicException When this abstract method is not implemented
-     *
-     * @return null|int null or 0 if everything went fine, or an error code
-     *
      * @see    setCode()
+     *
+     * @param InputInterface  $input  An InputInterface instance
+     * @param OutputInterface $output An OutputInterface instance
+     *
+     * @return int|null null or 0 if everything went fine, or an error code
+     *
+     * @throws LogicException When this abstract method is not implemented
      */
     protected function execute(
         InputInterface $input,
-        OutputInterface $output
+        OutputInterface $output,
     ): int {
         $output->writeln('preparing App ...');
 
@@ -111,7 +112,7 @@ class ParseCommand extends Command
         $modules    = $input->getOption('modules');
         $collection = new ModuleCollection();
 
-        /*******************************************************************************
+        /*
          * BrowserDetector
          */
 
@@ -132,25 +133,25 @@ class ParseCommand extends Command
                 $output->writeln('    preparing module ' . $moduleConfig['name'] . ' ...');
 
                 if (!isset($moduleConfig['requires-cache'])) {
-                    $moduleCache   = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
-                        new \MatthiasMullie\Scrapbook\Adapters\MemoryStore()
+                    $moduleCache = new SimpleCache(
+                        new MemoryStore(),
                     );
                 } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
-                    $moduleCache   = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
-                        new \MatthiasMullie\Scrapbook\Adapters\Flysystem(
-                            new \League\Flysystem\Filesystem($moduleConfig['cache-dir'])
-                        )
+                    $moduleCache = new SimpleCache(
+                        new Flysystem(
+                            new Filesystem($moduleConfig['cache-dir']),
+                        ),
                     );
                 } else {
-                    $moduleCache   = new \MatthiasMullie\Scrapbook\Psr16\SimpleCache(
-                        new \MatthiasMullie\Scrapbook\Adapters\MemoryStore()
+                    $moduleCache = new SimpleCache(
+                        new MemoryStore(),
                     );
                 }
 
                 $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];
 
-                /** @var \UaComparator\Module\ModuleInterface $detectorModule */
                 $detectorModule = new $moduleClassName($this->logger, $moduleCache);
+                assert($detectorModule instanceof ModuleInterface);
                 $detectorModule->setName($moduleConfig['name']);
                 $detectorModule->setConfig($moduleConfig['request']);
 
@@ -158,15 +159,15 @@ class ParseCommand extends Command
                 $detectorModule->setCheck(new $checkName());
 
                 $mapperName = '\\UaComparator\\Module\\Mapper\\' . $moduleConfig['mapper'];
-                /** @var \UaComparator\Module\Mapper\MapperInterface $mapper */
-                $mapper = new $mapperName($inputMapper, $moduleCache);
+                $mapper     = new $mapperName($inputMapper, $moduleCache);
+                assert($mapper instanceof MapperInterface);
                 $detectorModule->setMapper($mapper);
 
                 $collection->addModule($detectorModule);
             }
         }
 
-        /*******************************************************************************
+        /*
          * init Modules
          */
 
@@ -178,7 +179,7 @@ class ParseCommand extends Command
             $module->init();
         }
 
-        /*******************************************************************************
+        /*
          * initialize Source
          */
 
@@ -193,10 +194,10 @@ class ParseCommand extends Command
                 new WootheeSource($this->logger, $this->cache),
                 new DetectorSource($this->logger, $this->cache),
                 new DirectorySource($this->logger, 'data/useragents'),
-            ]
+            ],
         );
 
-        /*******************************************************************************
+        /*
          * Loop
          */
 
@@ -217,11 +218,9 @@ class ParseCommand extends Command
                 $output->writeln('        parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...');
             }
 
-            $bench = [
-                'agent' => $agent,
-            ];
+            $bench = ['agent' => $agent];
 
-            /***************************************************************************
+            /*
              * handle modules
              */
             $cacheId = hash('sha512', bin2hex($agent));
@@ -231,7 +230,7 @@ class ParseCommand extends Command
             }
 
             foreach ($collection as $module) {
-                /* @var \UaComparator\Module\ModuleInterface $module */
+                /** @var ModuleInterface $module */
                 $module
                     ->startTimer()
                     ->detect($agent)
@@ -243,7 +242,7 @@ class ParseCommand extends Command
 
                 // per useragent benchmark
                 $bench[$module->getName()] = [
-                    'time'   => $actualTime,
+                    'time' => $actualTime,
                     'memory' => $actualMemory,
                 ];
 
@@ -251,19 +250,19 @@ class ParseCommand extends Command
                     'data/results/' . $cacheId . '/' . $module->getName() . '.json',
                     json_encode(
                         [
-                            'ua'     => $agent,
-                            'result' => (null === $detectionResult ? null : $detectionResult->toArray()),
-                            'time'   => $actualTime,
+                            'ua' => $agent,
+                            'result' => $detectionResult?->toArray(),
+                            'time' => $actualTime,
                             'memory' => $actualMemory,
                         ],
-                        JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR
-                    )
+                        JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR,
+                    ),
                 );
             }
 
             file_put_contents(
                 'data/results/' . $cacheId . '/bench.json',
-                json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR)
+                json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR),
             );
 
             ++$counter;

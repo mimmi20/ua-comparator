@@ -1,40 +1,32 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Module;
 
 use ArrayAccess;
 use Countable;
 use Iterator;
 
+use function count;
+
 /**
  * UaComparator.ini parsing class with caching and update capabilities
- *
- * @category  UaComparator
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2015 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class ModuleCollection implements Iterator, Countable, ArrayAccess
+final class ModuleCollection implements ArrayAccess, Countable, Iterator
 {
-    /**
-     * @var \UaComparator\Module\ModuleInterface[]
-     */
-    private $modules = [];
+    /** @var ModuleInterface[] */
+    private array $modules = [];
 
-    /**
-     * @var int
-     */
-    private $position = 0;
+    private int $position = 0;
 
     /**
      * Constructor
@@ -44,32 +36,23 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
         $this->position = 0;
     }
 
-    /**
-     * @param \UaComparator\Module\ModuleInterface $module
-     *
-     * @return \UaComparator\Module\ModuleCollection
-     */
-    public function addModule(ModuleInterface $module)
+    public function addModule(ModuleInterface $module): self
     {
         $this->modules[] = $module;
 
         return $this;
     }
 
-    /**
-     * @return \UaComparator\Module\ModuleInterface[]
-     */
-    public function getModules()
+    /** @return ModuleInterface[] */
+    public function getModules(): array
     {
         return $this->modules;
     }
 
     /**
      * initializes the module
-     *
-     * @return \UaComparator\Module\ModuleCollection
      */
-    public function init()
+    public function init(): self
     {
         foreach ($this->modules as $module) {
             $module->init();
@@ -82,11 +65,9 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Return the current element
      *
-     * @link http://php.net/manual/en/iterator.current.php
-     *
-     * @return \UaComparator\Module\ModuleInterface
+     * @see http://php.net/manual/en/iterator.current.php
      */
-    public function current()
+    public function current(): ModuleInterface
     {
         return $this->modules[$this->position];
     }
@@ -95,9 +76,9 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Move forward to next element
      *
-     * @link http://php.net/manual/en/iterator.next.php
+     * @see http://php.net/manual/en/iterator.next.php
      */
-    public function next()
+    public function next(): void
     {
         ++$this->position;
     }
@@ -106,11 +87,11 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Return the key of the current element
      *
-     * @link http://php.net/manual/en/iterator.key.php
+     * @see http://php.net/manual/en/iterator.key.php
      *
      * @return int scalar on success, or null on failure
      */
-    public function key()
+    public function key(): int
     {
         return $this->position;
     }
@@ -119,12 +100,12 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Checks if current position is valid
      *
-     * @link http://php.net/manual/en/iterator.valid.php
+     * @see http://php.net/manual/en/iterator.valid.php
      *
      * @return bool The return value will be casted to boolean and then evaluated.
      *              Returns true on success or false on failure.
      */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->modules[$this->position]);
     }
@@ -133,9 +114,9 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Rewind the Iterator to the first element
      *
-     * @link http://php.net/manual/en/iterator.rewind.php
+     * @see http://php.net/manual/en/iterator.rewind.php
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }
@@ -144,14 +125,14 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Count elements of an object
      *
-     * @link http://php.net/manual/en/countable.count.php
+     * @see http://php.net/manual/en/countable.count.php
      *
      * @return int The custom count as an integer.
      *             </p>
      *             <p>
      *             The return value is cast to an integer.
      */
-    public function count()
+    public function count(): int
     {
         return count($this->modules);
     }
@@ -160,7 +141,7 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Whether a offset exists
      *
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     * @see http://php.net/manual/en/arrayaccess.offsetexists.php
      *
      * @param mixed $offset <p>
      *                      An offset to check for.
@@ -171,7 +152,7 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      *              <p>
      *              The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->modules[$offset]);
     }
@@ -180,7 +161,7 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Offset to retrieve
      *
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     * @see http://php.net/manual/en/arrayaccess.offsetget.php
      *
      * @param mixed $offset <p>
      *                      The offset to retrieve.
@@ -190,14 +171,14 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->modules[$offset]) ? $this->modules[$offset] : null;
+        return $this->modules[$offset] ?? null;
     }
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Offset to set
      *
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     * @see http://php.net/manual/en/arrayaccess.offsetset.php
      *
      * @param mixed $offset <p>
      *                      The offset to assign the value to.
@@ -206,7 +187,7 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      *                      The value to set.
      *                      </p>
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (null === $offset) {
             $this->modules[] = $value;
@@ -219,13 +200,13 @@ class ModuleCollection implements Iterator, Countable, ArrayAccess
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Offset to unset
      *
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     * @see http://php.net/manual/en/arrayaccess.offsetunset.php
      *
      * @param mixed $offset <p>
      *                      The offset to unset.
      *                      </p>
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->modules[$offset]);
     }

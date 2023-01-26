@@ -1,17 +1,20 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Module\Mapper;
 
+use BrowserDetector\Version\Version;
 use Psr\Cache\CacheItemPoolInterface;
+use stdClass;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
 use UaResult\Device\Device;
@@ -20,31 +23,17 @@ use UaResult\Os\Os;
 use UaResult\Result\Result;
 use Wurfl\Request\GenericRequestFactory;
 
+use function in_array;
+
 /**
  * UaComparator.ini parsing class with caching and update capabilities
- *
- * @category  UaComparator
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2015 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class Woothee implements MapperInterface
+final class Woothee implements MapperInterface
 {
-    /**
-     * @var \UaDataMapper\InputMapper|null
-     */
-    private $mapper = null;
+    private InputMapper | null $mapper = null;
 
-    /**
-     * @var \Psr\Cache\CacheItemPoolInterface|null
-     */
-    private $cache = null;
+    private CacheItemPoolInterface | null $cache = null;
 
-    /**
-     * @param \UaDataMapper\InputMapper         $mapper
-     * @param \Psr\Cache\CacheItemPoolInterface $cache
-     */
     public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
     {
         $this->mapper = $mapper;
@@ -54,12 +43,9 @@ class Woothee implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param \stdClass $parserResult
-     * @param string    $agent
-     *
-     * @return \UaResult\Result\Result the object containing the browsers details
+     * @return Result the object containing the browsers details
      */
-    public function map($parserResult, $agent)
+    public function map(stdClass $parserResult, string $agent): Result
     {
         $browserName = $this->mapper->mapBrowserName($parserResult->name);
 
@@ -67,14 +53,14 @@ class Woothee implements MapperInterface
             $browserName,
             null,
             $this->mapper->mapBrowserVersion($parserResult->version, $browserName),
-            $this->mapper->mapBrowserType($this->cache, $parserResult->category)
+            $this->mapper->mapBrowserType($this->cache, $parserResult->category),
         );
 
-        if (!empty($parserResult->os) && !in_array($parserResult->os, ['iPad', 'iPhone'])) {
+        if (!empty($parserResult->os) && !in_array($parserResult->os, ['iPad', 'iPhone'], true)) {
             $osName    = $this->mapper->mapOsName($parserResult->os);
             $osVersion = $this->mapper->mapOsVersion($parserResult->os_version, $osName);
 
-            if (!($osVersion instanceof \BrowserDetector\Version\Version)) {
+            if (!($osVersion instanceof Version)) {
                 $osVersion = null;
             }
 
@@ -91,10 +77,7 @@ class Woothee implements MapperInterface
         return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
-    /**
-     * @return null|\UaDataMapper\InputMapper
-     */
-    public function getMapper()
+    public function getMapper(): InputMapper | null
     {
         return $this->mapper;
     }
