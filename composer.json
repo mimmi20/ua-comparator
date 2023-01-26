@@ -42,7 +42,7 @@
     "phpstan/phpstan": "^1.4.8",
     "phpstan/phpstan-deprecation-rules": "^1.0.0",
     "phpstan/phpstan-phpunit": "^1.0.0",
-    "phpunit/phpunit": "^9.5.17"
+    "phpunit/phpunit": "^9.5.28"
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
