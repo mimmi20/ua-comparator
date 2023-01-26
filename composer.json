@@ -37,7 +37,7 @@
     "symfony/console": "^v5.4.2 || ^v6.0.3"
   },
   "require-dev": {
-    "mimmi20/coding-standard": "^2.6.3",
+    "mimmi20/coding-standard": "^3.0.26",
     "phpstan/extension-installer": "^1.1.0",
     "phpstan/phpstan": "^1.4.8",
     "phpstan/phpstan-deprecation-rules": "^1.0.0",
