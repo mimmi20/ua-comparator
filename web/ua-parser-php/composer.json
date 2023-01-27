@@ -6,7 +6,7 @@
     "symfony/yaml": "^v6.0.3",
     "symfony/filesystem": "^v6.0.6",
     "symfony/finder": "^v6.0.3",
-    "symfony/console": "^v6.0.5"
+    "symfony/console": "^v6.2.5"
   },
   "config": {
     "preferred-install": "dist",
