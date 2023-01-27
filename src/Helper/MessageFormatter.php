@@ -1,14 +1,15 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Helper;
 
 use BrowserDetector\Version\Version;
@@ -18,71 +19,53 @@ use Psr\Log\LoggerInterface;
 use UaResult\Result\Result;
 use UaResult\Result\ResultFactory;
 
+use function array_keys;
+use function assert;
+use function in_array;
+use function mb_strlen;
+use function mb_strpos;
+use function mb_strtolower;
+use function mb_substr;
+use function str_pad;
+
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
- *
- * @category  BrowserDetectorModule
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2012-2014 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class MessageFormatter
+final class MessageFormatter
 {
-    /**
-     * @var \UaResult\Result\Result[]
-     */
-    private $collection = null;
+    /** @var Result[] */
+    private array $collection;
 
-    /**
-     * @var int
-     */
-    private $columnsLength = 0;
+    private int $columnsLength = 0;
 
-    /**
-     * @var \UaResult\Result\ResultFactory
-     */
-    private $resultFactory = null;
+    private ResultFactory $resultFactory;
 
     public function __construct()
     {
         $this->resultFactory = new ResultFactory();
     }
 
-    /**
-     * @param \UaResult\Result\Result[] $collection
-     *
-     * @return \UaComparator\Helper\MessageFormatter
-     */
-    public function setCollection(array $collection)
+    /** @param Result[] $collection */
+    public function setCollection(array $collection): self
     {
         $this->collection = $collection;
 
         return $this;
     }
 
-    /**
-     * @param int $columnsLength
-     *
-     * @return \UaComparator\Helper\MessageFormatter
-     */
-    public function setColumnsLength($columnsLength)
+    public function setColumnsLength(int $columnsLength): self
     {
         $this->columnsLength = $columnsLength;
 
         return $this;
     }
 
-    /**
-     * @param string $propertyName
-     *
-     * @return string[]
-     */
-    public function formatMessage($propertyName, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    /** @return string[] */
+    public function formatMessage(string $propertyName, CacheItemPoolInterface $cache, LoggerInterface $logger): array
     {
-        $modules = array_keys($this->collection);
-        /** @var \UaResult\Result\Result $firstElement */
+        $modules      = array_keys($this->collection);
         $firstElement = $this->collection[$modules[0]]['result'];
+        assert($firstElement instanceof Result);
 
         if (null === $firstElement) {
             $strReality = '(NULL)';
@@ -93,8 +76,8 @@ class MessageFormatter
         $detectionResults = [];
 
         foreach ($modules as $module => $name) {
-            /** @var \UaResult\Result\Result $element */
             $element = $this->collection[$name]['result'];
+            assert($element instanceof Result);
             if (null === $element) {
                 $strTarget = '(NULL)';
             } else {
@@ -103,15 +86,17 @@ class MessageFormatter
 
             if (mb_strtolower($strTarget) === mb_strtolower($strReality)) {
                 $r1 = ' ';
-            } elseif (in_array($strReality, ['(NULL)', '', '(empty)']) || in_array($strTarget, ['(NULL)', '', '(empty)'])) {
+            } elseif (in_array($strReality, ['(NULL)', '', '(empty)'], true) || in_array($strTarget, ['(NULL)', '', '(empty)'], true)) {
                 $r1 = ' ';
             } else {
-                if ((mb_strlen($strTarget) > mb_strlen($strReality))
+                if (
+                    (mb_strlen($strTarget) > mb_strlen($strReality))
                     && (0 < mb_strlen($strReality))
                     && (0 === mb_strpos($strTarget, $strReality))
                 ) {
                     $r1 = '-';
-                } elseif ((mb_strlen($strTarget) < mb_strlen($strReality))
+                } elseif (
+                    (mb_strlen($strTarget) < mb_strlen($strReality))
                     && (0 < mb_strlen($strTarget))
                     && (0 === mb_strpos($strReality, $strTarget))
                 ) {
@@ -132,17 +117,12 @@ class MessageFormatter
         return $detectionResults;
     }
 
-    /**
-     * @param \UaResult\Result\Result $element
-     * @param string                  $propertyName
-     *
-     * @return string
-     */
-    private function getValue(Result $element, $propertyName)
+    private function getValue(Result $element, string $propertyName): string
     {
         switch ($propertyName) {
             case 'mobile_browser':
                 $value = $element->getBrowser()->getName();
+
                 break;
             case 'mobile_browser_version':
                 $value = $element->getBrowser()->getVersion();
@@ -154,21 +134,27 @@ class MessageFormatter
                 if ('' === $value) {
                     $value = null;
                 }
+
                 break;
             case 'mobile_browser_modus':
                 $value = $element->getBrowser()->getModus();
+
                 break;
             case 'mobile_browser_bits':
                 $value = $element->getBrowser()->getBits();
+
                 break;
             case 'browser_type':
                 $value = $element->getBrowser()->getType()->getName();
+
                 break;
             case 'mobile_browser_manufacturer':
                 $value = $element->getBrowser()->getManufacturer()->getName();
+
                 break;
             case 'renderingengine_name':
                 $value = $element->getEngine()->getName();
+
                 break;
             case 'renderingengine_version':
                 $value = $element->getEngine()->getVersion();
@@ -180,12 +166,15 @@ class MessageFormatter
                 if ('' === $value) {
                     $value = null;
                 }
+
                 break;
             case 'renderingengine_manufacturer':
                 $value = $element->getEngine()->getManufacturer()->getName();
+
                 break;
             case 'device_os':
                 $value = $element->getOs()->getName();
+
                 break;
             case 'device_os_version':
                 $value = $element->getOs()->getVersion();
@@ -197,48 +186,63 @@ class MessageFormatter
                 if ('' === $value) {
                     $value = null;
                 }
+
                 break;
             case 'device_os_bits':
                 $value = $element->getOs()->getBits();
+
                 break;
             case 'device_os_manufacturer':
                 $value = $element->getOs()->getManufacturer()->getName();
+
                 break;
             case 'brand_name':
                 $value = $element->getDevice()->getBrand()->getBrandName();
+
                 break;
             case 'marketing_name':
                 $value = $element->getDevice()->getMarketingName();
+
                 break;
             case 'model_name':
                 $value = $element->getDevice()->getDeviceName();
+
                 break;
             case 'manufacturer_name':
                 $value = $element->getDevice()->getManufacturer()->getName();
+
                 break;
             case 'device_type':
                 $value = $element->getDevice()->getType()->getName();
+
                 break;
             case 'pointing_method':
                 $value = $element->getDevice()->getPointingMethod();
+
                 break;
             case 'has_qwerty_keyboard':
                 $value = $element->getDevice()->getHasQwertyKeyboard();
+
                 break;
             case 'resolution_width':
                 $value = $element->getDevice()->getResolutionWidth();
+
                 break;
             case 'resolution_height':
                 $value = $element->getDevice()->getResolutionHeight();
+
                 break;
             case 'dual_orientation':
                 $value = $element->getDevice()->getDualOrientation();
+
                 break;
             case 'colors':
                 $value = $element->getDevice()->getColors();
+
                 break;
             default:
                 $value = '(n/a)';
+
                 break;
         }
 

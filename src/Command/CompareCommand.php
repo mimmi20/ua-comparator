@@ -1,57 +1,55 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Command;
 
+use DirectoryIterator;
+use IteratorIterator;
+use LogicException;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
 use Psr\Cache\CacheItemPoolInterface;
+use SplFileInfo;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
 use UaComparator\Helper\MessageFormatter;
 
-/**
- * Class CompareCommand
- *
- * @category   UaComparator
- *
- * @author     Thomas Müller <mimmi20@live.de>
- */
-class CompareCommand extends Command
+use function array_keys;
+use function array_values;
+use function assert;
+use function count;
+use function file_exists;
+use function file_get_contents;
+use function in_array;
+use function json_decode;
+use function mb_substr;
+use function str_pad;
+use function str_repeat;
+use function substr_replace;
+
+use const JSON_THROW_ON_ERROR;
+use const STR_PAD_LEFT;
+
+final class CompareCommand extends Command
 {
-    const COL_LENGTH       = 50;
-    const FIRST_COL_LENGTH = 20;
+    public const COL_LENGTH       = 50;
+    public const FIRST_COL_LENGTH = 20;
 
-    private Logger $logger;
-
-    private CacheItemPoolInterface $cache;
-
-    private Config $config;
-
-    /**
-     * @param \Monolog\Logger                   $logger
-     * @param \Psr\Cache\CacheItemPoolInterface $cache
-     * @param \Noodlehaus\Config                $config
-     */
-    public function __construct(Logger $logger, CacheItemPoolInterface $cache, Config $config)
+    public function __construct(private Logger $logger, private CacheItemPoolInterface $cache, private Config $config)
     {
-        $this->logger = $logger;
-        $this->cache  = $cache;
-        $this->config = $config;
-
         parent::__construct();
     }
 
@@ -73,30 +71,30 @@ class CompareCommand extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface   $input  An InputInterface instance
-     * @param \Symfony\Component\Console\Output\OutputInterface $output An OutputInterface instance
-     *
-     * @throws \LogicException When this abstract method is not implemented
-     *
-     * @return null|int null or 0 if everything went fine, or an error code
-     *
      * @see    setCode()
+     *
+     * @param InputInterface  $input  An InputInterface instance
+     * @param OutputInterface $output An OutputInterface instance
+     *
+     * @return int|null null or 0 if everything went fine, or an error code
+     *
+     * @throws LogicException When this abstract method is not implemented
+     *
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
-    protected function execute(
-        InputInterface $input,
-        OutputInterface $output
-    ): int {
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $output->writeln('preparing App ...');
 
         $consoleLogger = new ConsoleLogger($output);
         $this->logger->pushHandler(new PsrHandler($consoleLogger));
 
-        /*******************************************************************************
+        /*
          * Loop
          */
 
         $dataDir   = 'data/results/';
-        $iterator  = new \DirectoryIterator($dataDir);
+        $iterator  = new DirectoryIterator($dataDir);
         $i         = 1;
         $okfound   = 0;
         $nokfound  = 0;
@@ -122,9 +120,9 @@ class CompareCommand extends Command
             $modules[] = $moduleConfig['name'];
         }
 
-        foreach (new \IteratorIterator($iterator) as $file) {
-            /** @var $file \SplFileInfo */
-            if ($file->isFile() || in_array($file->getFilename(), ['.', '..'])) {
+        foreach (new IteratorIterator($iterator) as $file) {
+            assert($file instanceof SplFileInfo);
+            if ($file->isFile() || in_array($file->getFilename(), ['.', '..'], true)) {
                 continue;
             }
 
@@ -169,10 +167,10 @@ class CompareCommand extends Command
                 $allResults[$propertyTitel] = $detectionResults;
             }
 
-            if (in_array('-', $matches)) {
+            if (in_array('-', $matches, true)) {
                 ++$nokfound;
 
-                $content = $this->getLine($collection);
+                $content  = $this->getLine($collection);
                 $content .= '|                    |' . mb_substr($agent, 0, self::COL_LENGTH * count($collection)) . "\n";
 
                 $content .= $this->getLine($collection);
@@ -181,6 +179,7 @@ class CompareCommand extends Command
                 foreach (array_keys($collection) as $moduleName) {
                     $content .= str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
                 }
+
                 $content .= "\n";
 
                 $content .= $this->getLine($collection);
@@ -192,7 +191,7 @@ class CompareCommand extends Command
 
                     foreach (array_values($detectionResults) as $index => $value) {
                         $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
-                        $lineContent = substr_replace($lineContent, mb_substr($value, 0, 1), 22 + $index, 1);
+                        $lineContent  = substr_replace($lineContent, mb_substr($value, 0, 1), 22 + $index, 1);
                     }
 
                     $content .= $lineContent . "\n";
@@ -200,7 +199,7 @@ class CompareCommand extends Command
 
                 $content .= $this->getLine($collection);
                 echo '-', "\n", $content;
-            } elseif (in_array(':', $matches)) {
+            } elseif (in_array(':', $matches, true)) {
                 echo ':';
                 ++$sosofound;
             } else {
@@ -208,7 +207,7 @@ class CompareCommand extends Command
                 ++$okfound;
             }
 
-            if (($i % 100) === 0) {
+            if (0 === $i % 100) {
                 echo "\n";
             }
 
@@ -220,14 +219,9 @@ class CompareCommand extends Command
         return self::SUCCESS;
     }
 
-    /**
-     * @param array $collection
-     *
-     * @return string
-     */
     private function getLine(array $collection = []): string
     {
-        $content = '+--------------------+';
+        $content  = '+--------------------+';
         $content .= str_repeat('-', count($collection));
         $content .= '+--------------------------------------------------+';
         $content .= str_repeat('--------------------------------------------------+', count($collection));

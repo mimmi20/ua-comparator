@@ -1,33 +1,25 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Helper;
+
+use function mb_substr;
 
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
- *
- * @category  BrowserDetectorModule
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2012-2014 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class TimeFormatter
+final class TimeFormatter
 {
-    /**
-     * @param string $time
-     *
-     * @return string
-     */
-    public static function formatTime($time)
+    public static function formatTime(string $time): string
     {
         $wochen      = (int) ((int) $time / 604800);
         $restwoche   = (int) ((int) $time % 604800);

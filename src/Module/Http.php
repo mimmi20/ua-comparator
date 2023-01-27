@@ -1,134 +1,72 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Module;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use GuzzleHttp\Psr7\Response;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use UaComparator\Helper\Request;
 use UaComparator\Module\Check\CheckInterface;
 use UaComparator\Module\Mapper\MapperInterface;
+use UaResult\Result\Result;
+use Ubench;
+use UnexpectedValueException;
+
+use function http_build_query;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
- *
- * @category  UaComparator
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2015 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class Http implements ModuleInterface
+final class Http implements ModuleInterface
 {
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger = null;
-
-    /**
-     * @var \Psr\Cache\CacheItemPoolInterface
-     */
-    private $cache = null;
-
-    /**
-     * @var string
-     */
-    private $name = '';
-
-    /**
-     * @var \GuzzleHttp\Psr7\Response|null
-     */
-    private $detectionResult = null;
-
-    /**
-     * @var string
-     */
-    private $agent = '';
-
-    /**
-     * @var null|\Ubench
-     */
-    private $bench = null;
-
-    /**
-     * @var null|array
-     */
-    private $config = null;
-
-    /**
-     * @var null|\UaComparator\Module\Check\CheckInterface
-     */
-    private $check = null;
-
-    /**
-     * @var null|\UaComparator\Module\Mapper\MapperInterface
-     */
-    private $mapper = null;
-
-    /**
-     * @var \GuzzleHttp\Psr7\Request
-     */
-    private $request = null;
-
-    /**
-     * @var float
-     */
-    private $duration = 0.0;
-
-    /**
-     * @var int
-     */
-    private $memory = 0;
+    private string $name                     = '';
+    private Response | null $detectionResult = null;
+    private string $agent                    = '';
+    private Ubench | null $bench             = null;
+    private array | null $config             = null;
+    private CheckInterface | null $check     = null;
+    private MapperInterface | null $mapper   = null;
+    private \GuzzleHttp\Psr7\Request $request;
+    private float $duration     = 0.0;
+    private int | float $memory = 0;
 
     /**
      * creates the module
-     *
-     * @param \Psr\Log\LoggerInterface          $logger
-     * @param \Psr\Cache\CacheItemPoolInterface $cache
      */
-    public function __construct(LoggerInterface $logger, CacheItemPoolInterface $cache)
+    public function __construct(private LoggerInterface $logger, private CacheItemPoolInterface $cache)
     {
-        $this->logger = $logger;
-        $this->cache  = $cache;
-
-        $this->bench = new \Ubench();
+        $this->bench = new Ubench();
     }
 
     /**
      * initializes the module
-     *
-     * @return \UaComparator\Module\Http
      */
-    public function init()
+    public function init(): self
     {
         return $this;
     }
 
-    /**
-     * @param string $agent
-     * @param array  $headers
-     *
-     * @return \UaComparator\Module\Http
-     */
-    public function detect($agent, array $headers = [])
+    public function detect(string $agent, array $headers = []): self
     {
         $this->agent = $agent;
         $body        = null;
 
-        $params  = [$this->config['ua-key'] => $agent] + $this->config['params'];
-        $headers = $headers + $this->config['headers'];
+        $params   = [$this->config['ua-key'] => $agent] + $this->config['params'];
+        $headers += $this->config['headers'];
 
         if ('GET' === $this->config['method']) {
             $uri = $this->config['uri'] . '?' . http_build_query($params, '', '&');
@@ -155,10 +93,8 @@ class Http implements ModuleInterface
 
     /**
      * starts the detection timer
-     *
-     * @return \UaComparator\Module\Http
      */
-    public function startTimer()
+    public function startTimer(): self
     {
         $this->bench->start();
 
@@ -167,10 +103,8 @@ class Http implements ModuleInterface
 
     /**
      * stops the detection timer
-     *
-     * @return \UaComparator\Module\Http
      */
-    public function endTimer()
+    public function endTimer(): self
     {
         $this->bench->end();
 
@@ -182,111 +116,72 @@ class Http implements ModuleInterface
 
     /**
      * returns the needed time
-     *
-     * @return float
      */
-    public function getTime()
+    public function getTime(): float
     {
         return $this->duration;
     }
 
     /**
      * returns the maximum needed memory
-     *
-     * @return int
      */
-    public function getMaxMemory()
+    public function getMaxMemory(): int
     {
         return $this->memory;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return \UaComparator\Module\Http
-     */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getConfig()
+    public function getConfig(): array | null
     {
         return $this->config;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return \UaComparator\Module\Http
-     */
-    public function setConfig(array $config)
+    public function setConfig(array $config): self
     {
         $this->config = $config;
 
         return $this;
     }
 
-    /**
-     * @return null|\UaComparator\Module\Check\CheckInterface
-     */
-    public function getCheck()
+    public function getCheck(): CheckInterface | null
     {
         return $this->check;
     }
 
-    /**
-     * @param \UaComparator\Module\Check\CheckInterface $check
-     *
-     * @return \UaComparator\Module\Http
-     */
-    public function setCheck(CheckInterface $check)
+    public function setCheck(CheckInterface $check): self
     {
         $this->check = $check;
 
         return $this;
     }
 
-    /**
-     * @return null|\UaComparator\Module\Mapper\MapperInterface
-     */
-    public function getMapper()
+    public function getMapper(): MapperInterface | null
     {
         return $this->mapper;
     }
 
-    /**
-     * @param \UaComparator\Module\Mapper\MapperInterface $mapper
-     *
-     * @return \UaComparator\Module\Http
-     */
-    public function setMapper(MapperInterface $mapper)
+    public function setMapper(MapperInterface $mapper): self
     {
         $this->mapper = $mapper;
 
         return $this;
     }
 
-    /**
-     * @return \UaResult\Result\Result|null
-     */
-    public function getDetectionResult()
+    public function getDetectionResult(): Result | null
     {
         if (null === $this->detectionResult) {
-            return;
+            return null;
         }
 
         try {
@@ -295,24 +190,24 @@ class Http implements ModuleInterface
                 $this->request,
                 $this->cache,
                 $this->logger,
-                $this->agent
+                $this->agent,
             );
         } catch (RequestException $e) {
             $this->logger->error($e);
 
-            return;
+            return null;
         }
 
         if (isset($return->duration)) {
             $this->duration = $return->duration;
 
-            unset($return->duration);
+            $return->duration = null;
         }
 
         if (isset($return->memory)) {
             $this->memory = $return->memory;
 
-            unset($return->memory);
+            $return->memory = null;
         }
 
         try {
@@ -321,8 +216,10 @@ class Http implements ModuleInterface
             }
 
             return $this->getMapper()->map($return, $this->agent);
-        } catch (\UnexpectedValueException $e) {
+        } catch (UnexpectedValueException $e) {
             $this->logger->error($e);
         }
+
+        return null;
     }
 }

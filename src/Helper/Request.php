@@ -1,47 +1,40 @@
 <?php
 /**
- * This file is part of the ua-comparator package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2017, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 declare(strict_types = 1);
+
 namespace UaComparator\Helper;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
+
+use function assert;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
- *
- * @category  UaComparator
- *
- * @author    Thomas Mueller <mimmi20@live.de>
- * @copyright 2015 Thomas Mueller
- * @license   http://www.opensource.org/licenses/MIT MIT License
  */
-class Request
+final class Request
 {
     /**
      * sends the request and checks the response code
      *
-     * @param \Psr\Http\Message\RequestInterface $request
-     * @param \GuzzleHttp\Client                 $client
-     *
-     * @throws \GuzzleHttp\Exception\RequestException
-     *
-     * @return \GuzzleHttp\Psr7\Response
+     * @throws RequestException
      */
-    public function getResponse(RequestInterface $request, Client $client)
+    public function getResponse(RequestInterface $request, Client $client): Response
     {
-        /* @var $response \GuzzleHttp\Psr7\Response */
         $response = $client->send($request);
+        assert($response instanceof Response);
 
-        if ($response->getStatusCode() !== 200) {
+        if (200 !== $response->getStatusCode()) {
             throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Status code is: "' . $response->getStatusCode() . '"', $request);
         }
 
