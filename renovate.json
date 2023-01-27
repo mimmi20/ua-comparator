@@ -21,7 +21,7 @@
   "platformAutomerge": true,
   "rangeStrategy": "replace",
   "rollbackPrs": true,
-  "schedule": ["daily"],
+  "schedule": ["before 3am"],
   "updateLockFiles": true,
   "packageRules": [
     {"matchDepTypes": ["require"], "rangeStrategy": "widen"},
