@@ -33,25 +33,16 @@ use function http_build_query;
  */
 final class Http implements ModuleInterface
 {
-    private string $name = '';
-
+    private string $name                     = '';
     private Response | null $detectionResult = null;
-
-    private string $agent = '';
-
-    private Ubench | null $bench = null;
-
-    private array | null $config = null;
-
-    private CheckInterface | null $check = null;
-
-    private MapperInterface | null $mapper = null;
-
+    private string $agent                    = '';
+    private Ubench | null $bench             = null;
+    private array | null $config             = null;
+    private CheckInterface | null $check     = null;
+    private MapperInterface | null $mapper   = null;
     private \GuzzleHttp\Psr7\Request $request;
-
-    private float $duration = 0.0;
-
-    private int $memory = 0;
+    private float $duration     = 0.0;
+    private int | float $memory = 0;
 
     /**
      * creates the module
@@ -190,7 +181,7 @@ final class Http implements ModuleInterface
     public function getDetectionResult(): Result | null
     {
         if (null === $this->detectionResult) {
-            return;
+            return null;
         }
 
         try {
@@ -204,7 +195,7 @@ final class Http implements ModuleInterface
         } catch (RequestException $e) {
             $this->logger->error($e);
 
-            return;
+            return null;
         }
 
         if (isset($return->duration)) {
@@ -228,5 +219,7 @@ final class Http implements ModuleInterface
         } catch (UnexpectedValueException $e) {
             $this->logger->error($e);
         }
+
+        return null;
     }
 }
