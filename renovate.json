@@ -17,10 +17,25 @@
   ],
   "commitBodyTable": true,
   "enabledManagers": ["composer", "github-actions", "npm"],
-  "lockFileMaintenance": {"enabled": false, "extends": ["schedule:daily"]},
-  "platformAutomerge": false,
-  "schedule": [
-    "at 3am on Tuesday"
+  "lockFileMaintenance": {"enabled": true, "extends": ["schedule:daily"]},
+  "platformAutomerge": true,
+  "rangeStrategy": "replace",
+  "rollbackPrs": true,
+  "schedule": ["daily"],
+  "updateLockFiles": true,
+  "packageRules": [
+    {"matchDepTypes": ["require"], "rangeStrategy": "widen"},
+    {"matchPackagePatterns": ["^mimmi20/"], "groupSlug": "mimmi20", "groupName": "mimmi20 packages"},
+    {
+      "matchPackageNames": ["php"],
+      "allowedVersions": "^8.1",
+      "extends": [":automergeDisabled", ":automergePr"],
+      "ignoreUnstable": false,
+      "groupName": "PHP"
+    }
   ],
-  "updateLockFiles": true
+  "vulnerabilityAlerts": {
+    "extends": [":automergeDisabled", ":automergePr"],
+    "rangeStrategy": "bump"
+  }
 }
