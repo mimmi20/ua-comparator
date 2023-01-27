@@ -16,7 +16,7 @@
     "group:allNonMajor"
   ],
   "commitBodyTable": true,
-  "enabledManagers": ["composer", "github-actions"],
+  "enabledManagers": ["composer", "github-actions", "npm"],
   "lockFileMaintenance": {"enabled": false, "extends": ["schedule:daily"]},
   "platformAutomerge": false,
   "schedule": [
