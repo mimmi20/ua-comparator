@@ -33,22 +33,6 @@ updates:
 #        versions:
 #          - ">= 0"
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    commit-message:
-      include: "scope"
-      prefix: "github-actions"
-
   - package-ecosystem: "npm"
     directory: "web/3rd-eden/"
     schedule:
@@ -425,3 +409,6 @@ updates:
     labels:
       - "dependencies"
     target-branch: "master"
+    commit-message:
+      include: "scope"
+      prefix: "github-actions"
