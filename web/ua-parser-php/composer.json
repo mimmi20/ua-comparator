@@ -5,7 +5,7 @@
     "ua-parser/uap-php": "^v3.9.14",
     "symfony/yaml": "^v6.0.3",
     "symfony/filesystem": "^v6.0.6",
-    "symfony/finder": "^v6.0.3",
+    "symfony/finder": "^v6.2.5",
     "symfony/console": "^v6.0.5"
   },
   "config": {
