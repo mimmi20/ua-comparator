@@ -9,13 +9,13 @@
       "version": "1.0.0",
       "license": "ISC",
       "dependencies": {
-        "which-browser": "^0.5.1"
+        "which-browser": "^0.7.0"
       }
     },
     "node_modules/which-browser": {
-      "version": "0.5.1",
-      "resolved": "https://registry.npmjs.org/which-browser/-/which-browser-0.5.1.tgz",
-      "integrity": "sha512-MulGxP+e6dN62chtrKRPRftpyAqt870E8KtonNRwuOn5hilWkNW4MUbsXxNy1IdyrPD8xKKFLqLbuYV1pOIi4Q==",
+      "version": "0.7.0",
+      "resolved": "https://registry.npmjs.org/which-browser/-/which-browser-0.7.0.tgz",
+      "integrity": "sha512-3VyIKnUZoTpUwqRhmd4x96Z3pKGV16SyBDp0DANd7/ujnxO+/48wMC9vodMjiCD0lX8YMtJDUoMdCIaTCnYooA==",
       "engines": {
         "node": ">=6.0.0"
       }
@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "which-browser": {
-      "version": "0.5.1",
-      "resolved": "https://registry.npmjs.org/which-browser/-/which-browser-0.5.1.tgz",
-      "integrity": "sha512-MulGxP+e6dN62chtrKRPRftpyAqt870E8KtonNRwuOn5hilWkNW4MUbsXxNy1IdyrPD8xKKFLqLbuYV1pOIi4Q=="
+      "version": "0.7.0",
+      "resolved": "https://registry.npmjs.org/which-browser/-/which-browser-0.7.0.tgz",
+      "integrity": "sha512-3VyIKnUZoTpUwqRhmd4x96Z3pKGV16SyBDp0DANd7/ujnxO+/48wMC9vodMjiCD0lX8YMtJDUoMdCIaTCnYooA=="
     }
   }
 }
