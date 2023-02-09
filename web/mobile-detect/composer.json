@@ -2,7 +2,7 @@
   "require": {
     "php": "^8.1.0",
     "composer-runtime-api": "^2.0",
-    "mobiledetect/mobiledetectlib": "^2.8.37 || ^3.0.0"
+    "mobiledetect/mobiledetectlib": "3.74.0"
   },
   "config": {
     "preferred-install": "dist",

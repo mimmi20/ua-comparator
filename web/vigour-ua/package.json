@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "vigour-ua": "^4.0.0"
+    "vigour-ua": "4.0.0"
   }
 }

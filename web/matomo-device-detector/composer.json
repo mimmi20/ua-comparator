@@ -2,8 +2,8 @@
   "require": {
     "php": "^8.1.0",
     "composer-runtime-api": "^2.0",
-    "matomo/device-detector": "^5.0.1 || ^6.0.0",
-    "matthiasmullie/scrapbook": "^1.4.8"
+    "matomo/device-detector": "6.0.6",
+    "matthiasmullie/scrapbook": "1.5.1"
   },
   "config": {
     "preferred-install": "dist",

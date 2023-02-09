@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@financial-times/useragent_parser": "^1.6.0"
+    "@financial-times/useragent_parser": "1.6.3"
   }
 }

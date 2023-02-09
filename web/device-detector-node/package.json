@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "device-detector-node": "^0.1.38"
+    "device-detector-node": "0.1.38"
   }
 }

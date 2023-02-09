@@ -10,8 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "request": "^2.88.2",
-    "useragent": "^2.3.0",
-    "yamlparser": "*"
+    "request": "2.88.2",
+    "useragent": "2.3.0",
+    "yamlparser": "0.0.2"
   }
 }

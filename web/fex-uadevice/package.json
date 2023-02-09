@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ua-device": "^0.1.10"
+    "ua-device": "0.1.10"
   }
 }
