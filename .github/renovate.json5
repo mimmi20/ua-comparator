@@ -1,41 +1,77 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base",
-    ":assignee(mimmi20)",
-    ":automergeDisabled",
-    ":combinePatchMinorReleases",
-    ":disableDependencyDashboard",
-    ":disableLockFiles",
-    ":enableRenovate",
-    ":enableVulnerabilityAlerts",
-    ":gitSignOff",
-    ":ignoreUnstable",
-    ":label(dependencies)",
-    ":maintainLockFilesDisabled",
-    ":noUnscheduledUpdates",
-    ":pinVersions",
-    ":prNotPending",
-    ":rebaseStalePrs",
-    ":reviewer(mimmi20)",
-    ":semanticCommitsDisabled",
-    ":separateMajorReleases",
-    ":timezone(UTC)",
-    "group:allNonMajor"
+
+  "extends": ["github>whitesource/merge-confidence:beta"],
+
+  "enabled": true,
+  "assignees": [
+    "mimmi20"
   ],
+  "automerge": false,
+  "commitBody": "Signed-off-by: {{{gitAuthor}}}",
   "commitBodyTable": true,
+  "dependencyDashboard": false,
   "enabledManagers": ["composer", "github-actions", "npm"],
+  "ignoreUnstable": true,
+  "labels": [
+    "dependencies"
+  ],
+  "lockFileMaintenance": {
+    "enabled": false
+  },
   "platformAutomerge": false,
+  "prBodyColumns": [
+    "Package",
+    "Change",
+    "Type",
+    "Update"
+  ],
+  "prBodyDefinitions": {
+    "Package": "`{{{depName}}}`",
+    "Type": "{{{depType}}}",
+    "Update": "{{{updateType}}}",
+    "Change": "[{{#if displayFrom}}`{{{displayFrom}}}` -> {{else}}{{#if currentValue}}`{{{currentValue}}}` -> {{/if}}{{/if}}{{#if displayTo}}`{{{displayTo}}}`{{else}}`{{{newValue}}}`{{/if}}]({{#if depName}}https://renovatebot.com/diffs/npm/{{replace '/' '%2f' depName}}/{{{currentVersion}}}/{{{newVersion}}}{{/if}})"
+  },
+  "prCreation": "immediate",
+  "rangeStrategy": "bump",
+  "rebaseWhen": "behind-base-branch",
+  "reviewers": [
+    "mimmi20"
+  ],
   "rollbackPrs": true,
   "schedule": ["before 3am"],
+  "semanticCommits": "disabled",
+  "separateMajorMinor": true,
+  "separateMinorPatch": false,
+  "timezone": "UTC",
+  "updateLockFiles": false,
+  "updateNotScheduled": false,
   "packageRules": [
-    {"matchPackagePatterns": ["^mimmi20/"], "groupSlug": "mimmi20", "groupName": "mimmi20 packages"},
     {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
+    },
+    {
+      "groupName": "mimmi20 packages",
+      "groupSlug": "mimmi20",
+      "matchPackagePatterns": ["^mimmi20/"]
+    },
+    {
+      "groupName": "PHP",
       "matchPackageNames": ["php"],
       "allowedVersions": "^8.1",
-      "extends": [":automergeDisabled", ":automergePr"],
       "ignoreUnstable": false,
-      "groupName": "PHP"
+      "rangeStrategy": "widen"
     }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true
+  }
 }
