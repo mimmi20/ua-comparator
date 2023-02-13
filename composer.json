@@ -32,11 +32,11 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "devster/ubench": "^2.1.0",
-    "hassankhan/config": "^3.0.0",
-    "league/flysystem": "^3.0.11",
-    "matthiasmullie/scrapbook": "^1.4.8",
-    "monolog/monolog": "^3.2.0",
-    "symfony/console": "^v6.0.3"
+    "hassankhan/config": "^3.1.0",
+    "league/flysystem": "^3.12.2",
+    "matthiasmullie/scrapbook": "^1.5.1",
+    "monolog/monolog": "^3.3.1",
+    "symfony/console": "^v6.2.5"
   },
   "require-dev": {
     "ext-dom": "*",
@@ -46,7 +46,7 @@
     "ext-xmlwriter": "*",
     "mimmi20/coding-standard": "^3.0.27",
     "phpstan/extension-installer": "^1.2.0",
-    "phpstan/phpstan": "^1.9.14",
+    "phpstan/phpstan": "^1.9.17",
     "phpstan/phpstan-deprecation-rules": "^1.1.1"
   },
   "minimum-stability": "stable",
