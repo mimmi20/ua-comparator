@@ -46,7 +46,7 @@
     "ext-xmlwriter": "*",
     "mimmi20/coding-standard": "^3.0.27",
     "phpstan/extension-installer": "^1.2.0",
-    "phpstan/phpstan": "^1.9.17",
+    "phpstan/phpstan": "^1.9.18",
     "phpstan/phpstan-deprecation-rules": "^1.1.1"
   },
   "minimum-stability": "stable",
