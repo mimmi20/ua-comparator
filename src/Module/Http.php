@@ -12,6 +12,7 @@ declare(strict_types = 1);
 
 namespace UaComparator\Module;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
@@ -44,22 +45,25 @@ final class Http implements ModuleInterface
     private float $duration     = 0.0;
     private int | float $memory = 0;
 
-    /**
-     * creates the module
-     */
-    public function __construct(private LoggerInterface $logger, private CacheItemPoolInterface $cache)
-    {
+    /** @throws void */
+    public function __construct(
+        private LoggerInterface $logger,
+        private CacheItemPoolInterface $cache,
+    ) {
         $this->bench = new Ubench();
     }
 
     /**
      * initializes the module
+     *
+     * @throws void
      */
     public function init(): self
     {
         return $this;
     }
 
+    /** @throws void */
     public function detect(string $agent, array $headers = []): self
     {
         $this->agent = $agent;
@@ -93,6 +97,8 @@ final class Http implements ModuleInterface
 
     /**
      * starts the detection timer
+     *
+     * @throws void
      */
     public function startTimer(): self
     {
@@ -103,6 +109,8 @@ final class Http implements ModuleInterface
 
     /**
      * stops the detection timer
+     *
+     * @throws Exception
      */
     public function endTimer(): self
     {
@@ -116,6 +124,8 @@ final class Http implements ModuleInterface
 
     /**
      * returns the needed time
+     *
+     * @throws void
      */
     public function getTime(): float
     {
@@ -124,17 +134,21 @@ final class Http implements ModuleInterface
 
     /**
      * returns the maximum needed memory
+     *
+     * @throws void
      */
     public function getMaxMemory(): int
     {
         return $this->memory;
     }
 
+    /** @throws void */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /** @throws void */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -142,11 +156,13 @@ final class Http implements ModuleInterface
         return $this;
     }
 
+    /** @throws void */
     public function getConfig(): array | null
     {
         return $this->config;
     }
 
+    /** @throws void */
     public function setConfig(array $config): self
     {
         $this->config = $config;
@@ -154,11 +170,13 @@ final class Http implements ModuleInterface
         return $this;
     }
 
+    /** @throws void */
     public function getCheck(): CheckInterface | null
     {
         return $this->check;
     }
 
+    /** @throws void */
     public function setCheck(CheckInterface $check): self
     {
         $this->check = $check;
@@ -166,11 +184,13 @@ final class Http implements ModuleInterface
         return $this;
     }
 
+    /** @throws void */
     public function getMapper(): MapperInterface | null
     {
         return $this->mapper;
     }
 
+    /** @throws void */
     public function setMapper(MapperInterface $mapper): self
     {
         $this->mapper = $mapper;
@@ -178,6 +198,7 @@ final class Http implements ModuleInterface
         return $this;
     }
 
+    /** @throws void */
     public function getDetectionResult(): Result | null
     {
         if (null === $this->detectionResult) {

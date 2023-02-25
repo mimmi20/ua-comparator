@@ -56,17 +56,25 @@ use const JSON_THROW_ON_ERROR;
 
 final class ParseCommand extends Command
 {
-    public const SOURCE_SQL  = 'sql';
-    public const SOURCE_DIR  = 'dir';
+    public const SOURCE_SQL = 'sql';
+
+    public const SOURCE_DIR = 'dir';
+
     public const SOURCE_TEST = 'tests';
 
-    public function __construct(private Logger $logger, private CacheItemPoolInterface $cache, private Config $config)
-    {
+    /** @throws void */
+    public function __construct(
+        private readonly Logger $logger,
+        private readonly CacheItemPoolInterface $cache,
+        private readonly Config $config,
+    ) {
         parent::__construct();
     }
 
     /**
      * Configures the current command.
+     *
+     * @throws void
      */
     protected function configure(): void
     {

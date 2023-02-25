@@ -28,12 +28,14 @@ use Wurfl\Request\GenericRequestFactory;
  */
 final class UaParser implements MapperInterface
 {
-    private InputMapper | null $mapper = null;
-
+    private InputMapper | null $mapper           = null;
     private CacheItemPoolInterface | null $cache = null;
 
-    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
-    {
+    /** @throws void */
+    public function __construct(
+        InputMapper $mapper,
+        CacheItemPoolInterface $cache,
+    ) {
         $this->mapper = $mapper;
         $this->cache  = $cache;
     }
@@ -41,21 +43,27 @@ final class UaParser implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
+     * @param stdClass $parserResult
+     *
      * @return Result the object containing the browsers details
+     *
+     * @throws void
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function map(stdClass $parserResult, string $agent): Result
+    public function map($parserResult, string $agent): Result
     {
         $browser = new Browser(
             $this->mapper->mapBrowserName($parserResult->ua->family),
             null,
-            new Version((int) $parserResult->ua->major, (int) $parserResult->ua->minor, (string) $parserResult->ua->patch),
+            new Version((string) $parserResult->ua->major, (string) $parserResult->ua->minor, (string) $parserResult->ua->patch),
         );
 
         $os = new Os(
             $this->mapper->mapOsName($parserResult->os->family),
             null,
             null,
-            new Version((int) $parserResult->os->major, (int) $parserResult->os->minor, (string) $parserResult->os->patch),
+            new Version((string) $parserResult->os->major, (string) $parserResult->os->minor, (string) $parserResult->os->patch),
         );
 
         $device = new Device(null, null);
@@ -66,6 +74,7 @@ final class UaParser implements MapperInterface
         return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
+    /** @throws void */
     public function getMapper(): InputMapper | null
     {
         return $this->mapper;

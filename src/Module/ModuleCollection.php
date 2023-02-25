@@ -23,19 +23,17 @@ use function count;
  */
 final class ModuleCollection implements ArrayAccess, Countable, Iterator
 {
-    /** @var ModuleInterface[] */
+    /** @var array<ModuleInterface> */
     private array $modules = [];
+    private int $position  = 0;
 
-    private int $position = 0;
-
-    /**
-     * Constructor
-     */
+    /** @throws void */
     public function __construct()
     {
         $this->position = 0;
     }
 
+    /** @throws void */
     public function addModule(ModuleInterface $module): self
     {
         $this->modules[] = $module;
@@ -43,7 +41,11 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
         return $this;
     }
 
-    /** @return ModuleInterface[] */
+    /**
+     * @return array<ModuleInterface>
+     *
+     * @throws void
+     */
     public function getModules(): array
     {
         return $this->modules;
@@ -51,6 +53,8 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
 
     /**
      * initializes the module
+     *
+     * @throws void
      */
     public function init(): self
     {
@@ -61,35 +65,22 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
         return $this;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     *
-     * @see http://php.net/manual/en/iterator.current.php
-     */
+    /** @throws void */
     public function current(): ModuleInterface
     {
         return $this->modules[$this->position];
     }
 
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
-     *
-     * @see http://php.net/manual/en/iterator.next.php
-     */
+    /** @throws void */
     public function next(): void
     {
         ++$this->position;
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
-     *
-     * @see http://php.net/manual/en/iterator.key.php
-     *
      * @return int scalar on success, or null on failure
+     *
+     * @throws void
      */
     public function key(): int
     {
@@ -97,60 +88,37 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
-     *
-     * @see http://php.net/manual/en/iterator.valid.php
-     *
      * @return bool The return value will be casted to boolean and then evaluated.
      *              Returns true on success or false on failure.
+     *
+     * @throws void
      */
     public function valid(): bool
     {
         return isset($this->modules[$this->position]);
     }
 
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @see http://php.net/manual/en/iterator.rewind.php
-     */
+    /** @throws void */
     public function rewind(): void
     {
         $this->position = 0;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     *
-     * @see http://php.net/manual/en/countable.count.php
-     *
-     * @return int The custom count as an integer.
-     *             </p>
-     *             <p>
-     *             The return value is cast to an integer.
-     */
+    /** @throws void */
     public function count(): int
     {
         return count($this->modules);
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Whether a offset exists
-     *
-     * @see http://php.net/manual/en/arrayaccess.offsetexists.php
-     *
-     * @param mixed $offset <p>
-     *                      An offset to check for.
-     *                      </p>
+     * @param int|string $offset
      *
      * @return bool true on success or false on failure.
      *              </p>
      *              <p>
      *              The return value will be casted to boolean if non-boolean was returned.
+     *
+     * @throws void
      */
     public function offsetExists($offset): bool
     {
@@ -158,16 +126,11 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to retrieve
-     *
-     * @see http://php.net/manual/en/arrayaccess.offsetget.php
-     *
-     * @param mixed $offset <p>
-     *                      The offset to retrieve.
-     *                      </p>
+     * @param int|string $offset
      *
      * @return mixed can return all value types
+     *
+     * @throws void
      */
     public function offsetGet($offset)
     {
@@ -175,17 +138,10 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to set
+     * @param int|string|null $offset
+     * @param mixed           $value
      *
-     * @see http://php.net/manual/en/arrayaccess.offsetset.php
-     *
-     * @param mixed $offset <p>
-     *                      The offset to assign the value to.
-     *                      </p>
-     * @param mixed $value  <p>
-     *                      The value to set.
-     *                      </p>
+     * @throws void
      */
     public function offsetSet($offset, $value): void
     {
@@ -197,14 +153,9 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to unset
+     * @param int|string $offset
      *
-     * @see http://php.net/manual/en/arrayaccess.offsetunset.php
-     *
-     * @param mixed $offset <p>
-     *                      The offset to unset.
-     *                      </p>
+     * @throws void
      */
     public function offsetUnset($offset): void
     {

@@ -29,7 +29,11 @@ use function unserialize;
  */
 final class BrowserDetectorModule implements CheckInterface
 {
-    /** @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter */
+    /**
+     * @throws RequestException
+     *
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+     */
     public function getResponse(
         Response $response,
         RequestInterface $request,
@@ -41,6 +45,7 @@ final class BrowserDetectorModule implements CheckInterface
          * no json returned?
          */
         $contentType = $response->getHeader('Content-Type');
+
         if (!isset($contentType[0]) || 'x-application/serialize' !== $contentType[0]) {
             throw new RequestException(
                 'Could not get valid "x-application/serialize" response from "' . $request->getUri()
