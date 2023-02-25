@@ -23,7 +23,11 @@ use stdClass;
  */
 interface CheckInterface
 {
-    /** @return array|stdClass|null */
+    /**
+     * @return array|stdClass|null
+     *
+     * @throws void
+     */
     public function getResponse(
         Response $response,
         RequestInterface $request,

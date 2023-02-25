@@ -31,12 +31,14 @@ use function in_array;
  */
 final class PiwikDetector implements MapperInterface
 {
-    private InputMapper | null $mapper = null;
-
+    private InputMapper | null $mapper           = null;
     private CacheItemPoolInterface | null $cache = null;
 
-    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
-    {
+    /** @throws void */
+    public function __construct(
+        InputMapper $mapper,
+        CacheItemPoolInterface $cache,
+    ) {
         $this->mapper = $mapper;
         $this->cache  = $cache;
     }
@@ -44,9 +46,15 @@ final class PiwikDetector implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
+     * @param stdClass $parserResult
+     *
      * @return Result the object containing the browsers details
+     *
+     * @throws void
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function map(stdClass $parserResult, string $agent): Result
+    public function map($parserResult, string $agent): Result
     {
         $browserVersion      = null;
         $browserManufacturer = null;
@@ -56,6 +64,7 @@ final class PiwikDetector implements MapperInterface
 
             if (!empty($parserResult->bot->producer->name)) {
                 $browserMakerKey = $this->mapper->mapBrowserMaker($parserResult->bot->producer->name, $browserName);
+
                 try {
                     $browserManufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
                 } catch (NotFoundException) {
@@ -89,6 +98,7 @@ final class PiwikDetector implements MapperInterface
 
         $deviceBrand    = null;
         $deviceBrandKey = $this->mapper->mapDeviceBrandName($parserResult->device->brand, $deviceName);
+
         try {
             $deviceBrand = (new CompanyLoader($this->cache))->load($deviceBrandKey);
         } catch (NotFoundException) {
@@ -127,6 +137,7 @@ final class PiwikDetector implements MapperInterface
         return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
+    /** @throws void */
     public function getMapper(): InputMapper | null
     {
         return $this->mapper;

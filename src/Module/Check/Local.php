@@ -28,18 +28,23 @@ use function mb_strpos;
  */
 final class Local implements CheckInterface
 {
-    /** @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter */
+    /**
+     * @throws RequestException
+     *
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+     */
     public function getResponse(
         Response $response,
         RequestInterface $request,
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         string $agent,
-    ): array {
+    ): stdClass {
         /*
          * no json returned?
          */
         $contentType = $response->getHeader('Content-Type');
+
         if (!isset($contentType[0]) || 'application/json' !== $contentType[0]) {
             throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }

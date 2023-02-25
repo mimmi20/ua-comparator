@@ -28,6 +28,8 @@ final class LoggerFactory
      * creates a \Monolo\Logger instance
      *
      * @param bool $debug If true the debug logging mode will be enabled
+     *
+     * @throws void
      */
     public static function create(bool $debug = false): Logger
     {

@@ -24,6 +24,7 @@ use Symfony\Component\Console\Application;
 
 final class UaComparator extends Application
 {
+    /** @throws void */
     public function __construct()
     {
         parent::__construct('Useragent Parser Comparator Project', 'dev-master');

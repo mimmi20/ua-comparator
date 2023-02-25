@@ -19,6 +19,7 @@ use function mb_substr;
  */
 final class TimeFormatter
 {
+    /** @throws void */
     public static function formatTime(string $time): string
     {
         $wochen      = (int) ((int) $time / 604800);

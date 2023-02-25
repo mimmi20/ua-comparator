@@ -21,12 +21,14 @@ use UaResult\Result\Result;
  */
 final class BrowserDetectorModule implements MapperInterface
 {
-    private InputMapper | null $mapper = null;
-
+    private InputMapper | null $mapper           = null;
     private CacheItemPoolInterface | null $cache = null;
 
-    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
-    {
+    /** @throws void */
+    public function __construct(
+        InputMapper $mapper,
+        CacheItemPoolInterface $cache,
+    ) {
         $this->mapper = $mapper;
         $this->cache  = $cache;
     }
@@ -38,6 +40,8 @@ final class BrowserDetectorModule implements MapperInterface
      *
      * @return Result the object containing the browsers details
      *
+     * @throws void
+     *
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
     public function map(mixed $parserResult, string $agent): Result
@@ -45,6 +49,7 @@ final class BrowserDetectorModule implements MapperInterface
         return $parserResult;
     }
 
+    /** @throws void */
     public function getMapper(): InputMapper | null
     {
         return $this->mapper;

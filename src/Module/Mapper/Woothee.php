@@ -30,12 +30,14 @@ use function in_array;
  */
 final class Woothee implements MapperInterface
 {
-    private InputMapper | null $mapper = null;
-
+    private InputMapper | null $mapper           = null;
     private CacheItemPoolInterface | null $cache = null;
 
-    public function __construct(InputMapper $mapper, CacheItemPoolInterface $cache)
-    {
+    /** @throws void */
+    public function __construct(
+        InputMapper $mapper,
+        CacheItemPoolInterface $cache,
+    ) {
         $this->mapper = $mapper;
         $this->cache  = $cache;
     }
@@ -43,9 +45,15 @@ final class Woothee implements MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
+     * @param stdClass $parserResult
+     *
      * @return Result the object containing the browsers details
+     *
+     * @throws void
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function map(stdClass $parserResult, string $agent): Result
+    public function map($parserResult, string $agent): Result
     {
         $browserName = $this->mapper->mapBrowserName($parserResult->name);
 
@@ -60,7 +68,7 @@ final class Woothee implements MapperInterface
             $osName    = $this->mapper->mapOsName($parserResult->os);
             $osVersion = $this->mapper->mapOsVersion($parserResult->os_version, $osName);
 
-            if (!($osVersion instanceof Version)) {
+            if (!$osVersion instanceof Version) {
                 $osVersion = null;
             }
 
@@ -77,6 +85,7 @@ final class Woothee implements MapperInterface
         return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
     }
 
+    /** @throws void */
     public function getMapper(): InputMapper | null
     {
         return $this->mapper;

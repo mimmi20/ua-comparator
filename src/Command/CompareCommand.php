@@ -45,16 +45,23 @@ use const STR_PAD_LEFT;
 
 final class CompareCommand extends Command
 {
-    public const COL_LENGTH       = 50;
+    public const COL_LENGTH = 50;
+
     public const FIRST_COL_LENGTH = 20;
 
-    public function __construct(private Logger $logger, private CacheItemPoolInterface $cache, private Config $config)
-    {
+    /** @throws void */
+    public function __construct(
+        private Logger $logger,
+        private CacheItemPoolInterface $cache,
+        private Config $config,
+    ) {
         parent::__construct();
     }
 
     /**
      * Configures the current command.
+     *
+     * @throws void
      */
     protected function configure(): void
     {
@@ -82,8 +89,10 @@ final class CompareCommand extends Command
      *
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output,
+    ): int {
         $output->writeln('preparing App ...');
 
         $consoleLogger = new ConsoleLogger($output);
@@ -93,12 +102,12 @@ final class CompareCommand extends Command
          * Loop
          */
 
-        $dataDir   = 'data/results/';
-        $iterator  = new DirectoryIterator($dataDir);
-        $i         = 1;
-        $okfound   = 0;
-        $nokfound  = 0;
-        $sosofound = 0;
+        $dataDir  = 'data/results/';
+        $iterator = new DirectoryIterator($dataDir);
+        $i        = 1;
+//        $okfound   = 0;
+//        $nokfound  = 0;
+//        $sosofound = 0;
 
         $messageFormatter = new MessageFormatter();
         $messageFormatter->setColumnsLength(self::COL_LENGTH);
@@ -122,6 +131,7 @@ final class CompareCommand extends Command
 
         foreach (new IteratorIterator($iterator) as $file) {
             assert($file instanceof SplFileInfo);
+
             if ($file->isFile() || in_array($file->getFilename(), ['.', '..'], true)) {
                 continue;
             }
@@ -168,7 +178,7 @@ final class CompareCommand extends Command
             }
 
             if (in_array('-', $matches, true)) {
-                ++$nokfound;
+//                ++$nokfound;
 
                 $content  = $this->getLine($collection);
                 $content .= '|                    |' . mb_substr($agent, 0, self::COL_LENGTH * count($collection)) . "\n";
@@ -176,6 +186,7 @@ final class CompareCommand extends Command
                 $content .= $this->getLine($collection);
 
                 $content .= '|                    |' . str_repeat(' ', count($collection)) . '|                                                  |';
+
                 foreach (array_keys($collection) as $moduleName) {
                     $content .= str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
                 }
@@ -201,10 +212,10 @@ final class CompareCommand extends Command
                 echo '-', "\n", $content;
             } elseif (in_array(':', $matches, true)) {
                 echo ':';
-                ++$sosofound;
+//                ++$sosofound;
             } else {
                 echo '.';
-                ++$okfound;
+//                ++$okfound;
             }
 
             if (0 === $i % 100) {
@@ -219,6 +230,7 @@ final class CompareCommand extends Command
         return self::SUCCESS;
     }
 
+    /** @throws void */
     private function getLine(array $collection = []): string
     {
         $content  = '+--------------------+';

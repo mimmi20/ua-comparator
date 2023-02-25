@@ -33,19 +33,22 @@ use function str_pad;
  */
 final class MessageFormatter
 {
-    /** @var Result[] */
+    /** @var array<Result> */
     private array $collection;
-
     private int $columnsLength = 0;
-
     private ResultFactory $resultFactory;
 
+    /** @throws void */
     public function __construct()
     {
         $this->resultFactory = new ResultFactory();
     }
 
-    /** @param Result[] $collection */
+    /**
+     * @param array<Result> $collection
+     *
+     * @throws void
+     */
     public function setCollection(array $collection): self
     {
         $this->collection = $collection;
@@ -53,6 +56,7 @@ final class MessageFormatter
         return $this;
     }
 
+    /** @throws void */
     public function setColumnsLength(int $columnsLength): self
     {
         $this->columnsLength = $columnsLength;
@@ -60,9 +64,16 @@ final class MessageFormatter
         return $this;
     }
 
-    /** @return string[] */
-    public function formatMessage(string $propertyName, CacheItemPoolInterface $cache, LoggerInterface $logger): array
-    {
+    /**
+     * @return array<string>
+     *
+     * @throws void
+     */
+    public function formatMessage(
+        string $propertyName,
+        CacheItemPoolInterface $cache,
+        LoggerInterface $logger,
+    ): array {
         $modules      = array_keys($this->collection);
         $firstElement = $this->collection[$modules[0]]['result'];
         assert($firstElement instanceof Result);
@@ -78,6 +89,7 @@ final class MessageFormatter
         foreach ($modules as $module => $name) {
             $element = $this->collection[$name]['result'];
             assert($element instanceof Result);
+
             if (null === $element) {
                 $strTarget = '(NULL)';
             } else {
@@ -107,6 +119,7 @@ final class MessageFormatter
             }
 
             $result = $r1 . $strTarget;
+
             if (mb_strlen($result) > $this->columnsLength) {
                 $result = mb_substr($result, 0, $this->columnsLength - 3) . '...';
             }
@@ -117,6 +130,7 @@ final class MessageFormatter
         return $detectionResults;
     }
 
+    /** @throws void */
     private function getValue(Result $element, string $propertyName): string
     {
         switch ($propertyName) {
@@ -180,7 +194,7 @@ final class MessageFormatter
                 $value = $element->getOs()->getVersion();
 
                 if ($value instanceof Version) {
-                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY);
                 }
 
                 if ('' === $value) {

@@ -15,15 +15,18 @@ namespace UaComparator\Helper;
 final class Check
 {
     public const MINIMUM = 'minimum';
-    public const MEDIUM  = 'medium';
+
+    public const MEDIUM = 'medium';
 
     /**
      * Executes the current command.
      *
      * This method is not abstract because you can use this class
      * as a concrete class. In this case, instead of defining the
-     * execute() method, you set the code to execute by passing
+     * {@see execute()} method, you set the code to execute by passing
      * a Closure to the setCode() method.
+     *
+     * @throws void
      */
     public function getChecks(): array
     {
