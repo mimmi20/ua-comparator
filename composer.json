@@ -36,7 +36,7 @@
     "league/flysystem": "^3.12.3",
     "matthiasmullie/scrapbook": "^1.5.1",
     "monolog/monolog": "^3.3.1",
-    "symfony/console": "^v6.2.5"
+    "symfony/console": "^v6.2.7"
   },
   "require-dev": {
     "ext-dom": "*",
