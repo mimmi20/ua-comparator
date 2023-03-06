@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ua-parser-js": "^1.0.33"
+    "ua-parser-js": "^1.0.34"
   }
 }
