@@ -36,7 +36,7 @@ final class MessageFormatter
     /** @var array<Result> */
     private array $collection;
     private int $columnsLength = 0;
-    private ResultFactory $resultFactory;
+    private readonly ResultFactory $resultFactory;
 
     /** @throws void */
     public function __construct()

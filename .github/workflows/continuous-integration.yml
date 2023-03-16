@@ -24,5 +24,8 @@ jobs:
       composer-options: "--optimize-autoloader --prefer-dist --prefer-stable -v"
       composer-outdated-option: ""
       skip-phpstan: true
+      skip-phplint: false
+      skip-rector: false
+      skip-phpmd: false
     secrets:
       envPAT: "${{ secrets.GITHUB_TOKEN }}"

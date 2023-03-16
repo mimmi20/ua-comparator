@@ -51,9 +51,9 @@ final class CompareCommand extends Command
 
     /** @throws void */
     public function __construct(
-        private Logger $logger,
-        private CacheItemPoolInterface $cache,
-        private Config $config,
+        private readonly Logger $logger,
+        private readonly CacheItemPoolInterface $cache,
+        private readonly Config $config,
     ) {
         parent::__construct();
     }
@@ -181,7 +181,7 @@ final class CompareCommand extends Command
 //                ++$nokfound;
 
                 $content  = $this->getLine($collection);
-                $content .= '|                    |' . mb_substr($agent, 0, self::COL_LENGTH * count($collection)) . "\n";
+                $content .= '|                    |' . mb_substr((string) $agent, 0, self::COL_LENGTH * count($collection)) . "\n";
 
                 $content .= $this->getLine($collection);
 
@@ -237,8 +237,7 @@ final class CompareCommand extends Command
         $content .= str_repeat('-', count($collection));
         $content .= '+--------------------------------------------------+';
         $content .= str_repeat('--------------------------------------------------+', count($collection));
-        $content .= "\n";
 
-        return $content;
+        return $content . "\n";
     }
 }

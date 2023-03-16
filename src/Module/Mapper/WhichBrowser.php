@@ -27,16 +27,11 @@ use Wurfl\Request\GenericRequestFactory;
  */
 final class WhichBrowser implements MapperInterface
 {
-    private InputMapper | null $mapper           = null;
-    private CacheItemPoolInterface | null $cache = null;
-
     /** @throws void */
     public function __construct(
-        InputMapper $mapper,
-        CacheItemPoolInterface $cache,
+        private readonly InputMapper | null $mapper,
+        private readonly CacheItemPoolInterface | null $cache,
     ) {
-        $this->mapper = $mapper;
-        $this->cache  = $cache;
     }
 
     /**

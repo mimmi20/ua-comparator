@@ -30,16 +30,11 @@ use function in_array;
  */
 final class Woothee implements MapperInterface
 {
-    private InputMapper | null $mapper           = null;
-    private CacheItemPoolInterface | null $cache = null;
-
     /** @throws void */
     public function __construct(
-        InputMapper $mapper,
-        CacheItemPoolInterface $cache,
+        private readonly InputMapper | null $mapper,
+        private readonly CacheItemPoolInterface | null $cache,
     ) {
-        $this->mapper = $mapper;
-        $this->cache  = $cache;
     }
 
     /**

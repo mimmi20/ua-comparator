@@ -23,6 +23,8 @@ use function html_entity_decode;
 use function json_decode;
 use function mb_strpos;
 
+use const JSON_THROW_ON_ERROR;
+
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  */
@@ -51,11 +53,11 @@ final class Local implements CheckInterface
 
         $rawContent = $response->getBody()->getContents();
 
-        if (false !== mb_strpos($rawContent, '<')) {
+        if (false !== mb_strpos((string) $rawContent, '<')) {
             throw new RequestException('An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
         }
 
-        $content = json_decode(html_entity_decode($rawContent));
+        $content = json_decode(html_entity_decode((string) $rawContent), null, 512, JSON_THROW_ON_ERROR);
 
         if (!$content instanceof stdClass || !isset($content->result)) {
             throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
