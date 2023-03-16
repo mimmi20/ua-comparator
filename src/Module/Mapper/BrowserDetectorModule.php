@@ -12,7 +12,6 @@ declare(strict_types = 1);
 
 namespace UaComparator\Module\Mapper;
 
-use Psr\Cache\CacheItemPoolInterface;
 use UaDataMapper\InputMapper;
 use UaResult\Result\Result;
 
@@ -21,16 +20,10 @@ use UaResult\Result\Result;
  */
 final class BrowserDetectorModule implements MapperInterface
 {
-    private InputMapper | null $mapper           = null;
-    private CacheItemPoolInterface | null $cache = null;
-
     /** @throws void */
     public function __construct(
-        InputMapper $mapper,
-        CacheItemPoolInterface $cache,
+        private readonly InputMapper | null $mapper,
     ) {
-        $this->mapper = $mapper;
-        $this->cache  = $cache;
     }
 
     /**

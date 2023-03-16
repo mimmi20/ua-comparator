@@ -47,8 +47,8 @@ final class Http implements ModuleInterface
 
     /** @throws void */
     public function __construct(
-        private LoggerInterface $logger,
-        private CacheItemPoolInterface $cache,
+        private readonly LoggerInterface $logger,
+        private readonly CacheItemPoolInterface $cache,
     ) {
         $this->bench = new Ubench();
     }

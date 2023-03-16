@@ -139,11 +139,10 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
 
     /**
      * @param int|string|null $offset
-     * @param mixed           $value
      *
      * @throws void
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, mixed $value): void
     {
         if (null === $offset) {
             $this->modules[] = $value;

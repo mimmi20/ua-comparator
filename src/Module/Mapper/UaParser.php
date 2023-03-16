@@ -13,7 +13,6 @@ declare(strict_types = 1);
 namespace UaComparator\Module\Mapper;
 
 use BrowserDetector\Version\Version;
-use Psr\Cache\CacheItemPoolInterface;
 use stdClass;
 use UaDataMapper\InputMapper;
 use UaResult\Browser\Browser;
@@ -28,16 +27,10 @@ use Wurfl\Request\GenericRequestFactory;
  */
 final class UaParser implements MapperInterface
 {
-    private InputMapper | null $mapper           = null;
-    private CacheItemPoolInterface | null $cache = null;
-
     /** @throws void */
     public function __construct(
-        InputMapper $mapper,
-        CacheItemPoolInterface $cache,
+        private readonly InputMapper | null $mapper,
     ) {
-        $this->mapper = $mapper;
-        $this->cache  = $cache;
     }
 
     /**

@@ -56,7 +56,7 @@ final class BrowserDetectorModule implements CheckInterface
 
         $rawContent = $response->getBody()->getContents();
 
-        if (false !== mb_strpos($rawContent, '<')) {
+        if (false !== mb_strpos((string) $rawContent, '<')) {
             throw new RequestException(
                 'An Error occured while calling "' . $request->getUri() . '". Response is "'
                 . $rawContent . '"',
@@ -64,7 +64,7 @@ final class BrowserDetectorModule implements CheckInterface
             );
         }
 
-        $content = @unserialize(html_entity_decode($rawContent));
+        $content = @unserialize(html_entity_decode((string) $rawContent));
 
         if (!is_array($content) || !isset($content['result'])) {
             throw new RequestException(

@@ -216,7 +216,7 @@ final class ParseCommand extends Command
         $existingTests = [];
 
         foreach ($source->getUserAgents($limit) as $agent) {
-            $agent = trim($agent);
+            $agent = trim((string) $agent);
 
             if (isset($existingTests[$agent])) {
                 continue;
