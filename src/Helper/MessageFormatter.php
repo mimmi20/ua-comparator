@@ -69,11 +69,8 @@ final class MessageFormatter
      *
      * @throws void
      */
-    public function formatMessage(
-        string $propertyName,
-        CacheItemPoolInterface $cache,
-        LoggerInterface $logger,
-    ): array {
+    public function formatMessage(string $propertyName, CacheItemPoolInterface $cache, LoggerInterface $logger): array
+    {
         $modules      = array_keys($this->collection);
         $firstElement = $this->collection[$modules[0]]['result'];
         assert($firstElement instanceof Result);

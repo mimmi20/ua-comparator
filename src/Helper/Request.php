@@ -31,10 +31,8 @@ final class Request
      * @throws RequestException
      * @throws GuzzleException
      */
-    public function getResponse(
-        RequestInterface $request,
-        Client $client,
-    ): Response {
+    public function getResponse(RequestInterface $request, Client $client): Response
+    {
         $response = $client->send($request);
         assert($response instanceof Response);
 

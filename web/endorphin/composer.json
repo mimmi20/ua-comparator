@@ -4,7 +4,7 @@
     "composer-runtime-api": "^2.0",
     "endorphin-studio/browser-detector": "^6.0.1",
     "symfony/finder": "^v6.2.7",
-    "symfony/http-foundation": "^v6.2.7",
+    "symfony/http-foundation": "^v6.2.8",
     "symfony/yaml": "^v6.2.7"
   },
   "config": {

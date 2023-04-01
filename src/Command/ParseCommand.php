@@ -106,10 +106,8 @@ final class ParseCommand extends Command
      *
      * @throws LogicException When this abstract method is not implemented
      */
-    protected function execute(
-        InputInterface $input,
-        OutputInterface $output,
-    ): int {
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $output->writeln('preparing App ...');
 
         $consoleLogger = new ConsoleLogger($output);
