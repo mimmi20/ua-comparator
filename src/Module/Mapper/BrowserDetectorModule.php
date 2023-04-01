@@ -21,9 +21,8 @@ use UaResult\Result\Result;
 final class BrowserDetectorModule implements MapperInterface
 {
     /** @throws void */
-    public function __construct(
-        private readonly InputMapper | null $mapper,
-    ) {
+    public function __construct(private readonly InputMapper | null $mapper)
+    {
     }
 
     /**

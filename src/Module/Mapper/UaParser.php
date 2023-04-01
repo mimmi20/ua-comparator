@@ -28,9 +28,8 @@ use Wurfl\Request\GenericRequestFactory;
 final class UaParser implements MapperInterface
 {
     /** @throws void */
-    public function __construct(
-        private readonly InputMapper | null $mapper,
-    ) {
+    public function __construct(private readonly InputMapper | null $mapper)
+    {
     }
 
     /**

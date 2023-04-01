@@ -89,10 +89,8 @@ final class CompareCommand extends Command
      *
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
-    protected function execute(
-        InputInterface $input,
-        OutputInterface $output,
-    ): int {
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $output->writeln('preparing App ...');
 
         $consoleLogger = new ConsoleLogger($output);
