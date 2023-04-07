@@ -83,7 +83,7 @@ final class CompareCommand extends Command
      * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
-     * @return int|null null or 0 if everything went fine, or an error code
+     * @return int null or 0 if everything went fine, or an error code
      *
      * @throws LogicException When this abstract method is not implemented
      *
@@ -103,9 +103,9 @@ final class CompareCommand extends Command
         $dataDir  = 'data/results/';
         $iterator = new DirectoryIterator($dataDir);
         $i        = 1;
-//        $okfound   = 0;
-//        $nokfound  = 0;
-//        $sosofound = 0;
+        // $okfound   = 0;
+        // $nokfound  = 0;
+        // $sosofound = 0;
 
         $messageFormatter = new MessageFormatter();
         $messageFormatter->setColumnsLength(self::COL_LENGTH);
@@ -176,7 +176,7 @@ final class CompareCommand extends Command
             }
 
             if (in_array('-', $matches, true)) {
-//                ++$nokfound;
+                // ++$nokfound;
 
                 $content  = $this->getLine($collection);
                 $content .= '|                    |' . mb_substr((string) $agent, 0, self::COL_LENGTH * count($collection)) . "\n";
@@ -210,10 +210,10 @@ final class CompareCommand extends Command
                 echo '-', "\n", $content;
             } elseif (in_array(':', $matches, true)) {
                 echo ':';
-//                ++$sosofound;
+            // ++$sosofound;
             } else {
                 echo '.';
-//                ++$okfound;
+                // ++$okfound;
             }
 
             if (0 === $i % 100) {
