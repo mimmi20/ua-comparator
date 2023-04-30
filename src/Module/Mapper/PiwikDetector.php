@@ -58,7 +58,10 @@ final class PiwikDetector implements MapperInterface
             $browserName = $this->mapper->mapBrowserName($parserResult->bot->name);
 
             if (!empty($parserResult->bot->producer->name)) {
-                $browserMakerKey = $this->mapper->mapBrowserMaker($parserResult->bot->producer->name, $browserName);
+                $browserMakerKey = $this->mapper->mapBrowserMaker(
+                    $parserResult->bot->producer->name,
+                    $browserName,
+                );
 
                 try {
                     $browserManufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
@@ -75,19 +78,12 @@ final class PiwikDetector implements MapperInterface
                 $browserName,
             );
 
-            if (!empty($parserResult->client->type)) {
-                $browserType = $this->mapper->mapBrowserType($this->cache, $parserResult->client->type);
-            } else {
-                $browserType = null;
-            }
+            $browserType = !empty($parserResult->client->type)
+                ? $this->mapper->mapBrowserType($this->cache, $parserResult->client->type)
+                : null;
         }
 
-        $browser = new Browser(
-            $browserName,
-            $browserManufacturer,
-            $browserVersion,
-            $browserType,
-        );
+        $browser = new Browser($browserName, $browserManufacturer, $browserVersion, $browserType);
 
         $deviceName = $this->mapper->mapDeviceName($parserResult->device->model);
 
@@ -112,7 +108,10 @@ final class PiwikDetector implements MapperInterface
 
         if (!empty($parserResult->os->name)) {
             $osName    = $this->mapper->mapOsName($parserResult->os->name);
-            $osVersion = $this->mapper->mapOsVersion($parserResult->os->version, $parserResult->os->name);
+            $osVersion = $this->mapper->mapOsVersion(
+                $parserResult->os->version,
+                $parserResult->os->name,
+            );
 
             if (!in_array($osName, ['PlayStation'], true)) {
                 $os = new Os($osName, null, null, $osVersion);
@@ -129,7 +128,13 @@ final class PiwikDetector implements MapperInterface
 
         $requestFactory = new GenericRequestFactory();
 
-        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
+        return new Result(
+            $requestFactory->createRequestForUserAgent($agent),
+            $device,
+            $os,
+            $browser,
+            $engine,
+        );
     }
 
     /** @throws void */

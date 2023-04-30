@@ -23,13 +23,11 @@ interface MapperInterface
     /**
      * Gets the information about the browser by User Agent
      *
-     * @param mixed $parserResult
-     *
      * @return Result the object containing the browsers details
      *
      * @throws void
      */
-    public function map($parserResult, string $agent): Result;
+    public function map(mixed $parserResult, string $agent): Result;
 
     /** @throws void */
     public function getMapper(): InputMapper | null;

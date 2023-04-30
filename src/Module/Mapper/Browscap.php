@@ -53,16 +53,9 @@ final class Browscap implements MapperInterface
             $browser = new Browser(null, null, null);
         } else {
             $browserName    = $this->mapper->mapBrowserName($parserResult->browser);
-            $browserVersion = $this->mapper->mapBrowserVersion(
-                $parserResult->version,
-                $browserName,
-            );
+            $browserVersion = $this->mapper->mapBrowserVersion($parserResult->version, $browserName);
 
-            if (!empty($parserResult->browser_type)) {
-                $browserType = $parserResult->browser_type;
-            } else {
-                $browserType = null;
-            }
+            $browserType = !empty($parserResult->browser_type) ? $parserResult->browser_type : null;
 
             // if (!empty($parserResult->browser_modus) && 'unknown' !== $parserResult->browser_modus) {
             //    $browserModus = $parserResult->browser_modus;
@@ -71,7 +64,10 @@ final class Browscap implements MapperInterface
             // }
 
             $browserManufacturer = null;
-            $browserMakerKey     = $this->mapper->mapBrowserMaker($parserResult->browser_maker, $browserName);
+            $browserMakerKey     = $this->mapper->mapBrowserMaker(
+                $parserResult->browser_maker,
+                $browserName,
+            );
 
             try {
                 $browserManufacturer = (new CompanyLoader($this->cache))->load($browserMakerKey);
@@ -94,7 +90,10 @@ final class Browscap implements MapperInterface
             $deviceName = $this->mapper->mapDeviceName($parserResult->device_code_name);
 
             $deviceManufacturer = null;
-            $deviceMakerKey     = $this->mapper->mapDeviceMaker($parserResult->device_maker, $deviceName);
+            $deviceMakerKey     = $this->mapper->mapDeviceMaker(
+                $parserResult->device_maker,
+                $deviceName,
+            );
 
             try {
                 $deviceManufacturer = (new CompanyLoader($this->cache))->load($deviceMakerKey);
@@ -103,7 +102,10 @@ final class Browscap implements MapperInterface
             }
 
             $deviceBrand    = null;
-            $deviceBrandKey = $this->mapper->mapDeviceBrandName($parserResult->device_brand_name, $deviceName);
+            $deviceBrandKey = $this->mapper->mapDeviceBrandName(
+                $parserResult->device_brand_name,
+                $deviceName,
+            );
 
             try {
                 $deviceBrand = (new CompanyLoader($this->cache))->load($deviceBrandKey);
@@ -125,10 +127,16 @@ final class Browscap implements MapperInterface
             $os = new Os(null, null);
         } else {
             $platform        = $this->mapper->mapOsName($parserResult->platform);
-            $platformVersion = $this->mapper->mapOsVersion($parserResult->platform_version, $parserResult->platform);
+            $platformVersion = $this->mapper->mapOsVersion(
+                $parserResult->platform_version,
+                $parserResult->platform,
+            );
 
             $osManufacturer = null;
-            $osMakerKey     = $this->mapper->mapOsMaker($parserResult->platform_maker, $parserResult->platform);
+            $osMakerKey     = $this->mapper->mapOsMaker(
+                $parserResult->platform_maker,
+                $parserResult->platform,
+            );
 
             try {
                 $osManufacturer = (new CompanyLoader($this->cache))->load($osMakerKey);
@@ -153,7 +161,9 @@ final class Browscap implements MapperInterface
             $engineManufacturer = null;
 
             try {
-                $engineManufacturer = (new CompanyLoader($this->cache))->load($parserResult->renderingengine_maker);
+                $engineManufacturer = (new CompanyLoader($this->cache))->load(
+                    $parserResult->renderingengine_maker,
+                );
             } catch (NotFoundException) {
                 // $this->logger->info($e);
             }
@@ -167,7 +177,13 @@ final class Browscap implements MapperInterface
 
         $requestFactory = new GenericRequestFactory();
 
-        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
+        return new Result(
+            $requestFactory->createRequestForUserAgent($agent),
+            $device,
+            $os,
+            $browser,
+            $engine,
+        );
     }
 
     /** @throws void */

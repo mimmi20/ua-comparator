@@ -141,9 +141,14 @@ final class CompareCommand extends Command
 
             foreach ($modules as $module) {
                 if (file_exists($path . '/' . $module . '.json')) {
-                    $collection[$module] = json_decode(file_get_contents($path . '/' . $module . '.json'), true, 512, JSON_THROW_ON_ERROR);
+                    $collection[$module] = json_decode(
+                        file_get_contents($path . '/' . $module . '.json'),
+                        true,
+                        512,
+                        JSON_THROW_ON_ERROR,
+                    );
 
-                    if (null === $agent) {
+                    if ($agent === null) {
                         $agent = $collection[$module]['ua'];
                     }
                 } else {
@@ -160,13 +165,13 @@ final class CompareCommand extends Command
             $matches    = [];
 
             foreach ($checks as $propertyTitel => $x) {
-                if (empty($x['key'])) {
-                    $propertyName = $propertyTitel;
-                } else {
-                    $propertyName = $x['key'];
-                }
+                $propertyName = empty($x['key']) ? $propertyTitel : $x['key'];
 
-                $detectionResults = $messageFormatter->formatMessage($propertyName, $this->cache, $this->logger);
+                $detectionResults = $messageFormatter->formatMessage(
+                    $propertyName,
+                    $this->cache,
+                    $this->logger,
+                );
 
                 foreach ($detectionResults as $result) {
                     $matches[] = mb_substr($result, 0, 1);
@@ -179,11 +184,18 @@ final class CompareCommand extends Command
                 // ++$nokfound;
 
                 $content  = $this->getLine($collection);
-                $content .= '|                    |' . mb_substr((string) $agent, 0, self::COL_LENGTH * count($collection)) . "\n";
+                $content .= '|                    |' . mb_substr(
+                    (string) $agent,
+                    0,
+                    self::COL_LENGTH * count($collection),
+                ) . "\n";
 
                 $content .= $this->getLine($collection);
 
-                $content .= '|                    |' . str_repeat(' ', count($collection)) . '|                                                  |';
+                $content .= '|                    |' . str_repeat(
+                    ' ',
+                    count($collection),
+                ) . '|                                                  |';
 
                 foreach (array_keys($collection) as $moduleName) {
                     $content .= str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
@@ -200,7 +212,12 @@ final class CompareCommand extends Command
 
                     foreach (array_values($detectionResults) as $index => $value) {
                         $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
-                        $lineContent  = substr_replace($lineContent, mb_substr($value, 0, 1), 22 + $index, 1);
+                        $lineContent  = substr_replace(
+                            $lineContent,
+                            mb_substr($value, 0, 1),
+                            22 + $index,
+                            1,
+                        );
                     }
 
                     $content .= $lineContent . "\n";
@@ -216,7 +233,7 @@ final class CompareCommand extends Command
                 // ++$okfound;
             }
 
-            if (0 === $i % 100) {
+            if ($i % 100 === 0) {
                 echo "\n";
             }
 
@@ -234,7 +251,10 @@ final class CompareCommand extends Command
         $content  = '+--------------------+';
         $content .= str_repeat('-', count($collection));
         $content .= '+--------------------------------------------------+';
-        $content .= str_repeat('--------------------------------------------------+', count($collection));
+        $content .= str_repeat(
+            '--------------------------------------------------+',
+            count($collection),
+        );
 
         return $content . "\n";
     }

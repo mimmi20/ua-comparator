@@ -46,7 +46,7 @@ final class BrowserDetectorModule implements CheckInterface
          */
         $contentType = $response->getHeader('Content-Type');
 
-        if (!isset($contentType[0]) || 'x-application/serialize' !== $contentType[0]) {
+        if (!isset($contentType[0]) || $contentType[0] !== 'x-application/serialize') {
             throw new RequestException(
                 'Could not get valid "x-application/serialize" response from "' . $request->getUri()
                 . '". Response is "' . $response->getBody()->getContents() . '"',
@@ -56,7 +56,7 @@ final class BrowserDetectorModule implements CheckInterface
 
         $rawContent = $response->getBody()->getContents();
 
-        if (false !== mb_strpos((string) $rawContent, '<')) {
+        if (mb_strpos((string) $rawContent, '<') !== false) {
             throw new RequestException(
                 'An Error occured while calling "' . $request->getUri() . '". Response is "'
                 . $rawContent . '"',

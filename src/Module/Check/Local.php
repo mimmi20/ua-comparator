@@ -47,20 +47,34 @@ final class Local implements CheckInterface
          */
         $contentType = $response->getHeader('Content-Type');
 
-        if (!isset($contentType[0]) || 'application/json' !== $contentType[0]) {
-            throw new RequestException('Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        if (!isset($contentType[0]) || $contentType[0] !== 'application/json') {
+            throw new RequestException(
+                'Could not get valid "application/json" response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"',
+                $request,
+            );
         }
 
         $rawContent = $response->getBody()->getContents();
 
-        if (false !== mb_strpos((string) $rawContent, '<')) {
-            throw new RequestException('An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+        if (mb_strpos((string) $rawContent, '<') !== false) {
+            throw new RequestException(
+                'An Error occured while calling "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"',
+                $request,
+            );
         }
 
-        $content = json_decode(html_entity_decode((string) $rawContent), null, 512, JSON_THROW_ON_ERROR);
+        $content = json_decode(
+            html_entity_decode((string) $rawContent),
+            null,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
 
         if (!$content instanceof stdClass || !isset($content->result)) {
-            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"', $request);
+            throw new RequestException(
+                'Could not get valid response from "' . $request->getUri() . '". Response is "' . $response->getBody()->getContents() . '"',
+                $request,
+            );
         }
 
         return $content;

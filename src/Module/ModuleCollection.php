@@ -111,8 +111,6 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
     }
 
     /**
-     * @param int|string $offset
-     *
      * @return bool true on success or false on failure.
      *              </p>
      *              <p>
@@ -120,43 +118,33 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
      *
      * @throws void
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(int | string $offset): bool
     {
         return isset($this->modules[$offset]);
     }
 
     /**
-     * @param int|string $offset
-     *
      * @return mixed can return all value types
      *
      * @throws void
      */
-    public function offsetGet($offset)
+    public function offsetGet(int | string $offset): mixed
     {
         return $this->modules[$offset] ?? null;
     }
 
-    /**
-     * @param int|string|null $offset
-     *
-     * @throws void
-     */
-    public function offsetSet($offset, mixed $value): void
+    /** @throws void */
+    public function offsetSet(int | string | null $offset, mixed $value): void
     {
-        if (null === $offset) {
+        if ($offset === null) {
             $this->modules[] = $value;
         } else {
             $this->modules[$offset] = $value;
         }
     }
 
-    /**
-     * @param int|string $offset
-     *
-     * @throws void
-     */
-    public function offsetUnset($offset): void
+    /** @throws void */
+    public function offsetUnset(int | string $offset): void
     {
         unset($this->modules[$offset]);
     }
