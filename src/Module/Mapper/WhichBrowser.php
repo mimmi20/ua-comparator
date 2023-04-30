@@ -49,24 +49,15 @@ final class WhichBrowser implements MapperInterface
     {
         $browserName = $this->mapper->mapBrowserName($parserResult->browser->name);
 
-        if (empty($parserResult->browser->version->value)) {
-            $browserVersion = null;
-        } else {
-            $browserVersion = $this->mapper->mapBrowserVersion($parserResult->browser->version->value, $browserName);
-        }
+        $browserVersion = empty($parserResult->browser->version->value)
+            ? null
+            : $this->mapper->mapBrowserVersion($parserResult->browser->version->value, $browserName);
 
-        if (!empty($parserResult->browser->type)) {
-            $browserType = $this->mapper->mapBrowserType($this->cache, $parserResult->browser->type);
-        } else {
-            $browserType = null;
-        }
+        $browserType = !empty($parserResult->browser->type)
+            ? $this->mapper->mapBrowserType($this->cache, $parserResult->browser->type)
+            : null;
 
-        $browser = new Browser(
-            $browserName,
-            null,
-            $browserVersion,
-            $browserType,
-        );
+        $browser = new Browser($browserName, null, $browserVersion, $browserType);
 
         $device = new Device(
             $parserResult->device->model,
@@ -78,19 +69,15 @@ final class WhichBrowser implements MapperInterface
 
         $platform = $this->mapper->mapOsName($parserResult->os->name);
 
-        if (empty($parserResult->os->version->value)) {
-            $platformVersion = null;
-        } else {
-            $platformVersion = $this->mapper->mapOsVersion($parserResult->os->version->value, $platform);
-        }
+        $platformVersion = empty($parserResult->os->version->value)
+            ? null
+            : $this->mapper->mapOsVersion($parserResult->os->version->value, $platform);
 
         $os = new Os($platform, null, null, $platformVersion);
 
-        if (empty($parserResult->engine->version->value)) {
-            $engineVersion = null;
-        } else {
-            $engineVersion = $this->mapper->mapEngineVersion($parserResult->engine->version->value);
-        }
+        $engineVersion = empty($parserResult->engine->version->value)
+            ? null
+            : $this->mapper->mapEngineVersion($parserResult->engine->version->value);
 
         $engine = new Engine(
             $this->mapper->mapEngineName($parserResult->engine->name),
@@ -100,7 +87,13 @@ final class WhichBrowser implements MapperInterface
 
         $requestFactory = new GenericRequestFactory();
 
-        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
+        return new Result(
+            $requestFactory->createRequestForUserAgent($agent),
+            $device,
+            $os,
+            $browser,
+            $engine,
+        );
     }
 
     /** @throws void */

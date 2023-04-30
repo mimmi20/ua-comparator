@@ -72,7 +72,7 @@ final class Http implements ModuleInterface
         $params   = [$this->config['ua-key'] => $agent] + $this->config['params'];
         $headers += $this->config['headers'];
 
-        if ('GET' === $this->config['method']) {
+        if ($this->config['method'] === 'GET') {
             $uri = $this->config['uri'] . '?' . http_build_query($params, '', '&');
         } else {
             $uri  = $this->config['uri'];
@@ -87,7 +87,9 @@ final class Http implements ModuleInterface
         try {
             $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
         } catch (ConnectException $e) {
-            $this->logger->error(new ConnectException('could not connect to uri "' . $uri . '"', $this->request, $e));
+            $this->logger->error(
+                new ConnectException('could not connect to uri "' . $uri . '"', $this->request, $e),
+            );
         } catch (RequestException $e) {
             $this->logger->error($e);
         }
@@ -201,7 +203,7 @@ final class Http implements ModuleInterface
     /** @throws void */
     public function getDetectionResult(): Result | null
     {
-        if (null === $this->detectionResult) {
+        if ($this->detectionResult === null) {
             return null;
         }
 

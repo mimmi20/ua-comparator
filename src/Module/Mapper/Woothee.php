@@ -77,7 +77,13 @@ final class Woothee implements MapperInterface
 
         $requestFactory = new GenericRequestFactory();
 
-        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
+        return new Result(
+            $requestFactory->createRequestForUserAgent($agent),
+            $device,
+            $os,
+            $browser,
+            $engine,
+        );
     }
 
     /** @throws void */

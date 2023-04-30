@@ -221,7 +221,9 @@ final class ParseCommand extends Command
             }
 
             if (0 < $limit) {
-                $output->writeln('        parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...');
+                $output->writeln(
+                    '        parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...',
+                );
             }
 
             $bench = ['agent' => $agent];
@@ -248,18 +250,18 @@ final class ParseCommand extends Command
 
                 // per useragent benchmark
                 $bench[$module->getName()] = [
-                    'time' => $actualTime,
                     'memory' => $actualMemory,
+                    'time' => $actualTime,
                 ];
 
                 file_put_contents(
                     'data/results/' . $cacheId . '/' . $module->getName() . '.json',
                     json_encode(
                         [
-                            'ua' => $agent,
+                            'memory' => $actualMemory,
                             'result' => $detectionResult?->toArray(),
                             'time' => $actualTime,
-                            'memory' => $actualMemory,
+                            'ua' => $agent,
                         ],
                         JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR,
                     ),

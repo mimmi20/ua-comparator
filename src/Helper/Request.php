@@ -36,8 +36,11 @@ final class Request
         $response = $client->send($request);
         assert($response instanceof Response);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new RequestException('Could not get valid response from "' . $request->getUri() . '". Status code is: "' . $response->getStatusCode() . '"', $request);
+        if ($response->getStatusCode() !== 200) {
+            throw new RequestException(
+                'Could not get valid response from "' . $request->getUri() . '". Status code is: "' . $response->getStatusCode() . '"',
+                $request,
+            );
         }
 
         return $response;

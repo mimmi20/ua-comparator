@@ -75,11 +75,10 @@ final class MessageFormatter
         $firstElement = $this->collection[$modules[0]]['result'];
         assert($firstElement instanceof Result);
 
-        if (null === $firstElement) {
-            $strReality = '(NULL)';
-        } else {
-            $strReality = $this->getValue($this->resultFactory->fromArray($cache, $logger, (array) $firstElement), $propertyName);
-        }
+        $strReality = $firstElement === null ? '(NULL)' : $this->getValue(
+            $this->resultFactory->fromArray($cache, $logger, (array) $firstElement),
+            $propertyName,
+        );
 
         $detectionResults = [];
 
@@ -87,27 +86,29 @@ final class MessageFormatter
             $element = $this->collection[$name]['result'];
             assert($element instanceof Result);
 
-            if (null === $element) {
-                $strTarget = '(NULL)';
-            } else {
-                $strTarget = $this->getValue($this->resultFactory->fromArray($cache, $logger, (array) $element), $propertyName);
-            }
+            $strTarget = $element === null ? '(NULL)' : $this->getValue(
+                $this->resultFactory->fromArray($cache, $logger, (array) $element),
+                $propertyName,
+            );
 
             if (mb_strtolower($strTarget) === mb_strtolower($strReality)) {
                 $r1 = ' ';
-            } elseif (in_array($strReality, ['(NULL)', '', '(empty)'], true) || in_array($strTarget, ['(NULL)', '', '(empty)'], true)) {
+            } elseif (
+                in_array($strReality, ['(NULL)', '', '(empty)'], true)
+                || in_array($strTarget, ['(NULL)', '', '(empty)'], true)
+            ) {
                 $r1 = ' ';
             } else {
                 if (
                     (mb_strlen($strTarget) > mb_strlen($strReality))
                     && (0 < mb_strlen($strReality))
-                    && (0 === mb_strpos($strTarget, $strReality))
+                    && (mb_strpos($strTarget, $strReality) === 0)
                 ) {
                     $r1 = '-';
                 } elseif (
                     (mb_strlen($strTarget) < mb_strlen($strReality))
                     && (0 < mb_strlen($strTarget))
-                    && (0 === mb_strpos($strReality, $strTarget))
+                    && (mb_strpos($strReality, $strTarget) === 0)
                 ) {
                     $r1 = ' ';
                 } else {
@@ -139,10 +140,12 @@ final class MessageFormatter
                 $value = $element->getBrowser()->getVersion();
 
                 if ($value instanceof Version) {
-                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                    $value = $value->getVersion(
+                        VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY,
+                    );
                 }
 
-                if ('' === $value) {
+                if ($value === '') {
                     $value = null;
                 }
 
@@ -171,10 +174,12 @@ final class MessageFormatter
                 $value = $element->getEngine()->getVersion();
 
                 if ($value instanceof Version) {
-                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY);
+                    $value = $value->getVersion(
+                        VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY,
+                    );
                 }
 
-                if ('' === $value) {
+                if ($value === '') {
                     $value = null;
                 }
 
@@ -191,10 +196,12 @@ final class MessageFormatter
                 $value = $element->getOs()->getVersion();
 
                 if ($value instanceof Version) {
-                    $value = $value->getVersion(VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY);
+                    $value = $value->getVersion(
+                        VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY,
+                    );
                 }
 
-                if ('' === $value) {
+                if ($value === '') {
                     $value = null;
                 }
 
@@ -257,13 +264,13 @@ final class MessageFormatter
                 break;
         }
 
-        if (null === $value || 'null' === $value) {
+        if ($value === null || $value === 'null') {
             $output = '(NULL)';
-        } elseif ('' === $value) {
+        } elseif ($value === '') {
             $output = '(empty)';
-        } elseif (false === $value || 'false' === $value) {
+        } elseif ($value === false || $value === 'false') {
             $output = '(false)';
-        } elseif (true === $value || 'true' === $value) {
+        } elseif ($value === true || $value === 'true') {
             $output = '(true)';
         } else {
             $output = (string) $value;

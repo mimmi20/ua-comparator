@@ -48,14 +48,22 @@ final class UaParser implements MapperInterface
         $browser = new Browser(
             $this->mapper->mapBrowserName($parserResult->ua->family),
             null,
-            new Version((string) $parserResult->ua->major, (string) $parserResult->ua->minor, (string) $parserResult->ua->patch),
+            new Version(
+                (string) $parserResult->ua->major,
+                (string) $parserResult->ua->minor,
+                (string) $parserResult->ua->patch,
+            ),
         );
 
         $os = new Os(
             $this->mapper->mapOsName($parserResult->os->family),
             null,
             null,
-            new Version((string) $parserResult->os->major, (string) $parserResult->os->minor, (string) $parserResult->os->patch),
+            new Version(
+                (string) $parserResult->os->major,
+                (string) $parserResult->os->minor,
+                (string) $parserResult->os->patch,
+            ),
         );
 
         $device = new Device(null, null);
@@ -63,7 +71,13 @@ final class UaParser implements MapperInterface
 
         $requestFactory = new GenericRequestFactory();
 
-        return new Result($requestFactory->createRequestForUserAgent($agent), $device, $os, $browser, $engine);
+        return new Result(
+            $requestFactory->createRequestForUserAgent($agent),
+            $device,
+            $os,
+            $browser,
+            $engine,
+        );
     }
 
     /** @throws void */

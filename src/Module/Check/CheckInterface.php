@@ -23,16 +23,12 @@ use stdClass;
  */
 interface CheckInterface
 {
-    /**
-     * @return array|stdClass|null
-     *
-     * @throws void
-     */
+    /** @throws void */
     public function getResponse(
         Response $response,
         RequestInterface $request,
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         string $agent,
-    );
+    ): array | stdClass | null;
 }
