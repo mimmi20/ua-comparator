@@ -33,8 +33,8 @@
   name: "stale"
   description: "no activity"
 - color: b60205
-  name: "BC Break"
-  description: ""
+  name: "bc break"
+  description: "BC Break"
 - color: f4e99c
   name: "maintenance"
   description: "Maintenance"
@@ -55,34 +55,7 @@
   description: "Improvements or additions to documentation"
 
 # other Labels to mimmi20/ua-comparator
-- color: b0b1fc
-  name: "new browser"
-  description: ""
-- color: bfdadc
-  name: "new device"
-  description: ""
-- color: dcffb2
-  name: "new engine"
-  description: ""
-- color: 408c09
-  name: "new platform"
-  description: ""
-- color: e85f9c
-  name: "new test"
-  description: ""
-- color: 5319e7
-  name: "update browser"
-  description: ""
-- color: ed956d
-  name: "update device"
-  description: ""
-- color: e886e4
-  name: "update engine"
-  description: ""
-- color: fc445c
-  name: "update platform"
-  description: ""
-- color: e3ffaf
-  name: "update test"
-  description: ""
+#- color: 5319e7
+#  name: "new useragents"
+#  description: ""
 
