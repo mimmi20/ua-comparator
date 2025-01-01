@@ -60,7 +60,7 @@ updates:
       prefix: "npm"
 
   - package-ecosystem: "npm"
-    directory: "web/3rd-eden/"
+    directory: "web/amplitude-ua-parser-js/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -79,7 +79,7 @@ updates:
     target-branch: "master"
 
   - package-ecosystem: "npm"
-    directory: "web/bowser-js/"
+    directory: "web/bowser/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -98,7 +98,7 @@ updates:
     target-branch: "master"
 
   - package-ecosystem: "composer"
-    directory: "web/browscap/"
+    directory: "web/browscap-php/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -117,7 +117,7 @@ updates:
       prefix: "composer"
 
   - package-ecosystem: "npm"
-    directory: "web/browser-detect-js/"
+    directory: "web/browser-detect/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -171,7 +171,7 @@ updates:
     versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
-    directory: "web/detect-browser-js/"
+    directory: "web/crawler-detect/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -190,7 +190,7 @@ updates:
     target-branch: "master"
 
   - package-ecosystem: "npm"
-    directory: "web/device-detector-js/"
+    directory: "web/detect-browser/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -209,7 +209,26 @@ updates:
     target-branch: "master"
 
   - package-ecosystem: "npm"
-    directory: "web/device-detector-node-js/"
+    directory: "web/device-detector/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
+
+  - package-ecosystem: "npm"
+    directory: "web/device-detector-node/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -263,25 +282,6 @@ updates:
     versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
-    directory: "web/express-useragent-exposer/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-    target-branch: "master"
-
-  - package-ecosystem: "npm"
     directory: "web/express-useragent/"
     schedule:
       interval: "daily"
@@ -302,6 +302,25 @@ updates:
 
   - package-ecosystem: "npm"
     directory: "web/fex-uadevice/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
+
+  - package-ecosystem: "npm"
+    directory: "web/financial-times-useragent_parser/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -357,6 +376,25 @@ updates:
       include: "scope"
       prefix: "composer"
 
+  - package-ecosystem: "npm"
+    directory: "web/journyio-user-agent-parser/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
+
   - package-ecosystem: "composer"
     directory: "web/matomo/"
     schedule:
@@ -377,7 +415,7 @@ updates:
       prefix: "composer"
 
   - package-ecosystem: "composer"
-    directory: "web/sinergi/"
+    directory: "web/mobile-detect/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -394,6 +432,63 @@ updates:
     commit-message:
       include: "scope"
       prefix: "composer"
+
+  - package-ecosystem: "npm"
+    directory: "web/node-device-detector/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
+
+  - package-ecosystem: "composer"
+    directory: "web/php-get-browser/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    target-branch: "master"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "composer"
+
+  - package-ecosystem: "npm"
+    directory: "web/platformjs/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "npm"
     directory: "web/ua-parser-js/"
@@ -453,7 +548,7 @@ updates:
     target-branch: "master"
 
   - package-ecosystem: "npm"
-    directory: "web/which-browser-js/"
+    directory: "web/whichbrowser-js/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -472,7 +567,7 @@ updates:
     target-branch: "master"
 
   - package-ecosystem: "composer"
-    directory: "web/which-browser-php/"
+    directory: "web/whichbrowser-php/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -530,25 +625,6 @@ updates:
 
   - package-ecosystem: "composer"
     directory: "web/woothee-php/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "web/zsxsoft/"
     schedule:
       interval: "daily"
       time: "04:00"
