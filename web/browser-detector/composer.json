@@ -6,7 +6,7 @@
     "matthiasmullie/scrapbook": "^1.5.1",
     "mimmi20/browser-detector": "^7.0.2",
     "psr/log": "^3.0.0",
-    "monolog/monolog": "^2.3.5 || ^3.0.0"
+    "monolog/monolog": "^3.8.1"
   },
   "config": {
     "preferred-install": "dist",
