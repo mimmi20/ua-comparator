@@ -3,7 +3,7 @@
     "php": "^8.1.0",
     "composer-runtime-api": "*",
     "ua-parser/uap-php": "^v3.9.14",
-    "symfony/yaml": "^v6.3.0",
+    "symfony/yaml": "^v7.2.0",
     "symfony/filesystem": "^v6.3.0",
     "symfony/finder": "^v6.3.0",
     "symfony/console": "^v6.3.0"
