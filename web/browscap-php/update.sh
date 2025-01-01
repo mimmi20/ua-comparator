@@ -16,4 +16,4 @@ rm -rf ./data/
 mkdir ./data/
 
 ./vendor/bin/browscap-php browscap:update --cache ./data --remote-file Full_PHP_BrowscapINI -vv
-./vendor/bin/browscap-php browscap:fetch --remote-file Full_PHP_BrowscapINI -vv --file ../data/cache/browscap/browscap.ini
+./vendor/bin/browscap-php browscap:fetch --remote-file Full_PHP_BrowscapINI -vv ../../data/cache/browscap/browscap.ini
