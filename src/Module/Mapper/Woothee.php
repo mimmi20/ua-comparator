@@ -32,10 +32,8 @@ use function in_array;
 final readonly class Woothee implements MapperInterface
 {
     /** @throws void */
-    public function __construct(
-        private InputMapper | null $mapper,
-        private CacheItemPoolInterface | null $cache,
-    ) {
+    public function __construct(private InputMapper | null $mapper, private CacheItemPoolInterface | null $cache)
+    {
     }
 
     /**

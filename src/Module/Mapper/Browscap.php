@@ -31,10 +31,8 @@ use Wurfl\Request\GenericRequestFactory;
 final readonly class Browscap implements MapperInterface
 {
     /** @throws void */
-    public function __construct(
-        private InputMapper | null $mapper,
-        private CacheItemPoolInterface | null $cache,
-    ) {
+    public function __construct(private InputMapper | null $mapper, private CacheItemPoolInterface | null $cache)
+    {
     }
 
     /**
