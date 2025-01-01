@@ -39,11 +39,11 @@ if (hasUa) {
     try {
         r = detector.detect(line);
     } catch (err) {
-        output.result.err = [
-            err.name,
-            err.message,
-            err.stack
-        ];
+        output.result.err = {
+            name: err.name,
+            message: err.message,
+            stack: err.stack
+        };
     }
     const end = process.hrtime(start)[1] / 1000000000;
 

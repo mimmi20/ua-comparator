@@ -46,7 +46,7 @@ $output = [
     'parse_time'  => 0,
     'init_time'   => $initTime,
     'memory_used' => 0,
-    'version'     => \Composer\InstalledVersions::getPrettyVersion('browscap/browscap-php') . '-' . $bcCache->getVersion(),
+    'version'     => \Composer\InstalledVersions::getPrettyVersion('browscap/browscap-php'),
 ];
 
 if ($hasUa) {

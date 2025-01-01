@@ -9,24 +9,39 @@
   "detectionCapabilities": {
     "client": {
       "name": true,
+      "modus": true,
       "version": true,
+      "manufacturer": true,
+      "bits": true,
       "isBot": true,
       "type": true
     },
     "renderingEngine": {
       "name": true,
-      "version": true
+      "version": true,
+      "manufacturer": true
     },
     "operatingSystem": {
       "name": true,
-      "version": true
+      "marketing-name": false,
+      "version": true,
+      "manufacturer": true,
+      "bits": true
     },
     "device": {
-      "model": true,
+      "name": true,
+      "marketing-name": false,
+      "manufacturer": true,
       "brand": true,
+      "dual-orientation": false,
       "type": true,
       "isMobile": true,
-      "isTouch": true
+      "sim-count": false,
+      "display-width": false,
+      "display-height": false,
+      "isTouch": true,
+      "display-type": false,
+      "display-size": false
     }
   }
 }

@@ -59,6 +59,7 @@ if ($hasUa) {
             'dualOrientation' => null,
             'type'     => null,
             'simCount' => null,
+            'ismobile' => null,
         ],
         'client' => [
             'name'    => $browser->getBrowser() === 'unknown' ? null : $browser->getBrowser(),

@@ -39,14 +39,16 @@ if (hasUa) {
     const start = process.hrtime();
     const r = detector.detect(line);
     const bot = detector.parseBot(line);
+    const isNotABot = (Array.isArray(bot) && bot.length === 0) || JSON.stringify(bot) === '{}';
+    const isMobile = DeviceHelper.isMobile(r);
     const end = process.hrtime(start)[1] / 1000000000;
 
     output.result.parsed = {
         device: {
-            deviceName: r.device.model ? r.device.model : null,
+            deviceName: r.device.model ?? null,
             marketingName: null,
             manufacturer: null,
-            brand: r.device.vendor ? r.device.vendor : null,
+            brand: r.device.vendor ?? null,
             display: {
                 width: null,
                 height: null,
@@ -55,9 +57,9 @@ if (hasUa) {
                 size: null,
             },
             dualOrientation: null,
-            type: r.device.type ? r.device.type : null,
+            type: r.device.type ?? null,
             simCount: null,
-            ismobile: DeviceHelper.isMobile(r)
+            ismobile: isMobile
         },
         client: {
             name: bot === null ? (r.client.name ? r.client.name : null) : (bot.name ?? null),
@@ -69,18 +71,18 @@ if (hasUa) {
             type: bot === null ? (r.client.type ?? null) : (bot.category ?? null)
         },
         platform: {
-            name: r.os.name ? r.os.name : null,
+            name: r.os.name ?? null,
             marketingName: null,
-            version: r.os.version ? r.os.version : null,
+            version: r.os.version ?? null,
             manufacturer: null,
             bits: null
         },
         engine: {
-            name: null,
-            version: null,
+            name: r.client.engine ?? null,
+            version: r.client.engine_version ?? null,
             manufacturer: null
         },
-        raw: r
+        raw: [r, bot]
     };
     output.parse_time = end;
 }

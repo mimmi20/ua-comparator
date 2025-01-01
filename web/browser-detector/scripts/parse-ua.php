@@ -27,7 +27,7 @@ $start = microtime(true);
 $logger    = new \Psr\Log\NullLogger();
 $factory   = new \BrowserDetector\DetectorFactory($cache, $logger);
 $detector  = $factory();
-$detector('Test String');
+$detector->getBrowser('Test String');
 $initTime = microtime(true) - $start;
 
 $output = [
@@ -47,49 +47,15 @@ $output = [
 
 if ($hasUa) {
     $start = microtime(true);
-    $r     = $detector($agentString);
+    $r     = $detector->getBrowser($agentString);
     $end   = microtime(true) - $start;
 
     $output['result']['parsed'] = [
-        'device' => [
-            'deviceName'     => $r->getDevice()->getDeviceName(),
-            'marketingName' => $r->getDevice()->getMarketingName(),
-            'manufacturer' => $r->getDevice()->getManufacturer()->getName(),
-            'brand'    => $r->getDevice()->getBrand()->getBrandName(),
-            'display' => [
-                'width' => $r->getDevice()->getDisplay()->getWidth(),
-                'height' => $r->getDevice()->getDisplay()->getHeight(),
-                'touch' => $r->getDevice()->getDisplay()->hasTouch(),
-                'type' => null,
-                'size' => $r->getDevice()->getDisplay()->getSize(),
-            ],
-            'dualOrientation' => null,
-            'type'     => $r->getDevice()->getType()->getName(),
-            'simCount' => null,
-            'ismobile' => $r->getDevice()->getType()->isMobile(),
-        ],
-        'client' => [
-            'name'    => $r->getBrowser()->getName(),
-            'modus' => $r->getBrowser()->getModus(),
-            'version' => $r->getBrowser()->getVersion()->getVersion(),
-            'manufacturer' => $r->getBrowser()->getManufacturer()->getName(),
-            'bits' => $r->getBrowser()->getBits(),
-            'type'    => $r->getBrowser()->getType()->getType(),
-            'isbot'   => $r->getBrowser()->getType()->isBot(),
-        ],
-        'platform' => [
-            'name'    => $r->getOs()->getName(),
-            'marketingName' => $r->getOs()->getMarketingName(),
-            'version' => $r->getOs()->getVersion()->getVersion(),
-            'manufacturer' => $r->getOs()->getManufacturer()->getName(),
-            'bits' => $r->getOs()->getBits(),
-        ],
-        'engine' => [
-            'name'    => $r->getEngine()->getName(),
-            'version' => $r->getEngine()->getVersion()->getVersion(),
-            'manufacturer' => $r->getEngine()->getManufacturer()->getName(),
-        ],
-        'raw' => $r->toArray(),
+        'device' => $r['device'],
+        'client' => $r['client'],
+        'platform' => $r['os'],
+        'engine' => $r['engine'],
+        'raw' => $r,
     ];
 
     $output['parse_time'] = $end;
