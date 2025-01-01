@@ -1,3 +1,6 @@
+---
+# file-version: 1.0
+
 template: |
   ## What’s Changed
 
@@ -10,6 +13,9 @@ template: |
 change-template: "- $TITLE by @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&#@`' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 no-changes-template: "- No changes"
+name-template: "$RESOLVED_VERSION"
+tag-template: "$RESOLVED_VERSION"
+version-template: "$MAJOR.$MINOR.$PATCH"
 
 exclude-labels:
   - "duplicate"
@@ -68,7 +74,7 @@ categories:
   - title: "**📦 Documentation:**"
     labels:
       - "documentation"
-  # other Labels to mimmi20/ua-comparator
+  # other Labels
   #- title: "**📦 new Useragents:**"
   #  labels:
   #    - "new useragents"

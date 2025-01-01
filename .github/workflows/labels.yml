@@ -1,21 +1,32 @@
 # https://help.github.com/en/categories/automating-your-workflow-with-github-actions
 
+# file-version: 1.0
+
 name: "Sync labels in the declarative way"
 
 on:
   push:
     branches:
-      - master
+      - "master"
+    paths:
+      - ".github/labels.yml"
+      - ".github/workflows/labels.yml"
+
+permissions:
+  contents: read
 
 jobs:
   build:
     name: "Sync labels"
 
-    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    runs-on: "ubuntu-24.04"
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
@@ -24,7 +35,7 @@ jobs:
 
       - uses: "micnncim/action-label-syncer@v1.3.0"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_REPOSITORY: "${{ github.repository }}"
         with:
-          manifest: .github/labels.yml
+          manifest: ".github/labels.yml"
