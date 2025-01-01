@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the mimmi20/useragent-parser-comparison package.
+ * This file is part of the mimmi20/ua-comparator package.
  *
  * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
  *

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -154,17 +155,17 @@ final class ParseCommand extends Command
                     );
                 }
 
-                $moduleClassName = '\\UaComparator\\Module\\' . $moduleConfig['class'];
+                $moduleClassName = '\UaComparator\Module\\' . $moduleConfig['class'];
 
                 $detectorModule = new $moduleClassName($this->logger, $moduleCache);
                 assert($detectorModule instanceof ModuleInterface);
                 $detectorModule->setName($moduleConfig['name']);
                 $detectorModule->setConfig($moduleConfig['request']);
 
-                $checkName = '\\UaComparator\\Module\\Check\\' . $moduleConfig['check'];
+                $checkName = '\UaComparator\Module\Check\\' . $moduleConfig['check'];
                 $detectorModule->setCheck(new $checkName());
 
-                $mapperName = '\\UaComparator\\Module\\Mapper\\' . $moduleConfig['mapper'];
+                $mapperName = '\UaComparator\Module\Mapper\\' . $moduleConfig['mapper'];
                 $mapper     = new $mapperName($inputMapper, $moduleCache);
                 assert($mapper instanceof MapperInterface);
                 $detectorModule->setMapper($mapper);
