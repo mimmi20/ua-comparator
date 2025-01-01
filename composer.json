@@ -35,7 +35,7 @@
     "hassankhan/config": "^3.1.0",
     "league/flysystem": "^3.15.1",
     "matthiasmullie/scrapbook": "^1.5.1",
-    "monolog/monolog": "^3.3.1",
+    "monolog/monolog": "^3.8.1",
     "symfony/console": "^v6.3.0"
   },
   "require-dev": {
