@@ -9,13 +9,13 @@
       "version": "1.0.0",
       "license": "ISC",
       "dependencies": {
-        "which-browser": "^0.7.0"
+        "which-browser": "^0.7.1"
       }
     },
     "node_modules/which-browser": {
-      "version": "0.7.0",
-      "resolved": "https://registry.npmjs.org/which-browser/-/which-browser-0.7.0.tgz",
-      "integrity": "sha512-3VyIKnUZoTpUwqRhmd4x96Z3pKGV16SyBDp0DANd7/ujnxO+/48wMC9vodMjiCD0lX8YMtJDUoMdCIaTCnYooA==",
+      "version": "0.7.1",
+      "resolved": "https://registry.npmjs.org/which-browser/-/which-browser-0.7.1.tgz",
+      "integrity": "sha512-nq9hV5zIhQ7LU/Z2lf6oT2O7p4yQMm7beu0eR5D7WhT9MVGezdpQDCv2GozWWqhWmSgwytKHLvgQOgcabTN7BA==",
       "engines": {
         "node": ">=6.0.0"
       }
@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "which-browser": {
-      "version": "0.7.0",
-      "resolved": "https://registry.npmjs.org/which-browser/-/which-browser-0.7.0.tgz",
-      "integrity": "sha512-3VyIKnUZoTpUwqRhmd4x96Z3pKGV16SyBDp0DANd7/ujnxO+/48wMC9vodMjiCD0lX8YMtJDUoMdCIaTCnYooA=="
+      "version": "0.7.1",
+      "resolved": "https://registry.npmjs.org/which-browser/-/which-browser-0.7.1.tgz",
+      "integrity": "sha512-nq9hV5zIhQ7LU/Z2lf6oT2O7p4yQMm7beu0eR5D7WhT9MVGezdpQDCv2GozWWqhWmSgwytKHLvgQOgcabTN7BA=="
     }
   }
 }
