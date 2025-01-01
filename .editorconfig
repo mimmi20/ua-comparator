@@ -1,3 +1,8 @@
+; This file is for unifying the coding style for different editors and IDEs.
+; More information at http://editorconfig.org
+
+; file-version: 2.0
+
 root = true
 
 [*]
@@ -5,11 +10,12 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 indent_style = space
-indent_size = 2
+indent_size = 4
 trim_trailing_whitespace = true
 
-[{*.php,*.xml}]
-indent_size = 4
+[*.{js,ts,cjs,cts,mjs,mts,json,json5,yaml,yml,neon}]
+indent_size = 2
 
 [*.md]
+indent_size = 2
 trim_trailing_whitespace = false
