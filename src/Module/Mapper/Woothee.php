@@ -29,12 +29,12 @@ use function in_array;
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  */
-final class Woothee implements MapperInterface
+final readonly class Woothee implements MapperInterface
 {
     /** @throws void */
     public function __construct(
-        private readonly InputMapper | null $mapper,
-        private readonly CacheItemPoolInterface | null $cache,
+        private InputMapper | null $mapper,
+        private CacheItemPoolInterface | null $cache,
     ) {
     }
 

@@ -57,11 +57,11 @@ use const JSON_THROW_ON_ERROR;
 
 final class ParseCommand extends Command
 {
-    public const SOURCE_SQL = 'sql';
+    public const string SOURCE_SQL = 'sql';
 
-    public const SOURCE_DIR = 'dir';
+    public const string SOURCE_DIR = 'dir';
 
-    public const SOURCE_TEST = 'tests';
+    public const string SOURCE_TEST = 'tests';
 
     /** @throws void */
     public function __construct(

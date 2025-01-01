@@ -28,12 +28,12 @@ use Wurfl\Request\GenericRequestFactory;
 /**
  * Browscap.ini parsing class with caching and update capabilities
  */
-final class Browscap implements MapperInterface
+final readonly class Browscap implements MapperInterface
 {
     /** @throws void */
     public function __construct(
-        private readonly InputMapper | null $mapper,
-        private readonly CacheItemPoolInterface | null $cache,
+        private InputMapper | null $mapper,
+        private CacheItemPoolInterface | null $cache,
     ) {
     }
 

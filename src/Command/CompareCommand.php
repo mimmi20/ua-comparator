@@ -46,9 +46,9 @@ use const STR_PAD_LEFT;
 
 final class CompareCommand extends Command
 {
-    public const COL_LENGTH = 50;
+    public const int COL_LENGTH = 50;
 
-    public const FIRST_COL_LENGTH = 20;
+    public const int FIRST_COL_LENGTH = 20;
 
     /** @throws void */
     public function __construct(

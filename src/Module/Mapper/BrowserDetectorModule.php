@@ -19,10 +19,10 @@ use UaResult\Result\Result;
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  */
-final class BrowserDetectorModule implements MapperInterface
+final readonly class BrowserDetectorModule implements MapperInterface
 {
     /** @throws void */
-    public function __construct(private readonly InputMapper | null $mapper)
+    public function __construct(private InputMapper | null $mapper)
     {
     }
 

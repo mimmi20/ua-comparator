@@ -15,9 +15,9 @@ namespace UaComparator\Helper;
 
 final class Check
 {
-    public const MINIMUM = 'minimum';
+    public const string MINIMUM = 'minimum';
 
-    public const MEDIUM = 'medium';
+    public const string MEDIUM = 'medium';
 
     /**
      * Executes the current command.

@@ -26,10 +26,10 @@ use Wurfl\Request\GenericRequestFactory;
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  */
-final class UaParser implements MapperInterface
+final readonly class UaParser implements MapperInterface
 {
     /** @throws void */
-    public function __construct(private readonly InputMapper | null $mapper)
+    public function __construct(private InputMapper | null $mapper)
     {
     }
 
