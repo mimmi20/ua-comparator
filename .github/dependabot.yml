@@ -59,373 +59,12 @@ updates:
       include: "scope"
       prefix: "npm"
 
-  # tests
-  - package-ecosystem: "composer"
-    directory: "tests/browscap/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/browser-detector/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/cbschuld/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/crawler-detect/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/curated/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/donatj/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/endorphin/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/matomo/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/mobile-detect/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/ua-parser-js/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/ua-parser-php/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/whichbrowser-php/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "tests/woothee-php/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
   - package-ecosystem: "npm"
-    directory: "tests/ua-parser-js/"
+    directory: "web/3rd-eden/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -437,23 +76,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
+    target-branch: "master"
 
-  # parsers
   - package-ecosystem: "npm"
-    directory: "parsers/3rd-eden-useragent/"
+    directory: "web/bowser-js/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -465,76 +95,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/amplitude-ua-parser-js/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/bowser/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "composer"
-    directory: "parsers/browscap-php/"
+    directory: "web/browscap/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -542,26 +110,18 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "npm"
-    directory: "parsers/browser-detect/"
+    directory: "web/browser-detect-js/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -573,22 +133,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "composer"
-    directory: "parsers/browser-detector/"
+    directory: "web/browser-detector/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -596,26 +148,18 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "composer"
-    directory: "parsers/cbschuld/"
+    directory: "web/cbschuld/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -623,26 +167,91 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
+    versioning-strategy: "increase"
+
+  - package-ecosystem: "npm"
+    directory: "web/detect-browser-js/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
+
+  - package-ecosystem: "npm"
+    directory: "web/device-detector-js/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
+
+  - package-ecosystem: "npm"
+    directory: "web/device-detector-node-js/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
+
+  - package-ecosystem: "composer"
+    directory: "web/donatj/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "composer"
-    directory: "parsers/crawler-detect/"
+    directory: "web/endorphin/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -650,26 +259,15 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
 
   - package-ecosystem: "npm"
-    directory: "parsers/detect-browser/"
+    directory: "web/express-useragent-exposer/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -681,22 +279,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "npm"
-    directory: "parsers/device-detector/"
+    directory: "web/express-useragent/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -708,22 +298,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "npm"
-    directory: "parsers/device-detector-node/"
+    directory: "web/fex-uadevice/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -735,22 +317,33 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
+    target-branch: "master"
+
+  - package-ecosystem: "npm"
+    directory: "web/hotoo-detector/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "composer"
-    directory: "parsers/donatj/"
+    directory: "web/jenssegers-agent/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -758,26 +351,18 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "composer"
-    directory: "parsers/endorphin/"
+    directory: "web/matomo/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -785,215 +370,18 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/express-useragent/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/fex-uadevice/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/financial-times-useragent_parser/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/hotoo-detector/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-
-  - package-ecosystem: "composer"
-    directory: "parsers/jenssegers-agent/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/journyio-user-agent-parser/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-
-  - package-ecosystem: "composer"
-    directory: "parsers/matomo/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "composer"
-    directory: "parsers/mobile-detect/"
+    directory: "web/sinergi/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1001,26 +389,18 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "npm"
-    directory: "parsers/node-device-detector/"
+    directory: "web/ua-parser-js/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1032,76 +412,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/platformjs/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-
-  - package-ecosystem: "npm"
-    directory: "parsers/ua-parser-js/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "composer"
-    directory: "parsers/ua-parser-php/"
+    directory: "web/ua-parser-php/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1109,26 +427,18 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "npm"
-    directory: "parsers/vigour-ua/"
+    directory: "web/vigour-ua/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1140,22 +450,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "npm"
-    directory: "parsers/whichbrowser-js/"
+    directory: "web/which-browser-js/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1167,22 +469,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "composer"
-    directory: "parsers/whichbrowser-php/"
+    directory: "web/which-browser-php/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1190,26 +484,18 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "composer"
-    directory: "parsers/wolfcast/"
+    directory: "web/wolfcast/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1217,26 +503,18 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
       prefix: "composer"
 
   - package-ecosystem: "npm"
-    directory: "parsers/woothee-js/"
+    directory: "web/woothee-js/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1248,22 +526,14 @@ updates:
     commit-message:
       include: "scope"
       prefix: "npm"
+    target-branch: "master"
 
   - package-ecosystem: "composer"
-    directory: "parsers/woothee-php/"
+    directory: "web/woothee-php/"
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
-    groups:
-      security-updates:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-      version-updates:
-        applies-to: "version-updates"
-        patterns:
-          - "*"
     open-pull-requests-limit: 10
     reviewers:
       - "mimmi20"
@@ -1271,6 +541,26 @@ updates:
       - "mimmi20"
     labels:
       - "dependencies"
+    target-branch: "master"
+    versioning-strategy: "increase"
+    commit-message:
+      include: "scope"
+      prefix: "composer"
+
+  - package-ecosystem: "composer"
+    directory: "web/zsxsoft/"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mimmi20"
+    assignees:
+      - "mimmi20"
+    labels:
+      - "dependencies"
+    target-branch: "master"
     versioning-strategy: "increase"
     commit-message:
       include: "scope"
