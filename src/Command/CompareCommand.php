@@ -1,8 +1,9 @@
 <?php
+
 /**
  * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -35,8 +36,8 @@ use function file_exists;
 use function file_get_contents;
 use function in_array;
 use function json_decode;
+use function mb_str_pad;
 use function mb_substr;
-use function str_pad;
 use function str_repeat;
 use function substr_replace;
 
@@ -45,9 +46,9 @@ use const STR_PAD_LEFT;
 
 final class CompareCommand extends Command
 {
-    public const COL_LENGTH = 50;
+    public const int COL_LENGTH = 50;
 
-    public const FIRST_COL_LENGTH = 20;
+    public const int FIRST_COL_LENGTH = 20;
 
     /** @throws void */
     public function __construct(
@@ -198,7 +199,7 @@ final class CompareCommand extends Command
                 ) . '|                                                  |';
 
                 foreach (array_keys($collection) as $moduleName) {
-                    $content .= str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
+                    $content .= mb_str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
                 }
 
                 $content .= "\n";
@@ -207,11 +208,11 @@ final class CompareCommand extends Command
 
                 foreach ($allResults as $propertyTitel => $detectionResults) {
                     $lineContent = '|                    |' . str_repeat(' ', count($collection)) . '|'
-                        . str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT)
+                        . mb_str_pad($propertyTitel, self::COL_LENGTH, ' ', STR_PAD_LEFT)
                         . '|';
 
                     foreach (array_values($detectionResults) as $index => $value) {
-                        $lineContent .= str_pad($value, self::COL_LENGTH, ' ') . '|';
+                        $lineContent .= mb_str_pad($value, self::COL_LENGTH, ' ') . '|';
                         $lineContent  = substr_replace(
                             $lineContent,
                             mb_substr($value, 0, 1),

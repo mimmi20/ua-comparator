@@ -1,5 +1,7 @@
 # https://help.github.com/en/categories/automating-your-workflow-with-github-actions
 
+# file-version: 1.0
+
 name: "Continuous Integration"
 
 on:
@@ -14,19 +16,71 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
-    name: "Run CI"
+  validate:
+    name: "Validate Project"
 
-    uses: "mimmi20/mimmi20/.github/workflows/ci.yml@main"
+    uses: "mimmi20/ci/.github/workflows/validate.yml@8.3"
     with:
-      extensions: "ctype, dom, fileinfo, iconv, json, mbstring, simplexml, tokenizer, xml, xmlwriter"
+      extensions: "ctype, curl, dom, fileinfo, iconv, intl, mbstring, simplexml, tokenizer, xml, xmlwriter, pdo"
       ini-values: "opcache.enable=1, opcache.fast_shutdown=0, zend.assertions=1, assert.exception=On, intl.default_locale=de, intl.use_exceptions=1, zend.exception_ignore_args=0"
       composer-options: "--optimize-autoloader --prefer-dist --prefer-stable -v"
-      composer-outdated-option: ""
-      skip-phpstan: true
+      skip-validate-composer: false
+      skip-validate-yaml: false
+      skip-validate-md: false
       skip-phplint: false
+      skip-check-composer: false
+      skip-ec-checker: false
+      dependency-analyser-options: ""
+
+  install:
+    name: "Install Project"
+
+    needs: "validate"
+
+    uses: "mimmi20/ci/.github/workflows/install.yml@8.3"
+    with:
+      extensions: "ctype, curl, dom, fileinfo, iconv, intl, mbstring, simplexml, tokenizer, xml, xmlwriter, pdo"
+      ini-values: "opcache.enable=1, opcache.fast_shutdown=0, zend.assertions=1, assert.exception=On, intl.default_locale=de, intl.use_exceptions=1, zend.exception_ignore_args=0"
+      composer-options: "--optimize-autoloader --prefer-dist --prefer-stable -v"
+      skip-php-install: false
+      skip-npm-install: true
+
+  analytics:
+    name: "Project Analysis"
+
+    needs: "install"
+
+    uses: "mimmi20/ci/.github/workflows/analytics.yml@8.3"
+    with:
+      extensions: "ctype, curl, dom, fileinfo, iconv, intl, mbstring, simplexml, tokenizer, xml, xmlwriter, pdo"
+      ini-values: "opcache.enable=1, opcache.fast_shutdown=0, zend.assertions=1, assert.exception=On, intl.default_locale=de, intl.use_exceptions=1, zend.exception_ignore_args=0"
+      composer-options: "--optimize-autoloader --prefer-dist --prefer-stable -v"
+      skip-php-cs-fixer: false
+      skip-phpcs: false
+      skip-phpstan: true
       skip-rector: false
-      skip-phpmd: false
-      skip-psalm: true
-    secrets:
-      envPAT: "${{ secrets.GITHUB_TOKEN }}"
+      skip-eslint: true
+      skip-stylelint: true
+      skip-prettier: true
+      phpcs-options: ""
+
+  # This is a meta job to avoid to have to constantly change the protection rules
+  # whenever we touch the matrix.
+  tests-status:
+    name: "Unit & Integration Tests Status"
+
+    runs-on: "ubuntu-24.04"
+
+    if: always()
+
+    needs:
+      - "analytics"
+
+    steps:
+      - name: Successful run
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+
+      - name: Failing run
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1

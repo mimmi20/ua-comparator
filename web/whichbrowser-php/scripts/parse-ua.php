@@ -52,10 +52,10 @@ if ($hasUa) {
 
     $output['result']['parsed'] = [
         'device' => [
-            'deviceName'     => !empty($parser->device->model) ? $parser->device->model : null,
+            'deviceName'     => $parser->device->model ?? null,
             'marketingName' => null,
             'manufacturer' => null,
-            'brand'    => !empty($parser->device->manufacturer) ? $parser->device->manufacturer : null,
+            'brand'    => $parser->device->manufacturer ?? null,
             'display' => [
                 'width' => null,
                 'height' => null,
@@ -64,23 +64,23 @@ if ($hasUa) {
                 'size' => null,
             ],
             'dualOrientation' => null,
-            'type'     => !empty($parser->device->type) ? $parser->device->type : null,
+            'type'     => $parser->device->type ?? null,
             'simCount' => null,
             'ismobile' => $isMobile,
         ],
         'client' => [
-            'name'    => !empty($parser->browser->name) ? $parser->browser->name : null,
+            'name'    => $parser->browser->name ?? null,
             'modus' => null,
-            'version' => !empty($parser->browser->version) ? $parser->browser->version->value : null,
+            'version' => $parser->browser->version->value ?? null,
             'manufacturer' => null,
             'bits' => null,
             'type' => null,
             'isbot'    => null,
         ],
         'platform' => [
-            'name'    => !empty($parser->os->name) ? $parser->os->name : null,
+            'name'    => $parser->os->name ?? null,
             'marketingName' => null,
-            'version' => !empty($parser->os->version->value) ? $parser->os->version->value : null,
+            'version' => $parser->os->version->value ?? null,
             'manufacturer' => null,
             'bits' => null,
         ],

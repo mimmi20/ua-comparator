@@ -19,7 +19,7 @@ $parseTime = 0;
 
 $start = microtime(true);
 require_once __DIR__ . '/../vendor/autoload.php';
-$parser = new \Mobile_Detect();
+$parser = new \Detection\MobileDetect();
 $parser->setUserAgent('Test String');
 $parser->isMobile();
 

@@ -9,7 +9,7 @@ command -v "$composer_command" >/dev/null 2>&1 || {
     composer_command="composer.phar"
 }
 
-$composer_command update --ignore-platform-reqs
+$composer_command update --ignore-platform-reqs $*
 
 echo "clearing cache directory ..."
 rm -rf ./data/

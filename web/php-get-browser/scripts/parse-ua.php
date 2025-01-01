@@ -33,7 +33,7 @@ $output = [
     'parse_time'  => 0,
     'init_time'   => $initTime,
     'memory_used' => 0,
-    'version'     => PHP_VERSION . '-' . file_get_contents(__DIR__ . '/../data/version.txt'),
+    'version'     => PHP_VERSION,
 ];
 
 if ($hasUa) {
@@ -57,7 +57,7 @@ if ($hasUa) {
             'dualOrientation' => null,
             'type'     => ($r->device_type && $r->device_type !== 'unknown') ? $r->device_type : null,
             'simCount' => null,
-            'ismobile' => property_exists($r, 'ismobiledevice') ? $r->ismobiledevice : null,
+            'ismobile' => $r->ismobiledevice ?? null,
         ],
         'client' => [
             'name'    => ($r->browser && $r->browser !== 'unknown') ? $r->browser : null,

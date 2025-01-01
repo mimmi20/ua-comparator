@@ -1,8 +1,9 @@
 <?php
+
 /**
  * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -41,7 +42,7 @@ final class Http implements ModuleInterface
     private array | null $config             = null;
     private CheckInterface | null $check     = null;
     private MapperInterface | null $mapper   = null;
-    private \GuzzleHttp\Psr7\Request $request;
+    private GuzzleHttpRequest $request;
     private float $duration     = 0.0;
     private int | float $memory = 0;
 

@@ -51,30 +51,30 @@ if ($hasUa) {
 
     $output['result']['parsed'] = [
         'device' => [
-            'deviceName'     => isset($r->device->model) ? $r->device->model : null,
+            'deviceName'     => $r->device->model ?? null,
             'marketingName' => null,
             'manufacturer' => null,
-            'brand'    => isset($r->device->name) ? $r->device->name : null,
+            'brand'    => $r->device->name ?? null,
             'display' => [
                 'width' => null,
                 'height' => null,
-                'touch' => $r->isTouch,
+                'touch' => $r->isTouch ?? null,
                 'type' => null,
                 'size' => null,
             ],
             'dualOrientation' => null,
-            'type'     => isset($r->device->type) ? $r->device->type : null,
+            'type'     => $r->device->type ?? null,
             'simCount' => null,
-            'ismobile' => $r->isMobile,
+            'ismobile' => $r->isMobile ?? null,
         ],
         'client' => [
-            'name'    => $r->isRobot ? (isset($r->robot) ? $r->robot->name : null) : ((isset($r->browser->name) && $r->browser->name !== 'not available') ? $r->browser->name : null),
+            'name'    => $r->isRobot ? ($r->robot->name ?? null) : ($r->browser->name ?? null),
             'modus' => null,
             'version' => (isset($r->browser->version) && $r->browser->version !== 'not available') ? $r->browser->version : null,
             'manufacturer' => null,
             'bits' => null,
             'type' => null,
-            'isbot'   => $r->isRobot,
+            'isbot'   => $r->isRobot ?? null,
         ],
         'platform' => [
             'name'    => (isset($r->os->name) && $r->os->name !== 'not available') ? $r->os->name : null,

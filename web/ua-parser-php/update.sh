@@ -9,7 +9,7 @@ command -v "$composer_command" >/dev/null 2>&1 || {
     composer_command="composer.phar"
 }
 
-$composer_command update
+$composer_command update $*
 
 echo "Updating ua-parser data..."
 php vendor/ua-parser/uap-php/bin/uaparser ua-parser:update

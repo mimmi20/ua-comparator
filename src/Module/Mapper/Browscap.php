@@ -1,8 +1,9 @@
 <?php
+
 /**
  * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -27,13 +28,11 @@ use Wurfl\Request\GenericRequestFactory;
 /**
  * Browscap.ini parsing class with caching and update capabilities
  */
-final class Browscap implements MapperInterface
+final readonly class Browscap implements MapperInterface
 {
     /** @throws void */
-    public function __construct(
-        private readonly InputMapper | null $mapper,
-        private readonly CacheItemPoolInterface | null $cache,
-    ) {
+    public function __construct(private InputMapper | null $mapper, private CacheItemPoolInterface | null $cache)
+    {
     }
 
     /**

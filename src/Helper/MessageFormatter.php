@@ -1,8 +1,9 @@
 <?php
+
 /**
  * This file is part of the mimmi20/ua-comparator package.
  *
- * Copyright (c) 2015-2023, Thomas Mueller <mimmi20@live.de>
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -22,11 +23,11 @@ use UaResult\Result\ResultFactory;
 use function array_keys;
 use function assert;
 use function in_array;
+use function mb_str_pad;
 use function mb_strlen;
 use function mb_strpos;
 use function mb_strtolower;
 use function mb_substr;
-use function str_pad;
 
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
@@ -122,7 +123,7 @@ final class MessageFormatter
                 $result = mb_substr($result, 0, $this->columnsLength - 3) . '...';
             }
 
-            $detectionResults[$module] = str_pad($result, $this->columnsLength, ' ');
+            $detectionResults[$module] = mb_str_pad($result, $this->columnsLength, ' ');
         }
 
         return $detectionResults;
