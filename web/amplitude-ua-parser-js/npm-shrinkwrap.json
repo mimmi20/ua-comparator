@@ -9,13 +9,13 @@
       "version": "1.0.0",
       "license": "ISC",
       "dependencies": {
-        "@amplitude/ua-parser-js": "^0.7.26"
+        "@amplitude/ua-parser-js": "^0.7.33"
       }
     },
     "node_modules/@amplitude/ua-parser-js": {
-      "version": "0.7.31",
-      "resolved": "https://registry.npmjs.org/@amplitude/ua-parser-js/-/ua-parser-js-0.7.31.tgz",
-      "integrity": "sha512-+z8UGRaj13Pt5NDzOnkTBy49HE2CX64jeL0ArB86HAtilpnfkPB7oqkigN7Lf2LxscMg4QhFD7mmCfedh3rqTg==",
+      "version": "0.7.33",
+      "resolved": "https://registry.npmjs.org/@amplitude/ua-parser-js/-/ua-parser-js-0.7.33.tgz",
+      "integrity": "sha512-wKEtVR4vXuPT9cVEIJkYWnlF++Gx3BdLatPBM+SZ1ztVIvnhdGBZR/mn9x/PzyrMcRlZmyi6L56I2J3doVBnjA==",
       "funding": [
         {
           "type": "opencollective",
@@ -33,9 +33,9 @@
   },
   "dependencies": {
     "@amplitude/ua-parser-js": {
-      "version": "0.7.31",
-      "resolved": "https://registry.npmjs.org/@amplitude/ua-parser-js/-/ua-parser-js-0.7.31.tgz",
-      "integrity": "sha512-+z8UGRaj13Pt5NDzOnkTBy49HE2CX64jeL0ArB86HAtilpnfkPB7oqkigN7Lf2LxscMg4QhFD7mmCfedh3rqTg=="
+      "version": "0.7.33",
+      "resolved": "https://registry.npmjs.org/@amplitude/ua-parser-js/-/ua-parser-js-0.7.33.tgz",
+      "integrity": "sha512-wKEtVR4vXuPT9cVEIJkYWnlF++Gx3BdLatPBM+SZ1ztVIvnhdGBZR/mn9x/PzyrMcRlZmyi6L56I2J3doVBnjA=="
     }
   }
 }
