@@ -24,3 +24,4 @@ infection-*.log
 rewrite*.php
 .reports/
 .phpcs.cache
+npm-shrinkwrap.json
