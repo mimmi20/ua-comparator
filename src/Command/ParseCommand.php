@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace UaComparator\Command;
 
 use BrowscapHelper\Source\BrowscapSource;
+use BrowscapHelper\Source\BrowserDetectorSource;
 use BrowscapHelper\Source\CollectionSource;
-use BrowscapHelper\Source\DetectorSource;
 use BrowscapHelper\Source\DirectorySource;
-use BrowscapHelper\Source\PiwikSource;
+use BrowscapHelper\Source\MatomoSource;
 use BrowscapHelper\Source\UapCoreSource;
 use BrowscapHelper\Source\WhichBrowserSource;
 use BrowscapHelper\Source\WootheeSource;
@@ -29,7 +29,6 @@ use MatthiasMullie\Scrapbook\Psr16\SimpleCache;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -64,11 +63,8 @@ final class ParseCommand extends Command
     public const string SOURCE_TEST = 'tests';
 
     /** @throws void */
-    public function __construct(
-        private readonly Logger $logger,
-        private readonly CacheItemPoolInterface $cache,
-        private readonly Config $config,
-    ) {
+    public function __construct(private readonly Logger $logger, private readonly Config $config)
+    {
         parent::__construct();
     }
 
@@ -193,15 +189,13 @@ final class ParseCommand extends Command
         $output->writeln('initializing sources ...');
 
         $source = new CollectionSource(
-            [
-                new BrowscapSource($this->logger, $this->cache),
-                new PiwikSource($this->logger, $this->cache),
-                new UapCoreSource($this->logger),
-                new WhichBrowserSource($this->logger, $this->cache),
-                new WootheeSource($this->logger, $this->cache),
-                new DetectorSource($this->logger, $this->cache),
-                new DirectorySource($this->logger, 'data/useragents'),
-            ],
+            new BrowscapSource(),
+            new MatomoSource(),
+            new UapCoreSource(),
+            new WhichBrowserSource(),
+            new WootheeSource(),
+            new BrowserDetectorSource(),
+            new DirectorySource('data/useragents'),
         );
 
         /*
@@ -214,7 +208,7 @@ final class ParseCommand extends Command
         $counter       = 1;
         $existingTests = [];
 
-        foreach ($source->getUserAgents($limit) as $agent) {
+        foreach ($source->getUserAgents('') as $agent) {
             $agent = trim((string) $agent);
 
             if (isset($existingTests[$agent])) {

@@ -21,7 +21,6 @@ mkdir ../data/cache/browscap/
 mkdir ../data/cache/browser/
 mkdir ../data/cache/matomo/
 mkdir ../data/cache/uaparser/
-mkdir ../data/cache/uasparser/
 mkdir ../data/cache/general/
 
 cd ../web

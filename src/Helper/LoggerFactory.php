@@ -19,6 +19,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryPeakUsageProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
+use Psr\Log\LogLevel;
 
 use function assert;
 use function is_callable;
@@ -37,16 +38,16 @@ final class LoggerFactory
         $logger = new Logger('ua-comparator');
 
         if ($debug) {
-            $stream = new StreamHandler('php://output', Logger::DEBUG);
+            $stream = new StreamHandler('php://output', LogLevel::DEBUG);
             $stream->setFormatter(
                 new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %extra%' . "\n"),
             );
         } else {
-            $stream = new StreamHandler('php://output', Logger::INFO);
+            $stream = new StreamHandler('php://output', LogLevel::INFO);
             $stream->setFormatter(new LineFormatter('[%datetime%] %message% %extra%' . "\n"));
         }
 
-        $logger->pushHandler(new StreamHandler('log/error.log', Logger::NOTICE));
+        $logger->pushHandler(new StreamHandler('log/error.log', LogLevel::NOTICE));
 
         $peakMemoryProcessor = new MemoryPeakUsageProcessor(true);
         assert(is_callable($peakMemoryProcessor));
