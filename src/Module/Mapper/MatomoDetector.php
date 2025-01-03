@@ -30,7 +30,7 @@ use function in_array;
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  */
-final readonly class PiwikDetector implements MapperInterface
+final readonly class MatomoDetector implements MapperInterface
 {
     /** @throws void */
     public function __construct(private InputMapper | null $mapper, private CacheItemPoolInterface | null $cache)

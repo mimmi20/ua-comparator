@@ -14,9 +14,9 @@ declare(strict_types = 1);
 namespace UaComparator\Module\Check;
 
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use UaResult\Result\ResultFactory;
 
@@ -36,7 +36,7 @@ final class BrowserDetectorModule implements CheckInterface
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
     public function getResponse(
-        Response $response,
+        ResponseInterface $response,
         RequestInterface $request,
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,

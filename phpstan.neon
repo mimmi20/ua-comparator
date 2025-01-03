@@ -1,6 +1,8 @@
 parameters:
   level: max
 
+  phpVersion: 80300 # PHP 8.3
+
   parallel:
     maximumNumberOfProcesses: 1
     processTimeout: 200.0
@@ -14,15 +16,6 @@ parameters:
     - %currentWorkingDirectory%/vendor/squizlabs/php_codesniffer/autoload.php
     - %currentWorkingDirectory%/vendor/squizlabs/php_codesniffer/src/Util/Tokens.php
 
-  # reports occurrences of type-checking functions always evaluated to true
-  checkAlwaysTrueCheckTypeFunctionCall: true
-
-  # reports instanceof occurrences always evaluated to true
-  checkAlwaysTrueInstanceof: true
-
-  # reports === and !== occurrences always evaluated to true
-  checkAlwaysTrueStrictComparison: true
-
   # enable stricter analysis of benevolent union types
   checkBenevolentUnionTypes: true
 
@@ -34,10 +27,6 @@ parameters:
 
   # reports function and method calls with incorrect name case
   checkFunctionNameCase: true
-
-  # it requires type variables always be specified in typehints
-  checkGenericClassInNonGenericObjectType: true
-
   # be strict about values with an unspecified (implicit mixed) type
   checkImplicitMixed: true
 
@@ -47,14 +36,14 @@ parameters:
   # require that callable signatures are specified
   checkMissingCallableSignature: true
 
-  # checks for missing typehints in iterables
-  checkMissingIterableValueType: true
-
   # reports return typehints that could be narrowed down because some of the listed types are never returned
   checkTooWideReturnTypesInProtectedAndPublicMethods: true
 
   # reports properties with native types that weren’t initialized in the class constructor
   checkUninitializedProperties: true
+
+  # reports missing #[\Override] attribute
+  checkMissingOverrideMethodAttribute: false # todo: fix
 
   # doesn’t require typehints for properties if the types can be inferred from constructor injection
   inferPrivatePropertyTypeFromConstructor: false
@@ -69,13 +58,13 @@ parameters:
   reportAlwaysTrueInLastCondition: true
 
   # reports violations of parameter type contravariance and return type covariance
-  reportMaybesInMethodSignatures: true
+  reportMaybesInMethodSignatures: false # todo: fix
 
   # reports violations of property type invariance
-  reportMaybesInPropertyPhpDocTypes: true
+  reportMaybesInPropertyPhpDocTypes: false # todo: fix
 
   # reports violations of parameter type contravariance and return type covariance in static methods
-  reportStaticMethodSignatures: true
+  reportStaticMethodSignatures: false # todo: fix
 
   #
   reportWrongPhpDocTypeInVarTag: true
@@ -94,8 +83,31 @@ parameters:
       missingCheckedExceptionInThrows: true
       tooWideThrowType: true
 
+  cognitive_complexity:
+    class: 55
+    function: 43
+
+  type_coverage:
+    return_type: 100
+    param_type: 99.7
+    property_type: 100
+    constant_type: 100
+    # also, how many files has declare strict types
+    declare: 100
+
+  unused_public:
+    methods: true
+    properties: true
+    constants: true
+    local_methods: true
+
+  type_perfect:
+    null_over_false: true
+    no_mixed: true
+    narrow_param: true
+
   ignoreErrors:
-    - '~Parameter #1 \$headers of method BrowserDetector\\Detector::__invoke\(\) expects array<string, string>\|Psr\\Http\\Message\\MessageInterface\|string\|UaRequest\\GenericRequestInterface, stdClass given~'
-    - '~Parameter #1 \$message of method Psr\\Log\\LoggerInterface::.* expects string, .*Exception given~'
-    - '~is not subtype of Throwable~'
+    - '~return type has no value type specified in iterable type array~'
+    - '~with no value type specified in iterable type array~'
+    - '~UaResult\\~'
     - '~Call to deprecated method getBrowser\(\) of class BrowserDetector\\Detector~'

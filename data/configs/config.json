@@ -17,57 +17,43 @@
       "mapper": "BrowserDetectorModule"
     },
     "browscap": {
-      "name": "Browscap-PHP (3.x)",
-      "enabled": true,
+      "name": "Browscap-PHP",
+      "enabled": false,
       "class": "Http",
       "requires-cache": true,
-      "cache-dir": "data/cache/browscap3/",
+      "cache-dir": "data/cache/browscap/",
       "request": {
         "method": "GET",
         "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/browscap3/detect.php",
+        "uri": "http://localhost:8000/web/browscap/detect.php",
         "params": {},
         "headers": {}
       },
       "check": "Local",
       "mapper": "Browscap"
     },
-    "crossjoin": {
-      "name": "Crossjoin-Browscap (1.x)",
+    "matomo": {
+      "name": "Matomo",
       "enabled": true,
       "class": "Http",
       "requires-cache": true,
-      "cache-dir": "data/cache/crossjoin/",
+      "cache-dir": "data/cache/matomo/",
       "request": {
         "method": "GET",
         "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/crossjoin/detect.php",
+        "uri": "http://localhost:8000/web/matomo/detect.php",
         "params": {},
         "headers": {}
       },
       "check": "Local",
-      "mapper": "Browscap"
-    },
-    "piwik": {
-      "name": "Piwik",
-      "enabled": true,
-      "class": "Http",
-      "requires-cache": false,
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/piwik/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "PiwikDetector"
+      "mapper": "MatomoDetector"
     },
     "ua-parser": {
       "name": "UAParser",
-      "enabled": true,
+      "enabled": false,
       "class": "Http",
-      "requires-cache": false,
+      "requires-cache": true,
+      "cache-dir": "data/cache/uaparser/",
       "request": {
         "method": "GET",
         "ua-key": "useragent",
@@ -80,7 +66,7 @@
     },
     "which-browser": {
       "name": "WhichBrowser",
-      "enabled": true,
+      "enabled": false,
       "class": "Http",
       "requires-cache": false,
       "request": {
@@ -95,7 +81,7 @@
     },
     "woothee": {
       "name": "Woothee",
-      "enabled": true,
+      "enabled": false,
       "class": "Http",
       "requires-cache": false,
       "request": {

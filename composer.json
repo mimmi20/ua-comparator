@@ -37,6 +37,7 @@
     "league/flysystem": "^3.29.1",
     "league/flysystem-local": "^3.29.0",
     "matthiasmullie/scrapbook": "^1.5.4",
+    "mimmi20/browscap-helper-source": "^5.0.0",
     "monolog/monolog": "^3.8.1",
     "psr/cache": "^3.0.0",
     "psr/log": "^3.0.2",

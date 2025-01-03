@@ -16,7 +16,7 @@ namespace UaComparator;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use MatthiasMullie\Scrapbook\Adapters\Flysystem;
-use MatthiasMullie\Scrapbook\Psr16\SimpleCache;
+use MatthiasMullie\Scrapbook\Psr6\Pool;
 use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -35,7 +35,7 @@ final class UaComparator extends Application
         ErrorHandler::register($logger);
 
         $browscapAdapter = new LocalFilesystemAdapter('data/cache/general/');
-        $cache           = new SimpleCache(
+        $cache           = new Pool(
             new Flysystem(
                 new Filesystem($browscapAdapter),
             ),
@@ -44,6 +44,6 @@ final class UaComparator extends Application
         $config = new Config(['data/configs/config.json']);
 
         $this->add(new Command\CompareCommand($logger, $cache, $config));
-        $this->add(new Command\ParseCommand($logger, $cache, $config));
+        $this->add(new Command\ParseCommand($logger, $config));
     }
 }
