@@ -51,7 +51,7 @@
     "ext-xml": "*",
     "ext-xmlwriter": "*",
     "infection/infection": "^0.29.10",
-    "mimmi20/coding-standard": "^6.0.2",
+    "mimmi20/coding-standard": "^6.0.3",
     "nikic/php-parser": "^5.4.0",
     "phpstan/extension-installer": "^1.4.3",
     "phpstan/phpstan": "^2.1.1",
