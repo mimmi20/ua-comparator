@@ -2,7 +2,7 @@
   "require": {
     "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
     "composer-runtime-api": "^2.0",
-    "matomo/device-detector": "^6.4.2",
+    "matomo/device-detector": "^6.4.3",
     "matthiasmullie/scrapbook": "^1.5.4"
   },
   "config": {
