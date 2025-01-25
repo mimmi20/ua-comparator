@@ -15,6 +15,7 @@ mkdir ../data/browser/
 echo "clearing cache directory ..."
 rm -rf ../data/cache/
 
+echo "recreate cache directories ..."
 mkdir ../data/cache/
 mkdir ../data/cache/browscap-php/
 mkdir ../data/cache/browscap/
@@ -23,6 +24,7 @@ mkdir ../data/cache/matomo/
 mkdir ../data/cache/uaparser/
 mkdir ../data/cache/general/
 
+echo "update parsers ..."
 cd ../web
 
 for f in *; do
@@ -35,4 +37,3 @@ for f in *; do
 done
 
 echo "Done updating the parsers"
-
