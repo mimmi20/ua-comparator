@@ -112,30 +112,32 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
     }
 
     /**
+     * @param int | string $offset
      * @return bool true on success or false on failure.
-     *              </p>
-     *              <p>
-     *              The return value will be casted to boolean if non-boolean was returned.
      *
      * @throws void
      */
-    public function offsetExists(int | string $offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->modules[$offset]);
     }
 
     /**
+     * @param int | string $offset
      * @return mixed can return all value types
      *
      * @throws void
      */
-    public function offsetGet(int | string $offset): mixed
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->modules[$offset] ?? null;
     }
 
-    /** @throws void */
-    public function offsetSet(int | string | null $offset, mixed $value): void
+    /**
+     * @param int | string | null $offset
+     * @throws void
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if ($offset === null) {
             $this->modules[] = $value;
@@ -144,8 +146,11 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
         }
     }
 
-    /** @throws void */
-    public function offsetUnset(int | string $offset): void
+    /**
+     * @param int | string $offset
+     * @throws void
+     */
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->modules[$offset]);
     }

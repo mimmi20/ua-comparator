@@ -26,3 +26,4 @@ rewrite*.php
 .phpcs.cache
 npm-shrinkwrap.json
 data/cache/browscap/browscap.ini
+/data/results

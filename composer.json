@@ -33,6 +33,7 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "devster/ubench": "^2.1.0",
+    "guzzlehttp/guzzle": "^7.9.2",
     "hassankhan/config": "^3.2.0",
     "league/flysystem": "^3.29.1",
     "league/flysystem-local": "^3.29.0",
@@ -86,7 +87,18 @@
       "phpstan/extension-installer": true
     },
     "lock": false,
-    "preferred-install": "dist",
+    "preferred-install": {
+      "browscap/browscap": "source",
+      "donatj/phpuseragentparser": "source",
+      "jaybizzle/crawler-detect": "source",
+      "matomo/device-detector": "source",
+      "mimmi20/browser-detector": "source",
+      "mobiledetect/mobiledetectlib": "source",
+      "whichbrowser/parser": "source",
+      "woothee/woothee-testset": "source",
+      "zsxsoft/php-useragent": "source",
+      "*": "dist"
+    },
     "sort-packages": true
   }
 }

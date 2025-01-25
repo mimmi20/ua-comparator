@@ -18,14 +18,18 @@ use BrowscapHelper\Source\BrowserDetectorSource;
 use BrowscapHelper\Source\CollectionSource;
 use BrowscapHelper\Source\DirectorySource;
 use BrowscapHelper\Source\MatomoSource;
+use BrowscapHelper\Source\OutputAwareInterface;
 use BrowscapHelper\Source\UapCoreSource;
 use BrowscapHelper\Source\WhichBrowserSource;
 use BrowscapHelper\Source\WootheeSource;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemAdapter;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use LogicException;
 use MatthiasMullie\Scrapbook\Adapters\Flysystem;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
 use MatthiasMullie\Scrapbook\Psr16\SimpleCache;
+use MatthiasMullie\Scrapbook\Psr6\Pool;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
@@ -112,7 +116,7 @@ final class ParseCommand extends Command
 
         $output->writeln('preparing modules ...');
 
-        $modules    = $input->getOption('modules');
+        //$modules    = $input->getOption('modules');
         $collection = new ModuleCollection();
 
         /*
@@ -121,11 +125,11 @@ final class ParseCommand extends Command
 
         $inputMapper = new InputMapper();
 
-        foreach ($modules as $module) {
+        //foreach ($modules as $module) {
             foreach ($this->config['modules'] as $key => $moduleConfig) {
-                if ($key !== $module) {
-                    continue;
-                }
+//                if ($key !== $module) {
+//                    continue;
+//                }
 
                 assert(is_array($moduleConfig));
 
@@ -136,17 +140,18 @@ final class ParseCommand extends Command
                 $output->writeln('    preparing module ' . $moduleConfig['name'] . ' ...');
 
                 if (!isset($moduleConfig['requires-cache'])) {
-                    $moduleCache = new SimpleCache(
+                    $moduleCache = new Pool(
                         new MemoryStore(),
                     );
                 } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
-                    $moduleCache = new SimpleCache(
+                    $adapter = new LocalFilesystemAdapter($moduleConfig['cache-dir']);
+                    $moduleCache = new Pool(
                         new Flysystem(
-                            new Filesystem($moduleConfig['cache-dir']),
+                            new Filesystem($adapter),
                         ),
                     );
                 } else {
-                    $moduleCache = new SimpleCache(
+                    $moduleCache = new Pool(
                         new MemoryStore(),
                     );
                 }
@@ -168,7 +173,7 @@ final class ParseCommand extends Command
 
                 $collection->addModule($detectorModule);
             }
-        }
+        //}
 
         /*
          * init Modules
@@ -188,7 +193,7 @@ final class ParseCommand extends Command
 
         $output->writeln('initializing sources ...');
 
-        $source = new CollectionSource(
+        $sources = [
             new BrowscapSource(),
             new MatomoSource(),
             new UapCoreSource(),
@@ -196,7 +201,7 @@ final class ParseCommand extends Command
             new WootheeSource(),
             new BrowserDetectorSource(),
             new DirectorySource('data/useragents'),
-        );
+        ];
 
         /*
          * Loop
@@ -208,69 +213,81 @@ final class ParseCommand extends Command
         $counter       = 1;
         $existingTests = [];
 
-        foreach ($source->getUserAgents('') as $agent) {
-            $agent = trim((string) $agent);
+        foreach ($sources as $source) {
+            if ($source instanceof OutputAwareInterface) {
+                $source->setOutput($output);
+            }
 
-            if (isset($existingTests[$agent])) {
+            $baseMessage = sprintf('reading from source %s ', $source->getName());
+
+            if (!$source->isReady($baseMessage)) {
                 continue;
             }
 
-            if (0 < $limit) {
-                $output->writeln(
-                    '        parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...',
-                );
-            }
+            foreach ($source->getUserAgents('') as $agent) {
+                $agent = trim((string) $agent);
 
-            $bench = ['agent' => $agent];
+                if (isset($existingTests[$agent])) {
+                    continue;
+                }
 
-            /*
-             * handle modules
-             */
-            $cacheId = hash('sha512', bin2hex($agent));
+                if (0 < $limit) {
+                    $output->writeln(
+                        '        parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...',
+                    );
+                }
 
-            if (!file_exists('data/results/' . $cacheId)) {
-                mkdir('data/results/' . $cacheId, 0775, true);
-            }
+                $bench = ['agent' => $agent];
 
-            foreach ($collection as $module) {
-                /** @var ModuleInterface $module */
-                $module
-                    ->startTimer()
-                    ->detect($agent)
-                    ->endTimer();
+                /*
+                 * handle modules
+                 */
+                $cacheId = hash('sha512', bin2hex($agent));
 
-                $detectionResult = $module->getDetectionResult();
-                $actualTime      = $module->getTime();
-                $actualMemory    = $module->getMaxMemory();
+                if (!file_exists('data/results/' . $cacheId)) {
+                    mkdir('data/results/' . $cacheId, 0775, true);
+                }
 
-                // per useragent benchmark
-                $bench[$module->getName()] = [
-                    'memory' => $actualMemory,
-                    'time' => $actualTime,
-                ];
+                foreach ($collection as $module) {
+                    /** @var ModuleInterface $module */
+                    $module
+                        ->startTimer()
+                        ->detect($agent)
+                        ->endTimer();
+
+                    $detectionResult = $module->getDetectionResult();
+                    $actualTime      = $module->getTime();
+                    $actualMemory    = $module->getMaxMemory();
+
+                    // per useragent benchmark
+                    $bench[$module->getName()] = [
+                        'memory' => $actualMemory,
+                        'time' => $actualTime,
+                    ];
+
+                    file_put_contents(
+                        'data/results/' . $cacheId . '/' . $module->getName() . '.json',
+                        json_encode(
+                            [
+                                'memory' => $actualMemory,
+                                'result' => $detectionResult?->toArray(),
+                                'time' => $actualTime,
+                                'ua' => $agent,
+                            ],
+                            JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR,
+                        ),
+                    );
+                }
 
                 file_put_contents(
-                    'data/results/' . $cacheId . '/' . $module->getName() . '.json',
-                    json_encode(
-                        [
-                            'memory' => $actualMemory,
-                            'result' => $detectionResult?->toArray(),
-                            'time' => $actualTime,
-                            'ua' => $agent,
-                        ],
-                        JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR,
-                    ),
+                    'data/results/' . $cacheId . '/bench.json',
+                    json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR),
                 );
+
+                ++$counter;
+
+                $existingTests[$agent] = 1;
             }
-
-            file_put_contents(
-                'data/results/' . $cacheId . '/bench.json',
-                json_encode($bench, JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_THROW_ON_ERROR),
-            );
-
-            ++$counter;
-
-            $existingTests[$agent] = 1;
         }
 
         return self::SUCCESS;
