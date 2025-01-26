@@ -15,10 +15,6 @@ namespace UaComparator\Helper;
 
 final class Check
 {
-    public const string MINIMUM = 'minimum';
-
-    public const string MEDIUM = 'medium';
-
     /**
      * Executes the current command.
      *
@@ -26,6 +22,8 @@ final class Check
      * as a concrete class. In this case, instead of defining the
      * {@see execute()} method, you set the code to execute by passing
      * a Closure to the setCode() method.
+     *
+     * @return array<string, array<string, string>>
      *
      * @throws void
      */

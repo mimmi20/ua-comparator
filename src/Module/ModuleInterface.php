@@ -13,8 +13,6 @@ declare(strict_types = 1);
 
 namespace UaComparator\Module;
 
-use UaComparator\Module\Check\CheckInterface;
-use UaComparator\Module\Mapper\MapperInterface;
 use UaResult\Result\Result;
 
 /**
@@ -30,21 +28,21 @@ interface ModuleInterface
     public function init(): self;
 
     /** @throws void */
-    public function detect(string $agent): self;
+    public function detect(string $agent, array $headers): self;
 
     /**
      * starts the detection timer
      *
      * @throws void
      */
-    public function startTimer(): self;
+    public function startBenchmark(): self;
 
     /**
      * stops the detection timer
      *
      * @throws void
      */
-    public function endTimer(): self;
+    public function endBenchmark(): self;
 
     /**
      * returns the needed time
@@ -62,27 +60,6 @@ interface ModuleInterface
 
     /** @throws void */
     public function getName(): string;
-
-    /** @throws void */
-    public function setName(string $name): self;
-
-    /** @throws void */
-    public function getConfig(): array | null;
-
-    /** @throws void */
-    public function setConfig(array $config): Http;
-
-    /** @throws void */
-    public function getCheck(): CheckInterface | null;
-
-    /** @throws void */
-    public function setCheck(CheckInterface $check): Http;
-
-    /** @throws void */
-    public function getMapper(): MapperInterface | null;
-
-    /** @throws void */
-    public function setMapper(MapperInterface $mapper): Http;
 
     /** @throws void */
     public function getDetectionResult(): Result | null;

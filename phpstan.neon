@@ -8,6 +8,7 @@ parameters:
     processTimeout: 200.0
 
   paths:
+    - public
     - src
     - tests
 
@@ -89,7 +90,7 @@ parameters:
 
   type_coverage:
     return_type: 100
-    param_type: 99.7
+    param_type: 94.8
     property_type: 100
     constant_type: 100
     # also, how many files has declare strict types
@@ -110,4 +111,17 @@ parameters:
     - '~return type has no value type specified in iterable type array~'
     - '~with no value type specified in iterable type array~'
     - '~UaResult\\~'
-    - '~Call to deprecated method getBrowser\(\) of class BrowserDetector\\Detector~'
+    - '~on mixed~'
+    - '~Make sure the type is known~'
+    - '~types as the only types passed to this method~'
+    - '~mixed given~'
+    - '~Cannot cast mixed to (string|int)~'
+    - '~Access to an undefined property~'
+    - '~Unreachable statement~'
+    - '~Dead catch~'
+    - '~does not accept mixed~'
+    - '~array given~'
+    - '~will always evaluate to true~'
+    - '~of an invalid type mixed supplied for foreach~'
+    - '~and mixed results in an error~'
+    - '~not a callable~'

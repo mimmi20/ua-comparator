@@ -16,9 +16,11 @@
         <exclude name="SlevomatCodingStandard.Complexity.Cognitive.ComplexityTooHigh"/>
         <exclude name="Generic.Metrics.CyclomaticComplexity"/>
         <exclude name="SlevomatCodingStandard.Classes.ClassLength.ClassTooLong"/>
+        <exclude name="SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable.DisallowedSuperGlobalVariable"/>
     </rule>
 
     <!-- Paths to check -->
+    <file>public</file>
     <file>src</file>
     <file>tests</file>
     <file>.php-cs-fixer.php</file>

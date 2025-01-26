@@ -15,18 +15,22 @@ namespace UaComparator\Command;
 
 use DirectoryIterator;
 use IteratorIterator;
-use LogicException;
+use JsonException;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
 use Psr\Cache\CacheItemPoolInterface;
+use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use UaComparator\Helper\Check;
 use UaComparator\Helper\MessageFormatter;
+use UnexpectedValueException;
 
 use function array_keys;
 use function array_values;
@@ -46,11 +50,13 @@ use const STR_PAD_LEFT;
 
 final class CompareCommand extends Command
 {
+    /** @api */
     public const int COL_LENGTH = 50;
 
+    /** @api */
     public const int FIRST_COL_LENGTH = 20;
 
-    /** @throws void */
+    /** @throws LogicException */
     public function __construct(
         private readonly Logger $logger,
         private readonly CacheItemPoolInterface $cache,
@@ -62,7 +68,7 @@ final class CompareCommand extends Command
     /**
      * Configures the current command.
      *
-     * @throws void
+     * @throws InvalidArgumentException
      */
     protected function configure(): void
     {
@@ -86,7 +92,9 @@ final class CompareCommand extends Command
      *
      * @return int null or 0 if everything went fine, or an error code
      *
-     * @throws LogicException When this abstract method is not implemented
+     * @throws UnexpectedValueException
+     * @throws RuntimeException
+     * @throws JsonException
      *
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
      */
@@ -107,9 +115,6 @@ final class CompareCommand extends Command
         // $okfound   = 0;
         // $nokfound  = 0;
         // $sosofound = 0;
-
-        $messageFormatter = new MessageFormatter();
-        $messageFormatter->setColumnsLength(self::COL_LENGTH);
 
         $output->writeln('init checks ...');
 
@@ -143,7 +148,7 @@ final class CompareCommand extends Command
             foreach ($modules as $module) {
                 if (file_exists($path . '/' . $module . '.json')) {
                     $collection[$module] = json_decode(
-                        file_get_contents($path . '/' . $module . '.json'),
+                        (string) file_get_contents($path . '/' . $module . '.json'),
                         true,
                         512,
                         JSON_THROW_ON_ERROR,
@@ -157,7 +162,10 @@ final class CompareCommand extends Command
                 }
             }
 
-            $messageFormatter->setCollection($collection);
+            $messageFormatter = new MessageFormatter(
+                collection: $collection,
+                columnsLength: self::COL_LENGTH,
+            );
 
             /*
              * Auswertung
@@ -199,7 +207,7 @@ final class CompareCommand extends Command
                 ) . '|                                                  |';
 
                 foreach (array_keys($collection) as $moduleName) {
-                    $content .= mb_str_pad($moduleName, self::COL_LENGTH, ' ') . '|';
+                    $content .= mb_str_pad((string) $moduleName, self::COL_LENGTH, ' ') . '|';
                 }
 
                 $content .= "\n";

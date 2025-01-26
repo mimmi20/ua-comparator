@@ -14,8 +14,8 @@ declare(strict_types = 1);
 namespace UaComparator\Module\Check;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
@@ -27,7 +27,7 @@ interface CheckInterface
     /** @throws void */
     public function getResponse(
         ResponseInterface $response,
-        RequestInterface $request,
+        UriInterface $uri,
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         string $agent,

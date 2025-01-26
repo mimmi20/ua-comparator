@@ -1,0 +1,215 @@
+## Enable Expires-Header and Cache-control
+################################################################################
+<IfModule mod_expires.c>
+    ExpiresActive On
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header set X-UA-Compatible "IE=edge"
+    Header set Accept-CH "sec-ch-ua,ua,sec-ch-ua-platform,ua-platform,sec-ch-ua-mobile,ua-mobile,sec-ch-ua-full-version,ua-full-version,sec-ch-ua-platform-version,ua-platform-version,sec-ch-ua-arch,ua-arch,sec-ch-ua-bitness,ua-bitness,sec-ch-ua-model,ua-model,sec-ch-lang,lang,sec-ch-save-data,save-data,sec-ch-width,width,sec-ch-viewport-width,viewport-width,sec-ch-viewport-height,viewport-height,sec-ch-dpr,dpr,sec-ch-device-memory,device-memory,sec-ch-rtt,rtt,sec-ch-downlink,downlink,sec-ch-ect,ect,sec-ch-prefers-color-scheme,sec-ch-prefers-reduced-motion,sec-ch-prefers-reduced-transparency,sec-ch-prefers-contrast,sec-ch-forced-colors,sec-ch-prefers-reduced-data"
+    Header append Vary Accept-Encoding
+
+    # don't allow to show inside a iframe
+    Header always set Content-Security-Policy "base-uri 'self'; default-src 'self'; frame-ancestors 'none'; script-src 'self' 'wasm-unsafe-eval' 'inline-speculation-rules'; upgrade-insecure-requests"
+
+    Header always set Referrer-Policy "no-referrer, strict-origin-when-cross-origin"
+
+    # dont't allow content sniffing inside the browser
+    Header always set X-Content-Type-Options nosniff
+
+    # Always set these headers for CORS.
+    Header always set Access-Control-Max-Age 29030400
+    Header always set Access-Control-Allow-Methods: "GET,POST,OPTIONS"
+    # @todo: add csp with reporting url
+</IfModule>
+
+<FilesMatch "\.ico(__[0-9a-z]+)?$">
+    <IfModule mod_headers.c>
+        # 1 Year
+        Header set Cache-Control "max-age=29030400, public"
+    </IfModule>
+    <IfModule mod_expires.c>
+        ExpiresDefault "access plus 1 year"
+    </IfModule>
+</FilesMatch>
+
+<FilesMatch "\.(json|js|gif|jpe?g|png|svg|svgz|mp4|eot|ttf|woff2?|css|var|zd|zc|zg)(__[0-9a-z]+)?$">
+    <IfModule mod_headers.c>
+        # 4 Weeks
+        Header set Cache-Control "max-age=2419200, public"
+    </IfModule>
+    <IfModule mod_expires.c>
+        ExpiresDefault "access plus 4 weeks"
+    </IfModule>
+</FilesMatch>
+
+<FilesMatch "\.(woff2?|ttf|eot|svg)$">
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+    </IfModule>
+</FilesMatch>
+
+RewriteEngine On
+
+AddType application/x-javascript js cjs mjs
+AddType text/css css
+AddType image/svg+xml svg
+AddType image/svgz+xml svgz
+AddType font/woff woff
+AddType font/woff2 woff2
+AddType video/mp4 mp4
+
+## Enable Compression
+################################################################################
+<IfModule mod_deflate.c>
+    #AddOutputFilterByType DEFLATE application/javascript
+    #AddOutputFilterByType DEFLATE application/rss+xml
+    #AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+    #AddOutputFilterByType DEFLATE application/x-font
+    #AddOutputFilterByType DEFLATE application/x-font-opentype
+    #AddOutputFilterByType DEFLATE application/x-font-otf
+    #AddOutputFilterByType DEFLATE application/x-font-truetype
+    #AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-javascript
+    #AddOutputFilterByType DEFLATE application/xhtml+xml
+    #AddOutputFilterByType DEFLATE application/xml
+    #AddOutputFilterByType DEFLATE font/opentype
+    #AddOutputFilterByType DEFLATE font/otf
+    #AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE font/woff
+    AddOutputFilterByType DEFLATE font/woff2
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE image/svgz+xml
+    #AddOutputFilterByType DEFLATE image/x-icon
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/html
+    #AddOutputFilterByType DEFLATE text/javascript
+    #AddOutputFilterByType DEFLATE text/plain
+    #AddOutputFilterByType DEFLATE text/xml
+    #AddOutputFilterByType DEFLATE application/json
+    #AddOutputFilterByType DEFLATE text/x-component
+    #AddOutputFilterByType DEFLATE application/atom+xml
+    #AddOutputFilterByType DEFLATE application/pdf
+
+    # Append the compression method onto the end of the ETag
+    DeflateAlterETag AddSuffix
+
+    <IfModule mod_headers.c>
+        # Serve gzip compressed CSS and JS files if they exist
+        # and the client accepts gzip.
+        RewriteCond "%{HTTP:Accept-encoding}" "gzip"
+        RewriteCond "%{REQUEST_FILENAME}\.gz" -s
+        RewriteRule "^(.*)\.(css|js|cjs|mjs|svg|html|woff|woff2)" "$1\.$2\.gz" [QSA]
+
+        # Serve correct content types, and prevent mod_deflate double gzip.
+        RewriteRule "\.css\.gz$" "-" [T=text/css,E=no-gzip:1]
+        RewriteRule "\.js\.gz$"  "-" [T=application/x-javascript,E=no-gzip:1]
+        RewriteRule "\.cjs\.gz$"  "-" [T=application/x-javascript,E=no-gzip:1]
+        RewriteRule "\.mjs\.gz$"  "-" [T=application/x-javascript,E=no-gzip:1]
+        RewriteRule "\.svg\.gz$"  "-" [T=image/svg+xml,E=no-gzip:1]
+        RewriteRule "\.html\.gz$"  "-" [T=text/html,E=no-gzip:1]
+        RewriteRule "\.woff\.gz$"  "-" [T=font/woff,E=no-gzip:1]
+        RewriteRule "\.woff2\.gz$"  "-" [T=font/woff2,E=no-gzip:1]
+
+        <FilesMatch "(\.(css|js|cjs|mjs|svg|html|woff|woff2)\.gz)$">
+            # Serve correct encoding type.
+            Header append Content-Encoding gzip
+
+            # Force proxies to cache gzipped &
+            # non-gzipped css/js files separately.
+            Header append Vary Accept-Encoding
+        </FilesMatch>
+    </IfModule>
+</IfModule>
+
+# prefer to brotli over gzip if brotli is available
+<IfModule mod_brotli.c>
+    #AddOutputFilterByType BROTLI_COMPRESS application/javascript
+    #AddOutputFilterByType BROTLI_COMPRESS application/rss+xml
+    #AddOutputFilterByType BROTLI_COMPRESS application/vnd.ms-fontobject
+    #AddOutputFilterByType BROTLI_COMPRESS application/x-font
+    #AddOutputFilterByType BROTLI_COMPRESS application/x-font-opentype
+    #AddOutputFilterByType BROTLI_COMPRESS application/x-font-otf
+    #AddOutputFilterByType BROTLI_COMPRESS application/x-font-truetype
+    #AddOutputFilterByType BROTLI_COMPRESS application/x-font-ttf
+    AddOutputFilterByType BROTLI_COMPRESS application/x-javascript
+    #AddOutputFilterByType BROTLI_COMPRESS application/xhtml+xml
+    #AddOutputFilterByType BROTLI_COMPRESS application/xml
+    #AddOutputFilterByType BROTLI_COMPRESS font/opentype
+    #AddOutputFilterByType BROTLI_COMPRESS font/otf
+    #AddOutputFilterByType BROTLI_COMPRESS font/ttf
+    AddOutputFilterByType BROTLI_COMPRESS font/woff
+    AddOutputFilterByType BROTLI_COMPRESS font/woff2
+    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml
+    AddOutputFilterByType BROTLI_COMPRESS image/svgz+xml
+    #AddOutputFilterByType BROTLI_COMPRESS image/x-icon
+    AddOutputFilterByType BROTLI_COMPRESS text/css
+    AddOutputFilterByType BROTLI_COMPRESS text/html
+    #AddOutputFilterByType BROTLI_COMPRESS text/javascript
+    #AddOutputFilterByType BROTLI_COMPRESS text/plain
+    #AddOutputFilterByType BROTLI_COMPRESS text/xml
+    #AddOutputFilterByType BROTLI_COMPRESS application/json
+    #AddOutputFilterByType BROTLI_COMPRESS text/x-component
+    #AddOutputFilterByType BROTLI_COMPRESS application/atom+xml
+    #AddOutputFilterByType BROTLI_COMPRESS application/pdf
+
+    BrotliAlterETag AddSuffix
+
+    <IfModule mod_headers.c>
+        # Serve brotli compressed CSS and JS files if they exist
+        # and the client accepts brotli.
+        RewriteCond "%{HTTP:Accept-encoding}" "br"
+        RewriteCond "%{REQUEST_FILENAME}\.br" -s
+        RewriteRule "^(.*)\.(css|js|cjs|mjs|svg|html|woff|woff2)" "$1\.$2\.br" [QSA]
+
+        # Serve correct content types, and prevent double compression.
+        RewriteRule "\.css\.br$" "-" [T=text/css,E=no-brotli:1]
+        RewriteRule "\.js\.br$"  "-" [T=application/x-javascript,E=no-brotli:1]
+        RewriteRule "\.cjs\.br$"  "-" [T=application/x-javascript,E=no-brotli:1]
+        RewriteRule "\.mjs\.br$"  "-" [T=application/x-javascript,E=no-brotli:1]
+        RewriteRule "\.svg\.br$"  "-" [T=image/svg+xml,E=no-brotli:1]
+        RewriteRule "\.html\.br$"  "-" [T=text/html,E=no-brotli:1]
+        RewriteRule "\.woff\.br$"  "-" [T=font/woff,E=no-brotli:1]
+        RewriteRule "\.woff2\.br$"  "-" [T=font/woff2,E=no-brotli:1]
+
+        <FilesMatch "(\.(css|js|cjs|mjs|svg|html|woff|woff2)\.br)$">
+            # Serve correct encoding type.
+            Header append Content-Encoding br
+
+            # Force proxies to cache brotli &
+            # non-brotli css/js files separately.
+            Header append Vary Accept-Encoding
+        </FilesMatch>
+    </IfModule>
+</IfModule>
+
+# The following rule allows authentication to work with fast-cgi
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+## Rewrite rule for core css/js packages
+################################################################################
+RewriteRule ^(.+)__([0-9a-f]+)\.(css|js|var|jpe?g|png|gif|ico|eot|woff2?|ttf|svg)$ $1.$3 [NC,L]
+
+############# auf https weiterleiten ####################
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} !localhost:\d+$ [NC]
+RewriteCond %{HTTP_HOST} !unidev\d+\.dyn\.unister\.lan:\d+$ [NC]
+RewriteCond %{HTTP_HOST} !10\.\d+\.\d+\.\d+:\d+$ [NC]
+RewriteRule (.*) https://%{HTTP_HOST}/$1 [L,NC,R=301,QSA]
+
+# The following rule tells Apache that if the requested filename
+# exists, simply serve it.
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+
+# The following rewrites all other queries to index.php. The
+# condition ensures that if you are using Apache aliases to do
+# mass virtual hosting, the base path will be prepended to
+# allow proper resolution of the index.php file; it will work
+# in non-aliased environments as well, providing a safe, one-size
+# fits all solution.
+RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
+RewriteRule ^(.*) - [E=BASE:%1]
+RewriteRule !\.(css|js|var|jpe?g|png|gif|ico|eot|woff2?|ttf|svg|xml|shtml|swf|flv|map)$ %{ENV:BASE}/index.php [L]

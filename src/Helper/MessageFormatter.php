@@ -13,12 +13,12 @@ declare(strict_types = 1);
 
 namespace UaComparator\Helper;
 
-use BrowserDetector\Version\Version;
 use BrowserDetector\Version\VersionInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use UaResult\Result\Result;
 use UaResult\Result\ResultFactory;
+use UnexpectedValueException;
 
 use function array_keys;
 use function assert;
@@ -32,48 +32,29 @@ use function mb_substr;
 /**
  * BrowserDetectorModule.ini parsing class with caching and update capabilities
  */
-final class MessageFormatter
+final readonly class MessageFormatter
 {
-    /** @var array<Result> */
-    private array $collection;
-    private int $columnsLength = 0;
-    private readonly ResultFactory $resultFactory;
-
-    /** @throws void */
-    public function __construct()
-    {
-        $this->resultFactory = new ResultFactory();
-    }
+    private ResultFactory $resultFactory;
 
     /**
      * @param array<Result> $collection
      *
      * @throws void
      */
-    public function setCollection(array $collection): self
+    public function __construct(private array $collection, private int $columnsLength)
     {
-        $this->collection = $collection;
-
-        return $this;
-    }
-
-    /** @throws void */
-    public function setColumnsLength(int $columnsLength): self
-    {
-        $this->columnsLength = $columnsLength;
-
-        return $this;
+        $this->resultFactory = new ResultFactory();
     }
 
     /**
      * @return array<string>
      *
-     * @throws void
+     * @throws UnexpectedValueException
      */
     public function formatMessage(string $propertyName, CacheItemPoolInterface $cache, LoggerInterface $logger): array
     {
         $modules      = array_keys($this->collection);
-        $firstElement = $this->collection[$modules[0]]['result'];
+        $firstElement = $this->collection[$modules[0]];
         assert($firstElement instanceof Result);
 
         $strReality = $firstElement === null ? '(NULL)' : $this->getValue(
@@ -84,7 +65,7 @@ final class MessageFormatter
         $detectionResults = [];
 
         foreach ($modules as $module => $name) {
-            $element = $this->collection[$name]['result'];
+            $element = $this->collection[$name];
             assert($element instanceof Result);
 
             $strTarget = $element === null ? '(NULL)' : $this->getValue(
@@ -129,141 +110,39 @@ final class MessageFormatter
         return $detectionResults;
     }
 
-    /** @throws void */
+    /** @throws UnexpectedValueException */
     private function getValue(Result $element, string $propertyName): string
     {
-        switch ($propertyName) {
-            case 'mobile_browser':
-                $value = $element->getBrowser()->getName();
-
-                break;
-            case 'mobile_browser_version':
-                $value = $element->getBrowser()->getVersion();
-
-                if ($value instanceof Version) {
-                    $value = $value->getVersion(
-                        VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY,
-                    );
-                }
-
-                if ($value === '') {
-                    $value = null;
-                }
-
-                break;
-            case 'mobile_browser_modus':
-                $value = $element->getBrowser()->getModus();
-
-                break;
-            case 'mobile_browser_bits':
-                $value = $element->getBrowser()->getBits();
-
-                break;
-            case 'browser_type':
-                $value = $element->getBrowser()->getType()->getName();
-
-                break;
-            case 'mobile_browser_manufacturer':
-                $value = $element->getBrowser()->getManufacturer()->getName();
-
-                break;
-            case 'renderingengine_name':
-                $value = $element->getEngine()->getName();
-
-                break;
-            case 'renderingengine_version':
-                $value = $element->getEngine()->getVersion();
-
-                if ($value instanceof Version) {
-                    $value = $value->getVersion(
-                        VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY | VersionInterface::IGNORE_MACRO_IF_EMPTY,
-                    );
-                }
-
-                if ($value === '') {
-                    $value = null;
-                }
-
-                break;
-            case 'renderingengine_manufacturer':
-                $value = $element->getEngine()->getManufacturer()->getName();
-
-                break;
-            case 'device_os':
-                $value = $element->getOs()->getName();
-
-                break;
-            case 'device_os_version':
-                $value = $element->getOs()->getVersion();
-
-                if ($value instanceof Version) {
-                    $value = $value->getVersion(
-                        VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY,
-                    );
-                }
-
-                if ($value === '') {
-                    $value = null;
-                }
-
-                break;
-            case 'device_os_bits':
-                $value = $element->getOs()->getBits();
-
-                break;
-            case 'device_os_manufacturer':
-                $value = $element->getOs()->getManufacturer()->getName();
-
-                break;
-            case 'brand_name':
-                $value = $element->getDevice()->getBrand()->getBrandName();
-
-                break;
-            case 'marketing_name':
-                $value = $element->getDevice()->getMarketingName();
-
-                break;
-            case 'model_name':
-                $value = $element->getDevice()->getDeviceName();
-
-                break;
-            case 'manufacturer_name':
-                $value = $element->getDevice()->getManufacturer()->getName();
-
-                break;
-            case 'device_type':
-                $value = $element->getDevice()->getType()->getName();
-
-                break;
-            case 'pointing_method':
-                $value = $element->getDevice()->getPointingMethod();
-
-                break;
-            case 'has_qwerty_keyboard':
-                $value = $element->getDevice()->getHasQwertyKeyboard();
-
-                break;
-            case 'resolution_width':
-                $value = $element->getDevice()->getResolutionWidth();
-
-                break;
-            case 'resolution_height':
-                $value = $element->getDevice()->getResolutionHeight();
-
-                break;
-            case 'dual_orientation':
-                $value = $element->getDevice()->getDualOrientation();
-
-                break;
-            case 'colors':
-                $value = $element->getDevice()->getColors();
-
-                break;
-            default:
-                $value = '(n/a)';
-
-                break;
-        }
+        $value = match ($propertyName) {
+            'mobile_browser' => $element->getBrowser()->getName(),
+            'mobile_browser_version' => $element->getBrowser()->getVersion()->getVersion(
+                VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY,
+            ),
+            'mobile_browser_modus' => $element->getBrowser()->getModus(),
+            'mobile_browser_bits' => $element->getBrowser()->getBits(),
+            'browser_type' => $element->getBrowser()->getType()->getName(),
+            'mobile_browser_manufacturer' => $element->getBrowser()->getManufacturer()->getName(),
+            'renderingengine_name' => $element->getEngine()->getName(),
+            'renderingengine_version' => $element->getEngine()->getVersion()->getVersion(
+                VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY,
+            ),
+            'renderingengine_manufacturer' => $element->getEngine()->getManufacturer()->getName(),
+            'device_os' => $element->getOs()->getName(),
+            'device_os_version' => $element->getOs()->getVersion()->getVersion(
+                VersionInterface::IGNORE_MICRO_IF_EMPTY | VersionInterface::IGNORE_MINOR_IF_EMPTY,
+            ),
+            'device_os_bits' => $element->getOs()->getBits(),
+            'device_os_manufacturer' => $element->getOs()->getManufacturer()->getName(),
+            'brand_name' => $element->getDevice()->getBrand()->getBrandName(),
+            'marketing_name' => $element->getDevice()->getMarketingName(),
+            'model_name' => $element->getDevice()->getDeviceName(),
+            'manufacturer_name' => $element->getDevice()->getManufacturer()->getName(),
+            'device_type' => $element->getDevice()->getType()->getName(),
+            'resolution_width' => $element->getDevice()->getDisplay()->getWidth(),
+            'resolution_height' => $element->getDevice()->getDisplay()->getHeight(),
+            'dual_orientation' => $element->getDevice()->getDualOrientation(),
+            default => '(n/a)',
+        };
 
         if ($value === null || $value === 'null') {
             $output = '(NULL)';
