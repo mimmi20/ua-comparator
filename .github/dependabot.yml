@@ -6,22 +6,37 @@ updates:
   # Base directory
 
   - package-ecosystem: "composer"
+
     directory: "/"
+
     schedule:
       interval: "daily"
       time: "04:00"
       timezone: "Europe/Berlin"
+
     open-pull-requests-limit: 10
+
     reviewers:
       - "mimmi20"
+
     assignees:
       - "mimmi20"
+
     labels:
       - "dependencies"
+
     versioning-strategy: "increase"
+
+    target-branch: "master"
+
     commit-message:
       include: "scope"
       prefix: "composer"
+
+    ignore:
+      - dependency-name: "psr/http-message"
+
+    rebase-strategy: "auto"
 
   - package-ecosystem: "npm"
     directory: "/"
@@ -79,81 +94,8 @@ updates:
       prefix: "npm"
     target-branch: "master"
 
-  - package-ecosystem: "composer"
-    directory: "web/browscap-php/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
   - package-ecosystem: "npm"
     directory: "web/browser-detect/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "npm"
-    target-branch: "master"
-
-  - package-ecosystem: "composer"
-    directory: "web/browser-detector/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "web/cbschuld/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-
-  - package-ecosystem: "npm"
-    directory: "web/crawler-detect/"
     schedule:
       interval: "daily"
       time: "04:00"
@@ -227,41 +169,6 @@ updates:
       include: "scope"
       prefix: "npm"
     target-branch: "master"
-
-  - package-ecosystem: "composer"
-    directory: "web/donatj/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "web/endorphin/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
 
   - package-ecosystem: "npm"
     directory: "web/express-useragent/"
@@ -376,25 +283,6 @@ updates:
       include: "scope"
       prefix: "npm"
     target-branch: "master"
-
-  - package-ecosystem: "composer"
-    directory: "web/matomo/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
 
   - package-ecosystem: "composer"
     directory: "web/mobile-detect/"

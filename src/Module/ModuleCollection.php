@@ -13,7 +13,6 @@ declare(strict_types = 1);
 
 namespace UaComparator\Module;
 
-use ArrayAccess;
 use Countable;
 use Iterator;
 
@@ -21,10 +20,12 @@ use function count;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
+ *
+ * @implements Iterator<int, ModuleInterface>
  */
-final class ModuleCollection implements ArrayAccess, Countable, Iterator
+final class ModuleCollection implements Countable, Iterator
 {
-    /** @var array<ModuleInterface> */
+    /** @var array<int, ModuleInterface> */
     private array $modules = [];
     private int $position  = 0;
 
@@ -38,30 +39,6 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
     public function addModule(ModuleInterface $module): self
     {
         $this->modules[] = $module;
-
-        return $this;
-    }
-
-    /**
-     * @return array<ModuleInterface>
-     *
-     * @throws void
-     */
-    public function getModules(): array
-    {
-        return $this->modules;
-    }
-
-    /**
-     * initializes the module
-     *
-     * @throws void
-     */
-    public function init(): self
-    {
-        foreach ($this->modules as $module) {
-            $module->init();
-        }
 
         return $this;
     }
@@ -109,49 +86,5 @@ final class ModuleCollection implements ArrayAccess, Countable, Iterator
     public function count(): int
     {
         return count($this->modules);
-    }
-
-    /**
-     * @param int | string $offset
-     * @return bool true on success or false on failure.
-     *
-     * @throws void
-     */
-    public function offsetExists(mixed $offset): bool
-    {
-        return isset($this->modules[$offset]);
-    }
-
-    /**
-     * @param int | string $offset
-     * @return mixed can return all value types
-     *
-     * @throws void
-     */
-    public function offsetGet(mixed $offset): mixed
-    {
-        return $this->modules[$offset] ?? null;
-    }
-
-    /**
-     * @param int | string | null $offset
-     * @throws void
-     */
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        if ($offset === null) {
-            $this->modules[] = $value;
-        } else {
-            $this->modules[$offset] = $value;
-        }
-    }
-
-    /**
-     * @param int | string $offset
-     * @throws void
-     */
-    public function offsetUnset(mixed $offset): void
-    {
-        unset($this->modules[$offset]);
     }
 }

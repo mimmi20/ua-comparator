@@ -13,6 +13,7 @@ declare(strict_types = 1);
 
 namespace UaComparator;
 
+use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use MatthiasMullie\Scrapbook\Adapters\Flysystem;
@@ -21,17 +22,22 @@ use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Exception\LogicException;
 
 final class UaComparator extends Application
 {
-    /** @throws void */
+    /**
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     */
     public function __construct()
     {
         parent::__construct('Useragent Parser Comparator Project', 'dev-master');
 
         $logger = new Logger('ua-comparator');
-        $logger->pushHandler(new StreamHandler('log/error.log', Logger::NOTICE));
+        $logger->pushHandler(new StreamHandler('log/error.log', LogLevel::NOTICE));
         ErrorHandler::register($logger);
 
         $browscapAdapter = new LocalFilesystemAdapter('data/cache/general/');

@@ -15,33 +15,35 @@ namespace UaComparator\Command;
 
 use BrowscapHelper\Source\BrowscapSource;
 use BrowscapHelper\Source\BrowserDetectorSource;
-use BrowscapHelper\Source\CollectionSource;
 use BrowscapHelper\Source\DirectorySource;
 use BrowscapHelper\Source\MatomoSource;
 use BrowscapHelper\Source\OutputAwareInterface;
 use BrowscapHelper\Source\UapCoreSource;
 use BrowscapHelper\Source\WhichBrowserSource;
 use BrowscapHelper\Source\WootheeSource;
+use JsonException;
 use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use LogicException;
 use MatthiasMullie\Scrapbook\Adapters\Flysystem;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
-use MatthiasMullie\Scrapbook\Psr16\SimpleCache;
 use MatthiasMullie\Scrapbook\Psr6\Pool;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
-use UaComparator\Module\Mapper\MapperInterface;
+use UaComparator\Module\Check\DefaultCheck;
+use UaComparator\Module\Http;
+use UaComparator\Module\Mapper\DefaultMapper;
 use UaComparator\Module\ModuleCollection;
 use UaComparator\Module\ModuleInterface;
 use UaDataMapper\InputMapper;
+use UnexpectedValueException;
 
 use function assert;
 use function bin2hex;
@@ -60,13 +62,7 @@ use const JSON_THROW_ON_ERROR;
 
 final class ParseCommand extends Command
 {
-    public const string SOURCE_SQL = 'sql';
-
-    public const string SOURCE_DIR = 'dir';
-
-    public const string SOURCE_TEST = 'tests';
-
-    /** @throws void */
+    /** @throws \Symfony\Component\Console\Exception\LogicException */
     public function __construct(private readonly Logger $logger, private readonly Config $config)
     {
         parent::__construct();
@@ -75,7 +71,7 @@ final class ParseCommand extends Command
     /**
      * Configures the current command.
      *
-     * @throws void
+     * @throws InvalidArgumentException
      */
     protected function configure(): void
     {
@@ -103,9 +99,11 @@ final class ParseCommand extends Command
      * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
-     * @return int|null null or 0 if everything went fine, or an error code
+     * @return int null or 0 if everything went fine, or an error code
      *
      * @throws LogicException When this abstract method is not implemented
+     * @throws JsonException
+     * @throws UnexpectedValueException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -116,7 +114,6 @@ final class ParseCommand extends Command
 
         $output->writeln('preparing modules ...');
 
-        //$modules    = $input->getOption('modules');
         $collection = new ModuleCollection();
 
         /*
@@ -125,55 +122,43 @@ final class ParseCommand extends Command
 
         $inputMapper = new InputMapper();
 
-        //foreach ($modules as $module) {
-            foreach ($this->config['modules'] as $key => $moduleConfig) {
-//                if ($key !== $module) {
-//                    continue;
-//                }
+        foreach ($this->config['modules'] as $moduleConfig) {
+            assert(is_array($moduleConfig));
 
-                assert(is_array($moduleConfig));
-
-                if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
-                    continue;
-                }
-
-                $output->writeln('    preparing module ' . $moduleConfig['name'] . ' ...');
-
-                if (!isset($moduleConfig['requires-cache'])) {
-                    $moduleCache = new Pool(
-                        new MemoryStore(),
-                    );
-                } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
-                    $adapter = new LocalFilesystemAdapter($moduleConfig['cache-dir']);
-                    $moduleCache = new Pool(
-                        new Flysystem(
-                            new Filesystem($adapter),
-                        ),
-                    );
-                } else {
-                    $moduleCache = new Pool(
-                        new MemoryStore(),
-                    );
-                }
-
-                $moduleClassName = '\UaComparator\Module\\' . $moduleConfig['class'];
-
-                $detectorModule = new $moduleClassName($this->logger, $moduleCache);
-                assert($detectorModule instanceof ModuleInterface);
-                $detectorModule->setName($moduleConfig['name']);
-                $detectorModule->setConfig($moduleConfig['request']);
-
-                $checkName = '\UaComparator\Module\Check\\' . $moduleConfig['check'];
-                $detectorModule->setCheck(new $checkName());
-
-                $mapperName = '\UaComparator\Module\Mapper\\' . $moduleConfig['mapper'];
-                $mapper     = new $mapperName($inputMapper, $moduleCache);
-                assert($mapper instanceof MapperInterface);
-                $detectorModule->setMapper($mapper);
-
-                $collection->addModule($detectorModule);
+            if (!$moduleConfig['enabled'] || !$moduleConfig['name']) {
+                continue;
             }
-        //}
+
+            $output->writeln('    preparing module ' . $moduleConfig['name'] . ' ...');
+
+            if (!isset($moduleConfig['requires-cache'])) {
+                $moduleCache = new Pool(
+                    new MemoryStore(),
+                );
+            } elseif ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
+                $adapter     = new LocalFilesystemAdapter($moduleConfig['cache-dir']);
+                $moduleCache = new Pool(
+                    new Flysystem(
+                        new Filesystem($adapter),
+                    ),
+                );
+            } else {
+                $moduleCache = new Pool(
+                    new MemoryStore(),
+                );
+            }
+
+            $collection->addModule(
+                new Http(
+                    name: $moduleConfig['name'],
+                    logger: $this->logger,
+                    cache: $moduleCache,
+                    check: new DefaultCheck(),
+                    mapper: new DefaultMapper($inputMapper),
+                    config: $moduleConfig['request'],
+                ),
+            );
+        }
 
         /*
          * init Modules
@@ -181,7 +166,8 @@ final class ParseCommand extends Command
 
         $output->writeln('initializing modules ...');
 
-        foreach ($collection->getModules() as $module) {
+        foreach ($collection as $module) {
+            /** @var ModuleInterface $module */
             $output->writeln('    initializing module ' . $module->getName() . ' ...');
 
             $module->init();
@@ -224,14 +210,19 @@ final class ParseCommand extends Command
                 continue;
             }
 
-            foreach ($source->getUserAgents('') as $agent) {
+            foreach ($source->getHeaders($baseMessage) as $headers) {
+                $agent = $headers['user-agent'] ?? 'n/a';
                 $agent = trim((string) $agent);
 
                 if (isset($existingTests[$agent])) {
                     continue;
                 }
 
-                if (0 < $limit) {
+                if ($limit > 0) {
+                    if ($counter > $limit) {
+                        continue;
+                    }
+
                     $output->writeln(
                         '        parsing ua #' . sprintf('%1$08d', $counter) . ': ' . $agent . ' ...',
                     );
@@ -251,9 +242,9 @@ final class ParseCommand extends Command
                 foreach ($collection as $module) {
                     /** @var ModuleInterface $module */
                     $module
-                        ->startTimer()
-                        ->detect($agent)
-                        ->endTimer();
+                        ->startBenchmark()
+                        ->detect($agent, $headers)
+                        ->endBenchmark();
 
                     $detectionResult = $module->getDetectionResult();
                     $actualTime      = $module->getTime();

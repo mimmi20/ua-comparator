@@ -13,7 +13,6 @@ declare(strict_types = 1);
 
 namespace UaComparator\Module\Mapper;
 
-use UaDataMapper\InputMapper;
 use UaResult\Result\Result;
 
 /**
@@ -29,7 +28,4 @@ interface MapperInterface
      * @throws void
      */
     public function map(mixed $parserResult, string $agent): Result;
-
-    /** @throws void */
-    public function getMapper(): InputMapper | null;
 }

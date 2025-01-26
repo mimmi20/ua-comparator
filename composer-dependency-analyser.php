@@ -18,6 +18,7 @@ $config = new Configuration();
 
 $config
     // Adjusting scanned paths
+    ->addPathToScan(__DIR__ . '/public', isDev: false)
     ->addPathToScan(__DIR__ . '/src', isDev: false)
     ->addPathToScan(__DIR__ . '/tests', isDev: true)
     ->addPathToScan(__DIR__ . '/vendor', isDev: false)

@@ -2,97 +2,117 @@
   "modules": {
     "browser-detector": {
       "name": "BrowserDetector",
-      "enabled": true,
-      "class": "Http",
+      "enabled": false,
       "requires-cache": true,
       "cache-dir": "data/cache/browser/",
       "request": {
         "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/browser-detector/detect.php",
+        "uri": "http://localhost:8000/browser-detector/",
         "params": {},
         "headers": {}
-      },
-      "check": "BrowserDetectorModule",
-      "mapper": "BrowserDetectorModule"
-    },
-    "browscap": {
-      "name": "Browscap-PHP",
-      "enabled": false,
-      "class": "Http",
-      "requires-cache": true,
-      "cache-dir": "data/cache/browscap/",
-      "request": {
-        "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/browscap/detect.php",
-        "params": {},
-        "headers": {}
-      },
-      "check": "Local",
-      "mapper": "Browscap"
+      }
     },
     "matomo": {
       "name": "Matomo",
-      "enabled": true,
-      "class": "Http",
+      "enabled": false,
       "requires-cache": true,
       "cache-dir": "data/cache/matomo/",
       "request": {
         "method": "GET",
-        "ua-key": "useragent",
-        "uri": "http://localhost:8000/web/matomo/detect.php",
+        "uri": "http://localhost:8000/matomo/",
         "params": {},
         "headers": {}
-      },
-      "check": "Local",
-      "mapper": "MatomoDetector"
+      }
+    },
+    "browscap": {
+      "name": "Browscap-PHP",
+      "enabled": true,
+      "requires-cache": true,
+      "cache-dir": "data/cache/browscap/",
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/browscap-php/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "cbschuld": {
+      "name": "Cbschuld",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/cbschuld/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "crawler-detect": {
+      "name": "CrawlerDetect",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/crawler-detect/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "donatj": {
+      "name": "CrawlerDetect",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/donatj/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "endorphin": {
+      "name": "CrawlerDetect",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/endorphin/",
+        "params": {},
+        "headers": {}
+      }
     },
     "ua-parser": {
       "name": "UAParser",
       "enabled": false,
-      "class": "Http",
       "requires-cache": true,
       "cache-dir": "data/cache/uaparser/",
       "request": {
         "method": "GET",
-        "ua-key": "useragent",
         "uri": "http://localhost:8000/web/ua-parser/detect.php",
         "params": {},
         "headers": {}
-      },
-      "check": "Local",
-      "mapper": "UaParser"
+      }
     },
     "which-browser": {
       "name": "WhichBrowser",
       "enabled": false,
-      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
-        "ua-key": "useragent",
         "uri": "http://localhost:8000/web/which-browser/detect.php",
         "params": {},
         "headers": {}
-      },
-      "check": "Local",
-      "mapper": "WhichBrowser"
+      }
     },
     "woothee": {
       "name": "Woothee",
       "enabled": false,
-      "class": "Http",
       "requires-cache": false,
       "request": {
         "method": "GET",
-        "ua-key": "useragent",
         "uri": "http://localhost:8000/web/woothee/detect.php",
         "params": {},
         "headers": {}
-      },
-      "check": "Local",
-      "mapper": "Woothee"
+      }
     }
   }
 }

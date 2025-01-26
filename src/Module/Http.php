@@ -16,9 +16,11 @@ namespace UaComparator\Module;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use UaComparator\Helper\Request;
@@ -28,28 +30,29 @@ use UaResult\Result\Result;
 use Ubench;
 use UnexpectedValueException;
 
-use function http_build_query;
-
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  */
 final class Http implements ModuleInterface
 {
-    private string $name                     = '';
     private Response | null $detectionResult = null;
     private string $agent                    = '';
-    private Ubench | null $bench             = null;
-    private array | null $config             = null;
-    private CheckInterface | null $check     = null;
-    private MapperInterface | null $mapper   = null;
-    private GuzzleHttpRequest $request;
-    private float $duration     = 0.0;
-    private int | float $memory = 0;
+    private readonly Ubench $bench;
+    private float $duration = 0.0;
+    private int $memory     = 0;
 
-    /** @throws void */
+    /**
+     * @param array{uri: string, headers: array<string, string>, method: 'GET'|'POST'} $config
+     *
+     * @throws void
+     */
     public function __construct(
+        private readonly string $name,
         private readonly LoggerInterface $logger,
         private readonly CacheItemPoolInterface $cache,
+        private readonly CheckInterface $check,
+        private readonly MapperInterface $mapper,
+        private readonly array $config,
     ) {
         $this->bench = new Ubench();
     }
@@ -64,32 +67,25 @@ final class Http implements ModuleInterface
         return $this;
     }
 
-    /** @throws void */
-    public function detect(string $agent, array $headers = []): self
+    /** @throws GuzzleException */
+    public function detect(string $agent, array $headers): self
     {
         $this->agent = $agent;
-        $body        = null;
 
-        $params   = [$this->config['ua-key'] => $agent] + $this->config['params'];
         $headers += $this->config['headers'];
 
-        if ($this->config['method'] === 'GET') {
-            $uri = $this->config['uri'] . '?' . http_build_query($params, '', '&');
-        } else {
-            $uri  = $this->config['uri'];
-            $body = http_build_query($params, '', '&');
-        }
+        $uri = $this->config['uri'];
 
-        $this->request = new GuzzleHttpRequest($this->config['method'], $uri, $headers, $body);
+        $request       = new GuzzleHttpRequest($this->config['method'], $uri, $headers);
         $requestHelper = new Request();
 
         $this->detectionResult = null;
 
         try {
-            $this->detectionResult = $requestHelper->getResponse($this->request, new Client());
+            $this->detectionResult = $requestHelper->getResponse($request, new Client());
         } catch (ConnectException $e) {
             $this->logger->error(
-                new ConnectException('could not connect to uri "' . $uri . '"', $this->request, $e),
+                new ConnectException('could not connect to uri "' . $uri . '"', $request, $e),
             );
         } catch (RequestException $e) {
             $this->logger->error($e);
@@ -103,7 +99,7 @@ final class Http implements ModuleInterface
      *
      * @throws void
      */
-    public function startTimer(): self
+    public function startBenchmark(): self
     {
         $this->bench->start();
 
@@ -115,12 +111,12 @@ final class Http implements ModuleInterface
      *
      * @throws Exception
      */
-    public function endTimer(): self
+    public function endBenchmark(): self
     {
         $this->bench->end();
 
-        $this->duration = $this->bench->getTime(true);
-        $this->memory   = $this->bench->getMemoryPeak(true);
+        $this->duration = (float) $this->bench->getTime(true);
+        $this->memory   = (int) $this->bench->getMemoryPeak(true);
 
         return $this;
     }
@@ -152,56 +148,6 @@ final class Http implements ModuleInterface
     }
 
     /** @throws void */
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /** @throws void */
-    public function getConfig(): array | null
-    {
-        return $this->config;
-    }
-
-    /** @throws void */
-    public function setConfig(array $config): self
-    {
-        $this->config = $config;
-
-        return $this;
-    }
-
-    /** @throws void */
-    public function getCheck(): CheckInterface | null
-    {
-        return $this->check;
-    }
-
-    /** @throws void */
-    public function setCheck(CheckInterface $check): self
-    {
-        $this->check = $check;
-
-        return $this;
-    }
-
-    /** @throws void */
-    public function getMapper(): MapperInterface | null
-    {
-        return $this->mapper;
-    }
-
-    /** @throws void */
-    public function setMapper(MapperInterface $mapper): self
-    {
-        $this->mapper = $mapper;
-
-        return $this;
-    }
-
-    /** @throws void */
     public function getDetectionResult(): Result | null
     {
         if ($this->detectionResult === null) {
@@ -209,12 +155,12 @@ final class Http implements ModuleInterface
         }
 
         try {
-            $return = $this->getCheck()->getResponse(
-                $this->detectionResult,
-                $this->request,
-                $this->cache,
-                $this->logger,
-                $this->agent,
+            $return = $this->check->getResponse(
+                response: $this->detectionResult,
+                uri: new Uri($this->config['uri']),
+                cache: $this->cache,
+                logger: $this->logger,
+                agent: $this->agent,
             );
         } catch (RequestException $e) {
             $this->logger->error($e);
@@ -235,11 +181,7 @@ final class Http implements ModuleInterface
         }
 
         try {
-            if (isset($return->result)) {
-                return $this->getMapper()->map($return->result, $this->agent);
-            }
-
-            return $this->getMapper()->map($return, $this->agent);
+            return $this->mapper->map($return, $this->agent);
         } catch (UnexpectedValueException $e) {
             $this->logger->error($e);
         }
