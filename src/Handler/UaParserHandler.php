@@ -15,11 +15,12 @@ namespace UaComparator\Handler;
 
 use Composer\InstalledVersions;
 use InvalidArgumentException;
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
+use UAParser\Exception\FileNotFoundException;
+use UAParser\Parser;
 
 use function array_keys;
 use function is_int;
@@ -35,15 +36,17 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CrawlerDetectHandler
+final readonly class UaParserHandler
 {
-    /** @throws InvalidArgumentException */
+    /**
+     * @throws InvalidArgumentException
+     * @throws FileNotFoundException
+     */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $start  = microtime(true);
-        $parser = new CrawlerDetect();
-        $parser->setUserAgent('Test String');
-        $parser->isCrawler();
+        $parser = Parser::create();
+        $parser->parse('Test String');
         $initTime = microtime(true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
@@ -71,21 +74,22 @@ final readonly class CrawlerDetectHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('jaybizzle/crawler-detect'),
+            'version' => InstalledVersions::getPrettyVersion('ua-parser/uap-php'),
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $parser->setUserAgent($agentString);
-            $isbot     = $parser->isCrawler();
-            $parseTime = microtime(true) - $start;
+            $start           = microtime(true);
+            $r               = $parser->parse($agentString);
+            $browserVersion  = $r->ua->toVersion();
+            $platformVersion = $r->os->toVersion();
+            $parseTime       = microtime(true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [
-                    'deviceName' => null,
+                    'deviceName' => $r->device->model,
                     'marketingName' => null,
                     'manufacturer' => null,
-                    'brand' => null,
+                    'brand' => $r->device->brand,
                     'display' => [
                         'width' => null,
                         'height' => null,
@@ -99,18 +103,18 @@ final readonly class CrawlerDetectHandler
                     'ismobile' => null,
                 ],
                 'client' => [
-                    'name' => null,
+                    'name' => $r->ua->family,
                     'modus' => null,
-                    'version' => null,
+                    'version' => $browserVersion,
                     'manufacturer' => null,
                     'bits' => null,
                     'type' => null,
-                    'isbot' => $isbot,
+                    'isbot' => null,
                 ],
                 'platform' => [
-                    'name' => null,
+                    'name' => $r->os->family,
                     'marketingName' => null,
-                    'version' => null,
+                    'version' => $platformVersion,
                     'manufacturer' => null,
                     'bits' => null,
                 ],
@@ -119,7 +123,7 @@ final readonly class CrawlerDetectHandler
                     'version' => null,
                     'manufacturer' => null,
                 ],
-                'raw' => null,
+                'raw' => $r,
             ];
 
             $output['parse_time'] = $parseTime;

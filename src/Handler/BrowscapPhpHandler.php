@@ -92,9 +92,9 @@ final readonly class BrowscapPhpHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $r     = $bc->getBrowser($agentString);
-            $end   = microtime(true) - $start;
+            $start     = microtime(true);
+            $r         = $bc->getBrowser($agentString);
+            $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [
@@ -138,7 +138,7 @@ final readonly class BrowscapPhpHandler
                 'raw' => $r,
             ];
 
-            $output['parse_time'] = $end;
+            $output['parse_time'] = $parseTime;
         }
 
         $output['memory_used'] = memory_get_peak_usage();

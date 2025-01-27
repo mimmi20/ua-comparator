@@ -24,9 +24,9 @@ rm -rf ../data/cache/
 
 echo "recreate cache directories ..."
 mkdir ../data/cache/
-mkdir ../data/cache/browscap-php/
 mkdir ../data/cache/browscap/
 mkdir ../data/cache/browser/
 mkdir ../data/cache/matomo/
-mkdir ../data/cache/uaparser/
-mkdir ../data/cache/general/
+mkdir ../data/cache/endorphin/
+mkdir ../data/cache/mobiledetect/
+mkdir ../data/cache/whichbrowser/

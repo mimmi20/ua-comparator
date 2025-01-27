@@ -15,11 +15,15 @@ namespace UaComparator\Handler;
 
 use Composer\InstalledVersions;
 use InvalidArgumentException;
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use JsonException;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use MatthiasMullie\Scrapbook\Adapters\Flysystem;
+use MatthiasMullie\Scrapbook\Psr6\Pool;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
+use WhichBrowser\Parser;
 
 use function array_keys;
 use function is_int;
@@ -35,19 +39,25 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CrawlerDetectHandler
+final readonly class WhichBrowserHandler
 {
     /** @throws InvalidArgumentException */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start  = microtime(true);
-        $parser = new CrawlerDetect();
-        $parser->setUserAgent('Test String');
-        $parser->isCrawler();
+        $cacheDir = 'data/cache/whichbrowser';
+
+        $browscapAdapter = new LocalFilesystemAdapter($cacheDir);
+        $cache           = new Pool(
+            new Flysystem(
+                new Filesystem($browscapAdapter),
+            ),
+        );
+        $parser          = new Parser();
+        $start           = microtime(true);
+        $parser->analyse(['User-Agent' => 'Test String'], ['cache' => $cache]);
         $initTime = microtime(true) - $start;
 
-        $hasUa       = $request->hasHeader('user-agent');
-        $agentString = $request->getHeaderLine('user-agent');
+        $hasUa = $request->hasHeader('user-agent');
 
         $headerNames = array_keys($request->getHeaders());
 
@@ -71,21 +81,21 @@ final readonly class CrawlerDetectHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('jaybizzle/crawler-detect'),
+            'version' => InstalledVersions::getPrettyVersion('whichbrowser/parser'),
         ];
 
         if ($hasUa) {
             $start = microtime(true);
-            $parser->setUserAgent($agentString);
-            $isbot     = $parser->isCrawler();
+            $parser->analyse($headers, ['cache' => $cache]);
+            $isMobile  = $parser->isMobile();
             $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [
-                    'deviceName' => null,
+                    'deviceName' => $parser->device->model,
                     'marketingName' => null,
                     'manufacturer' => null,
-                    'brand' => null,
+                    'brand' => $parser->device->manufacturer,
                     'display' => [
                         'width' => null,
                         'height' => null,
@@ -94,32 +104,32 @@ final readonly class CrawlerDetectHandler
                         'size' => null,
                     ],
                     'dualOrientation' => null,
-                    'type' => null,
+                    'type' => $parser->device->type,
                     'simCount' => null,
-                    'ismobile' => null,
+                    'ismobile' => $isMobile,
                 ],
                 'client' => [
-                    'name' => null,
+                    'name' => $parser->browser->name,
                     'modus' => null,
-                    'version' => null,
+                    'version' => $parser->browser->version->value ?? null,
                     'manufacturer' => null,
                     'bits' => null,
                     'type' => null,
-                    'isbot' => $isbot,
+                    'isbot' => null,
                 ],
                 'platform' => [
-                    'name' => null,
+                    'name' => $parser->os->name,
                     'marketingName' => null,
-                    'version' => null,
+                    'version' => $parser->os->version->value ?? null,
                     'manufacturer' => null,
                     'bits' => null,
                 ],
                 'engine' => [
-                    'name' => null,
+                    'name' => $parser->engine->name,
                     'version' => null,
                     'manufacturer' => null,
                 ],
-                'raw' => null,
+                'raw' => $parser->toArray(),
             ];
 
             $output['parse_time'] = $parseTime;

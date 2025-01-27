@@ -2,7 +2,7 @@
   "modules": {
     "browser-detector": {
       "name": "BrowserDetector",
-      "enabled": false,
+      "enabled": true,
       "requires-cache": true,
       "cache-dir": "data/cache/browser/",
       "request": {
@@ -14,7 +14,7 @@
     },
     "matomo": {
       "name": "Matomo",
-      "enabled": false,
+      "enabled": true,
       "requires-cache": true,
       "cache-dir": "data/cache/matomo/",
       "request": {
@@ -59,7 +59,7 @@
       }
     },
     "donatj": {
-      "name": "CrawlerDetect",
+      "name": "Donatj",
       "enabled": true,
       "requires-cache": false,
       "request": {
@@ -70,9 +70,10 @@
       }
     },
     "endorphin": {
-      "name": "CrawlerDetect",
+      "name": "Endorphin",
       "enabled": true,
-      "requires-cache": false,
+      "requires-cache": true,
+      "cache-dir": "data/cache/endorphin/",
       "request": {
         "method": "GET",
         "uri": "http://localhost:8000/endorphin/",
@@ -80,14 +81,25 @@
         "headers": {}
       }
     },
-    "ua-parser": {
-      "name": "UAParser",
-      "enabled": false,
+    "mobiledetect": {
+      "name": "MobileDetect",
+      "enabled": true,
       "requires-cache": true,
-      "cache-dir": "data/cache/uaparser/",
+      "cache-dir": "data/cache/mobiledetect/",
       "request": {
         "method": "GET",
-        "uri": "http://localhost:8000/web/ua-parser/detect.php",
+        "uri": "http://localhost:8000/mobiledetect/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "ua-parser": {
+      "name": "UAParser",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/ua-parser/",
         "params": {},
         "headers": {}
       }
@@ -95,21 +107,33 @@
     "which-browser": {
       "name": "WhichBrowser",
       "enabled": false,
+      "requires-cache": true,
+      "cache-dir": "data/cache/whichbrowser/",
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/which-browser/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "wolfcast": {
+      "name": "Wolfcast",
+      "enabled": false,
       "requires-cache": false,
       "request": {
         "method": "GET",
-        "uri": "http://localhost:8000/web/which-browser/detect.php",
+        "uri": "http://localhost:8000/wolfcast/",
         "params": {},
         "headers": {}
       }
     },
     "woothee": {
       "name": "Woothee",
-      "enabled": false,
+      "enabled": true,
       "requires-cache": false,
       "request": {
         "method": "GET",
-        "uri": "http://localhost:8000/web/woothee/detect.php",
+        "uri": "http://localhost:8000/woothee/",
         "params": {},
         "headers": {}
       }

@@ -73,9 +73,9 @@ final readonly class DonatjHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $r     = parse_user_agent($agentString);
-            $end   = microtime(true) - $start;
+            $start     = microtime(true);
+            $r         = parse_user_agent($agentString);
+            $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [
@@ -119,7 +119,7 @@ final readonly class DonatjHandler
                 'raw' => $r,
             ];
 
-            $output['parse_time'] = $end;
+            $output['parse_time'] = $parseTime;
         }
 
         $output['memory_used'] = memory_get_peak_usage();

@@ -17,7 +17,9 @@ use BrowserDetector\DetectorFactory;
 use Composer\InstalledVersions;
 use InvalidArgumentException;
 use JsonException;
-use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use MatthiasMullie\Scrapbook\Adapters\Flysystem;
 use MatthiasMullie\Scrapbook\Psr16\SimpleCache;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -50,8 +52,13 @@ final readonly class BrowserDetectorHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $cache = new SimpleCache(
-            new MemoryStore(),
+        $cacheDir = 'data/cache/browser';
+
+        $fileAdapter = new LocalFilesystemAdapter($cacheDir);
+        $cache       = new SimpleCache(
+            new Flysystem(
+                new Filesystem($fileAdapter),
+            ),
         );
 
         $start    = microtime(true);
@@ -89,9 +96,9 @@ final readonly class BrowserDetectorHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $r     = $detector->getBrowser($request);
-            $end   = microtime(true) - $start;
+            $start     = microtime(true);
+            $r         = $detector->getBrowser($request);
+            $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => $r['device'],
@@ -101,7 +108,7 @@ final readonly class BrowserDetectorHandler
                 'raw' => $r,
             ];
 
-            $output['parse_time'] = $end;
+            $output['parse_time'] = $parseTime;
         }
 
         $output['memory_used'] = memory_get_peak_usage();

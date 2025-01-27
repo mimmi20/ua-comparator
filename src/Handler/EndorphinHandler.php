@@ -47,8 +47,10 @@ final readonly class EndorphinHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
+        $cacheDir = 'data/cache/endorphin';
+
         $start    = microtime(true);
-        $detector = new Detector();
+        $detector = new Detector(['cacheDirectory' => $cacheDir]);
 
         $detector->analyse('Test String');
         $initTime = microtime(true) - $start;
@@ -82,9 +84,9 @@ final readonly class EndorphinHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $r     = $detector->analyse($agentString);
-            $end   = microtime(true) - $start;
+            $start     = microtime(true);
+            $r         = $detector->analyse($agentString);
+            $parseTime = microtime(true) - $start;
 
             $r = json_decode((string) json_encode($r));
 
@@ -130,7 +132,7 @@ final readonly class EndorphinHandler
                 'raw' => $r,
             ];
 
-            $output['parse_time'] = $end;
+            $output['parse_time'] = $parseTime;
         }
 
         $output['memory_used'] = memory_get_peak_usage();

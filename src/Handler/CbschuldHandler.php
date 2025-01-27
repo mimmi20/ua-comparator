@@ -76,7 +76,7 @@ final readonly class CbschuldHandler
         if ($hasUa) {
             $start = microtime(true);
             $browser->setUserAgent($agentString);
-            $end = microtime(true) - $start;
+            $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [
@@ -120,7 +120,7 @@ final readonly class CbschuldHandler
                 'raw' => $browser,
             ];
 
-            $output['parse_time'] = $end;
+            $output['parse_time'] = $parseTime;
         }
 
         $output['memory_used'] = memory_get_peak_usage();
