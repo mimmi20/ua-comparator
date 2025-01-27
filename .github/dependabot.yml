@@ -246,25 +246,6 @@ updates:
       prefix: "npm"
     target-branch: "master"
 
-  - package-ecosystem: "composer"
-    directory: "web/jenssegers-agent/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
   - package-ecosystem: "npm"
     directory: "web/journyio-user-agent-parser/"
     schedule:
@@ -283,25 +264,6 @@ updates:
       include: "scope"
       prefix: "npm"
     target-branch: "master"
-
-  - package-ecosystem: "composer"
-    directory: "web/mobile-detect/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
 
   - package-ecosystem: "npm"
     directory: "web/node-device-detector/"
@@ -360,25 +322,6 @@ updates:
       prefix: "npm"
     target-branch: "master"
 
-  - package-ecosystem: "composer"
-    directory: "web/ua-parser-php/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
   - package-ecosystem: "npm"
     directory: "web/vigour-ua/"
     schedule:
@@ -417,44 +360,6 @@ updates:
       prefix: "npm"
     target-branch: "master"
 
-  - package-ecosystem: "composer"
-    directory: "web/whichbrowser-php/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
-  - package-ecosystem: "composer"
-    directory: "web/wolfcast/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
-
   - package-ecosystem: "npm"
     directory: "web/woothee-js/"
     schedule:
@@ -473,25 +378,6 @@ updates:
       include: "scope"
       prefix: "npm"
     target-branch: "master"
-
-  - package-ecosystem: "composer"
-    directory: "web/woothee-php/"
-    schedule:
-      interval: "daily"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "mimmi20"
-    assignees:
-      - "mimmi20"
-    labels:
-      - "dependencies"
-    target-branch: "master"
-    versioning-strategy: "increase"
-    commit-message:
-      include: "scope"
-      prefix: "composer"
 
   # actions
   - package-ecosystem: "github-actions"

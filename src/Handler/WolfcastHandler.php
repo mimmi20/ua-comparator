@@ -15,11 +15,11 @@ namespace UaComparator\Handler;
 
 use Composer\InstalledVersions;
 use InvalidArgumentException;
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
+use Wolfcast\BrowserDetection;
 
 use function array_keys;
 use function is_int;
@@ -35,15 +35,13 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CrawlerDetectHandler
+final readonly class WolfcastHandler
 {
     /** @throws InvalidArgumentException */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start  = microtime(true);
-        $parser = new CrawlerDetect();
-        $parser->setUserAgent('Test String');
-        $parser->isCrawler();
+        $start = microtime(true);
+        new BrowserDetection('Test String');
         $initTime = microtime(true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
@@ -71,13 +69,12 @@ final readonly class CrawlerDetectHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('jaybizzle/crawler-detect'),
+            'version' => InstalledVersions::getPrettyVersion('wolfcast/browser-detection'),
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $parser->setUserAgent($agentString);
-            $isbot     = $parser->isCrawler();
+            $start     = microtime(true);
+            $result    = new BrowserDetection($agentString);
             $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
@@ -96,21 +93,23 @@ final readonly class CrawlerDetectHandler
                     'dualOrientation' => null,
                     'type' => null,
                     'simCount' => null,
-                    'ismobile' => null,
+                    'ismobile' => $result->isMobile(),
                 ],
                 'client' => [
-                    'name' => null,
+                    'name' => $result->getName() !== 'unknown' ? $result->getName() : null,
                     'modus' => null,
-                    'version' => null,
+                    'version' => $result->getVersion() !== 'unknown' ? $result->getVersion() : null,
                     'manufacturer' => null,
                     'bits' => null,
                     'type' => null,
-                    'isbot' => $isbot,
+                    'isbot' => null,
                 ],
                 'platform' => [
-                    'name' => null,
+                    'name' => $result->getPlatform() !== 'unknown' ? $result->getPlatform() : null,
                     'marketingName' => null,
-                    'version' => null,
+                    'version' => $result->getPlatformVersion(
+                        true,
+                    ) !== 'unknown' ? $result->getPlatformVersion(true) : null,
                     'manufacturer' => null,
                     'bits' => null,
                 ],

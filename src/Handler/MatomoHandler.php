@@ -21,7 +21,9 @@ use DeviceDetector\ClientHints;
 use DeviceDetector\DeviceDetector;
 use InvalidArgumentException;
 use JsonException;
-use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use MatthiasMullie\Scrapbook\Adapters\Flysystem;
 use MatthiasMullie\Scrapbook\Psr16\SimpleCache;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -50,8 +52,13 @@ final readonly class MatomoHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $cache = new SimpleCache(
-            new MemoryStore(),
+        $cacheDir = 'data/cache/matomo';
+
+        $fileAdapter = new LocalFilesystemAdapter($cacheDir);
+        $cache       = new SimpleCache(
+            new Flysystem(
+                new Filesystem($fileAdapter),
+            ),
         );
 
         $start = microtime(true);
@@ -106,7 +113,7 @@ final readonly class MatomoHandler
             $device     = $dd->getDeviceName();
             $isMobile   = $dd->isMobile();
 
-            $end1 = microtime(true) - $start1;
+            $parseTime1 = microtime(true) - $start1;
 
             $dd->skipBotDetection(false);
             $dd->setUserAgent($agentString . ' - ');
@@ -118,7 +125,7 @@ final readonly class MatomoHandler
             $isBot   = $dd->isBot();
             $botInfo = $dd->getBot();
 
-            $end2 = microtime(true) - $start2;
+            $parseTime2 = microtime(true) - $start2;
 
             $output['result']['parsed'] = [
                 'device' => [
@@ -165,7 +172,7 @@ final readonly class MatomoHandler
                 'raw' => null,
             ];
 
-            $output['parse_time'] = $isBot ? $end2 : $end1;
+            $output['parse_time'] = $isBot ? $parseTime2 : $parseTime1;
         }
 
         $output['memory_used'] = memory_get_peak_usage();

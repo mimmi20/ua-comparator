@@ -53,12 +53,17 @@
     "mimmi20/ua-browser-type": "^11.0.0",
     "mimmi20/ua-data-mapper": "^4.0.0",
     "mimmi20/ua-result": "^12.0.0",
+    "mobiledetect/mobiledetectlib": "^4.8.09",
     "monolog/monolog": "^3.8.1",
     "psr/cache": "^3.0.0",
     "psr/http-message": "^1.1 || ^2.0",
     "psr/log": "^3.0.2",
     "react/http": "^1.11.0",
-    "symfony/console": "^7.2.1"
+    "symfony/console": "^7.2.1",
+    "ua-parser/uap-php": "^3.9.14",
+    "whichbrowser/parser": "^2.1.8",
+    "wolfcast/browser-detection": "^2.9.8",
+    "woothee/woothee": "^1.10.0"
   },
   "require-dev": {
     "ext-ctype": "*",
@@ -110,7 +115,6 @@
       "mobiledetect/mobiledetectlib": "source",
       "whichbrowser/parser": "source",
       "woothee/woothee-testset": "source",
-      "zsxsoft/php-useragent": "source",
       "*": "dist"
     },
     "sort-packages": true

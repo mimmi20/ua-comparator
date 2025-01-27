@@ -21,4 +21,9 @@ return static function (FrameworkX\App $app): void {
     $app->get('/crawler-detect/', \UaComparator\Handler\CrawlerDetectHandler::class);
     $app->get('/donatj/', \UaComparator\Handler\DonatjHandler::class);
     $app->get('/endorphin/', \UaComparator\Handler\EndorphinHandler::class);
+    $app->get('/mobiledetect/', \UaComparator\Handler\MobileDetectHandler::class);
+    $app->get('/ua-parser/', \UaComparator\Handler\UaParserHandler::class);
+    $app->get('/which-browser/', \UaComparator\Handler\WhichBrowserHandler::class);
+    $app->get('/wolfcast/', \UaComparator\Handler\WolfcastHandler::class);
+    $app->get('/woothee/', \UaComparator\Handler\WootheeHandler::class);
 };

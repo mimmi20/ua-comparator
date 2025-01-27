@@ -14,9 +14,14 @@ declare(strict_types = 1);
 namespace UaComparator\Handler;
 
 use Composer\InstalledVersions;
+use Detection\Exception\MobileDetectException;
+use Detection\MobileDetect;
 use InvalidArgumentException;
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use JsonException;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use MatthiasMullie\Scrapbook\Adapters\Flysystem;
+use MatthiasMullie\Scrapbook\Psr16\SimpleCache;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
@@ -35,19 +40,30 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CrawlerDetectHandler
+final readonly class MobileDetectHandler
 {
-    /** @throws InvalidArgumentException */
+    /**
+     * @throws InvalidArgumentException
+     * @throws MobileDetectException
+     */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
+        $cacheDir = 'data/cache/mobiledetect';
+
+        $fileAdapter = new LocalFilesystemAdapter($cacheDir);
+        $cache       = new SimpleCache(
+            new Flysystem(
+                new Filesystem($fileAdapter),
+            ),
+        );
+
         $start  = microtime(true);
-        $parser = new CrawlerDetect();
+        $parser = new MobileDetect($cache);
         $parser->setUserAgent('Test String');
-        $parser->isCrawler();
+        $parser->isMobile();
         $initTime = microtime(true) - $start;
 
-        $hasUa       = $request->hasHeader('user-agent');
-        $agentString = $request->getHeaderLine('user-agent');
+        $hasUa = $request->hasHeader('user-agent');
 
         $headerNames = array_keys($request->getHeaders());
 
@@ -71,13 +87,13 @@ final readonly class CrawlerDetectHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('jaybizzle/crawler-detect'),
+            'version' => InstalledVersions::getPrettyVersion('mobiledetect/mobiledetectlib'),
         ];
 
         if ($hasUa) {
             $start = microtime(true);
-            $parser->setUserAgent($agentString);
-            $isbot     = $parser->isCrawler();
+            $parser->setHttpHeaders($headers);
+            $ismobile  = $parser->isMobile();
             $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
@@ -96,7 +112,7 @@ final readonly class CrawlerDetectHandler
                     'dualOrientation' => null,
                     'type' => null,
                     'simCount' => null,
-                    'ismobile' => null,
+                    'ismobile' => $ismobile,
                 ],
                 'client' => [
                     'name' => null,
@@ -105,7 +121,7 @@ final readonly class CrawlerDetectHandler
                     'manufacturer' => null,
                     'bits' => null,
                     'type' => null,
-                    'isbot' => $isbot,
+                    'isbot' => null,
                 ],
                 'platform' => [
                     'name' => null,
