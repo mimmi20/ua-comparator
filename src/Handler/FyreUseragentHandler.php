@@ -14,8 +14,8 @@ declare(strict_types = 1);
 namespace UaComparator\Handler;
 
 use Composer\InstalledVersions;
+use Fyre\Http\UserAgent;
 use InvalidArgumentException;
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,7 +33,7 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CrawlerDetectHandler
+final readonly class FyreUseragentHandler
 {
     /**
      * @throws InvalidArgumentException
@@ -41,10 +41,13 @@ final readonly class CrawlerDetectHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start  = microtime(true);
-        $parser = new CrawlerDetect();
-        $parser->setUserAgent('Test String');
-        $parser->isCrawler();
+        $start     = microtime(true);
+        $userAgent = new UserAgent('Test String');
+        $userAgent->getBrowser();
+        $userAgent->getVersion();
+        $userAgent->getPlatform();
+        $userAgent->isMobile();
+        $userAgent->isRobot();
         $initTime = microtime(true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
@@ -59,13 +62,17 @@ final readonly class CrawlerDetectHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('jaybizzle/crawler-detect'),
+            'version' => InstalledVersions::getPrettyVersion('fyre/useragent'),
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $parser->setUserAgent($agentString);
-            $isbot     = $parser->isCrawler();
+            $start     = microtime(true);
+            $userAgent = new UserAgent($agentString);
+            $browser   = $userAgent->getBrowser();
+            $version   = $userAgent->getVersion();
+            $os        = $userAgent->getPlatform();
+            $isMobile  = $userAgent->isMobile();
+            $isBot     = $userAgent->isRobot();
             $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
@@ -85,21 +92,21 @@ final readonly class CrawlerDetectHandler
                         'size' => null,
                     ],
                     'type' => null,
-                    'ismobile' => null,
+                    'ismobile' => $isMobile,
                     'istv' => null,
                     'bits' => null,
                 ],
                 'client' => [
-                    'name' => null,
+                    'name' => $browser,
                     'modus' => null,
-                    'version' => null,
+                    'version' => $version,
                     'manufacturer' => null,
                     'bits' => null,
+                    'isbot' => $isBot,
                     'type' => null,
-                    'isbot' => $isbot,
                 ],
                 'platform' => [
-                    'name' => null,
+                    'name' => $os,
                     'marketingName' => null,
                     'version' => null,
                     'manufacturer' => null,

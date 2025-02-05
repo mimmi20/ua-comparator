@@ -23,8 +23,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 use ReflectionException;
 
-use function array_keys;
-use function is_int;
 use function json_decode;
 use function json_encode;
 use function json_last_error;
@@ -44,6 +42,7 @@ final readonly class EndorphinHandler
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws StorageException
+     * @throws JsonException
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
@@ -58,21 +57,8 @@ final readonly class EndorphinHandler
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
 
-        $headerNames = array_keys($request->getHeaders());
-
-        $headers = [];
-
-        foreach ($headerNames as $headerName) {
-            if (is_int($headerName)) {
-                continue;
-            }
-
-            $headers[$headerName] = $request->getHeaderLine($headerName);
-        }
-
         $output = [
-            'hasUa' => $hasUa,
-            'headers' => $headers,
+            'headers' => ['user-agent' => $agentString],
             'result' => [
                 'parsed' => null,
                 'err' => null,
@@ -92,21 +78,23 @@ final readonly class EndorphinHandler
 
             $output['result']['parsed'] = [
                 'device' => [
+                    'architecture' => null,
                     'deviceName' => $r->device->model ?? null,
                     'marketingName' => null,
                     'manufacturer' => null,
                     'brand' => $r->device->name ?? null,
+                    'dualOrientation' => null,
+                    'simCount' => null,
                     'display' => [
                         'width' => null,
                         'height' => null,
                         'touch' => $r->isTouch ?? null,
-                        'type' => null,
                         'size' => null,
                     ],
-                    'dualOrientation' => null,
                     'type' => $r->device->type ?? null,
-                    'simCount' => null,
                     'ismobile' => $r->isMobile ?? null,
+                    'istv' => null,
+                    'bits' => null,
                 ],
                 'client' => [
                     'name' => $r->isRobot ? ($r->robot->name ?? null) : ($r->browser->name ?? null),
@@ -147,10 +135,17 @@ final readonly class EndorphinHandler
                 ) . "\n",
             );
         } catch (JsonException $e) {
-            throw new InvalidArgumentException(
-                'Unable to encode given data as JSON: ' . json_last_error_msg(),
-                json_last_error(),
-                $e,
+            return new Response(
+                status: Response::STATUS_BAD_REQUEST,
+                headers: ['Content-Type' => 'application/json'],
+                body: json_encode(
+                    new InvalidArgumentException(
+                        'Unable to encode given data as JSON: ' . json_last_error_msg(),
+                        json_last_error(),
+                        $e,
+                    ),
+                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION,
+                ) . "\n",
             );
         }
     }

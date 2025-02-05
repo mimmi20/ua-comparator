@@ -14,8 +14,8 @@ declare(strict_types = 1);
 namespace UaComparator\Handler;
 
 use Composer\InstalledVersions;
+use foroco\BrowserDetection;
 use InvalidArgumentException;
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,7 +33,7 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CrawlerDetectHandler
+final readonly class ForocoDetectionHandler
 {
     /**
      * @throws InvalidArgumentException
@@ -41,10 +41,9 @@ final readonly class CrawlerDetectHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start  = microtime(true);
-        $parser = new CrawlerDetect();
-        $parser->setUserAgent('Test String');
-        $parser->isCrawler();
+        $bc    = new BrowserDetection();
+        $start = microtime(true);
+        $bc->getAll('Test String');
         $initTime = microtime(true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
@@ -59,13 +58,12 @@ final readonly class CrawlerDetectHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('jaybizzle/crawler-detect'),
+            'version' => InstalledVersions::getPrettyVersion('foroco/php-browser-detection'),
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $parser->setUserAgent($agentString);
-            $isbot     = $parser->isCrawler();
+            $start     = microtime(true);
+            $r         = $bc->getAll($agentString);
             $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
@@ -84,24 +82,24 @@ final readonly class CrawlerDetectHandler
                         'type' => null,
                         'size' => null,
                     ],
-                    'type' => null,
+                    'type' => $r['device_type'],
                     'ismobile' => null,
                     'istv' => null,
                     'bits' => null,
                 ],
                 'client' => [
-                    'name' => null,
+                    'name' => $r['browser_name'],
                     'modus' => null,
-                    'version' => null,
+                    'version' => $r['browser_version'],
                     'manufacturer' => null,
                     'bits' => null,
+                    'isbot' => null,
                     'type' => null,
-                    'isbot' => $isbot,
                 ],
                 'platform' => [
-                    'name' => null,
+                    'name' => $r['os_name'],
                     'marketingName' => null,
-                    'version' => null,
+                    'version' => $r['os_version'],
                     'manufacturer' => null,
                     'bits' => null,
                 ],
@@ -110,7 +108,7 @@ final readonly class CrawlerDetectHandler
                     'version' => null,
                     'manufacturer' => null,
                 ],
-                'raw' => null,
+                'raw' => $r,
             ];
 
             $output['parse_time'] = $parseTime;

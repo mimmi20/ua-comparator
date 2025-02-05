@@ -12,6 +12,8 @@
 declare(strict_types = 1);
 
 use FrameworkX\App;
+use FrameworkX\Container;
+use Psr\Container\ContainerInterface;
 
 // Delegate static file requests back to the PHP built-in webserver
 if (PHP_SAPI === 'cli-server' && __FILE__ !== $_SERVER['SCRIPT_FILENAME']) {
@@ -29,10 +31,15 @@ ini_set('memory_limit', '-1');
  */
 (static function (): void {
     try {
-        $app = new App();
+        $container = require 'config/container.php';
+        assert($container instanceof ContainerInterface);
+
+        $app = new App(new Container($container));
         (require 'config/routes.php')($app);
 
         $app->run();
+
+        var_dump(1);
     } catch (Throwable $e) {
         var_dump($e);
     }

@@ -59,7 +59,7 @@ final readonly class DefaultMapper implements MapperInterface
         );
 
         $browserVersion = $this->mapper->mapBrowserVersion(
-            $parserResult->result->parsed->client->version,
+            (string) $parserResult->result->parsed->client->version,
             $browserName,
         );
 

@@ -28,6 +28,7 @@ use React\Http\Message\Response;
 use RuntimeException;
 use UnexpectedValueException;
 
+use function array_change_key_case;
 use function array_keys;
 use function is_int;
 use function json_encode;
@@ -36,6 +37,7 @@ use function json_last_error_msg;
 use function memory_get_peak_usage;
 use function microtime;
 
+use const CASE_LOWER;
 use const JSON_PRESERVE_ZERO_FRACTION;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
@@ -49,6 +51,7 @@ final readonly class BrowserDetectorHandler
      * @throws UnexpectedValueException
      * @throws RuntimeException
      * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws JsonException
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
@@ -83,8 +86,7 @@ final readonly class BrowserDetectorHandler
         }
 
         $output = [
-            'hasUa' => $hasUa,
-            'headers' => $headers,
+            'headers' => array_change_key_case($headers, CASE_LOWER),
             'result' => [
                 'parsed' => null,
                 'err' => null,
@@ -102,8 +104,22 @@ final readonly class BrowserDetectorHandler
 
             $output['result']['parsed'] = [
                 'device' => $r['device'],
-                'client' => $r['client'],
-                'platform' => $r['os'],
+                'client' => [
+                    'name' => $r['client']['name'],
+                    'modus' => null,
+                    'version' => $r['client']['version'],
+                    'manufacturer' => $r['client']['manufacturer'],
+                    'bits' => null,
+                    'type' => $r['client']['type'],
+                    'isbot' => $r['client']['isbot'],
+                ],
+                'platform' => [
+                    'name' => $r['os']['name'],
+                    'marketingName' => $r['os']['marketingName'],
+                    'version' => $r['os']['version'],
+                    'manufacturer' => $r['os']['manufacturer'],
+                    'bits' => null,
+                ],
                 'engine' => $r['engine'],
                 'raw' => $r,
             ];
@@ -123,10 +139,17 @@ final readonly class BrowserDetectorHandler
                 ) . "\n",
             );
         } catch (JsonException $e) {
-            throw new InvalidArgumentException(
-                'Unable to encode given data as JSON: ' . json_last_error_msg(),
-                json_last_error(),
-                $e,
+            return new Response(
+                status: Response::STATUS_BAD_REQUEST,
+                headers: ['Content-Type' => 'application/json'],
+                body: json_encode(
+                    new InvalidArgumentException(
+                        'Unable to encode given data as JSON: ' . json_last_error_msg(),
+                        json_last_error(),
+                        $e,
+                    ),
+                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION,
+                ) . "\n",
             );
         }
     }

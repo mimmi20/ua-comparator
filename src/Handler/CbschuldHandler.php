@@ -21,8 +21,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
-use function array_keys;
-use function is_int;
 use function json_encode;
 use function json_last_error;
 use function json_last_error_msg;
@@ -37,7 +35,10 @@ use const JSON_UNESCAPED_UNICODE;
 
 final readonly class CbschuldHandler
 {
-    /** @throws InvalidArgumentException */
+    /**
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $start   = microtime(true);
@@ -48,21 +49,8 @@ final readonly class CbschuldHandler
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
 
-        $headerNames = array_keys($request->getHeaders());
-
-        $headers = [];
-
-        foreach ($headerNames as $headerName) {
-            if (is_int($headerName)) {
-                continue;
-            }
-
-            $headers[$headerName] = $request->getHeaderLine($headerName);
-        }
-
         $output = [
-            'hasUa' => $hasUa,
-            'headers' => $headers,
+            'headers' => ['user-agent' => $agentString],
             'result' => [
                 'parsed' => null,
                 'err' => null,
@@ -80,10 +68,13 @@ final readonly class CbschuldHandler
 
             $output['result']['parsed'] = [
                 'device' => [
+                    'architecture' => null,
                     'deviceName' => null,
                     'marketingName' => null,
                     'manufacturer' => null,
                     'brand' => null,
+                    'dualOrientation' => null,
+                    'simCount' => null,
                     'display' => [
                         'width' => null,
                         'height' => null,
@@ -91,10 +82,10 @@ final readonly class CbschuldHandler
                         'type' => null,
                         'size' => null,
                     ],
-                    'dualOrientation' => null,
                     'type' => null,
-                    'simCount' => null,
                     'ismobile' => $browser->isMobile(),
+                    'istv' => null,
+                    'bits' => null,
                 ],
                 'client' => [
                     'name' => $browser->getBrowser(),
@@ -135,10 +126,17 @@ final readonly class CbschuldHandler
                 ) . "\n",
             );
         } catch (JsonException $e) {
-            throw new InvalidArgumentException(
-                'Unable to encode given data as JSON: ' . json_last_error_msg(),
-                json_last_error(),
-                $e,
+            return new Response(
+                status: Response::STATUS_BAD_REQUEST,
+                headers: ['Content-Type' => 'application/json'],
+                body: json_encode(
+                    new InvalidArgumentException(
+                        'Unable to encode given data as JSON: ' . json_last_error_msg(),
+                        json_last_error(),
+                        $e,
+                    ),
+                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION,
+                ) . "\n",
             );
         }
     }

@@ -18,6 +18,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
+use RuntimeException;
 
 use function assert;
 
@@ -31,15 +32,18 @@ final class Request
      *
      * @throws RequestException
      * @throws GuzzleException
+     * @throws RuntimeException
      */
     public function getResponse(RequestInterface $request, Client $client): Response
     {
-        $response = $client->send($request);
+        $response = $client->send($request, ['http_errors' => false]);
         assert($response instanceof Response);
 
         if ($response->getStatusCode() !== 200) {
             throw new RequestException(
-                'Could not get valid response from "' . $request->getUri() . '". Status code is: "' . $response->getStatusCode() . '"',
+                'Could not get valid response from "' . $request->getUri() . '". ' . "\n"
+                . 'Status code is: "' . $response->getStatusCode() . '"' . "\n"
+                . 'Content is: "' . $response->getBody()->getContents() . '"',
                 $request,
             );
         }

@@ -16,19 +16,22 @@ namespace UaComparator\Module;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 use UaComparator\Helper\Request;
 use UaComparator\Module\Check\CheckInterface;
 use UaComparator\Module\Mapper\MapperInterface;
 use UaResult\Result\Result;
 use Ubench;
 use UnexpectedValueException;
+
+use function get_debug_type;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -67,7 +70,7 @@ final class Http implements ModuleInterface
         return $this;
     }
 
-    /** @throws GuzzleException */
+    /** @throws void */
     public function detect(string $agent, array $headers): self
     {
         $this->agent = $agent;
@@ -87,7 +90,13 @@ final class Http implements ModuleInterface
             $this->logger->error(
                 new ConnectException('could not connect to uri "' . $uri . '"', $request, $e),
             );
-        } catch (RequestException $e) {
+        } catch (ServerException | RequestException $e) {
+            $this->logger->error($e);
+            $this->logger->error(
+                get_debug_type($e->getRequest()),
+            );
+        } catch (Throwable $e) {
+            $this->logger->error(get_debug_type($e));
             $this->logger->error($e);
         }
 
