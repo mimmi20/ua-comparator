@@ -34,6 +34,7 @@ updates:
       prefix: "composer"
 
     ignore:
+      - dependency-name: "psr/container"
       - dependency-name: "psr/http-message"
 
     rebase-strategy: "auto"
