@@ -26,6 +26,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
+use function array_change_key_case;
 use function array_keys;
 use function is_int;
 use function json_encode;
@@ -34,6 +35,7 @@ use function json_last_error_msg;
 use function memory_get_peak_usage;
 use function microtime;
 
+use const CASE_LOWER;
 use const JSON_PRESERVE_ZERO_FRACTION;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
@@ -78,8 +80,7 @@ final readonly class MobileDetectHandler
         }
 
         $output = [
-            'hasUa' => $hasUa,
-            'headers' => $headers,
+            'headers' => array_change_key_case($headers, CASE_LOWER),
             'result' => [
                 'parsed' => null,
                 'err' => null,
@@ -98,10 +99,13 @@ final readonly class MobileDetectHandler
 
             $output['result']['parsed'] = [
                 'device' => [
+                    'architecture' => null,
                     'deviceName' => null,
                     'marketingName' => null,
                     'manufacturer' => null,
                     'brand' => null,
+                    'dualOrientation' => null,
+                    'simCount' => null,
                     'display' => [
                         'width' => null,
                         'height' => null,
@@ -109,10 +113,10 @@ final readonly class MobileDetectHandler
                         'type' => null,
                         'size' => null,
                     ],
-                    'dualOrientation' => null,
                     'type' => null,
-                    'simCount' => null,
                     'ismobile' => $ismobile,
+                    'istv' => null,
+                    'bits' => null,
                 ],
                 'client' => [
                     'name' => null,
@@ -153,10 +157,17 @@ final readonly class MobileDetectHandler
                 ) . "\n",
             );
         } catch (JsonException $e) {
-            throw new InvalidArgumentException(
-                'Unable to encode given data as JSON: ' . json_last_error_msg(),
-                json_last_error(),
-                $e,
+            return new Response(
+                status: Response::STATUS_BAD_REQUEST,
+                headers: ['Content-Type' => 'application/json'],
+                body: json_encode(
+                    new InvalidArgumentException(
+                        'Unable to encode given data as JSON: ' . json_last_error_msg(),
+                        json_last_error(),
+                        $e,
+                    ),
+                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION,
+                ) . "\n",
             );
         }
     }

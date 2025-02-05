@@ -87,7 +87,15 @@ final class Http implements ModuleInterface
             $this->logger->error(
                 new ConnectException('could not connect to uri "' . $uri . '"', $request, $e),
             );
-        } catch (RequestException $e) {
+        } catch (\GuzzleHttp\Exception\ServerException | \GuzzleHttp\Exception\RequestException $e) {
+            $this->logger->error(
+                $e,
+            );
+            $this->logger->error(
+                get_debug_type($e->getRequest())
+            );
+        } catch (\Throwable $e) {
+            $this->logger->error(get_debug_type($e));
             $this->logger->error($e);
         }
 

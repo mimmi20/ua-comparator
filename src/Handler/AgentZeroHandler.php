@@ -13,19 +13,21 @@ declare(strict_types = 1);
 
 namespace UaComparator\Handler;
 
-use Browser;
 use Composer\InstalledVersions;
+use hexydec\agentzero\agentzero;
 use InvalidArgumentException;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 
+use function get_object_vars;
 use function json_encode;
 use function json_last_error;
 use function json_last_error_msg;
 use function memory_get_peak_usage;
 use function microtime;
+use function trim;
 
 use const JSON_PRESERVE_ZERO_FRACTION;
 use const JSON_PRETTY_PRINT;
@@ -33,14 +35,13 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CbschuldHandler
+final readonly class AgentZeroHandler
 {
     /** @throws InvalidArgumentException */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start   = microtime(true);
-        $browser = new Browser();
-        $browser->setUserAgent('Test String');
+        $start = microtime(true);
+        agentzero::parse('Test String');
         $initTime = microtime(true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
@@ -55,58 +56,62 @@ final readonly class CbschuldHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('cbschuld/browser.php'),
+            'version' => InstalledVersions::getPrettyVersion('hexydec/agentzero'),
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $browser->setUserAgent($agentString);
+            $start     = microtime(true);
+            $r         = agentzero::parse($agentString);
             $parseTime = microtime(true) - $start;
 
-            $output['result']['parsed'] = [
-                'device' => [
-                    'architecture' => null,
-                    'deviceName' => null,
-                    'marketingName' => null,
-                    'manufacturer' => null,
-                    'brand' => null,
-                    'dualOrientation' => null,
-                    'simCount' => null,
-                    'display' => [
-                        'width' => null,
-                        'height' => null,
-                        'touch' => null,
-                        'type' => null,
-                        'size' => null,
+            if ($r !== false) {
+                $output['result']['parsed'] = [
+                    'device' => [
+                        'architecture' => $r->architecture,
+                        'deviceName' => null,
+                        'marketingName' => $r->device === null ? null : trim(
+                            $r->device . ' ' . $r->model,
+                        ),
+                        'manufacturer' => null,
+                        'brand' => $r->vendor,
+                        'dualOrientation' => null,
+                        'simCount' => null,
+                        'display' => [
+                            'width' => $r->width,
+                            'height' => $r->height,
+                            'touch' => null,
+                            'type' => null,
+                            'size' => null,
+                        ],
+                        'type' => $r->type === 'robot' ? null : $r->category,
+                        'ismobile' => $r->ismobiledevice ?? null,
+                        'istv' => null,
+                        'bits' => $r->bits,
                     ],
-                    'type' => null,
-                    'ismobile' => $browser->isMobile(),
-                    'istv' => null,
-                    'bits' => null,
-                ],
-                'client' => [
-                    'name' => $browser->getBrowser(),
-                    'modus' => null,
-                    'version' => $browser->getVersion(),
-                    'manufacturer' => null,
-                    'bits' => null,
-                    'type' => null,
-                    'isbot' => $browser->isRobot(),
-                ],
-                'platform' => [
-                    'name' => $browser->getPlatform(),
-                    'marketingName' => null,
-                    'version' => null,
-                    'manufacturer' => null,
-                    'bits' => null,
-                ],
-                'engine' => [
-                    'name' => null,
-                    'version' => null,
-                    'manufacturer' => null,
-                ],
-                'raw' => $browser,
-            ];
+                    'client' => [
+                        'name' => $r->app ?? $r->browser,
+                        'modus' => null,
+                        'version' => $r->appversion ?? $r->browserversion,
+                        'manufacturer' => null,
+                        'bits' => null,
+                        'isbot' => $r->type === 'robot',
+                        'type' => $r->type !== 'robot' ? null : $r->category,
+                    ],
+                    'platform' => [
+                        'name' => $r->platform,
+                        'marketingName' => null,
+                        'version' => $r->platformversion,
+                        'manufacturer' => null,
+                        'bits' => null,
+                    ],
+                    'engine' => [
+                        'name' => $r->engine,
+                        'version' => $r->engineversion,
+                        'manufacturer' => null,
+                    ],
+                    'raw' => get_object_vars($r),
+                ];
+            }
 
             $output['parse_time'] = $parseTime;
         }

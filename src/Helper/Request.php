@@ -34,12 +34,14 @@ final class Request
      */
     public function getResponse(RequestInterface $request, Client $client): Response
     {
-        $response = $client->send($request);
+        $response = $client->send($request, ['http_errors' => false]);
         assert($response instanceof Response);
 
         if ($response->getStatusCode() !== 200) {
             throw new RequestException(
-                'Could not get valid response from "' . $request->getUri() . '". Status code is: "' . $response->getStatusCode() . '"',
+                'Could not get valid response from "' . $request->getUri() . '". ' . "\n"
+                . 'Status code is: "' . $response->getStatusCode() . '"' . "\n"
+                . 'Content is: "' . $response->getBody()->getContents() . '"',
                 $request,
             );
         }

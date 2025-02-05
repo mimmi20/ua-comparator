@@ -137,6 +137,50 @@
         "params": {},
         "headers": {}
       }
+    },
+    "platine-php": {
+      "name": "platine-php",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/platine/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "foroco": {
+      "name": "foroco",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/foroco/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "fyre": {
+      "name": "fyre",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/fyre/",
+        "params": {},
+        "headers": {}
+      }
+    },
+    "agentzero": {
+      "name": "agentzero",
+      "enabled": true,
+      "requires-cache": false,
+      "request": {
+        "method": "GET",
+        "uri": "http://localhost:8000/agentzero/",
+        "params": {},
+        "headers": {}
+      }
     }
   }
 }

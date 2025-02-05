@@ -26,4 +26,8 @@ return static function (FrameworkX\App $app): void {
     $app->get('/which-browser/', \UaComparator\Handler\WhichBrowserHandler::class);
     $app->get('/wolfcast/', \UaComparator\Handler\WolfcastHandler::class);
     $app->get('/woothee/', \UaComparator\Handler\WootheeHandler::class);
+    $app->get('/platine/', \UaComparator\Handler\PlatinePhpHandler::class);
+    $app->get('/foroco/', \UaComparator\Handler\ForocoDetectionHandler::class);
+    $app->get('/fyre/', \UaComparator\Handler\FyreUseragentHandler::class);
+    $app->get('/agentzero/', \UaComparator\Handler\AgentZeroHandler::class);
 };

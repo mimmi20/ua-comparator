@@ -13,8 +13,8 @@ declare(strict_types = 1);
 
 namespace UaComparator\Handler;
 
-use Browser;
 use Composer\InstalledVersions;
+use Fyre\Http\UserAgent;
 use InvalidArgumentException;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
@@ -33,14 +33,18 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CbschuldHandler
+final readonly class FyreUseragentHandler
 {
     /** @throws InvalidArgumentException */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start   = microtime(true);
-        $browser = new Browser();
-        $browser->setUserAgent('Test String');
+        $start     = microtime(true);
+        $userAgent = new UserAgent('Test String');
+        $userAgent->getBrowser();
+        $userAgent->getVersion();
+        $userAgent->getPlatform();
+        $userAgent->isMobile();
+        $userAgent->isRobot();
         $initTime = microtime(true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
@@ -55,12 +59,17 @@ final readonly class CbschuldHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('cbschuld/browser.php'),
+            'version' => InstalledVersions::getPrettyVersion('fyre/useragent'),
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $browser->setUserAgent($agentString);
+            $start     = microtime(true);
+            $userAgent = new UserAgent($agentString);
+            $browser   = $userAgent->getBrowser();
+            $version   = $userAgent->getVersion();
+            $os        = $userAgent->getPlatform();
+            $isMobile  = $userAgent->isMobile();
+            $isBot     = $userAgent->isRobot();
             $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
@@ -80,21 +89,21 @@ final readonly class CbschuldHandler
                         'size' => null,
                     ],
                     'type' => null,
-                    'ismobile' => $browser->isMobile(),
+                    'ismobile' => $isMobile,
                     'istv' => null,
                     'bits' => null,
                 ],
                 'client' => [
-                    'name' => $browser->getBrowser(),
+                    'name' => $browser,
                     'modus' => null,
-                    'version' => $browser->getVersion(),
+                    'version' => $version,
                     'manufacturer' => null,
                     'bits' => null,
+                    'isbot' => $isBot,
                     'type' => null,
-                    'isbot' => $browser->isRobot(),
                 ],
                 'platform' => [
-                    'name' => $browser->getPlatform(),
+                    'name' => $os,
                     'marketingName' => null,
                     'version' => null,
                     'manufacturer' => null,
@@ -105,7 +114,7 @@ final readonly class CbschuldHandler
                     'version' => null,
                     'manufacturer' => null,
                 ],
-                'raw' => $browser,
+                'raw' => null,
             ];
 
             $output['parse_time'] = $parseTime;

@@ -13,8 +13,8 @@ declare(strict_types = 1);
 
 namespace UaComparator\Handler;
 
-use Browser;
 use Composer\InstalledVersions;
+use foroco\BrowserDetection;
 use InvalidArgumentException;
 use JsonException;
 use Psr\Http\Message\ResponseInterface;
@@ -33,14 +33,14 @@ use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class CbschuldHandler
+final readonly class ForocoDetectionHandler
 {
     /** @throws InvalidArgumentException */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start   = microtime(true);
-        $browser = new Browser();
-        $browser->setUserAgent('Test String');
+        $bc    = new BrowserDetection();
+        $start = microtime(true);
+        $bc->getAll('Test String');
         $initTime = microtime(true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
@@ -55,12 +55,12 @@ final readonly class CbschuldHandler
             'parse_time' => 0,
             'init_time' => $initTime,
             'memory_used' => 0,
-            'version' => InstalledVersions::getPrettyVersion('cbschuld/browser.php'),
+            'version' => InstalledVersions::getPrettyVersion('foroco/php-browser-detection'),
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $browser->setUserAgent($agentString);
+            $start     = microtime(true);
+            $r         = $bc->getAll($agentString);
             $parseTime = microtime(true) - $start;
 
             $output['result']['parsed'] = [
@@ -79,24 +79,24 @@ final readonly class CbschuldHandler
                         'type' => null,
                         'size' => null,
                     ],
-                    'type' => null,
-                    'ismobile' => $browser->isMobile(),
+                    'type' => $r['device_type'],
+                    'ismobile' => null,
                     'istv' => null,
                     'bits' => null,
                 ],
                 'client' => [
-                    'name' => $browser->getBrowser(),
+                    'name' => $r['browser_name'],
                     'modus' => null,
-                    'version' => $browser->getVersion(),
+                    'version' => $r['browser_version'],
                     'manufacturer' => null,
                     'bits' => null,
+                    'isbot' => null,
                     'type' => null,
-                    'isbot' => $browser->isRobot(),
                 ],
                 'platform' => [
-                    'name' => $browser->getPlatform(),
+                    'name' => $r['os_name'],
                     'marketingName' => null,
-                    'version' => null,
+                    'version' => $r['os_version'],
                     'manufacturer' => null,
                     'bits' => null,
                 ],
@@ -105,7 +105,7 @@ final readonly class CbschuldHandler
                     'version' => null,
                     'manufacturer' => null,
                 ],
-                'raw' => $browser,
+                'raw' => $r,
             ];
 
             $output['parse_time'] = $parseTime;
