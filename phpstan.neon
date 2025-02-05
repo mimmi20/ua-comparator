@@ -125,3 +125,4 @@ parameters:
     - '~of an invalid type mixed supplied for foreach~'
     - '~and mixed results in an error~'
     - '~not a callable~'
+    - '~is never read, only written~'

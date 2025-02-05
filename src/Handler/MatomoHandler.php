@@ -51,6 +51,7 @@ final readonly class MatomoHandler
     /**
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
+     * @throws JsonException
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {

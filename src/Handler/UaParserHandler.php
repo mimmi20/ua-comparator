@@ -39,6 +39,7 @@ final readonly class UaParserHandler
     /**
      * @throws InvalidArgumentException
      * @throws FileNotFoundException
+     * @throws JsonException
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {

@@ -44,6 +44,7 @@ final readonly class BrowscapPhpHandler
     /**
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws JsonException
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {

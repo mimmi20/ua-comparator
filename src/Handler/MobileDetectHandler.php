@@ -47,6 +47,7 @@ final readonly class MobileDetectHandler
     /**
      * @throws InvalidArgumentException
      * @throws MobileDetectException
+     * @throws JsonException
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {

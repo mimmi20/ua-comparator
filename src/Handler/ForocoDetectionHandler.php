@@ -35,7 +35,10 @@ use const JSON_UNESCAPED_UNICODE;
 
 final readonly class ForocoDetectionHandler
 {
-    /** @throws InvalidArgumentException */
+    /**
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $bc    = new BrowserDetection();

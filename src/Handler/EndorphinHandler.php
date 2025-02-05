@@ -42,6 +42,7 @@ final readonly class EndorphinHandler
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws StorageException
+     * @throws JsonException
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {

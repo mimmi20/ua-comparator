@@ -21,6 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use React\Http\Message\Response;
+use Throwable;
 
 use function json_encode;
 use function json_last_error;
@@ -36,12 +37,16 @@ use const JSON_UNESCAPED_UNICODE;
 
 final readonly class PlatinePhpHandler
 {
+    /** @throws void */
     public function __construct(private LoggerInterface $logger)
     {
         // nothing to do here
     }
 
-    /** @throws InvalidArgumentException */
+    /**
+     * @throws InvalidArgumentException
+     * @throws JsonException
+     */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $bc = new UserAgent();
@@ -71,15 +76,15 @@ final readonly class PlatinePhpHandler
         ];
 
         if ($hasUa) {
-            $start     = microtime(true);
+            $start = microtime(true);
 
             try {
-                $r = $bc->parse($agentString);
+                $r      = $bc->parse($agentString);
                 $device = $r->device();
                 $client = $r->browser();
-                $os = $r->os();
+                $os     = $r->os();
                 $engine = $r->engine();
-                $cpu = $r->cpu();
+                $cpu    = $r->cpu();
 
                 $parseTime = microtime(true) - $start;
 
@@ -133,7 +138,7 @@ final readonly class PlatinePhpHandler
                         'cpu' => (string) $cpu,
                     ],
                 ];
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->logger->error($e);
 
                 return new Response(

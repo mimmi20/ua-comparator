@@ -18,6 +18,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
+use RuntimeException;
 
 use function assert;
 
@@ -31,6 +32,7 @@ final class Request
      *
      * @throws RequestException
      * @throws GuzzleException
+     * @throws RuntimeException
      */
     public function getResponse(RequestInterface $request, Client $client): Response
     {

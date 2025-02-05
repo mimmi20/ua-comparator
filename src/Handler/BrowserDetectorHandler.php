@@ -51,6 +51,7 @@ final readonly class BrowserDetectorHandler
      * @throws UnexpectedValueException
      * @throws RuntimeException
      * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws JsonException
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {

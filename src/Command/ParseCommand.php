@@ -45,6 +45,7 @@ use UaComparator\Module\ModuleInterface;
 use UaDataMapper\InputMapper;
 use UnexpectedValueException;
 
+use function array_key_exists;
 use function assert;
 use function bin2hex;
 use function file_exists;
@@ -134,7 +135,12 @@ final class ParseCommand extends Command
             if (!array_key_exists('requires-cache', $moduleConfig)) {
                 $moduleConfig['requires-cache'] = false;
 
-                $output->writeln(sprintf('<error>"requires-cache" option missing for module "%s"</error>', $moduleConfig['name']));
+                $output->writeln(
+                    sprintf(
+                        '<error>"requires-cache" option missing for module "%s"</error>',
+                        $moduleConfig['name'],
+                    ),
+                );
             }
 
             if ($moduleConfig['requires-cache'] && isset($moduleConfig['cache-dir'])) {
