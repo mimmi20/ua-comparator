@@ -5,6 +5,6 @@
   "author": "Thomas Müller <mimmi20@live.de>",
   "license": "MIT",
   "devDependencies": {
-    "prettier": "3.5.0"
+    "prettier": "3.5.1"
   }
 }
