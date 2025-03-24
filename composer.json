@@ -75,7 +75,7 @@
     "symfony/http-foundation": "^7.2.3",
     "ua-parser/uap-php": "^3.9.14",
     "whichbrowser/parser": "^2.1.8",
-    "wolfcast/browser-detection": "^2.9.8",
+    "wolfcast/browser-detection": "^2.9.9",
     "woothee/woothee": "^1.10.0"
   },
   "require-dev": {
