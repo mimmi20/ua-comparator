@@ -73,7 +73,7 @@
     "react/http": "^1.11.0",
     "symfony/console": "^7.3.1",
     "symfony/http-foundation": "^7.3.1",
-    "ua-parser/uap-php": "^3.9.14",
+    "ua-parser/uap-php": "^3.10.0",
     "whichbrowser/parser": "^2.1.8",
     "wolfcast/browser-detection": "^2.9.9",
     "woothee/woothee": "^1.10.0"
