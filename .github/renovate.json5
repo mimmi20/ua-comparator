@@ -7,7 +7,7 @@
     ":combinePatchMinorReleases",
     ":disableDependencyDashboard",
     ":disableRateLimiting",
-    ":enableRenovate",
+    ":disableRenovate",
     ":enableVulnerabilityAlertsWithLabel(security)",
     ":gitSignOff",
     ":ignoreUnstable",
