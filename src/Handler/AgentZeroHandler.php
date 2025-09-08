@@ -25,9 +25,9 @@ use function get_object_vars;
 use function json_encode;
 use function json_last_error;
 use function json_last_error_msg;
+use function mb_trim;
 use function memory_get_peak_usage;
 use function microtime;
-use function trim;
 
 use const JSON_PRESERVE_ZERO_FRACTION;
 use const JSON_PRETTY_PRINT;
@@ -72,7 +72,7 @@ final readonly class AgentZeroHandler
                     'device' => [
                         'architecture' => $r->architecture,
                         'deviceName' => null,
-                        'marketingName' => $r->device === null ? null : trim(
+                        'marketingName' => $r->device === null ? null : mb_trim(
                             $r->device . ' ' . $r->model,
                         ),
                         'manufacturer' => null,

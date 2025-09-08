@@ -53,9 +53,9 @@ use function file_put_contents;
 use function hash;
 use function is_array;
 use function json_encode;
+use function mb_trim;
 use function mkdir;
 use function sprintf;
-use function trim;
 
 use const JSON_FORCE_OBJECT;
 use const JSON_PRETTY_PRINT;
@@ -220,7 +220,7 @@ final class ParseCommand extends Command
 
             foreach ($source->getHeaders($baseMessage) as $headers) {
                 $agent = $headers['user-agent'] ?? 'n/a';
-                $agent = trim((string) $agent);
+                $agent = mb_trim((string) $agent);
 
                 if (isset($existingTests[$agent])) {
                     continue;
