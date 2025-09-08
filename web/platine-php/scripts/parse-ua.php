@@ -49,7 +49,7 @@ $output = [
     'parse_time' => 0,
     'init_time' => $initTime,
     'memory_used' => 0,
-    'version' => InstalledVersions::getPrettyVersion('cbschuld/browser.php'),
+    'version' => InstalledVersions::getPrettyVersion('platine-php/user-agent'),
 ];
 
 if ($hasUa) {
