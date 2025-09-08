@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the mimmi20/ua-comparator package.
+ *
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types = 1);
 
 use BrowserDetector\DetectorFactory;
@@ -37,14 +46,14 @@ $initTime = microtime(true) - $start;
 $output = [
     'hasUa' => $hasUa,
     'headers' => ['user-agent' => $agentString],
-    'result'      => [
+    'result' => [
         'parsed' => null,
-        'err'    => null,
+        'err' => null,
     ],
-    'parse_time'  => 0,
-    'init_time'   => $initTime,
+    'parse_time' => 0,
+    'init_time' => $initTime,
     'memory_used' => 0,
-    'version'     => InstalledVersions::getPrettyVersion('mimmi20/browser-detector'),
+    'version' => InstalledVersions::getPrettyVersion('mimmi20/browser-detector'),
 ];
 
 if ($hasUa) {

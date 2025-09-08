@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the mimmi20/ua-comparator package.
+ *
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types = 1);
 
 ini_set('memory_limit', '-1');
@@ -16,6 +25,7 @@ if ($uaPos !== false) {
 }
 
 $start = microtime(true);
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Composer\InstalledVersions;
@@ -29,14 +39,14 @@ $initTime = microtime(true) - $start;
 $output = [
     'hasUa' => $hasUa,
     'headers' => ['user-agent' => $agentString],
-    'result'      => [
+    'result' => [
         'parsed' => null,
-        'err'    => null,
+        'err' => null,
     ],
-    'parse_time'  => 0,
-    'init_time'   => $initTime,
+    'parse_time' => 0,
+    'init_time' => $initTime,
     'memory_used' => 0,
-    'version'     => InstalledVersions::getPrettyVersion('endorphin-studio/browser-detector'),
+    'version' => InstalledVersions::getPrettyVersion('endorphin-studio/browser-detector'),
 ];
 
 if ($hasUa) {
@@ -49,10 +59,10 @@ if ($hasUa) {
     $output['result']['parsed'] = [
         'device' => [
             'architecture' => null,
-            'deviceName'     => $r->device->model ?? null,
+            'deviceName' => $r->device->model ?? null,
             'marketingName' => null,
             'manufacturer' => null,
-            'brand'    => $r->device->name ?? null,
+            'brand' => $r->device->name ?? null,
             'dualOrientation' => null,
             'simCount' => null,
             'display' => [
@@ -62,29 +72,29 @@ if ($hasUa) {
                 'type' => null,
                 'size' => null,
             ],
-            'type'     => $r->device->type ?? null,
+            'type' => $r->device->type ?? null,
             'ismobile' => $r->isMobile ?? null,
             'istv' => null,
             'bits' => null,
         ],
         'client' => [
-            'name'    => $r->isRobot ? ($r->robot->name ?? null) : ($r->browser->name ?? null),
+            'name' => $r->isRobot ? ($r->robot->name ?? null) : ($r->browser->name ?? null),
             'modus' => null,
             'version' => $r->browser->version ?? null,
             'manufacturer' => null,
             'bits' => null,
-            'isbot'   => $r->isRobot ?? null,
+            'isbot' => $r->isRobot ?? null,
             'type' => null,
         ],
         'platform' => [
-            'name'    => $r->os->name ?? null,
+            'name' => $r->os->name ?? null,
             'marketingName' => null,
             'version' => $r->os->version ?? null,
             'manufacturer' => null,
             'bits' => null,
         ],
         'engine' => [
-            'name'    => null,
+            'name' => null,
             'version' => null,
             'manufacturer' => null,
         ],

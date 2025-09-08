@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the mimmi20/ua-comparator package.
+ *
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types = 1);
 
 use Composer\InstalledVersions;
@@ -35,14 +44,14 @@ $initTime = microtime(true) - $start;
 $output = [
     'hasUa' => $hasUa,
     'headers' => ['user-agent' => $agentString],
-    'result'      => [
+    'result' => [
         'parsed' => null,
-        'err'    => null,
+        'err' => null,
     ],
-    'parse_time'  => 0,
-    'init_time'   => $initTime,
+    'parse_time' => 0,
+    'init_time' => $initTime,
     'memory_used' => 0,
-    'version'     => InstalledVersions::getPrettyVersion('whichbrowser/parser'),
+    'version' => InstalledVersions::getPrettyVersion('whichbrowser/parser'),
 ];
 
 if ($hasUa) {
@@ -54,10 +63,10 @@ if ($hasUa) {
     $output['result']['parsed'] = [
         'device' => [
             'architecture' => null,
-            'deviceName'     => $parser->device->model ?? null,
+            'deviceName' => $parser->device->model ?? null,
             'marketingName' => null,
             'manufacturer' => null,
-            'brand'    => $parser->device->manufacturer ?? null,
+            'brand' => $parser->device->manufacturer ?? null,
             'dualOrientation' => null,
             'simCount' => null,
             'display' => [
@@ -67,29 +76,29 @@ if ($hasUa) {
                 'type' => null,
                 'size' => null,
             ],
-            'type'     => $parser->device->type ?? null,
+            'type' => $parser->device->type ?? null,
             'ismobile' => $isMobile,
             'istv' => null,
             'bits' => null,
         ],
         'client' => [
-            'name'    => $parser->browser->name ?? null,
+            'name' => $parser->browser->name ?? null,
             'modus' => null,
             'version' => $parser->browser->version->value ?? null,
             'manufacturer' => null,
             'bits' => null,
-            'isbot'    => null,
+            'isbot' => null,
             'type' => null,
         ],
         'platform' => [
-            'name'    => $parser->os->name ?? null,
+            'name' => $parser->os->name ?? null,
             'marketingName' => null,
             'version' => $parser->os->version->value ?? null,
             'manufacturer' => null,
             'bits' => null,
         ],
         'engine' => [
-            'name'    => $parser->engine->name ?? null,
+            'name' => $parser->engine->name ?? null,
             'version' => $parser->engine->version->value ?? null,
             'manufacturer' => null,
         ],

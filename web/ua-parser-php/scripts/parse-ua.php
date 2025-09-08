@@ -1,6 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+/**
+ * This file is part of the mimmi20/ua-comparator package.
+ *
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types = 1);
 
 use Composer\InstalledVersions;
@@ -20,6 +29,7 @@ if ($uaPos !== false) {
 }
 
 $start = microtime(true);
+
 require __DIR__ . '/../vendor/autoload.php';
 $parser = Parser::create();
 $parser->parse('Test String');
@@ -30,14 +40,14 @@ $regexVersion = file_get_contents(__DIR__ . '/../data/version.txt');
 $output = [
     'hasUa' => $hasUa,
     'headers' => ['user-agent' => $agentString],
-    'result'      => [
+    'result' => [
         'parsed' => null,
-        'err'    => null,
+        'err' => null,
     ],
-    'parse_time'  => 0,
-    'init_time'   => $initTime,
+    'parse_time' => 0,
+    'init_time' => $initTime,
     'memory_used' => 0,
-    'version'     => InstalledVersions::getPrettyVersion('ua-parser/uap-php') . '-' . $regexVersion,
+    'version' => InstalledVersions::getPrettyVersion('ua-parser/uap-php') . '-' . $regexVersion,
 ];
 
 if ($hasUa) {
@@ -51,10 +61,10 @@ if ($hasUa) {
     $output['result']['parsed'] = [
         'device' => [
             'architecture' => null,
-            'deviceName'     => $r->device->model ?? null,
+            'deviceName' => $r->device->model ?? null,
             'marketingName' => null,
             'manufacturer' => null,
-            'brand'    => $r->device->brand ?? null,
+            'brand' => $r->device->brand ?? null,
             'dualOrientation' => null,
             'simCount' => null,
             'display' => [
@@ -64,29 +74,29 @@ if ($hasUa) {
                 'type' => null,
                 'size' => null,
             ],
-            'type'     => null,
+            'type' => null,
             'ismobile' => null,
             'istv' => null,
             'bits' => null,
         ],
         'client' => [
-            'name'    => $r->ua->family === 'Other' ? null : $r->ua->family,
+            'name' => $r->ua->family === 'Other' ? null : $r->ua->family,
             'modus' => null,
             'version' => $browserVersion !== '' ? $browserVersion : null,
             'manufacturer' => null,
             'bits' => null,
-            'isbot'    => null,
+            'isbot' => null,
             'type' => null,
         ],
         'platform' => [
-            'name'    => $r->os->family === 'Other' ? null : $r->os->family,
+            'name' => $r->os->family === 'Other' ? null : $r->os->family,
             'marketingName' => null,
             'version' => $platformVersion !== '' ? $platformVersion : null,
             'manufacturer' => null,
             'bits' => null,
         ],
         'engine' => [
-            'name'    => null,
+            'name' => null,
             'version' => null,
             'manufacturer' => null,
         ],

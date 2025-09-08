@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the mimmi20/ua-comparator package.
+ *
+ * Copyright (c) 2015-2025, Thomas Mueller <mimmi20@live.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types = 1);
 
 use Composer\InstalledVersions;
@@ -19,6 +28,7 @@ if ($uaPos !== false) {
 }
 
 $start = microtime(true);
+
 require __DIR__ . '/../vendor/autoload.php';
 new BrowserDetection('Test String');
 $initTime = microtime(true) - $start;
@@ -26,14 +36,14 @@ $initTime = microtime(true) - $start;
 $output = [
     'hasUa' => $hasUa,
     'headers' => ['user-agent' => $agentString],
-    'result'      => [
+    'result' => [
         'parsed' => null,
-        'err'    => null,
+        'err' => null,
     ],
-    'parse_time'  => 0,
-    'init_time'   => $initTime,
+    'parse_time' => 0,
+    'init_time' => $initTime,
     'memory_used' => 0,
-    'version'     => InstalledVersions::getPrettyVersion('wolfcast/browser-detection'),
+    'version' => InstalledVersions::getPrettyVersion('wolfcast/browser-detection'),
 ];
 
 if ($hasUa) {
@@ -44,10 +54,10 @@ if ($hasUa) {
     $output['result']['parsed'] = [
         'device' => [
             'architecture' => null,
-            'deviceName'     => null,
+            'deviceName' => null,
             'marketingName' => null,
             'manufacturer' => null,
-            'brand'    => null,
+            'brand' => null,
             'dualOrientation' => null,
             'simCount' => null,
             'display' => [
@@ -57,22 +67,22 @@ if ($hasUa) {
                 'type' => null,
                 'size' => null,
             ],
-            'type'     => null,
+            'type' => null,
             'ismobile' => $result->isMobile(),
             'istv' => null,
             'bits' => null,
         ],
         'client' => [
-            'name'    => $result->getName() !== 'unknown' ? $result->getName() : null,
+            'name' => $result->getName() !== 'unknown' ? $result->getName() : null,
             'modus' => null,
             'version' => $result->getVersion() !== 'unknown' ? $result->getVersion() : null,
             'manufacturer' => null,
             'bits' => null,
-            'isbot'    => null,
+            'isbot' => null,
             'type' => null,
         ],
         'platform' => [
-            'name'    => $result->getPlatform() !== 'unknown' ? $result->getPlatform() : null,
+            'name' => $result->getPlatform() !== 'unknown' ? $result->getPlatform() : null,
             'marketingName' => null,
             'version' => $result->getPlatformVersion(true) !== 'unknown' ? $result->getPlatformVersion(
                 true,
@@ -81,7 +91,7 @@ if ($hasUa) {
             'bits' => null,
         ],
         'engine' => [
-            'name'    => null,
+            'name' => null,
             'version' => null,
             'manufacturer' => null,
         ],
