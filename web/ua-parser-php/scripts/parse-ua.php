@@ -25,7 +25,7 @@ $parser = Parser::create();
 $parser->parse('Test String');
 $initTime = microtime(true) - $start;
 
-$regexVersion = file_get_contents(__DIR__ . '/../version.txt');
+$regexVersion = file_get_contents(__DIR__ . '/../data/version.txt');
 
 $output = [
     'hasUa' => $hasUa,
