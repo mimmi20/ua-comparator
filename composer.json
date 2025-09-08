@@ -34,7 +34,7 @@
     "ext-mbstring": "*",
     "composer-runtime-api": "^2.0",
     "browscap/browscap-php": "^7.5.0",
-    "cbschuld/browser.php": "^1.9.6",
+    "cbschuld/browser.php": "^2.0.0",
     "clue/framework-x": "^0.17.0",
     "devster/ubench": "^2.1.0",
     "donatj/phpuseragentparser": "^1.10.0",
