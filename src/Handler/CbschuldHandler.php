@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace UaComparator\Handler;
 
-use Browser;
+use cbschuld\Browser;
 use Composer\InstalledVersions;
 use InvalidArgumentException;
 use JsonException;
