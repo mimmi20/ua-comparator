@@ -13,7 +13,7 @@
       "version": true,
       "manufacturer": false,
       "bits": false,
-      "isBot": false,
+      "isBot": true,
       "type": true
     },
     "renderingEngine": {

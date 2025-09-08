@@ -1,0 +1,15 @@
+{
+  "require": {
+    "php": "~8.4.0 || ~8.5.0",
+    "composer-runtime-api": "^2.0",
+    "matomo/device-detector": "^6.4.7",
+    "matthiasmullie/scrapbook": "^1.5.4"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "lock": false
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

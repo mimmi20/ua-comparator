@@ -1,0 +1,47 @@
+{
+  "name": "agentzero",
+  "homepage": "https://github.com/hexydec/agentzero",
+  "packageName": "hexydec/agentzero",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "modus": false,
+      "version": true,
+      "manufacturer": false,
+      "bits": false,
+      "isBot": true,
+      "type": true
+    },
+    "renderingEngine": {
+      "name": true,
+      "version": true,
+      "manufacturer": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "marketing-name": false,
+      "version": true,
+      "manufacturer": false,
+      "bits": false
+    },
+    "device": {
+      "name": false,
+      "marketing-name": true,
+      "manufacturer": false,
+      "brand": true,
+      "dual-orientation": false,
+      "type": false,
+      "isMobile": false,
+      "sim-count": false,
+      "display-width": true,
+      "display-height": true,
+      "isTouch": false,
+      "display-type": false,
+      "display-size": false
+    }
+  }
+}

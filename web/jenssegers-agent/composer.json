@@ -1,0 +1,17 @@
+{
+  "require": {
+    "php": "~8.4.0 || ~8.5.0",
+    "composer-runtime-api": "^2.0",
+    "jenssegers/agent": "^v2.6.4"
+  },
+  "config": {
+    "preferred-install": {
+      "jenssegers/agent": "source",
+      "*": "dist"
+    },
+    "sort-packages": true,
+    "lock": false
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

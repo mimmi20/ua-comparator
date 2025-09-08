@@ -7,6 +7,10 @@
   "devDependencies": {
     "prettier": "^3.6.2"
   },
+  "scripts": {
+    "prettier": "prettier --config prettier.config.mjs --check {parsers,tests,web}/**/*.{js,mjs}",
+    "prettier-fix": "prettier --config prettier.config.mjs --write {parsers,tests,web}/**/*.{js,mjs}"
+  },
   "engines": {
     "node": "^22.12.0 || >= 24.0.0"
   },

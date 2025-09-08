@@ -11,5 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "@journyio/user-agent-parser": "^1.0.2"
-  }
+  },
+  "engines": {
+    "node": "^22.12.0 || >= 24.0.0"
+  },
+  "type": "module"
 }

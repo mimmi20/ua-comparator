@@ -30,3 +30,4 @@ data/cache/browscap/browscap.ini
 /data/results/*
 /log/*
 /data/cache
+/web/browscap-php/data
