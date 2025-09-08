@@ -1,0 +1,17 @@
+{
+  "require": {
+    "php": "~8.4.0 || ~8.5.0",
+    "composer-runtime-api": "^2.0",
+    "mimmi20/browser-detector": "^10.0.12",
+    "psr/log": "^3.0.2",
+    "monolog/monolog": "^3.9.0",
+    "matthiasmullie/scrapbook": "^1.5.4"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "lock": false
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

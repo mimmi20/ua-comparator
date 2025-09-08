@@ -1,0 +1,19 @@
+{
+  "require": {
+    "php": "~8.4.0 || ~8.5.0",
+    "composer-runtime-api": "^2.0.0",
+    "browscap/browscap-php": "^7.5.0",
+    "psr/log": "^3.0.2",
+    "symfony/console": "^v7.3.3",
+    "symfony/filesystem": "^v7.3.2",
+    "matthiasmullie/scrapbook": "^1.5.4",
+    "league/flysystem": "^3.30.0"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "lock": false
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

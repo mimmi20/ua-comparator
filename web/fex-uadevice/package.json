@@ -11,5 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "ua-device": "^0.1.10"
-  }
+  },
+  "engines": {
+    "node": "^22.12.0 || >= 24.0.0"
+  },
+  "type": "module"
 }

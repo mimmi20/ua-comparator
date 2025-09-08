@@ -1,0 +1,47 @@
+{
+  "name": "Endorphin Browser Detector",
+  "homepage": "https://github.com/endorphin-studio/browser-detector",
+  "packageName": "endorphin-studio/browser-detector",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "modus": false,
+      "version": true,
+      "manufacturer": false,
+      "bits": false,
+      "isBot": true,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false,
+      "manufacturer": false
+    },
+    "operatingSystem": {
+      "name": true,
+      "marketing-name": false,
+      "version": true,
+      "manufacturer": false,
+      "bits": false
+    },
+    "device": {
+      "name": false,
+      "marketing-name": false,
+      "manufacturer": false,
+      "brand": false,
+      "dual-orientation": false,
+      "type": true,
+      "isMobile": false,
+      "sim-count": false,
+      "display-width": false,
+      "display-height": false,
+      "isTouch": false,
+      "display-type": false,
+      "display-size": false
+    }
+  }
+}

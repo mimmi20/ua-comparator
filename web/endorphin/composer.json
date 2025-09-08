@@ -1,0 +1,15 @@
+{
+  "require": {
+    "php": "~8.4.0 || ~8.5.0",
+    "composer-runtime-api": "^2.0",
+    "endorphin-studio/browser-detector": "^6.0.1",
+    "symfony/yaml": "^v7.3.3"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "lock": false
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

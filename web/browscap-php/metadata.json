@@ -1,0 +1,47 @@
+{
+  "name": "Browscap PHP",
+  "homepage": "https://github.com/browscap/browscap-php",
+  "packageName": "browscap/browscap-php",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": true,
+      "modus": true,
+      "version": true,
+      "manufacturer": true,
+      "bits": true,
+      "isBot": true,
+      "type": true
+    },
+    "renderingEngine": {
+      "name": true,
+      "version": true,
+      "manufacturer": true
+    },
+    "operatingSystem": {
+      "name": true,
+      "marketing-name": false,
+      "version": true,
+      "manufacturer": true,
+      "bits": true
+    },
+    "device": {
+      "name": true,
+      "marketing-name": false,
+      "manufacturer": true,
+      "brand": true,
+      "dual-orientation": false,
+      "type": true,
+      "isMobile": true,
+      "sim-count": false,
+      "display-width": false,
+      "display-height": false,
+      "isTouch": true,
+      "display-type": false,
+      "display-size": false
+    }
+  }
+}

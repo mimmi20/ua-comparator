@@ -2,4 +2,4 @@
 
 parent_path=$( cd "$(dirname "${BASH_SOURCE}")" ; pwd -P )
 
-node $parent_path/scripts/parse-ua.js "$@"
+node $parent_path/scripts/parse-ua.mjs "$@"

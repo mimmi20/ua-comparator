@@ -1,0 +1,47 @@
+{
+  "name": "crawler-detect",
+  "homepage": "https://github.com/jaybizzle/crawler-detect",
+  "packageName": "jaybizzle/crawler-detect",
+  "language": "PHP",
+  "local": true,
+  "api": false,
+  "isActive": true,
+  "detectionCapabilities": {
+    "client": {
+      "name": false,
+      "modus": false,
+      "version": false,
+      "manufacturer": false,
+      "bits": false,
+      "isBot": true,
+      "type": false
+    },
+    "renderingEngine": {
+      "name": false,
+      "version": false,
+      "manufacturer": false
+    },
+    "operatingSystem": {
+      "name": false,
+      "marketing-name": false,
+      "version": false,
+      "manufacturer": false,
+      "bits": false
+    },
+    "device": {
+      "name": false,
+      "marketing-name": false,
+      "manufacturer": false,
+      "brand": false,
+      "dual-orientation": false,
+      "type": false,
+      "isMobile": false,
+      "sim-count": false,
+      "display-width": false,
+      "display-height": false,
+      "isTouch": false,
+      "display-type": false,
+      "display-size": false
+    }
+  }
+}

@@ -23,7 +23,9 @@
     <file>public</file>
     <file>src</file>
     <file>tests</file>
+    <file>web</file>
     <file>.php-cs-fixer.php</file>
     <file>rector.php</file>
     <file>composer-dependency-analyser.php</file>
+    <exclude-pattern>web/*/(data|vendor|node_modules)</exclude-pattern>
 </ruleset>

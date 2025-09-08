@@ -17,8 +17,8 @@
       "type": false
     },
     "renderingEngine": {
-      "name": false,
-      "version": false,
+      "name": true,
+      "version": true,
       "manufacturer": false
     },
     "operatingSystem": {

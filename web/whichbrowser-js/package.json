@@ -11,5 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "which-browser": "^0.7.1"
-  }
+  },
+  "engines": {
+    "node": "^22.12.0 || >= 24.0.0"
+  },
+  "type": "module"
 }

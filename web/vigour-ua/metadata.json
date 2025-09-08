@@ -17,7 +17,7 @@
       "type": false
     },
     "renderingEngine": {
-      "name": false,
+      "name": true,
       "version": false,
       "manufacturer": false
     },

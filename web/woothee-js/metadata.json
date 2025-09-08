@@ -11,7 +11,7 @@
       "name": true,
       "modus": false,
       "version": true,
-      "manufacturer": false,
+      "manufacturer": true,
       "bits": false,
       "isBot": false,
       "type": false
@@ -32,7 +32,7 @@
       "name": false,
       "marketing-name": false,
       "manufacturer": false,
-      "brand": true,
+      "brand": false,
       "dual-orientation": false,
       "type": true,
       "isMobile": false,

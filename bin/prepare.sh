@@ -30,3 +30,18 @@ mkdir ../data/cache/matomo/
 mkdir ../data/cache/endorphin/
 mkdir ../data/cache/mobiledetect/
 mkdir ../data/cache/whichbrowser/
+
+cd ../web
+
+echo "Prepare the parsers"
+
+for f in *; do
+    if [ -d ${f} ]; then
+        echo -e "\033[0;35mRunning update script for the \033[4;31m$f\033[0;35m parser\033[0m"
+        cd $f
+        sh ./prepare.sh $*
+        cd ..
+    fi
+done
+
+echo "Done preparing the parsers"
