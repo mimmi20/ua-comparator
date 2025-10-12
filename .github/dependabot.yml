@@ -4,35 +4,6 @@
 
 version: 2
 
-multi-ecosystem-groups:
-  maintenance-master:
-    schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "04:00"
-      timezone: "Europe/Berlin"
-
-    cooldown:
-      default-days: 7
-
-    groups:
-      production-dependencies:
-        dependency-type: "production"
-      development-dependencies:
-        dependency-type: "development"
-
-    versioning-strategy: "increase"
-
-    rebase-strategy: "disabled"
-
-    assignees:
-      - "mimmi20"
-
-    labels:
-      - "dependencies"
-
-    target-branch: "master"
-
 updates:
   - package-ecosystem: "composer"
 
@@ -56,9 +27,35 @@ updates:
       - "web/wolfcast/"
       - "web/woothee-php/"
 
-    multi-ecosystem-group: "maintenance-master"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "04:00"
+      timezone: "Europe/Berlin"
 
-    patterns: [ "*" ]
+    cooldown:
+      default-days: 7
+
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+      development-dependencies:
+        dependency-type: "development"
+
+    assignees:
+      - "mimmi20"
+
+    labels:
+      - "dependencies"
+
+    versioning-strategy: "increase"
+
+    commit-message:
+      include: "scope"
+      prefix: "composer (master)"
+
+    # Disable rebasing for all pull requests
+    rebase-strategy: "disabled"
 
   - package-ecosystem: "npm"
 
@@ -82,18 +79,67 @@ updates:
       - "web/whichbrowser-js/"
       - "web/woothee-js/"
 
-    multi-ecosystem-group: "maintenance-master"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "04:00"
+      timezone: "Europe/Berlin"
 
-    patterns: [ "*" ]
+    cooldown:
+      default-days: 7
+
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+      development-dependencies:
+        dependency-type: "development"
+
+    assignees:
+      - "mimmi20"
+
+    labels:
+      - "dependencies"
+
+    versioning-strategy: "increase"
+
+    commit-message:
+      include: "scope"
+      prefix: "npm (master)"
+
+    # Disable rebasing for all pull requests
+    rebase-strategy: "disabled"
 
   - package-ecosystem: "github-actions"
 
     directory: "/"
 
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "04:00"
+      timezone: "Europe/Berlin"
+
+    cooldown:
+      default-days: 7
+
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+      development-dependencies:
+        dependency-type: "development"
+
+    assignees:
+      - "mimmi20"
+
+    labels:
+      - "dependencies"
+
+    commit-message:
+      prefix: "github-actions (master)"
+
     ignore:
       - dependency-name: "mimmi20/ci"
       - dependency-name: "release-drafter/release-drafter"
 
-    multi-ecosystem-group: "maintenance-master"
-
-    patterns: [ "*" ]
+    # Disable rebasing for all pull requests
+    rebase-strategy: "disabled"
