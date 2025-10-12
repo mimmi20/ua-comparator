@@ -2,7 +2,7 @@
   "require": {
     "php": "~8.4.0 || ~8.5.0",
     "composer-runtime-api": "^2.0",
-    "jaybizzle/crawler-detect": "^v1.3.5"
+    "jaybizzle/crawler-detect": "^v1.3.6"
   },
   "config": {
     "preferred-install": "dist",
