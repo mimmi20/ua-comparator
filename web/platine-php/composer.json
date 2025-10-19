@@ -2,7 +2,7 @@
   "require": {
     "php": "~8.4.0 || ~8.5.0",
     "composer-runtime-api": "^2.0",
-    "platine-php/user-agent": "^2.0.1"
+    "platine-php/user-agent": "^2.0.0"
   },
   "config": {
     "preferred-install": "dist",
