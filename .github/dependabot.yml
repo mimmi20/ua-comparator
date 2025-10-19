@@ -28,9 +28,8 @@ updates:
       - "web/woothee-php/"
 
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "04:00"
+      interval: "cron"
+      cronjob: "0 4 11 * *"
       timezone: "Europe/Berlin"
 
     cooldown:
@@ -80,9 +79,8 @@ updates:
       - "web/woothee-js/"
 
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "04:00"
+      interval: "cron"
+      cronjob: "0 4 11 * *"
       timezone: "Europe/Berlin"
 
     cooldown:
@@ -114,9 +112,8 @@ updates:
     directory: "/"
 
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "04:00"
+      interval: "cron"
+      cronjob: "0 4 11 * *"
       timezone: "Europe/Berlin"
 
     cooldown:
