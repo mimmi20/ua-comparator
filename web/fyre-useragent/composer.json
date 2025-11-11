@@ -2,7 +2,7 @@
   "require": {
     "php": "~8.4.0 || ~8.5.0",
     "composer-runtime-api": "^2.0",
-    "fyre/useragent": "^2.1.6"
+    "fyre/useragent": "^3.0.1"
   },
   "config": {
     "preferred-install": "dist",
