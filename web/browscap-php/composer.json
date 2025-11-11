@@ -4,10 +4,10 @@
     "composer-runtime-api": "^2.0.0",
     "browscap/browscap-php": "^7.5.0",
     "psr/log": "^3.0.2",
-    "symfony/console": "^v7.3.4",
+    "symfony/console": "^v7.3.6",
     "symfony/filesystem": "^v7.3.2",
     "matthiasmullie/scrapbook": "^1.5.4",
-    "league/flysystem": "^3.30.0"
+    "league/flysystem": "^3.30.1"
   },
   "config": {
     "preferred-install": "dist",
