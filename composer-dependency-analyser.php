@@ -40,6 +40,10 @@ $config
     ->ignoreErrorsOnPackage('phpstan/phpstan-deprecation-rules', [ErrorType::UNUSED_DEPENDENCY])
     ->ignoreErrorsOnPackage('laminas/laminas-config-aggregator', [ErrorType::UNUSED_DEPENDENCY])
     ->ignoreErrorsOnPackage('mimmi20/monolog-streamformatter', [ErrorType::UNUSED_DEPENDENCY])
+    ->ignoreErrorsOnPackage(
+        'jbelien/phpstan-sarif-formatter',
+        [ErrorType::UNUSED_DEPENDENCY],
+    )
 
     // Adjust analysis
     // dev packages are often used only in CI, so this is not enabled by default
