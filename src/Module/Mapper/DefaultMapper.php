@@ -55,12 +55,10 @@ final readonly class DefaultMapper implements MapperInterface
 
         $browserManufacturer = $this->mapper->mapBrowserMaker(
             (string) $parserResult->result->parsed->client->manufacturer,
-            $browserName,
         );
 
         $browserVersion = $this->mapper->mapBrowserVersion(
             (string) $parserResult->result->parsed->client->version,
-            $browserName,
         );
 
         $browserType = !empty($parserResult->result->parsed->client->type)
@@ -78,11 +76,9 @@ final readonly class DefaultMapper implements MapperInterface
 
         $deviceBrandKey = $this->mapper->mapDeviceBrandName(
             $parserResult->result->parsed->device->brand,
-            $deviceName,
         );
         $deviceMakerKey = $this->mapper->mapDeviceMaker(
             (string) $parserResult->result->parsed->device->manufacturer,
-            $deviceName,
         );
 
         $device = new Device(
