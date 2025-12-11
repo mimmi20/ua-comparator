@@ -126,3 +126,11 @@ parameters:
     - '~and mixed results in an error~'
     - '~not a callable~'
     - '~is never read, only written~'
+
+services:
+  errorFormatter.sarif:
+    class: PHPStanSarifErrorFormatter\SarifErrorFormatter
+    arguments:
+      relativePathHelper: @simpleRelativePathHelper
+      currentWorkingDirectory: %currentWorkingDirectory%
+      pretty: true
