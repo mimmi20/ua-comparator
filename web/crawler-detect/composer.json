@@ -1,6 +1,6 @@
 {
   "require": {
-    "php": "~8.4.0 || ~8.5.0",
+    "php": "~8.5.0 || ~8.6.0",
     "composer-runtime-api": "^2.0",
     "jaybizzle/crawler-detect": "^v1.3.6"
   },
