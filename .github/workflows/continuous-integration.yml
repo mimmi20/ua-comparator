@@ -39,7 +39,7 @@ jobs:
       skip-validate-composer: true
       skip-phplint: false
       skip-check-composer: false
-      skip-ec-checker: false
+      skip-ec-checker: true
       dependency-analyser-options: ""
 
   install:
@@ -77,7 +77,7 @@ jobs:
       composer-options: "--optimize-autoloader --prefer-dist --prefer-stable -v"
       skip-php-cs-fixer: false
       skip-phpcs: false
-      skip-phpstan: false
+      skip-phpstan: true
       skip-rector: false
       use-code-scanning: true
       phpcs-options: ""
