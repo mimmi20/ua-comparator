@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ua-parser-js": "^2.0.6"
+    "ua-parser-js": "^2.0.9"
   },
   "engines": {
     "node": "^22.12.0 || >= 24.0.0"
