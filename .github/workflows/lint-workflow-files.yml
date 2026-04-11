@@ -10,10 +10,11 @@ permissions:
 
 jobs:
   actionlint:
-    uses: "mimmi20/ci/.github/workflows/lint-actions.yml@8.4"
+    uses: "mimmi20/ci/.github/workflows/lint-actions.yml@8.5"
     with:
       skip-nasm-install: true
       skip-libimagequant-install: true
+      skip-libpng-install: true
       skip-librabbitmq-install: true
       skip-libgif-install: true
 
@@ -30,9 +31,9 @@ jobs:
 
     steps:
       - name: Failing run
-        if: ${{ contains(needs.*.result, 'failure') }}
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped') || contains(needs.*.result, 'cancelled') }}
         run: exit 1
 
       - name: Successful run
-        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        if: ${{ !(contains(needs.*.result, 'failure')) && !(contains(needs.*.result, 'skipped')) && !(contains(needs.*.result, 'cancelled')) }}
         run: exit 0
