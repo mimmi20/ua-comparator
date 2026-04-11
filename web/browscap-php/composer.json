@@ -7,7 +7,7 @@
     "symfony/console": "^v7.3.6",
     "symfony/filesystem": "^v7.3.2",
     "matthiasmullie/scrapbook": "^1.5.4",
-    "league/flysystem": "^3.30.2"
+    "league/flysystem": "^3.33.0"
   },
   "config": {
     "preferred-install": "dist",
