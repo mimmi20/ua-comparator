@@ -23,7 +23,7 @@ jobs:
   validate:
     name: "Validate Project"
 
-    uses: "mimmi20/ci/.github/workflows/validate.yml@8.4"
+    uses: "mimmi20/ci/.github/workflows/validate.yml@8.5"
     with:
       extensions: "ctype, curl, dom, fileinfo, iconv, intl, mbstring, simplexml, tokenizer, xml, xmlwriter, pdo"
       ini-values: "opcache.enable=1, opcache.fast_shutdown=0, zend.assertions=1, assert.exception=On, intl.default_locale=de, intl.use_exceptions=1, zend.exception_ignore_args=0"
@@ -41,7 +41,7 @@ jobs:
 
     needs: "validate"
 
-    uses: "mimmi20/ci/.github/workflows/install.yml@8.4"
+    uses: "mimmi20/ci/.github/workflows/install.yml@8.5"
     with:
       extensions: "ctype, curl, dom, fileinfo, iconv, intl, mbstring, simplexml, tokenizer, xml, xmlwriter, pdo"
       ini-values: "opcache.enable=1, opcache.fast_shutdown=0, zend.assertions=1, assert.exception=On, intl.default_locale=de, intl.use_exceptions=1, zend.exception_ignore_args=0"
@@ -66,7 +66,7 @@ jobs:
 
     needs: "install"
 
-    uses: "mimmi20/ci/.github/workflows/analytics.yml@8.4"
+    uses: "mimmi20/ci/.github/workflows/analytics.yml@8.5"
     with:
       extensions: "ctype, curl, dom, fileinfo, iconv, intl, mbstring, simplexml, tokenizer, xml, xmlwriter, pdo"
       ini-values: "opcache.enable=1, opcache.fast_shutdown=0, zend.assertions=1, assert.exception=On, intl.default_locale=de, intl.use_exceptions=1, zend.exception_ignore_args=0"
