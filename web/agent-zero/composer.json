@@ -2,7 +2,7 @@
   "require": {
     "php": "~8.5.0 || ~8.6.0",
     "composer-runtime-api": "^2.0",
-    "hexydec/agentzero": "^2.0.3"
+    "hexydec/agentzero": "^2.0.4"
   },
   "config": {
     "preferred-install": "dist",
