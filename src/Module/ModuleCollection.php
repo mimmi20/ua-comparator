@@ -27,7 +27,7 @@ final class ModuleCollection implements Countable, Iterator
 {
     /** @var array<int, ModuleInterface> */
     private array $modules = [];
-    private int $position  = 0;
+    private int $position;
 
     /** @throws void */
     public function __construct()
