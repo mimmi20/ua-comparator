@@ -39,7 +39,7 @@ return static function (RectorConfig $rectorConfig): void {
             RemoveAlwaysTrueIfConditionRector::class,
             RemoveParentCallWithoutParentRector::class,
             NewMethodCallWithoutParenthesesRector::class,
-            RemoveDeadInstanceOfAssertRector::class
+            RemoveDeadInstanceOfAssertRector::class,
         ],
     );
 };
