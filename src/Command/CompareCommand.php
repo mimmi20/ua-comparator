@@ -162,9 +162,7 @@ final class CompareCommand extends Command
                         flags: JSON_THROW_ON_ERROR,
                     );
 
-                    if ($agent === null) {
-                        $agent = $collection[$module]['ua'];
-                    }
+                    $agent ??= $collection[$module]['ua'];
                 } else {
                     $collection[$module] = ['result' => []];
                 }
