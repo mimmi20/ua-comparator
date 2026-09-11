@@ -57,19 +57,19 @@ final readonly class BrowserDetectorHandler
     {
         $cacheDir = 'data/cache/browser';
 
-        $fileAdapter = new LocalFilesystemAdapter($cacheDir);
-        $cache       = new SimpleCache(
+        $localFilesystemAdapter = new LocalFilesystemAdapter($cacheDir);
+        $simpleCache            = new SimpleCache(
             new Flysystem(
-                new Filesystem($fileAdapter),
+                new Filesystem($localFilesystemAdapter),
             ),
         );
 
-        $start    = microtime(true);
-        $logger   = new NullLogger();
-        $factory  = new DetectorFactory($cache, $logger);
-        $detector = $factory();
+        $start           = microtime(as_float: true);
+        $nullLogger      = new NullLogger();
+        $detectorFactory = new DetectorFactory($simpleCache, $nullLogger);
+        $detector        = $detectorFactory();
         $detector->getBrowser('Test String');
-        $initTime = microtime(true) - $start;
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa = $request->hasHeader('user-agent');
 
@@ -98,9 +98,9 @@ final readonly class BrowserDetectorHandler
         ];
 
         if ($hasUa) {
-            $start     = microtime(true);
+            $start     = microtime(as_float: true);
             $r         = $detector->getBrowser($request);
-            $parseTime = microtime(true) - $start;
+            $parseTime = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => $r['device'],

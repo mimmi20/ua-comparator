@@ -41,10 +41,10 @@ final readonly class CbschuldHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start   = microtime(true);
+        $start   = microtime(as_float: true);
         $browser = new Browser();
         $browser->setUserAgent('Test String');
-        $initTime = microtime(true) - $start;
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -62,9 +62,9 @@ final readonly class CbschuldHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
+            $start = microtime(as_float: true);
             $browser->setUserAgent($agentString);
-            $parseTime = microtime(true) - $start;
+            $parseTime = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [

@@ -114,7 +114,6 @@ parameters:
     no_mixed_caller: true
 
   ignoreErrors:
-    - '~return type has no value type specified in iterable type array~'
     - '~with no value type specified in iterable type array~'
     - '~UaResult\\~'
     - '~on mixed~'
@@ -125,7 +124,6 @@ parameters:
     - '~Access to an undefined property~'
     - '~Unreachable statement~'
     - '~Dead catch~'
-    - '~does not accept mixed~'
     - '~array given~'
     - '~will always evaluate to true~'
     - '~of an invalid type mixed supplied for foreach~'

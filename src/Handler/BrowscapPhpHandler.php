@@ -50,17 +50,17 @@ final readonly class BrowscapPhpHandler
     {
         $cacheDir = 'data/cache/browscap';
 
-        $browscapAdapter = new LocalFilesystemAdapter($cacheDir);
-        $cache           = new SimpleCache(
+        $localFilesystemAdapter = new LocalFilesystemAdapter($cacheDir);
+        $simpleCache            = new SimpleCache(
             new Flysystem(
-                new Filesystem($browscapAdapter),
+                new Filesystem($localFilesystemAdapter),
             ),
         );
-        $logger          = new NullLogger();
-        $bc              = new Browscap($cache, $logger);
-        $start           = microtime(true);
-        $bc->getBrowser('Test String');
-        $initTime = microtime(true) - $start;
+        $nullLogger             = new NullLogger();
+        $browscap               = new Browscap($simpleCache, $nullLogger);
+        $start                  = microtime(as_float: true);
+        $browscap->getBrowser('Test String');
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -78,9 +78,9 @@ final readonly class BrowscapPhpHandler
         ];
 
         if ($hasUa) {
-            $start     = microtime(true);
-            $r         = $bc->getBrowser($agentString);
-            $parseTime = microtime(true) - $start;
+            $start     = microtime(as_float: true);
+            $r         = $browscap->getBrowser($agentString);
+            $parseTime = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [

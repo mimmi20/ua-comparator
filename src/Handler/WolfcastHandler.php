@@ -41,9 +41,9 @@ final readonly class WolfcastHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start = microtime(true);
+        $start = microtime(as_float: true);
         new BrowserDetection('Test String');
-        $initTime = microtime(true) - $start;
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -61,9 +61,9 @@ final readonly class WolfcastHandler
         ];
 
         if ($hasUa) {
-            $start     = microtime(true);
-            $result    = new BrowserDetection($agentString);
-            $parseTime = microtime(true) - $start;
+            $start            = microtime(as_float: true);
+            $browserDetection = new BrowserDetection($agentString);
+            $parseTime        = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [
@@ -82,25 +82,27 @@ final readonly class WolfcastHandler
                         'size' => null,
                     ],
                     'type' => null,
-                    'ismobile' => $result->isMobile(),
+                    'ismobile' => $browserDetection->isMobile(),
                     'istv' => null,
                     'bits' => null,
                 ],
                 'client' => [
-                    'name' => $result->getName() !== 'unknown' ? $result->getName() : null,
+                    'name' => $browserDetection->getName() !== 'unknown' ? $browserDetection->getName() : null,
                     'modus' => null,
-                    'version' => $result->getVersion() !== 'unknown' ? $result->getVersion() : null,
+                    'version' => $browserDetection->getVersion() !== 'unknown' ? $browserDetection->getVersion() : null,
                     'manufacturer' => null,
                     'bits' => null,
                     'type' => null,
                     'isbot' => null,
                 ],
                 'platform' => [
-                    'name' => $result->getPlatform() !== 'unknown' ? $result->getPlatform() : null,
+                    'name' => $browserDetection->getPlatform() !== 'unknown' ? $browserDetection->getPlatform() : null,
                     'marketingName' => null,
-                    'version' => $result->getPlatformVersion(
-                        true,
-                    ) !== 'unknown' ? $result->getPlatformVersion(true) : null,
+                    'version' => $browserDetection->getPlatformVersion(
+                        returnVersionNumbers: true,
+                    ) !== 'unknown' ? $browserDetection->getPlatformVersion(
+                        returnVersionNumbers: true,
+                    ) : null,
                     'manufacturer' => null,
                     'bits' => null,
                 ],

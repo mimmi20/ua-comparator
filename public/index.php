@@ -22,7 +22,7 @@ if (PHP_SAPI === 'cli-server' && __FILE__ !== $_SERVER['SCRIPT_FILENAME']) {
 
 chdir(dirname(__DIR__));
 
-require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 ini_set('memory_limit', '-1');
 

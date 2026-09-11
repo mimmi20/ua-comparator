@@ -24,7 +24,7 @@ use stdClass;
 
 use function html_entity_decode;
 use function json_decode;
-use function mb_strpos;
+use function str_contains;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -60,7 +60,7 @@ final class DefaultCheck implements CheckInterface
 
         $rawContent = $response->getBody()->getContents();
 
-        if (mb_strpos((string) $rawContent, '<') !== false) {
+        if (str_contains((string) $rawContent, '<')) {
             throw new RuntimeException(
                 'An Error occured while calling "' . $uri . '". Response is "' . $response->getBody()->getContents() . '"',
             );
@@ -68,9 +68,8 @@ final class DefaultCheck implements CheckInterface
 
         $content = json_decode(
             html_entity_decode((string) $rawContent),
-            null,
-            512,
-            JSON_THROW_ON_ERROR,
+            depth: 512,
+            flags: JSON_THROW_ON_ERROR,
         );
 
         if (!$content instanceof stdClass || !isset($content->result)) {

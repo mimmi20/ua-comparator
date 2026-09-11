@@ -31,5 +31,5 @@ interface CheckInterface
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         string $agent,
-    ): array | stdClass | null;
+    ): stdClass;
 }

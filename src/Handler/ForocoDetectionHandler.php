@@ -41,10 +41,10 @@ final readonly class ForocoDetectionHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $bc    = new BrowserDetection();
-        $start = microtime(true);
-        $bc->getAll('Test String');
-        $initTime = microtime(true) - $start;
+        $browserDetection = new BrowserDetection();
+        $start            = microtime(as_float: true);
+        $browserDetection->getAll('Test String');
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -62,9 +62,9 @@ final readonly class ForocoDetectionHandler
         ];
 
         if ($hasUa) {
-            $start     = microtime(true);
-            $r         = $bc->getAll($agentString);
-            $parseTime = microtime(true) - $start;
+            $start     = microtime(as_float: true);
+            $r         = $browserDetection->getAll($agentString);
+            $parseTime = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [

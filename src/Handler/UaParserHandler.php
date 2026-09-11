@@ -43,10 +43,10 @@ final readonly class UaParserHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start  = microtime(true);
+        $start  = microtime(as_float: true);
         $parser = Parser::create();
         $parser->parse('Test String');
-        $initTime = microtime(true) - $start;
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -64,11 +64,11 @@ final readonly class UaParserHandler
         ];
 
         if ($hasUa) {
-            $start           = microtime(true);
+            $start           = microtime(as_float: true);
             $r               = $parser->parse($agentString);
             $browserVersion  = $r->ua->toVersion();
             $platformVersion = $r->os->toVersion();
-            $parseTime       = microtime(true) - $start;
+            $parseTime       = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [

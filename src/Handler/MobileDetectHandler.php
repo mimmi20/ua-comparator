@@ -53,18 +53,18 @@ final readonly class MobileDetectHandler
     {
         $cacheDir = 'data/cache/mobiledetect';
 
-        $fileAdapter = new LocalFilesystemAdapter($cacheDir);
-        $cache       = new SimpleCache(
+        $localFilesystemAdapter = new LocalFilesystemAdapter($cacheDir);
+        $simpleCache            = new SimpleCache(
             new Flysystem(
-                new Filesystem($fileAdapter),
+                new Filesystem($localFilesystemAdapter),
             ),
         );
 
-        $start  = microtime(true);
-        $parser = new MobileDetect($cache);
-        $parser->setUserAgent('Test String');
-        $parser->isMobile();
-        $initTime = microtime(true) - $start;
+        $start        = microtime(as_float: true);
+        $mobileDetect = new MobileDetect($simpleCache);
+        $mobileDetect->setUserAgent('Test String');
+        $mobileDetect->isMobile();
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa = $request->hasHeader('user-agent');
 
@@ -93,10 +93,10 @@ final readonly class MobileDetectHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $parser->setHttpHeaders($headers);
-            $ismobile  = $parser->isMobile();
-            $parseTime = microtime(true) - $start;
+            $start = microtime(as_float: true);
+            $mobileDetect->setHttpHeaders($headers);
+            $ismobile  = $mobileDetect->isMobile();
+            $parseTime = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [
