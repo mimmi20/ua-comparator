@@ -40,16 +40,9 @@ final class UaComparator extends Application
         $logger->pushHandler(new StreamHandler('log/error.log', LogLevel::NOTICE));
         ErrorHandler::register($logger);
 
-        $browscapAdapter = new LocalFilesystemAdapter('data/cache/general/');
-        $cache           = new Pool(
-            new Flysystem(
-                new Filesystem($browscapAdapter),
-            ),
-        );
-
         $config = new Config(['data/configs/config.json']);
 
-        $this->add(new Command\CompareCommand($logger, $cache, $config));
-        $this->add(new Command\ParseCommand($logger, $config));
+        $this->addCommand(new Command\CompareCommand($logger, $config));
+        $this->addCommand(new Command\ParseCommand($logger, $config));
     }
 }

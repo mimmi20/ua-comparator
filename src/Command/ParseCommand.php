@@ -115,7 +115,7 @@ final class ParseCommand extends Command
 
         $output->writeln('preparing modules ...');
 
-        $collection = new ModuleCollection();
+        $moduleCollection = new ModuleCollection();
 
         /*
          * BrowserDetector
@@ -126,7 +126,11 @@ final class ParseCommand extends Command
         foreach ($this->config['modules'] as $moduleConfig) {
             assert(is_array($moduleConfig));
 
-            if (!$moduleConfig['enabled'] || !$moduleConfig['name']) {
+            if (!$moduleConfig['enabled']) {
+                continue;
+            }
+
+            if (!$moduleConfig['name']) {
                 continue;
             }
 
@@ -156,7 +160,7 @@ final class ParseCommand extends Command
                 );
             }
 
-            $collection->addModule(
+            $moduleCollection->addModule(
                 new Http(
                     name: $moduleConfig['name'],
                     logger: $this->logger,
@@ -174,7 +178,7 @@ final class ParseCommand extends Command
 
         $output->writeln('initializing modules ...');
 
-        foreach ($collection as $module) {
+        foreach ($moduleCollection as $module) {
             /** @var ModuleInterface $module */
             $output->writeln('    initializing module ' . $module->getName() . ' ...');
 
@@ -244,10 +248,10 @@ final class ParseCommand extends Command
                 $cacheId = hash('sha512', bin2hex($agent));
 
                 if (!file_exists('data/results/' . $cacheId)) {
-                    mkdir('data/results/' . $cacheId, 0775, true);
+                    mkdir('data/results/' . $cacheId, 0775, recursive: true);
                 }
 
-                foreach ($collection as $module) {
+                foreach ($moduleCollection as $module) {
                     /** @var ModuleInterface $module */
                     $module
                         ->startBenchmark()

@@ -41,10 +41,10 @@ final readonly class WootheeHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start  = microtime(true);
-        $parser = new Classifier();
-        $parser->parse('Test String');
-        $initTime = microtime(true) - $start;
+        $start      = microtime(as_float: true);
+        $classifier = new Classifier();
+        $classifier->parse('Test String');
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -62,9 +62,9 @@ final readonly class WootheeHandler
         ];
 
         if ($hasUa) {
-            $start     = microtime(true);
-            $r         = $parser->parse($agentString);
-            $parseTime = microtime(true) - $start;
+            $start     = microtime(as_float: true);
+            $r         = $classifier->parse($agentString);
+            $parseTime = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [

@@ -43,9 +43,9 @@ final readonly class AgentZeroHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start = microtime(true);
+        $start = microtime(as_float: true);
         agentzero::parse('Test String');
-        $initTime = microtime(true) - $start;
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -63,9 +63,9 @@ final readonly class AgentZeroHandler
         ];
 
         if ($hasUa) {
-            $start     = microtime(true);
+            $start     = microtime(as_float: true);
             $r         = agentzero::parse($agentString);
-            $parseTime = microtime(true) - $start;
+            $parseTime = microtime(as_float: true) - $start;
 
             if ($r !== false) {
                 $output['result']['parsed'] = [

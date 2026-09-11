@@ -51,16 +51,16 @@ final readonly class WhichBrowserHandler
     {
         $cacheDir = 'data/cache/whichbrowser';
 
-        $browscapAdapter = new LocalFilesystemAdapter($cacheDir);
-        $cache           = new Pool(
+        $localFilesystemAdapter = new LocalFilesystemAdapter($cacheDir);
+        $pool                   = new Pool(
             new Flysystem(
-                new Filesystem($browscapAdapter),
+                new Filesystem($localFilesystemAdapter),
             ),
         );
-        $parser          = new Parser();
-        $start           = microtime(true);
-        $parser->analyse(['User-Agent' => 'Test String'], ['cache' => $cache]);
-        $initTime = microtime(true) - $start;
+        $parser                 = new Parser();
+        $start                  = microtime(as_float: true);
+        $parser->analyse(['User-Agent' => 'Test String'], ['cache' => $pool]);
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa = $request->hasHeader('user-agent');
 
@@ -89,10 +89,10 @@ final readonly class WhichBrowserHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $parser->analyse($headers, ['cache' => $cache]);
+            $start = microtime(as_float: true);
+            $parser->analyse($headers, ['cache' => $pool]);
             $isMobile  = $parser->isMobile();
-            $parseTime = microtime(true) - $start;
+            $parseTime = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [

@@ -48,11 +48,11 @@ final readonly class EndorphinHandler
     {
         $cacheDir = 'data/cache/endorphin';
 
-        $start    = microtime(true);
+        $start    = microtime(as_float: true);
         $detector = new Detector(['cacheDirectory' => $cacheDir]);
 
         $detector->analyse('Test String');
-        $initTime = microtime(true) - $start;
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -70,9 +70,9 @@ final readonly class EndorphinHandler
         ];
 
         if ($hasUa) {
-            $start     = microtime(true);
+            $start     = microtime(as_float: true);
             $r         = $detector->analyse($agentString);
-            $parseTime = microtime(true) - $start;
+            $parseTime = microtime(as_float: true) - $start;
 
             $r = json_decode((string) json_encode($r));
 

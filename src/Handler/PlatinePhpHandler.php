@@ -49,16 +49,16 @@ final readonly class PlatinePhpHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $bc = new UserAgent();
+        $userAgent = new UserAgent();
 
-        $start = microtime(true);
-        $r     = $bc->parse('Test String');
+        $start = microtime(as_float: true);
+        $r     = $userAgent->parse('Test String');
         $r->device();
         $r->browser();
         $r->os();
         $r->engine();
         $r->cpu();
-        $initTime = microtime(true) - $start;
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -76,17 +76,17 @@ final readonly class PlatinePhpHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
+            $start = microtime(as_float: true);
 
             try {
-                $r      = $bc->parse($agentString);
+                $r      = $userAgent->parse($agentString);
                 $device = $r->device();
                 $client = $r->browser();
                 $os     = $r->os();
                 $engine = $r->engine();
                 $cpu    = $r->cpu();
 
-                $parseTime = microtime(true) - $start;
+                $parseTime = microtime(as_float: true) - $start;
 
                 $output['result']['parsed'] = [
                     'device' => [

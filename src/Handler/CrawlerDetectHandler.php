@@ -41,11 +41,11 @@ final readonly class CrawlerDetectHandler
      */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
-        $start  = microtime(true);
-        $parser = new CrawlerDetect();
-        $parser->setUserAgent('Test String');
-        $parser->isCrawler();
-        $initTime = microtime(true) - $start;
+        $start         = microtime(as_float: true);
+        $crawlerDetect = new CrawlerDetect();
+        $crawlerDetect->setUserAgent('Test String');
+        $crawlerDetect->isCrawler();
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -63,10 +63,10 @@ final readonly class CrawlerDetectHandler
         ];
 
         if ($hasUa) {
-            $start = microtime(true);
-            $parser->setUserAgent($agentString);
-            $isbot     = $parser->isCrawler();
-            $parseTime = microtime(true) - $start;
+            $start = microtime(as_float: true);
+            $crawlerDetect->setUserAgent($agentString);
+            $isbot     = $crawlerDetect->isCrawler();
+            $parseTime = microtime(as_float: true) - $start;
 
             $output['result']['parsed'] = [
                 'device' => [

@@ -26,8 +26,6 @@ use UaResult\Engine\Engine;
 use UaResult\Os\Os;
 use UaResult\Result\Result;
 
-use function in_array;
-
 /**
  * UaComparator.ini parsing class with caching and update capabilities
  */
@@ -61,9 +59,9 @@ final readonly class DefaultMapper implements MapperInterface
             (string) $parserResult->result->parsed->client->version,
         );
 
-        $browserType = !empty($parserResult->result->parsed->client->type)
-            ? $this->mapper->mapBrowserType($parserResult->result->parsed->client->type)
-            : Type::Unknown;
+        $browserType = empty($parserResult->result->parsed->client->type)
+            ? Type::Unknown
+            : $this->mapper->mapBrowserType($parserResult->result->parsed->client->type);
 
         $browser = new Browser(
             $browserName,
@@ -107,12 +105,12 @@ final readonly class DefaultMapper implements MapperInterface
                 $parserResult->result->parsed->os->name,
             );
 
-            if (!in_array($osName, ['PlayStation'], true)) {
+            if ($osName !== 'PlayStation') {
                 $os = new Os(
                     $osName,
-                    null,
-                    new Company(type: 'unknown', name: null, brandname: null),
-                    $osVersion,
+                    marketingName: null,
+                    manufacturer: new Company(type: 'unknown', name: null, brandname: null),
+                    version: $osVersion,
                 );
             }
         }

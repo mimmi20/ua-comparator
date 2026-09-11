@@ -57,17 +57,17 @@ final readonly class MatomoHandler
     {
         $cacheDir = 'data/cache/matomo';
 
-        $fileAdapter = new LocalFilesystemAdapter($cacheDir);
-        $cache       = new SimpleCache(
+        $localFilesystemAdapter = new LocalFilesystemAdapter($cacheDir);
+        $simpleCache            = new SimpleCache(
             new Flysystem(
-                new Filesystem($fileAdapter),
+                new Filesystem($localFilesystemAdapter),
             ),
         );
 
-        $start = microtime(true);
-        $dd    = new DeviceDetector('Test String');
-        $dd->parse();
-        $initTime = microtime(true) - $start;
+        $start          = microtime(as_float: true);
+        $deviceDetector = new DeviceDetector('Test String');
+        $deviceDetector->parse();
+        $initTime = microtime(as_float: true) - $start;
 
         $hasUa       = $request->hasHeader('user-agent');
         $agentString = $request->getHeaderLine('user-agent');
@@ -96,38 +96,38 @@ final readonly class MatomoHandler
             'version' => InstalledVersions::getPrettyVersion('matomo/device-detector'),
         ];
 
-        $dd->skipBotDetection();
+        $deviceDetector->skipBotDetection();
 
         if ($hasUa) {
-            $dd->setUserAgent($agentString);
+            $deviceDetector->setUserAgent($agentString);
 
             $clientHints = ClientHints::factory($headers);
-            $dd->setClientHints($clientHints);
-            $dd->setCache(new PSR16Bridge($cache));
+            $deviceDetector->setClientHints($clientHints);
+            $deviceDetector->setCache(new PSR16Bridge($simpleCache));
 
-            $start1 = microtime(true);
-            $dd->parse();
+            $start1 = microtime(as_float: true);
+            $deviceDetector->parse();
 
-            $clientInfo = $dd->getClient();
-            $osInfo     = $dd->getOs();
-            $model      = $dd->getModel();
-            $brand      = $dd->getBrandName();
-            $device     = $dd->getDeviceName();
-            $isMobile   = $dd->isMobile();
+            $clientInfo = $deviceDetector->getClient();
+            $osInfo     = $deviceDetector->getOs();
+            $model      = $deviceDetector->getModel();
+            $brand      = $deviceDetector->getBrandName();
+            $device     = $deviceDetector->getDeviceName();
+            $isMobile   = $deviceDetector->isMobile();
 
-            $parseTime1 = microtime(true) - $start1;
+            $parseTime1 = microtime(as_float: true) - $start1;
 
-            $dd->skipBotDetection(false);
-            $dd->setUserAgent($agentString . ' - ');
+            $deviceDetector->skipBotDetection(skip: false);
+            $deviceDetector->setUserAgent($agentString . ' - ');
 
-            $start2 = microtime(true);
+            $start2 = microtime(as_float: true);
 
-            $dd->parse();
+            $deviceDetector->parse();
 
-            $isBot   = $dd->isBot();
-            $botInfo = $dd->getBot();
+            $isBot   = $deviceDetector->isBot();
+            $botInfo = $deviceDetector->getBot();
 
-            $parseTime2 = microtime(true) - $start2;
+            $parseTime2 = microtime(as_float: true) - $start2;
 
             $output['result']['parsed'] = [
                 'device' => [

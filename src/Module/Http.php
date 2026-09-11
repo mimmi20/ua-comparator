@@ -32,6 +32,8 @@ use Ubench;
 use UnexpectedValueException;
 
 use function get_debug_type;
+use function is_float;
+use function is_int;
 
 /**
  * UaComparator.ini parsing class with caching and update capabilities
@@ -124,8 +126,8 @@ final class Http implements ModuleInterface
     {
         $this->bench->end();
 
-        $this->duration = (float) $this->bench->getTime(true);
-        $this->memory   = (int) $this->bench->getMemoryPeak(true);
+        $this->duration = (float) $this->bench->getTime(raw: true);
+        $this->memory   = (int) $this->bench->getMemoryPeak(raw: true);
 
         return $this;
     }
@@ -159,7 +161,7 @@ final class Http implements ModuleInterface
     /** @throws void */
     public function getDetectionResult(): Result | null
     {
-        if ($this->detectionResult === null) {
+        if (!$this->detectionResult instanceof Response) {
             return null;
         }
 
@@ -177,13 +179,13 @@ final class Http implements ModuleInterface
             return null;
         }
 
-        if (isset($return->duration)) {
+        if (is_float($return->duration)) {
             $this->duration = $return->duration;
 
             $return->duration = null;
         }
 
-        if (isset($return->memory)) {
+        if (is_int($return->memory)) {
             $this->memory = $return->memory;
 
             $return->memory = null;

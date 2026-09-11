@@ -41,7 +41,6 @@
     "endorphin-studio/browser-detector": "^6.0.1",
     "endorphin-studio/browser-detector-data": "^1.2.0",
     "foroco/php-browser-detection": "^2.8.0",
-    "fyre/useragent": "^3.0.1",
     "guzzlehttp/guzzle": "^7.13.1",
     "guzzlehttp/psr7": "^2.12.3",
     "hassankhan/config": "^3.2.0",

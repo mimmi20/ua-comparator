@@ -59,7 +59,6 @@ final class CompareCommand extends Command
     /** @throws LogicException */
     public function __construct(
         private readonly Logger $logger,
-        private readonly CacheItemPoolInterface $cache,
         private readonly Config $config,
     ) {
         parent::__construct();
@@ -118,15 +117,23 @@ final class CompareCommand extends Command
 
         $output->writeln('init checks ...');
 
-        $checkHelper = new Check();
-        $checks      = $checkHelper->getChecks();
+        $check  = new Check();
+        $checks = $check->getChecks();
 
         $output->writeln('init modules ...');
 
         $modules = [];
 
         foreach ($this->config['modules'] as $moduleConfig) {
-            if (!$moduleConfig['enabled'] || !$moduleConfig['name'] || !$moduleConfig['class']) {
+            if (!$moduleConfig['enabled']) {
+                continue;
+            }
+
+            if (!$moduleConfig['name']) {
+                continue;
+            }
+
+            if (!$moduleConfig['class']) {
                 continue;
             }
 
@@ -136,7 +143,11 @@ final class CompareCommand extends Command
         foreach (new IteratorIterator($iterator) as $file) {
             assert($file instanceof SplFileInfo);
 
-            if ($file->isFile() || in_array($file->getFilename(), ['.', '..'], true)) {
+            if ($file->isFile()) {
+                continue;
+            }
+
+            if (in_array($file->getFilename(), ['.', '..'], strict: true)) {
                 continue;
             }
 
@@ -149,9 +160,9 @@ final class CompareCommand extends Command
                 if (file_exists($path . '/' . $module . '.json')) {
                     $collection[$module] = json_decode(
                         (string) file_get_contents($path . '/' . $module . '.json'),
-                        true,
-                        512,
-                        JSON_THROW_ON_ERROR,
+                        associative: true,
+                        depth: 512,
+                        flags: JSON_THROW_ON_ERROR,
                     );
 
                     if ($agent === null) {
@@ -178,18 +189,17 @@ final class CompareCommand extends Command
 
                 $detectionResults = $messageFormatter->formatMessage(
                     $propertyName,
-                    $this->cache,
                     $this->logger,
                 );
 
-                foreach ($detectionResults as $result) {
-                    $matches[] = mb_substr($result, 0, 1);
+                foreach ($detectionResults as $detectionResult) {
+                    $matches[] = mb_substr($detectionResult, 0, 1);
                 }
 
                 $allResults[$propertyTitel] = $detectionResults;
             }
 
-            if (in_array('-', $matches, true)) {
+            if (in_array('-', $matches, strict: true)) {
                 // ++$nokfound;
 
                 $content  = $this->getLine($collection);
@@ -234,7 +244,7 @@ final class CompareCommand extends Command
 
                 $content .= $this->getLine($collection);
                 echo '-', "\n", $content;
-            } elseif (in_array(':', $matches, true)) {
+            } elseif (in_array(':', $matches, strict: true)) {
                 echo ':';
             // ++$sosofound;
             } else {
