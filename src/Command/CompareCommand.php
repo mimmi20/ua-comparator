@@ -19,7 +19,6 @@ use JsonException;
 use Monolog\Handler\PsrHandler;
 use Monolog\Logger;
 use Noodlehaus\Config;
-use Psr\Cache\CacheItemPoolInterface;
 use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Console\Command\Command;
@@ -57,10 +56,8 @@ final class CompareCommand extends Command
     public const int FIRST_COL_LENGTH = 20;
 
     /** @throws LogicException */
-    public function __construct(
-        private readonly Logger $logger,
-        private readonly Config $config,
-    ) {
+    public function __construct(private readonly Logger $logger, private readonly Config $config)
+    {
         parent::__construct();
     }
 
@@ -187,10 +184,7 @@ final class CompareCommand extends Command
             foreach ($checks as $propertyTitel => $x) {
                 $propertyName = empty($x['key']) ? $propertyTitel : $x['key'];
 
-                $detectionResults = $messageFormatter->formatMessage(
-                    $propertyName,
-                    $this->logger,
-                );
+                $detectionResults = $messageFormatter->formatMessage($propertyName, $this->logger);
 
                 foreach ($detectionResults as $detectionResult) {
                     $matches[] = mb_substr($detectionResult, 0, 1);

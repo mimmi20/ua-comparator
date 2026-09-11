@@ -16,7 +16,6 @@ namespace UaComparator\Helper;
 use BrowserDetector\Loader\LoaderInterface;
 use BrowserDetector\Version\VersionBuilder;
 use BrowserDetector\Version\VersionInterface;
-use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use UaDeviceType\Type;
 use UaResult\Bits\Bits;
@@ -172,6 +171,7 @@ final readonly class MessageFormatter
 
     /**
      * @param array<string, mixed> $data
+     *
      * @throws void
      */
     private function fromArray(LoggerInterface $logger, array $data): Result

@@ -14,10 +14,6 @@ declare(strict_types = 1);
 namespace UaComparator;
 
 use InvalidArgumentException;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use MatthiasMullie\Scrapbook\Adapters\Flysystem;
-use MatthiasMullie\Scrapbook\Psr6\Pool;
 use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
