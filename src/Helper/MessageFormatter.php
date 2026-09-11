@@ -13,6 +13,7 @@ declare(strict_types = 1);
 
 namespace UaComparator\Helper;
 
+use BrowserDetector\Loader\LoaderInterface;
 use BrowserDetector\Version\VersionBuilder;
 use BrowserDetector\Version\VersionInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -48,7 +49,7 @@ use function mb_substr;
  */
 final readonly class MessageFormatter
 {
-    private $companyLoader;
+    private LoaderInterface $companyLoader;
 
     /**
      * @param array<Result> $collection
