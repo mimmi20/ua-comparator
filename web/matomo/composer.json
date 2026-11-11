@@ -3,7 +3,7 @@
     "php": "~8.5.0 || ~8.6.0",
     "composer-runtime-api": "^2.0",
     "matomo/device-detector": "^6.5.2",
-    "matthiasmullie/scrapbook": "^1.5.4"
+    "matthiasmullie/scrapbook": "^1.5.5"
   },
   "config": {
     "preferred-install": "dist",

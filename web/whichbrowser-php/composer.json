@@ -3,7 +3,7 @@
     "php": "~8.5.0 || ~8.6.0",
     "composer-runtime-api": "^2.0",
     "whichbrowser/parser": "^v2.1.8",
-    "matthiasmullie/scrapbook": "^1.5.4"
+    "matthiasmullie/scrapbook": "^1.5.5"
   },
   "config": {
     "preferred-install": "dist",

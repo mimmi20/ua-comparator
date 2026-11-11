@@ -4,9 +4,9 @@
     "composer-runtime-api": "^2.0.0",
     "browscap/browscap-php": "^7.7.1",
     "psr/log": "^3.0.2",
-    "symfony/console": "^v8.1.8",
+    "symfony/console": "^v8.1.10",
     "symfony/filesystem": "^v8.1.6",
-    "matthiasmullie/scrapbook": "^1.5.4",
+    "matthiasmullie/scrapbook": "^1.5.5",
     "league/flysystem": "^3.36.0"
   },
   "config": {
